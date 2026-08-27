@@ -64,6 +64,55 @@ measured is what he will actually use.
 - [ ] Recommendation recorded in the spec's Tier 3 vehicle section
 - [ ] Every artifact under `spikes/` labeled throwaway in its header
 
+## Next Up — handoff to the Windows session
+
+**Read this first if you are picking this plan up cold.**
+
+### State as of 2026-08-27
+
+| | |
+|---|---|
+| Phase 0, hardware gate | **Passed.** See Phase 0 — Results below |
+| `minecraft_clone` benchmark | **Blocked** — the son reclaimed his laptop |
+| Phases 1 through 5 | Not started |
+| Spec | `docs/specs/2026-08-26-gamified-python-curriculum-design.md` |
+
+### Blocked item
+
+The `minecraft_clone` framerate benchmark needs his laptop and it is no longer available.
+**Trigger to unblock:** the next time the son's laptop is in reach, before Phase 5 sets performance
+constraints. Do not treat this as done — a single cube at 57 FPS proves a window opens, not
+that a voxel world is playable.
+
+While confirming which display adapter Ursina bound to, check that too; `dxdiag` showed two
+Display tabs, so the machine likely has an Intel iGPU alongside a discrete Quadro.
+
+### Do this next, on Windows, on the parent's machine
+
+**Phase 1 — parent-side environment.** Install Python from python.org and:
+
+```
+python -m pip install ursina
+python -c "from ursina import *; app=Ursina(); Entity(model='cube'); EditorCamera(); app.run()"
+```
+
+Match the son's runtime rather than the parent's habits. He is on Python 3.14. WSL2 is not
+a target — this repository is developed under WSL2, but the spike runs Windows-native
+because Windows-native is what he uses.
+
+**Phase 2 — write the three probes.** `spikes/ursina-tier3/`, Tier 0–3 syntax only, under
+40 lines each. The probe table is in Phase 2 below. Header every file as throwaway.
+
+Then Phases 3 through 5 in order.
+
+### Carry this into Phase 3
+
+The ceremony threshold in the Approach section is a guess of roughly 20%. Phase 0 produced
+evidence it may be too strict: the son read `Entity(model='cube')` and restated it correctly
+in his own words, unprompted, four tiers before that syntax is taught. Measure the ratio
+honestly, but weigh it against the fact that he demonstrably reasons about calls he cannot
+yet write.
+
 ## Approach
 
 Write three deliberately small programs against Ursina using strictly Tier 0–3 syntax,
