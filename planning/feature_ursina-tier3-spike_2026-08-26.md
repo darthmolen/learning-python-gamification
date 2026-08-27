@@ -6,9 +6,13 @@
 
 ## Objective
 
-Determine whether a Tier 3 learner — variables, control flow, and collections, with no
-functions and no classes — can write Ursina programs worth being proud of, and if not,
-define the minimal shim that closes the gap and can be fully retired by Tier 5.
+Prove Ursina runs acceptably on **the son's actual laptop**, and determine whether a Tier 3
+learner — variables, control flow, and collections, with no functions and no classes — can
+write Ursina programs worth being proud of. If not, define the minimal shim that closes the
+gap and can be fully retired by Tier 5.
+
+Two questions, in that order. The hardware question gates the vocabulary question, because
+a shim design is worthless if the engine never opens a window on his machine.
 
 ## Context
 
@@ -26,10 +30,34 @@ Tier 0 vocabulary — he calls `print()` and `len()` from week one. *Writing* on
 So a shim exposing plain positional functions is legible to a Tier 3 learner without
 teaching him anything he has not earned. Whether that shim stays small is the question.
 
+### Why the hardware check is a gate, not a footnote
+
+Spec §4 closes the Ursina-versus-`mcpi` question on continuity grounds: abandoning thirty
+weeks of work at week 37 would read as a bait and switch. **If his laptop cannot run Ursina
+and nobody checks, that is exactly what happens** — discovered at week 9 when Tier 3 starts,
+or at week 37 when the capstone does, by which point every option has closed.
+
+Checked in week 0, the options are all still open: install the vendor driver, replace the
+laptop, or move the capstone to Pygame Zero before a single quest is authored.
+
+**Both machines run Windows.** WSL2 is not a target for this spike. The son's laptop is
+Windows 10 and older; the parent should run the probes on Windows too, so that what gets
+measured is what he will actually use.
+
 ## Success Criteria
 
-- [ ] Ursina confirmed to render under WSL2, or the fallback documented and chosen
-- [ ] Three Tier-3-vocabulary probe programs written and running
+**Gate — the son's laptop:**
+
+- [ ] `winver` and `dxdiag` recorded: Windows build, CPU, GPU, driver vendor and version
+- [ ] Current Python installs and runs
+- [ ] `pip install ursina` succeeds
+- [ ] A single cube renders in a real window, hardware accelerated, no GDI Generic fallback
+- [ ] `minecraft_clone` sample runs, with its observed framerate recorded
+- [ ] Verdict written: capstone safe, capstone safe with constraints, or fallback required
+
+**Vocabulary:**
+
+- [ ] Three Tier-3-vocabulary probe programs written and running on Windows
 - [ ] Ceremony ratio measured for each probe against an explicit vocabulary list
 - [ ] Shim API surface defined, or documented as unnecessary
 - [ ] Retirement path mapped to specific Tier 4 and Tier 5 moments
@@ -58,15 +86,66 @@ needs rethinking rather than patching.
 
 ## Phases
 
-### Phase 1 — Environment feasibility (timeboxed, 30 minutes)
+### Phase 0 — Hardware gate, on the son's laptop (do this first)
 
-Ursina sits on Panda3D and wants a real GL context. Confirm it opens a window and renders
-a single cube under WSL2.
+Ursina sits on Panda3D, which needs a hardware-accelerated OpenGL context. This phase runs
+on **his machine**, not the parent's, because his is the older one and his is the one that
+matters.
 
-If it fails, record the failure precisely and pick a fallback — Windows-side Python, WSLg,
-or an X server — then continue. **Do not spend more than 30 minutes here.** A rendering
-problem is a Phase 1 finding, not a Phase 1 blocker; the vocabulary question is answerable
-either way, and the son's machine is Windows-native regardless.
+**Step 1 — inventory, five minutes.** Run `winver` and `dxdiag`. Record the Windows build,
+CPU, GPU, and the graphics driver's vendor and version. Vintage is the thing to look at:
+Intel HD Graphics (2010 and later) should be adequate; the older GMA-era parts top out
+around OpenGL 1.4–2.1 and will not do.
+
+**Step 2 — install.** Install current Python from python.org, then:
+
+```
+python -m pip install ursina
+```
+
+The documented Python floor is inconsistent — ursinaengine.org says 3.12+, the GitHub
+repository says 3.10+ — but the discrepancy does not bind on Windows 10, where current
+Python installs cleanly. Do not carry "3.12 hard floor" forward as settled.
+
+**Step 3 — does a window open at all.**
+
+```
+python -c "from ursina import *; app=Ursina(); Entity(model='cube'); EditorCamera(); app.run()"
+```
+
+The failure to watch for is a startup dump complaining that the application requested
+hardware acceleration while the driver — reported as **GDI Generic** — supports only
+software rendering, ending in *"Window wouldn't open; abandoning window"*. That means
+Windows fell back to its generic driver, usually because the OEM driver was never installed
+or was wiped by an upgrade.
+
+**The fix is the vendor driver** from Intel, AMD, or NVIDIA directly, not Windows Update.
+Panda3D's own documentation treats better drivers as the answer.
+
+A DirectX 9 backend (`load-display pandadx9` in `Config.prc`) is sometimes suggested as a
+second out. **Treat it as unverified.** At least one report has it failing to resolve the
+same error, and it may not be present in current Panda3D builds. Try it if the driver route
+fails, but do not plan around it.
+
+**Step 4 — is it fast enough.** Run the `minecraft_clone` sample from the Ursina repository
+and watch the frame counter. Record the number.
+
+**Verdict, written down before Phase 2 begins:**
+
+| Outcome | Meaning |
+|---|---|
+| Cube renders, clone playable | Capstone is safe. Never think about this again |
+| Renders, clone slow | Capstone is safe *with constraints* — small world, combined static mesh, no shadows, windowed 1280×720. See Phase 5 |
+| No window after vendor driver install | **Gate fails.** Stop. Escalate to the fallback decision below |
+
+**If the gate fails**, the choice is the parent's and belongs in the spec, not in this
+document: install a vendor driver, replace the laptop, or move the capstone to Pygame Zero.
+Reopening `mcpi` is a fourth option, but it re-imports the continuity problem §4 rejected.
+
+### Phase 1 — Parent-side environment (timeboxed, 30 minutes)
+
+Same install on the parent's Windows machine, so the probes are written against the same
+runtime the son uses. WSL2 is explicitly not a target.
 
 ### Phase 2 — Write the three probes [ASYNC]
 
@@ -109,7 +188,17 @@ Two constraints on the design:
   and recognise most of it. A shim he cannot eventually read is a black box, and the spec's
   §2.3 diagnosis is that black boxes are how these curricula fail.
 
-### Phase 5 — Map the retirement, then recommend
+### Phase 5 — Performance constraints, then map the retirement, then recommend
+
+If Phase 0 returned "safe with constraints", record the constraints that make the capstone
+viable on his hardware, because they become authoring rules rather than afterthoughts:
+small world, a combined mesh for static terrain instead of one `Entity` per block, no
+shadows, windowed at 1280×720.
+
+One `Entity` per block is thousands of draw calls, and the stock Minecraft-clone sample is
+written that way. This is good news pedagogically: *why is my game slow* is a genuine Tier 7
+performance-intuition lesson rather than a blocker — provided the shim does not bake the
+slow pattern in so deep that it cannot be undone at Tier 7.
 
 Scaffolding that never comes down is CodeCombat. Map each shim function to the moment the
 learner replaces it:
@@ -128,9 +217,10 @@ document's Status block.
 
 ## Dependencies / Prerequisites
 
-- Python 3.x with `pip` on the host running the spike
-- `pip install ursina` (pulls Panda3D)
-- A display path from WSL2, or a decision to run Windows-side — Phase 1 resolves this
+- **Physical access to the son's laptop.** Phase 0 cannot be done remotely or by proxy
+- Current Python with `pip`, installed on Windows on both machines
+- `pip install ursina`, which pulls Panda3D
+- The Ursina repository's `minecraft_clone` sample, for the framerate benchmark
 - Spec §4 Tiers 0–3 vocabulary list, which is the measuring stick
 
 ## Files Expected to Change
@@ -154,7 +244,9 @@ document's Status block.
 
 Promote to `planning/backlog/` if they surface:
 
-- WSL2 rendering proves unworkable and the project needs a standing decision about where
-  Python runs for both players.
+- The gate fails and the capstone needs re-deciding, which is a spec change and deserves
+  its own planning document rather than a status note here.
+- The son's laptop turns out to be viable but marginal, in which case the project needs a
+  standing performance budget for every graphical quest, not just the capstone.
 - Ursina's own version churn threatens a year-long campaign, which would need a pinning
   and upgrade policy.

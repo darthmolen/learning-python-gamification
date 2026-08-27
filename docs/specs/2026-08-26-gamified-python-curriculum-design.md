@@ -21,7 +21,7 @@ Teach a 11–14-year-old real, transferable Python while a parent learns alongsi
 | Vehicle | Phased: in-app puzzles first, real-repo quests after |
 | Stack | Vite + React SPA, Pyodide, Fastify API, Postgres, Docker Compose |
 | Git host | Self-hosted Gitea, in the same compose stack |
-| Machines | Parent's machine hosts; both play from their own computers |
+| Machines | Both Windows. Parent's machine hosts the stack; the son's is Windows 10 and older, and only needs Python, VS Code, git, Ursina, and a browser |
 
 ---
 
@@ -563,6 +563,7 @@ Driven by the learner's calendar, not by feature completeness.
 
 | Phase | Ships | Needed by |
 |---|---|---|
+| **0a** | **Ursina hardware gate on the son's laptop** | **week 0, before anything else** |
 | 0 | Compose stack, engine, schema, content validator | week 0 |
 | 1 | Quest view, Pyodide run, API verify, campaign map | week 1 |
 | 1.5 | Gitea, `git-signal`, Chronicle | week 3 |
@@ -570,6 +571,15 @@ Driven by the learner's calendar, not by feature completeness.
 | 3 | Patrols and spaced repetition | week 9 |
 | 4 | Two-player board, bounties | week 12 |
 | 5 | See roadmap | later |
+
+**Phase 0a gates the capstone, so it runs first.** Ursina needs a hardware-accelerated
+OpenGL context, and the son's laptop is Windows 10 and older. §4 rules out `mcpi` on the
+grounds that abandoning thirty weeks of work would read as a bait and switch — which is
+precisely what happens if his machine cannot run Ursina and nobody checks until week 9 or
+week 37. Verified in week 0, every option is still open: install the vendor driver, replace
+the laptop, or move the capstone to Pygame Zero before a single quest exists.
+
+See `planning/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 
 **Start the curriculum before the app is finished.** Tier 0 needs a markdown file and a REPL. If Tier 0 waits on Phase 1, the app becomes a satisfying way to postpone teaching a child Python.
 
@@ -614,6 +624,7 @@ Driven by the learner's calendar, not by feature completeness.
 | Chronicle scored rather than ritual | Reflection is a skill the industry lost |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
+| Ursina hardware gate before any build work | The continuity argument for Ursina collapses into the bait and switch it avoids if his laptop cannot run it |
 | Ursina from Tier 3, no `mcpi` | One repository, one story; work compounds into the capstone instead of being discarded at week 37 |
 | Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
