@@ -21,7 +21,7 @@ Teach a 11–14-year-old real, transferable Python while a parent learns alongsi
 | Vehicle | Phased: in-app puzzles first, real-repo quests after |
 | Stack | Vite + React SPA, Pyodide, Fastify API, Postgres, Docker Compose |
 | Git host | Self-hosted Gitea, in the same compose stack |
-| Machines | Both Windows. Parent's machine hosts the stack; the son's is Windows 10 and older, and only needs Python, VS Code, git, Ursina, and a browser |
+| Machines | Both Windows. Parent's machine hosts the stack. The son runs a 2017 mobile workstation — Windows 11 Pro 22H2, i7-7820HQ, 16GB RAM, DirectX 12, Python 3.14 — and needs only Python, VS Code, git, Ursina, and a browser |
 
 ---
 
@@ -572,14 +572,17 @@ Driven by the learner's calendar, not by feature completeness.
 | 4 | Two-player board, bounties | week 12 |
 | 5 | See roadmap | later |
 
-**Phase 0a gates the capstone, so it runs first.** Ursina needs a hardware-accelerated
-OpenGL context, and the son's laptop is Windows 10 and older. §4 rules out `mcpi` on the
-grounds that abandoning thirty weeks of work would read as a bait and switch — which is
-precisely what happens if his machine cannot run Ursina and nobody checks until week 9 or
-week 37. Verified in week 0, every option is still open: install the vendor driver, replace
-the laptop, or move the capstone to Pygame Zero before a single quest exists.
+**Phase 0a gated the capstone, and it passed on 2026-08-27.** Ursina needs a
+hardware-accelerated OpenGL context, and §4 rules out `mcpi` on the grounds that abandoning
+thirty weeks of work would read as a bait and switch — precisely what would happen if his
+machine could not run Ursina and nobody checked until week 9 or week 37.
 
-See `planning/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
+Verified: the son's laptop, Windows 11 Pro 22H2, i7-7820HQ, 16GB RAM, DirectX 12, Python 3.14.
+A cube renders in a real window at ~57 FPS with no GDI Generic fallback. **The voxel
+capstone is viable.** The `minecraft_clone` benchmark remains outstanding and is the only
+thing that could still qualify it.
+
+See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 
 **Start the curriculum before the app is finished.** Tier 0 needs a markdown file and a REPL. If Tier 0 waits on Phase 1, the app becomes a satisfying way to postpone teaching a child Python.
 

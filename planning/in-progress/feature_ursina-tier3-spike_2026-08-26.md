@@ -1,6 +1,6 @@
 # Ursina Tier 3 Vocabulary Ceiling Spike
 
-**Status:** Planned
+**Status:** In Progress
 **Date:** 2026-08-26
 **Author:** Claude (Opus 5), with Steven Molen
 
@@ -46,14 +46,14 @@ measured is what he will actually use.
 
 ## Success Criteria
 
-**Gate — the son's laptop:**
+**Gate — the son's laptop:** cleared 2026-08-27, one item outstanding
 
-- [ ] `winver` and `dxdiag` recorded: Windows build, CPU, GPU, driver vendor and version
-- [ ] Current Python installs and runs
-- [ ] `pip install ursina` succeeds
-- [ ] A single cube renders in a real window, hardware accelerated, no GDI Generic fallback
+- [x] `winver` and `dxdiag` recorded: Windows build, CPU, GPU, driver vendor and version
+- [x] Current Python installs and runs
+- [x] `pip install ursina` succeeds
+- [x] A single cube renders in a real window, hardware accelerated, no GDI Generic fallback
 - [ ] `minecraft_clone` sample runs, with its observed framerate recorded
-- [ ] Verdict written: capstone safe, capstone safe with constraints, or fallback required
+- [x] Verdict written: capstone safe, capstone safe with constraints, or fallback required
 
 **Vocabulary:**
 
@@ -141,6 +141,46 @@ and watch the frame counter. Record the number.
 **If the gate fails**, the choice is the parent's and belongs in the spec, not in this
 document: install a vendor driver, replace the laptop, or move the capstone to Pygame Zero.
 Reopening `mcpi` is a fourth option, but it re-imports the continuity problem §4 rejected.
+
+### Phase 0 — Results, 2026-08-27
+
+**The gate passed.** The machine is materially stronger than the plan assumed.
+
+| Measured | Value |
+|---|---|
+| Model | the son's laptop — a mobile workstation, not a budget laptop |
+| OS | Windows 11 Pro 22H2, build 22621.4317 |
+| CPU | Intel Core i7-7820HQ @ 2.90GHz, 8 logical CPUs |
+| Memory | 16 GB |
+| DirectX | 12 |
+| Python | 3.14, pip 26.2.1 |
+| Ursina | Installs cleanly |
+| Render | Window opens, cube draws, ~57 FPS, 1 entity, 0 colliders |
+| GDI Generic fallback | **Not triggered** |
+
+~57 FPS on a single entity is vsync against a 60Hz panel, which is the healthy result rather
+than a slow one.
+
+**Corrections to the plan's assumptions.** It was written expecting Windows 10 on older
+hardware. Both were wrong, in the project's favour. The Python floor question is moot at
+3.14, and the OpenGL driver risk — the failure judged most likely to bite — did not
+materialise at all. The DirectX 9 fallback, flagged as unverified, is not needed.
+
+**Outstanding.** A single cube proves a window opens; it does not prove a voxel world is
+playable. The `minecraft_clone` benchmark is still the load-bearing measurement, because
+the stock sample gives every block its own `Entity`. Run it before Phase 5 sets performance
+constraints.
+
+**Open follow-up.** `dxdiag` showed two Display tabs, which on a mobile workstation of that era usually means
+hybrid graphics — an Intel iGPU alongside a discrete Quadro. Confirm which adapter Ursina
+actually bound to. If it took the iGPU, the capstone may have significant headroom still
+unclaimed.
+
+**Unplanned finding, and the most encouraging one.** The son read the one-line Ursina
+incantation and restated it in his own words unprompted, and was visibly pleased that it
+drew a square. That is a Teach-back (spec §5.10) passed on day zero, against syntax four
+tiers ahead of him. It is direct evidence for the shim hypothesis this spike exists to test:
+he does not need to *write* `Entity(...)` to reason about what it does.
 
 ### Phase 1 — Parent-side environment (timeboxed, 30 minutes)
 
