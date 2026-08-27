@@ -177,7 +177,23 @@ stale by 2028. Revisit this arc's content annually.
 `async`/`await`, decorators, threading, metaclasses, web frameworks, machine learning, data science. None serves the learner's motivation, and each is a place where curricula stall. Deferred consciously to §9.
 
 ### Minecraft and Python: the honest position
-Minecraft Java Edition modding is Java, not Python. The options are a Spigot server plus RaspberryJuice driven by `mcpi`, Minecraft Education's Python mode, or building a voxel game outright. **This curriculum uses `mcpi` in Tiers 3–5 and Ursina for the capstone**, which sidesteps the problem by having him build the game rather than script someone else's.
+Minecraft Java Edition modding is Java, not Python. The options are a Spigot server plus
+RaspberryJuice driven by `mcpi`, Minecraft Education's Python mode, or building a voxel
+game outright.
+
+**This curriculum uses Ursina from Tier 3 through the capstone, and does not use `mcpi`.**
+
+`mcpi` buys a faster first thrill: one line places a block in a world he already loves.
+It costs continuity. Tiers 3–5 written against `mcpi` would be abandoned at week 37 when
+the capstone starts over in a different framework, and a learner who has spent thirty
+weeks on something reads that as a bait and switch — correctly.
+
+Ursina compounds instead. Every tier's work survives into the next, the repository tells
+one story, and the capstone is the culmination of the campaign rather than a fresh start.
+It also carries no server, no Java, and no version-pinned plugin to keep alive for a year.
+
+The trade is a slower start. He builds his world gradually rather than borrowing one, and
+that is the intended shape.
 
 ---
 
@@ -310,7 +326,7 @@ Bosses unlock real new powers:
 | Boss | Unlock |
 |---|---|
 | 2 | The real toolchain |
-| 3 | `mcpi` — Python touching actual Minecraft |
+| 3 | Ursina — his first blocks in a world that is his |
 | 4 | Pygame Zero |
 | 6 | `requests` and the open internet |
 | 7 | Merge rights on the engine repository |
@@ -574,7 +590,9 @@ Driven by the learner's calendar, not by feature completeness.
 
 ## 10. Open Questions
 
-1. Ursina versus `mcpi` weighting in Tiers 3–5, should he prefer scripting real Minecraft over building his own.
+1. ~~Ursina versus `mcpi`~~ — **closed.** Ursina throughout. Continuity beats a faster
+   first thrill, and abandoning thirty weeks of work at the capstone would read as a bait
+   and switch.
 2. ~~Parent track content~~ — **closed.** Quest YAML is reused unchanged; §5.11 governs the difference.
 3. ~~Backup policy~~ — **closed.** See §6.9.
 4. How the Scrollcraft transcripts get refreshed as models change. Annual review is the current answer, and it may prove too slow.
@@ -596,6 +614,7 @@ Driven by the learner's calendar, not by feature completeness.
 | Chronicle scored rather than ritual | Reflection is a skill the industry lost |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
+| Ursina from Tier 3, no `mcpi` | One repository, one story; work compounds into the capstone instead of being discarded at week 37 |
 | Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
 | Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |
