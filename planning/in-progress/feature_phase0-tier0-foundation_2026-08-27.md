@@ -1,0 +1,236 @@
+# Phase 0 + Tier 0 — Foundation, then UI Design
+
+**Status:** Planned
+**Date:** 2026-08-27
+**Author:** Claude (Opus 5), with Steven Molen
+**Spec:** `docs/specs/2026-08-26-gamified-python-curriculum-design.md`
+
+---
+
+## Context
+
+The Ursina Tier 3 spike closed on 2026-08-27. Both questions it existed to answer came back
+clean: the son's laptop renders a hardware-accelerated cube at ~57 fps with no GDI
+Generic fallback, and a three-name shim (`BLOCKS`, `place`, `start`) closes the Tier 3
+vocabulary gap at 0% ceremony against raw Ursina's 100%. Spec §8 Phase 0a is cleared. Nothing
+in the build order is gated on it any longer.
+
+The repository today holds a spec, a completed spike, and two backlog stubs. There is no
+application code. Phase 0 of the build order — compose stack, engine, schema, content
+validator — is due week 0, and Tier 0 teaching is due immediately, because §8 warns in as many
+words that if Tier 0 waits on Phase 1 *the app becomes a satisfying way to postpone teaching a
+child Python*.
+
+This plan delivers Phase 0 and Tier 0, then runs a Claude Design session for the seven screens
+of §6.8, then builds the teaching system against those screens rather than against a bullet
+list.
+
+**Toolchain verified present on the parent's machine:** Docker 28.3.2 with Compose v2.39.1
+(Linux containers, daemon up), Node v24.0.0, npm 11.3.0, Python 3.14.6, git 2.54.0.
+
+---
+
+## What is blocked, and what is not
+
+Almost nothing is blocked externally. The dependencies that remain are internal sequencing.
+
+| Work | Blocked by | Status |
+|---|---|---|
+| Compose stack (postgres, gitea) | nothing | **ready** |
+| Engine scoring core | the content contract (Wave 0) | **ready after ~30 min** |
+| Content validator, `new:quest` | the content contract (Wave 0) | **ready after ~30 min** |
+| Tier 0 curriculum | nothing at all | **ready — and on nobody's critical path** |
+| UI design session | Wave 1 landing, and a human | gated on wall-clock, not on code |
+| Engine query layer, DB schema, API contract | the UI design session | deliberately deferred |
+| Two remaining Ursina measurements | **physical access to the son's laptop** | the only hard external blocker |
+
+The Ursina measurements — locating the son's laptop on the `_bench.py` scaling curve, and confirming
+whether Panda3D bound to the iGPU or the discrete Quadro — block nothing. Both backlog stubs
+say so explicitly. Take them opportunistically next time the laptop is in reach.
+
+---
+
+## Design decisions this plan makes
+
+The spec is approved prose and leaves several engine inputs undefined. These are decided here
+so Wave 1 has something to test against. Each is a single exported constant or a five-line
+function, so each is cheap to retune.
+
+**DC-1 — Effective DC is clamped to [5, 30].** §5.1 gives Conjured −5 and Datamine −5 as
+separate modifiers, and §5.5 permits both on one quest. A DC 5 quest taking both lands at −5
+and pays negative XP. Clamping to the published 5–30 scale keeps the D&D vocabulary honest and
+guarantees XP is never negative.
+
+**DC-2 — Medal payment is the delta at time of earning, and is order-independent.** §5.10 says
+each medal "raises the quest's effective DC and pays the difference, once." Because modifiers
+sum, total XP across all earned medals equals `xp(finalEffectiveDC)` regardless of the order
+they were earned in. That commutativity is a property worth pinning with a test, and it is the
+single best mutant in the engine — change the sum to a max and it must go red.
+
+**DC-3 — Conjured and Ironman are mutually exclusive.** §5.12 states it; the engine enforces
+it by rejecting the pair rather than by silently dropping one.
+
+**DC-4 — The concept tag registry is authored from §4.** §6.10 requires the validator to prove
+every concept tag is known, but the known set does not exist yet. It gets written as
+`packages/content/src/concepts.ts`, one entry per vocabulary item in the §4 tier listings.
+
+**DC-5 — The challenge-run bonus is a +5 difficulty modifier, not a new concept.** §5.2 says
+beating a boss early "pays a bonus" without naming an amount. Expressing it as a modifier
+reuses the machinery §5.1 already built and honours that section's argument that a bonus should
+not be a special case bolted onto scoring. Skipped quests pay nothing, because they were not
+done.
+
+**Deferred to the design session, on purpose:** the level curve (§6.7 returns a level; no
+formula is given, and how often a level should fire is a presentation question), the patrol
+review interval ladder (§5.4 names an interval and never specifies it — proposal below, but
+the queue shape belongs to the Muster screen), and the estimated-total tilde of §5.1a. All
+three are shaped by screens that do not exist yet.
+
+*Proposed patrol ladder, to confirm at the design session:* fixed rungs at 1, 3, 7, 16, and 35
+days, advancing on a successful retrieval and stepping back one rung on a failure rather than
+resetting to zero — resetting punishes and floods the queue. §5.5's guaranteed +3 and +10 day
+reviews after a Datamine are a second, additive source, not a ladder position.
+
+---
+
+## The engine split, and why
+
+`packages/engine` is described in §6.7 as the one component that must never be wrong, which is
+also what makes it the one component that is trivially testable. It divides cleanly:
+
+| Built in Wave 1 — pinned by spec | Deferred to Wave 3 — shaped by the UI |
+|---|---|
+| `effectiveDC(baseDC, modifiers)` | `availableQuests(state)` return shape |
+| `xpFor(kind, effectiveDC)` | `tierProgress()` → `{cleared, total, estimated}` |
+| `medalDelta(baseDC, earned, newMedal)` | `duePatrols()` queue shape and cap |
+| modifier legality (DC-3) | `standings()` for The Board |
+| `bossUnlocked(clearedInTier)` — any 3 of 5 | `level(xp)` — curve undefined |
+
+The left column is arithmetic the spec specifies to the number; it cannot move. The right
+column is a projection whose shape only a real screen can settle. Building the right column
+before the design session means building it twice.
+
+**Layer boundary, from §5.1:** the engine owns `effectiveDC` and nothing else. The threshold at
+which a number becomes a warning is a presentation decision. A test asserts the engine's return
+types carry no `risk` or `warning` field, which pins the boundary cheaply and permanently.
+
+---
+
+## Waves
+
+### Wave 0 — the content contract (sequential, me, ~30 min)
+
+A genuine barrier: Wave 1's agents would otherwise race on the same type files.
+
+- `package.json` npm workspaces, TypeScript, vitest
+- `packages/content/src/schema.ts` — zod schema for the quest YAML of §6.2
+- `packages/content/src/concepts.ts` — the concept registry of DC-4
+
+### Wave 1 — four parallel agents, disjoint directories
+
+| Agent | Owns | Depends on |
+|---|---|---|
+| **A — engine core** | `packages/engine/` | Wave 0 types |
+| **B — infrastructure** | `infra/` | nothing |
+| **C — content tooling** | `packages/content/` beyond the schema | Wave 0 types |
+| **D — Tier 0 curriculum** | `curriculum/tier-0/` | nothing |
+
+**A** builds the five pinned functions above under full test-filter discipline.
+
+**B** builds `infra/docker-compose.yml` with postgres 16 and gitea on a shared instance
+(§6.1), persistent volumes, healthchecks throughout, and `.env.example`. Also the §6.9 backup
+job — `pg_dump` plus a mirror of every Gitea repository to a dated tarball, thirty-day
+retention — **and rehearses the restore**, which §6.9 requires before week 3.
+
+**C** builds the validator (`npm run validate:content`: acyclic prerequisite graph, every
+concept tag known, every referenced brief and test file present) and the `npm run new:quest`
+scaffolder. §6.10 notes the parent will run this more than 150 times and it should take two
+minutes.
+
+**D** authors `curriculum/tier-0/` — the §4 Tier 0 vocabulary as turtle-graphics session
+briefs, the exercises, and the Chronicle template of §5.6. No code dependency whatsoever. This
+is the workstream that lets teaching start this week.
+
+### Wave 2 — Claude Design session for the UI (me + you, human-in-the-loop)
+
+A canvas with one artboard per §6.8 screen: Campaign Map, Quest, Muster, Boss, The Board,
+Chronicle, Console. This is a wall-clock gate that agents cannot parallelise, which is exactly
+why curriculum churn continues underneath it.
+
+Three things the artboards must settle, because Wave 3 reads them as inputs: how a quest card
+renders its medal slots greyed (§5.10), how a tier header renders `1 of ~5` (§5.1a), and where
+the DC ≥ 20 warning lives.
+
+*Background, in parallel:* **agent D2** carries curriculum authoring forward into Tier 1.
+
+### Wave 3 — the teaching system, shaped by the design
+
+- The deferred engine query layer, now with known return shapes
+- DB schema and migrations job — progress in Postgres, content in git, the two never mixing
+  (§6.7). Tables for players, `quest_medals` keyed exactly as §6.2 specifies, attempts as
+  scars, datamines, concept reviews, chronicle entries, sessions, bounties
+- The API contract derived from the artboards
+
+*Background, in parallel:* curriculum churn continues into Tier 2a.
+
+Phase 1 proper — Fastify, the runner container, the SPA, Pyodide, and the turtle-to-canvas shim
+of §8 — follows this pass and is not in scope here.
+
+---
+
+## Test-filter discipline, by workstream
+
+The filter axis is not uniform across this work, and pretending it is would over-validate the
+cheap parts and under-validate the expensive one.
+
+| Workstream | Axis | Discipline |
+|---|---|---|
+| **A — engine** | **Filter, high bar** | Full RED → capture → GREEN → capture → MUTATE → kill → restore, per behavior. Named mutants: drop a modifier from the sum, return a constant XP, flip the `>= 3` in the boss unlock, remove the clamp. Every one must go red. |
+| **C — validator** | Filter | Mutants: accept a cyclic prerequisite graph, accept an unknown concept tag. Both must be caught. |
+| **B — compose** | **Configuration** — the skill's stated exception | Not unit tests. A smoke script asserting every healthcheck reaches green and that the restore actually restores. That is the composition test, and it is the right one. |
+| **D — curriculum** | n/a | Prose. Verified by a person reading it, and ultimately by a child sitting down with it. |
+| **Wave 3 — DB, API** | **Composition** | Migrations run against a real Postgres; API integration tests run against the real compose stack. Per the skill: a mock here *is* the registration you forgot. |
+
+Engine work captures failure and pass output into the transcript rather than attesting to it.
+A checked box whose evidence cannot be produced is unchecked.
+
+---
+
+## Verification
+
+**Wave 1 gate — all four must hold before the design session:**
+
+1. `npm test` green across `packages/engine` and `packages/content`, output pristine
+2. Every engine mutant listed above demonstrated red, then `git diff` clean on the mutated file
+3. `docker compose up -d` brings postgres and gitea to healthy; `docker compose ps` shows it
+4. Backup job produces a dated tarball, and a restore into a scratch database is rehearsed and
+   verified — not assumed
+5. `npm run validate:content` passes on the fixtures and **fails** on a deliberately cyclic one
+6. `npm run new:quest` scaffolds a quest that validates without hand-editing
+7. Tier 0 briefs read start to finish by a human
+
+**End-to-end, after Wave 3:** author a quest with `new:quest`, validate it, load it, and have
+the engine return correct availability, effective DC, and XP for both players — with the medal
+commutativity property holding across a randomised earn order.
+
+---
+
+## Files expected to change
+
+- `package.json`, `tsconfig.base.json` — new, npm workspaces root
+- `packages/content/src/{schema,concepts}.ts` — new, the Wave 0 contract
+- `packages/content/src/validate.ts`, `scripts/new-quest.ts` — new, §6.10
+- `packages/engine/src/scoring.ts` + tests — new, the pinned arithmetic
+- `infra/docker-compose.yml`, `infra/.env.example`, `infra/backup.sh` — new, §6.1 and §6.9
+- `curriculum/tier-0/**` — new, §4 Tier 0
+- `planning/in-progress/feature_phase0-tier0-foundation_2026-08-27.md` — this plan, per the
+  project's kanban convention
+
+---
+
+## Backlog expected to surface
+
+- The level curve and the patrol interval ladder, if the design session does not settle them
+- The two Ursina measurements already stubbed in `planning/backlog/`, unchanged by this work
+- A decision on whether the son's repository is created by hand or scaffolded by the Gitea
+  bootstrap — it is Phase 1.5 work, but the compose stack makes it answerable early

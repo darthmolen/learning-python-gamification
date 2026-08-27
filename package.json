@@ -1,0 +1,27 @@
+{
+  "name": "pyquest",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A gamified Python curriculum engine. Content lives in git, progress lives in Postgres.",
+  "license": "GPL-3.0-or-later",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --pretty",
+    "validate:content": "npm run validate:content --workspace @pyquest/content",
+    "new:quest": "npm run new:quest --workspace @pyquest/content"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.11"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
