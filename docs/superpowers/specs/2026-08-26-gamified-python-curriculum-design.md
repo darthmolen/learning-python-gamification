@@ -238,6 +238,11 @@ everything else.
 
 Storing a boolean beside the number that already implies it would let the two disagree.
 
+**Layer boundary:** the engine (§6.7) owns `effectiveDC` and nothing else. The threshold
+at which a number becomes a warning is a presentation decision and lives in the UI. Any
+other surface — console, notification, CLI — reads the same number and renders it however
+it likes, so no two surfaces can disagree about the underlying difficulty.
+
 No XP for minutes logged, videos watched, or lessons read. Working code is the only currency.
 
 ### 5.1a Denominators
