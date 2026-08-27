@@ -145,6 +145,34 @@ A 3D Minecraft-like game in Python using [Ursina](https://www.ursinaengine.org/)
 
 The pitch matters: **he built a game, he did not mod one.**
 
+### Elective Arc — Scrollcraft: The Helping Hand
+
+**Unlocks after Boss 7. Elective, and runs alongside the capstone.**
+
+Using AI well sounds ungradeable. It becomes gradeable when the AI output is a
+**canned transcript authored by the parent** rather than a live model. Transcripts are
+deterministic, safe, replayable, and they let the author plant exactly the failure the
+learner should catch.
+
+| Quest | Principle | Win condition |
+|---|---|---|
+| Too Confident Is a Smell | Confidence is a smell | A transcript contains a fluent, plausible, wrong answer. Find it and prove it wrong with a test |
+| Fact-Check the Oracle | Fact-check everything | The transcript calls a method that does not exist. Verify against real documentation, correct it, make it run |
+| Be More Specific | More specific, not less | The same goal, prompted vaguely and precisely. Submit both outputs and the analysis |
+| You Pose the Direction | Refuse its trailing suggestions | The transcript ends by offering to add caching and refactor. He writes the next prompt himself and holds his own line |
+| Prove It Small | Small proofs before implementation | A spike proving one assumption, committed **before** any implementation. Git history verifies the order, and commit order cannot be faked |
+| Read Before You Run | Validate, validate, validate | AI-written code with a planted bug. Find it without running it, then write the test that catches it |
+
+**BOSS — The Familiar:** build a small real feature with AI assistance and submit two
+artifacts: the feature, and a **conjuring log** recording every prompt, what he rejected
+and why, which spikes he demanded, and what he caught. The parent reviews the log rather
+than the code. Teach-back mandatory.
+
+The graded artifact is the reasoning trail, because the reasoning trail is the skill.
+
+**Review date:** canned transcripts age. A hallucination that convinces in 2026 may be
+stale by 2028. Revisit this arc's content annually.
+
 ### Deliberately excluded
 `async`/`await`, decorators, threading, metaclasses, web frameworks, machine learning, data science. None serves the learner's motivation, and each is a place where curricula stall. Deferred consciously to §9.
 
@@ -246,6 +274,78 @@ Relatedness is the hardest need to satisfy at scale, which is why commercial pla
 
 ---
 
+### 5.10 Medals
+
+A quest is not binary. Every quest carries medal slots, earned independently and on replay.
+
+| Medal | Requirement |
+|---|---|
+| Cleared | Tests pass. The only medal progression cares about |
+| Ironman | From memory. No documentation, no autocomplete, no AI |
+| Idiomatic | ruff and pyright clean, plus one written line on why this solution is idiomatic |
+| Teach-back | The other player signs off after hearing the explanation |
+| Conjured | Completed with AI assistance. See §5.12 |
+| Time Attack | Roadmap |
+
+Rules:
+
+- Medals earn independently, and **replaying a cleared quest to take a medal is a
+  first-class action** rather than a workaround.
+- Quest XP equals base XP plus medal bonuses, each paid once.
+- **Only Cleared unlocks anything.** Medals are elective depth, which keeps autonomy intact.
+- Unearned slots render greyed on the quest card, borrowing the visible-but-locked
+  psychology of the skill tree.
+
+Two consequences follow. The campaign map gains a completionist layer. More importantly,
+**voluntary replay becomes a second retrieval-practice engine** beside patrols: patrols are
+retrieval the engine forces, medals are retrieval the player chooses. Both build retention.
+
+Ironman is not auto-granted to the son. His binding constraint is working from memory
+without documentation, which is a genuine demand at his age. The parent's binding
+constraint is abstaining from AI. The same medal costs each player something real.
+
+### 5.11 The Parent's Track
+
+**One content set, two players.** Quest YAML is player-agnostic; the completion bar differs.
+
+**The challenge run is the parent's gap detector.** Playing Tier 0–3 quests straight would
+teach the parent nothing and distort the leaderboard, so the parent instead challenge-runs
+the bosses under the mechanic already defined in §5.2.
+
+- Beat the boss cold: the tier is skipped and the bonus paid.
+- **Fail it: a real gap has surfaced**, measured rather than self-assessed. The parent then
+  plays that tier's quests in earnest.
+
+*"I can write Python, but that does not mean I learned it"* is a problem introspection
+cannot solve. The bosses solve it by measurement.
+
+**Teach-back inverts the sign-off.** A parent quest is incomplete until the son hears the
+explanation and presses the button himself. This matters twice over: explanation exposes
+precisely the parts a fluent practitioner runs on muscle memory, and it hands the son real
+authority over the parent's work, including the standing power to say the explanation was
+not good enough.
+
+### 5.12 Conjured, and the AI policy
+
+The curriculum takes a deliberate position on AI rather than omitting one.
+
+**Conjured** marks a quest completed with AI assistance. It is legal, named, and logged.
+It pays reduced XP and requires a statement of what the AI did and why the result works.
+Conjured and Ironman cannot coexist on one quest, though the quest may be replayed later
+for Ironman, which is exactly the return-to-basics move an AI-fluent adult needs.
+
+**Availability:**
+
+| Player | Conjured unlocks |
+|---|---|
+| Parent | Day one |
+| Son | **Tier 7** |
+
+Before Tier 7, AI would rob the son of the struggle that does the teaching. From Tier 7
+onward, refusing to teach him to use it well would be its own failure. The Scrollcraft arc
+(§4) exists to teach the discipline, and the Scrolls of Conjure Helper economy (§9) later
+governs how many conjures a quest permits.
+
 ## 6. Application Architecture
 
 ### 6.1 Services
@@ -283,13 +383,21 @@ verifier:
 
 Adding content means editing a file. That is the entire justification for the engine.
 
+Quests may also carry **transcript assets** — canned AI conversations authored by the
+parent, used by the Scrollcraft arc. Transcripts are content like any brief, so they are
+versioned in git and validated on load.
+
+**Medals are stored per player, per quest, per medal**, not as a flat completion flag:
+`(player_id, quest_id, medal, earned_at, xp_awarded)`. Progression queries read only the
+`Cleared` rows; XP sums across all of them.
+
 ### 6.3 Verifiers
 
 | Type | Mechanism | Used by |
 |---|---|---|
 | `hidden-tests` | Submit posts the code to the API, which runs tests the client never sees | Tiers 0–1 drills |
 | `local-repo` | API pulls his repo, runs the quest's pytest specification | Tier 2b onward |
-| `parent-signoff` | The parent presses the button | Bosses with human win conditions |
+| `peer-signoff` | The other player presses the button, named by a `by` field | Bosses, and every Teach-back medal |
 | `git-signal` | Reads his git log for commits and streaks | Chronicle, streaks |
 
 **Run and Submit are deliberately different paths.** Pyodide runs his code in the browser for **Run**, giving instant feedback with no round trip. **Submit** goes to the API, because anything shipped to the browser is readable, and hidden tests shipped to the client are not hidden.
@@ -334,9 +442,18 @@ Pure functions over state and content. Given completions, XP, scars, datamines, 
 4. **Boss** — specification, attempt log, scars, sign-off
 5. **The Board** — two-player XP, levels, tier standings, open bounties
 6. **Chronicle** — entries, prompts, parent replies
-7. **Parent console** — sign-off, authoring, streak forgiveness
+7. **Console** — sign-off, authoring, streak forgiveness. Both players have one, since sign-off runs both directions
 
-### 6.9 Authoring is a first-class feature
+### 6.9 Backup policy
+
+Nightly job: `pg_dump` of Postgres plus a mirror of every Gitea repository, written to a
+dated tarball on a second disk. Thirty-day retention, with a restore rehearsed once before
+week 3.
+
+The Chronicle becomes irreplaceable quickly, and so does his commit history. Those are the
+two artifacts this project cannot regenerate.
+
+### 6.10 Authoring is a first-class feature
 
 `npm run new:quest` scaffolds the files. Every YAML file is zod-validated on load. Development hot-reloads content. `npm run validate:content` proves the prerequisite graph is acyclic and every concept tag is known.
 
@@ -373,7 +490,7 @@ Driven by the learner's calendar, not by feature completeness.
 | 0 | Compose stack, engine, schema, content validator | week 0 |
 | 1 | Quest view, Pyodide run, API verify, campaign map | week 1 |
 | 1.5 | Gitea, `git-signal`, Chronicle | week 3 |
-| 2 | `local-repo` verifier, boss flow, parent sign-off | week 6 |
+| 2 | `local-repo` verifier, boss flow, peer sign-off | week 6 |
 | 3 | Patrols and spaced repetition | week 9 |
 | 4 | Two-player board, bounties | week 12 |
 | 5 | See roadmap | later |
@@ -398,8 +515,9 @@ Driven by the learner's calendar, not by feature completeness.
 ## 10. Open Questions
 
 1. Ursina versus `mcpi` weighting in Tiers 3–5, should he prefer scripting real Minecraft over building his own.
-2. Whether the parent's own track needs separate content authoring or can reuse quest YAML unchanged.
-3. Backup and restore policy for Postgres and Gitea volumes.
+2. ~~Parent track content~~ — **closed.** Quest YAML is reused unchanged; §5.11 governs the difference.
+3. ~~Backup policy~~ — **closed.** See §6.9.
+4. How the Scrollcraft transcripts get refreshed as models change. Annual review is the current answer, and it may prove too slow.
 
 ---
 
@@ -418,6 +536,13 @@ Driven by the learner's calendar, not by feature completeness.
 | Chronicle scored rather than ritual | Reflection is a skill the industry lost |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
+| Medals per quest, earned on replay | Makes replay rewarding, and adds voluntary retrieval practice beside forced patrols |
+| Only Cleared gates progression | Keeps medals elective, preserving autonomy |
+| `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
+| Challenge runs as the parent's gap detector | Measures gaps instead of asking the parent to introspect them |
+| Conjured is legal, logged, and costed | Disclosure beats prohibition; the son will grow up with these tools |
+| Son's AI unlock at Tier 7 | Struggle teaches before Tier 7; refusing to teach the tool after Tier 7 fails him |
+| Canned transcripts as Scrollcraft content | Makes AI-usage discipline deterministic and gradeable |
 
 ---
 
