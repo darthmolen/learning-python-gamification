@@ -13,8 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty",
-    "validate:content": "npm run validate:content --workspace @pyquest/content",
-    "new:quest": "npm run new:quest --workspace @pyquest/content"
+    "validate:content": "npm run validate:content --workspace @pyquest/content --",
+    "new:quest": "npm run new:quest --workspace @pyquest/content --"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

@@ -1,0 +1,11 @@
+id: t1-typo
+title: Fixture t1-typo
+kind: quest
+tier: 1
+concepts: [if, whille]
+requires: []
+dc: 10
+brief: briefs/b.md
+verifier:
+  type: git-signal
+  signal: commit

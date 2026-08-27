@@ -1,0 +1,11 @@
+id: t0-ghost
+title: Fixture t0-ghost
+kind: quest
+tier: 0
+concepts: [print]
+dc: 10
+brief: briefs/never-written.md
+verifier:
+  type: hidden-tests
+  starter: starters/t0-ghost.py
+  tests: tests/t0-ghost_test.py

@@ -1,0 +1,11 @@
+id: t3-too-early
+title: Fixture t3-too-early
+kind: quest
+tier: 3
+concepts: [dict, class]
+requires: []
+dc: 10
+brief: briefs/b.md
+verifier:
+  type: git-signal
+  signal: commit

@@ -1,0 +1,11 @@
+id: t1-twin
+title: Fixture t1-twin, again
+kind: quest
+tier: 1
+concepts: [if]
+requires: []
+dc: 10
+brief: briefs/b.md
+verifier:
+  type: git-signal
+  signal: commit

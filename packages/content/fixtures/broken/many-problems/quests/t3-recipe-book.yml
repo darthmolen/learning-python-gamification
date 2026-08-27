@@ -1,0 +1,12 @@
+id: t3-recipe-book
+title: The Recipe Book
+kind: quest
+tier: 3
+concepts: [dict, dict-methods, iteraton]
+requires: [t3-inventory-lists]
+dc: 12
+brief: briefs/t3-recipe-book.md
+verifier:
+  type: hidden-tests
+  starter: starters/t3-recipe-book.py
+  tests: tests/t3-recipe-book_test.py

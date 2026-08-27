@@ -1,0 +1,14 @@
+id: t3-the-crafting-table
+title: The Crafting Table
+kind: boss
+tier: 3
+concepts: [dict, class]
+requires: [t3-inventory-lists, t3-shulker-sort]
+dc: 16
+brief: briefs/b.md
+themes:
+  - A potion brewer
+  - A blacksmith
+verifier:
+  type: peer-signoff
+  by: other-player

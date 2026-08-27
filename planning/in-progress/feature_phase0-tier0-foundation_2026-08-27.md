@@ -234,3 +234,25 @@ commutativity property holding across a randomised earn order.
 - The two Ursina measurements already stubbed in `planning/backlog/`, unchanged by this work
 - A decision on whether the son's repository is created by hand or scaffolded by the Gitea
   bootstrap — it is Phase 1.5 work, but the compose stack makes it answerable early
+
+---
+
+## Design session inputs, gathered during Wave 1
+
+Questions the artboards have to answer, surfaced by building the layers underneath them.
+
+**A medal can legitimately pay zero XP, and the UI must explain that.** Decision DC-1 clamps
+effective DC to the published 5–30 scale. At base DC 5 the floor absorbs the negative
+modifiers: earning Conjured pays 0, and a subsequent Datamine also pays 0. This is correct, it
+is tested, and it is invisible without help — a player takes a medal, watches the number not
+move, and concludes the app is broken. §5.10 promises each medal "pays the difference"; the
+honest rendering of a difference of zero is a design problem, not an arithmetic one.
+
+**Where does a Datamine render?** It is a difficulty modifier (§5.1) and a named, legal,
+costed move (§5.5), but it is not a medal, so it has no slot on the quest card that §5.10
+describes. It still needs to be visible, because §5.5's whole argument is that a costed, logged,
+*named* move beats a hidden one.
+
+**Boss unlock is a 3-of-5 progress state, not a boolean.** §5.2 gives each tier five quests and
+unlocks the boss on any three. The engine returns a boolean, but the campaign map has to show
+how close he is, and §5.1a insists on a denominator everywhere.

@@ -40,7 +40,7 @@ export const DifficultyClassSchema = z
  * `cleared` unlocks anything; the rest are elective depth, which is what keeps autonomy intact.
  *
  * `time-attack` is on the roadmap rather than implemented, so it is a legal name that quests
- * may not yet offer — see `AVAILABLE_MEDALS`.
+ * may not yet offer — see `DEFAULT_MEDALS`.
  */
 export const MEDALS = [
   'cleared',

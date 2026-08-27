@@ -1,0 +1,18 @@
+# Tier 0 boss. Spec §5.3: no scaffolding, a blank file and a specification. There is no
+# starter, so the verifier is peer-signoff (§6.3) and the other player presses the button.
+# Spec §5.2: a boss offers two or three theme framings and the player chooses.
+id: t0-first-light
+title: First Light
+kind: boss
+tier: 0
+concepts: [print, input, f-strings, int, reading-errors]
+requires: [t0-name-tag]
+dc: 8
+brief: briefs/t0-first-light.md
+themes:
+  - The Villager Trade Ticket
+  - The Spaceship Boarding Pass
+  - The Dungeon Character Sheet
+verifier:
+  type: peer-signoff
+  by: other-player

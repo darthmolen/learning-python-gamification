@@ -1,0 +1,11 @@
+id: t1-orphan
+title: Fixture t1-orphan
+kind: quest
+tier: 1
+concepts: [if]
+requires: [t1-does-not-exist]
+dc: 10
+brief: briefs/b.md
+verifier:
+  type: git-signal
+  signal: commit

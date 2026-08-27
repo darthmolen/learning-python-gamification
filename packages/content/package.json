@@ -13,8 +13,9 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "validate:content": "node --experimental-strip-types src/cli/validate.ts",
-    "new:quest": "node --experimental-strip-types src/cli/new-quest.ts"
+    "typecheck": "tsc -b && tsc -p tsconfig.test.json",
+    "validate:content": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/validate.ts",
+    "new:quest": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/new-quest.ts"
   },
   "dependencies": {
     "yaml": "^2.6.1",

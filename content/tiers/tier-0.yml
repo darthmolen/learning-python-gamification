@@ -1,0 +1,6 @@
+# Spec §5.1a — the manifest carries the denominator every progress display needs.
+# `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~5".
+tier: 0
+title: First Light
+authoring: partial
+estimatedQuests: 5

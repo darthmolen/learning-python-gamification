@@ -1,0 +1,233 @@
+/**
+ * The command-line contract.
+ *
+ * `validateContent` returning a list is not what the parent uses. What the parent uses is a
+ * process that exits non-zero and prints something worth reading, and neither of those is
+ * reachable from a unit test of the function — so these tests run the real CLIs as real
+ * processes, with nothing mocked. Spec §6.10's promise is about the command, so the command is
+ * what gets tested.
+ */
+
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { afterEach, describe, expect, it } from 'vitest';
+
+const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const VALIDATE_CLI = fileURLToPath(new URL('./validate.ts', import.meta.url));
+const NEW_QUEST_CLI = fileURLToPath(new URL('./new-quest.ts', import.meta.url));
+
+const broken = (name: string): string =>
+  fileURLToPath(new URL(`../../fixtures/broken/${name}`, import.meta.url));
+
+/** Run a CLI exactly as package.json runs it, and hand back what the shell would see. */
+function run(cli: string, args: readonly string[]): { code: number; output: string } {
+  const result = spawnSync(process.execPath, ['--experimental-strip-types', cli, ...args], {
+    encoding: 'utf8',
+  });
+  return { code: result.status ?? -1, output: `${result.stdout}${result.stderr}` };
+}
+
+const scratch: string[] = [];
+const tempRoot = (): string => {
+  const dir = mkdtempSync(join(tmpdir(), 'pyquest-content-'));
+  scratch.push(dir);
+  return dir;
+};
+
+afterEach(() => {
+  while (scratch.length > 0) rmSync(scratch.pop()!, { recursive: true, force: true });
+});
+
+describe('validate:content', () => {
+  it('exits 0 on the authored content root', () => {
+    const { code, output } = run(VALIDATE_CLI, ['--root', CONTENT_ROOT]);
+    expect(output).not.toContain('FAIL');
+    expect(code).toBe(0);
+  });
+
+  it('exits non-zero on a cyclic prerequisite graph, and names the cycle', () => {
+    const { code, output } = run(VALIDATE_CLI, ['--root', broken('cyclic')]);
+    expect(code).not.toBe(0);
+    expect(output).toMatch(/t1-[a-z](?: -> t1-[a-z])+/);
+  });
+
+  it('exits non-zero on an unknown concept tag, and names the tag', () => {
+    const { code, output } = run(VALIDATE_CLI, ['--root', broken('unknown-concept')]);
+    expect(code).not.toBe(0);
+    expect(output).toContain('whille');
+  });
+
+  it('reports every file it found problems in before it exits', () => {
+    const { code, output } = run(VALIDATE_CLI, ['--root', broken('many-problems')]);
+    expect(code).not.toBe(0);
+    expect(output).toContain('t3-recipe-book.yml');
+    expect(output).toContain('t3-the-crafting-table.yml');
+    expect(output).toContain('t3-inventory-lists.yml');
+  });
+
+  it('exits non-zero when pointed at a content root that is not there', () => {
+    const { code } = run(VALIDATE_CLI, ['--root', join(tempRoot(), 'nowhere')]);
+    expect(code).not.toBe(0);
+  });
+});
+
+describe('new:quest', () => {
+  it('scaffolds a quest that the validator accepts with no hand-editing', () => {
+    const root = tempRoot();
+    const scaffold = run(NEW_QUEST_CLI, [
+      '--root', root,
+      '--id', 't3-recipe-book',
+      '--title', 'The Recipe Book',
+      '--tier', '3',
+      '--concepts', 'dict,dict-methods,iteration',
+      '--dc', '12',
+    ]);
+    expect(scaffold.output).toContain('t3-recipe-book.yml');
+    expect(scaffold.code).toBe(0);
+
+    // A fresh tier has no manifest, and §5.1a has no denominator without one. It goes at the
+    // conventional path, because a directory an author cannot predict is one they will search.
+    expect(existsSync(join(root, 'tiers', 'tier-3.yml'))).toBe(true);
+    expect(existsSync(join(root, 'briefs', 't3-recipe-book.md'))).toBe(true);
+
+    const validate = run(VALIDATE_CLI, ['--root', root]);
+    expect(validate.output).not.toContain('FAIL');
+    expect(validate.code).toBe(0);
+  });
+
+  it('scaffolds a boss whose theme framings already satisfy §5.2', () => {
+    const root = tempRoot();
+    expect(
+      run(NEW_QUEST_CLI, [
+        '--root', root,
+        '--id', 't3-the-crafting-table',
+        '--title', 'The Crafting Table',
+        '--tier', '3',
+        '--kind', 'boss',
+        '--concepts', 'dict,iteration',
+      ]).code,
+    ).toBe(0);
+
+    const yaml = readFileSync(join(root, 'quests', 't3-the-crafting-table.yml'), 'utf8');
+    expect(yaml).toContain('themes:');
+    expect(run(VALIDATE_CLI, ['--root', root]).code).toBe(0);
+  });
+
+  it('wires a prerequisite through to a root that still validates', () => {
+    const root = tempRoot();
+    run(NEW_QUEST_CLI, ['--root', root, '--id', 't3-inventory-lists', '--title', 'Inventory Lists', '--tier', '3', '--concepts', 'list']);
+    const second = run(NEW_QUEST_CLI, [
+      '--root', root,
+      '--id', 't3-recipe-book',
+      '--title', 'The Recipe Book',
+      '--tier', '3',
+      '--concepts', 'dict',
+      '--requires', 't3-inventory-lists',
+    ]);
+    expect(second.code).toBe(0);
+    expect(run(VALIDATE_CLI, ['--root', root]).code).toBe(0);
+  });
+
+  it('refuses to overwrite an id that already exists', () => {
+    const root = tempRoot();
+    const args = ['--root', root, '--id', 't3-recipe-book', '--title', 'The Recipe Book', '--tier', '3', '--concepts', 'dict'];
+    expect(run(NEW_QUEST_CLI, args).code).toBe(0);
+
+    const again = run(NEW_QUEST_CLI, args);
+    expect(again.code).not.toBe(0);
+    expect(again.output).toContain('already exists');
+  });
+
+  it('refuses a concept the learner will not have met, before it writes anything', () => {
+    const root = tempRoot();
+    const { code, output } = run(NEW_QUEST_CLI, [
+      '--root', root,
+      '--id', 't3-too-early',
+      '--title', 'Too Early',
+      '--tier', '3',
+      '--concepts', 'dict,class',
+    ]);
+    expect(code).not.toBe(0);
+    expect(output).toContain('class');
+    expect(output).toContain('tier 5');
+    // Nothing was written, so a rejected scaffold leaves no half-quest behind.
+    expect(run(VALIDATE_CLI, ['--root', root]).output).not.toContain('t3-too-early');
+  });
+
+  it('refuses a concept tag that is not in the registry at all', () => {
+    const root = tempRoot();
+    const { code, output } = run(NEW_QUEST_CLI, [
+      '--root', root, '--id', 't3-typo', '--title', 'Typo', '--tier', '3', '--concepts', 'dicts',
+    ]);
+    expect(code).not.toBe(0);
+    expect(output).toContain('dicts');
+  });
+
+  it('explains itself rather than guessing when a required argument is missing', () => {
+    const { code, output } = run(NEW_QUEST_CLI, ['--root', tempRoot(), '--title', 'No Id']);
+    expect(code).not.toBe(0);
+    expect(output).toContain('--id');
+  });
+});
+
+/**
+ * Spawning `node cli.ts --id x` skips the two `package.json` files between the parent's
+ * keystrokes and the script, and those are exactly where the arguments got lost: a root script
+ * that delegates with `npm run … --workspace <pkg>` and no trailing `--` lets the inner npm
+ * swallow every `--flag` as one of its own config keys, forwarding only the bare values. Every
+ * test above passed while `npm run new:quest -- --id t3-x` was unusable.
+ *
+ * So this one runs the command the parent actually types, through both scripts, unmocked.
+ */
+describe('the command as the parent types it', () => {
+  const REPO_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
+
+  /** One command string, run through a shell, exactly as it would be typed. */
+  const npm = (command: string) =>
+    spawnSync(`npm run --silent ${command}`, {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      shell: true,
+    });
+
+  it('forwards flags through the root script to the scaffolder', () => {
+    const root = tempRoot();
+    const scaffold = npm(
+      `new:quest -- --root "${root}" --id t1-signal-fire --title "The Signal Fire" ` +
+        '--tier 1 --concepts while,range',
+    );
+    expect(`${scaffold.stdout}${scaffold.stderr}`).toContain('quests/t1-signal-fire.yml');
+    expect(scaffold.status).toBe(0);
+
+    // The title survived the shell, the two package.json files, and the YAML writer.
+    expect(readFileSync(join(root, 'quests', 't1-signal-fire.yml'), 'utf8'))
+      .toContain('The Signal Fire');
+
+    const validate = npm(`validate:content -- --root "${root}"`);
+    expect(`${validate.stdout}${validate.stderr}`).not.toContain('FAIL');
+    expect(validate.status).toBe(0);
+  }, 120_000);
+
+  /**
+   * `npm run --workspace` runs the script with the CWD set to the package directory, not to
+   * wherever the parent was standing. So a relative `--root` — the form anyone types, and the
+   * form every path in the repo's own docs takes — resolved against `packages/content` and
+   * missed. The command still exited non-zero, which is why the suite above stayed green: it
+   * failed with "no content root" instead of reporting the cycle that is actually there.
+   *
+   * An exit code is not a diagnosis. This pins the diagnosis.
+   */
+  it('resolves a relative --root against where the command was typed, not the package dir', () => {
+    const relative = 'packages/content/fixtures/broken/cyclic';
+    const result = npm(`validate:content -- --root ${relative}`);
+    const output = `${result.stdout}${result.stderr}`;
+
+    expect(output).not.toContain('no content root');
+    expect(output).toContain('prerequisite cycle');
+    expect(output).toMatch(/t1-a -> t1-[bc] -> t1-[bc] -> t1-a/);
+    expect(result.status).toBe(1);
+  }, 120_000);
+});
