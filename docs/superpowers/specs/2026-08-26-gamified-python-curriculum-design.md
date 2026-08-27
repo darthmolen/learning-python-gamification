@@ -183,19 +183,74 @@ Minecraft Java Edition modding is Java, not Python. The options are a Spigot ser
 
 ## 5. Game Mechanics
 
-### 5.1 Experience points
+### 5.1 Difficulty Class, difficulty modifiers, and XP
 
-| Source | XP |
+Borrowed wholesale from D&D. **Every quest carries a Difficulty Class on the familiar
+5–30 scale**, and XP derives from it. The author sets one number; the engine computes
+the rest.
+
+| DC | Reads as |
 |---|---|
-| Quest complete | 10–40, scaling by tier |
-| Boss fight | 150–300 |
-| Patrol drill | 5 |
-| Chronicle entry | 10 |
-| Tier release notes | 75 |
-| Co-op session | 20 |
-| Datamine used | quest XP x 0.5 |
+| 5 | Very easy |
+| 10 | Easy |
+| 15 | Medium |
+| 20 | Hard |
+| 25 | Very hard |
+| 30 | Nearly impossible |
+
+**Difficulty modifiers adjust the effective DC** rather than paying flat bonuses:
+
+| Modifier | Effect on DC |
+|---|---|
+| Ironman | +5 |
+| Idiomatic | +3 |
+| Teach-back | +3 |
+| Time Attack | +5 |
+| Conjured | −5 |
+| Datamine | −5 |
+
+This is the reason for adopting the D&D vocabulary rather than inventing one. A medal is
+not a special case bolted onto scoring; **a medal is a difficulty modifier**, and harder
+work pays more by the same formula that prices everything else. Nothing needs per-medal
+tuning.
+
+**XP by kind:**
+
+| Kind | XP |
+|---|---|
+| Quest | effective DC × 2 |
+| Boss | effective DC × 10 |
+| Patrol | 5 flat |
+| Chronicle entry | 10 flat |
+| Tier release notes | 75 flat |
+| Co-op session | 20 flat |
+
+A DC 5 quest pays 10 and a DC 20 quest pays 40. A DC 15 boss pays 150 and a DC 30 boss
+pays 300. Each medal re-prices the quest at its new effective DC and pays the difference,
+so replaying a DC 15 quest for Ironman pays the gap between DC 15 and DC 20.
+
+**Risk labels derive from DC. There is no separate flag.** A quest known to bite — a
+long-tail bug, a fiddly environment, a concept that historically stalls people — is
+expressed by *giving it a higher DC*, which is honest, because a quest that can eat a
+whole session is harder. The interface renders DC ≥ 20 with a warning, so the player can
+choose to take it on a good day, and it pays more by the same formula that prices
+everything else.
+
+Storing a boolean beside the number that already implies it would let the two disagree.
 
 No XP for minutes logged, videos watched, or lessons read. Working code is the only currency.
+
+### 5.1a Denominators
+
+Every progress display shows **cleared of total**, never a bare XP figure. XP is a
+numerator with no denominator: it says how far he has come and nothing about how far
+remains, and "how much more?" is the question a learner actually asks.
+
+- Tier headers read `7 of 12 cleared`.
+- Where a tier is not yet fully authored, the total wears a tilde: `1 of ~5`. **An
+  estimate marked as an estimate is honest; an estimate presented as fact is not**, and
+  he will find out either way.
+- Medal counts get their own denominators per tier, since medals are the completionist layer.
 
 ### 5.2 The skill tree
 
@@ -226,7 +281,7 @@ This mechanic exists to kill the most-cited flaw in the research: learners compl
 
 After **two genuine attempts** and one written sentence describing what he tried, he may unlock the reference solution.
 
-- Costs half the quest's XP.
+- Applies a −5 difficulty modifier (§5.1), re-pricing the quest at the lower effective DC.
 - Guarantees a patrol on that concept at +3 days and again at +10 days.
 - Carries a name and a button, because it is a **legal move, not cheating**.
 
@@ -278,20 +333,20 @@ Relatedness is the hardest need to satisfy at scale, which is why commercial pla
 
 A quest is not binary. Every quest carries medal slots, earned independently and on replay.
 
-| Medal | Requirement |
-|---|---|
-| Cleared | Tests pass. The only medal progression cares about |
-| Ironman | From memory. No documentation, no autocomplete, no AI |
-| Idiomatic | ruff and pyright clean, plus one written line on why this solution is idiomatic |
-| Teach-back | The other player signs off after hearing the explanation |
-| Conjured | Completed with AI assistance. See §5.12 |
-| Time Attack | Roadmap |
+| Medal | Requirement | DC |
+|---|---|---|
+| Cleared | Tests pass. The only medal progression cares about | base |
+| Ironman | From memory. No documentation, no autocomplete, no AI | +5 |
+| Idiomatic | ruff and pyright clean, plus one written line on why this solution is idiomatic | +3 |
+| Teach-back | The other player signs off after hearing the explanation | +3 |
+| Conjured | Completed with AI assistance. See §5.12 | −5 |
+| Time Attack | Roadmap | +5 |
 
 Rules:
 
 - Medals earn independently, and **replaying a cleared quest to take a medal is a
   first-class action** rather than a workaround.
-- Quest XP equals base XP plus medal bonuses, each paid once.
+- Each medal raises the quest's effective DC (§5.1) and pays the difference, once.
 - **Only Cleared unlocks anything.** Medals are elective depth, which keeps autonomy intact.
 - Unearned slots render greyed on the quest card, borrowing the visible-but-locked
   psychology of the skill tree.
@@ -373,7 +428,7 @@ kind: quest          # quest | patrol | boss
 tier: 3
 concepts: [dict, dict-methods, iteration]
 requires: [t3-inventory-lists]
-xp: 25
+dc: 12               # XP and risk label both derive from this; see §5.1
 brief: briefs/t3-recipe-book.md
 verifier:
   type: hidden-tests
@@ -536,6 +591,10 @@ Driven by the learner's calendar, not by feature completeness.
 | Chronicle scored rather than ritual | Reflection is a skill the industry lost |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
+| Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
+| Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
+| Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |
+| Denominators everywhere, tildes when estimated | XP answers "how far have I come"; only a denominator answers "how much is left" |
 | Medals per quest, earned on replay | Makes replay rewarding, and adds voluntary retrieval practice beside forced patrols |
 | Only Cleared gates progression | Keeps medals elective, preserving autonomy |
 | `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
