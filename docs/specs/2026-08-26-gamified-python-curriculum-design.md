@@ -112,6 +112,35 @@ This tier is load-bearing. Every platform surveyed fails at this seam, so it com
 
 **Vehicle:** Minecraft data. Inventories are lists. Crafting recipes are dicts. Block palettes are sets.
 
+**Graphics reach Ursina through a shim, `world.py`, not through Ursina directly.** The spike
+in `spikes/ursina-tier3/` measured this and the answer was not close. Ursina's surface is
+`Entity(model='cube', position=(x, y, z))` — keyword arguments (Tier 4), attribute access
+(Tier 5). Every line of raw Ursina a Tier 3 learner would write is vocabulary he has not
+earned; measured, 9 of 9 engine-touching lines, 100%.
+
+Two findings mattered more than the vocabulary gap:
+
+- **Raw Ursina hides failure**, violating §3 principle 5. A mistyped block name prints one
+  warning among forty lines of engine startup noise and then draws nothing; a two-element
+  `position` tuple produces no diagnostic at all; passing `color='green'` — the obvious guess
+  — produces an eight-frame traceback ending in a message about hexadecimal. The shim exists
+  first to be a validating boundary and only second to hide keyword arguments.
+- **The stock one-Entity-per-block pattern is unusable.** It drops below 60 fps between 1,000
+  and 2,500 blocks *on an RTX 5090*. Three nested `range(20)` loops — which he will write —
+  is 8,000 blocks at 14.9 fps. `start()` therefore fuses placed blocks into one mesh, taking
+  the same program to 1,424 fps. Authoring rule: cap Tier 3 worlds near 5,000 blocks.
+
+The surface is three names, positional arguments only: `BLOCKS`, `place(x, y, z, kind)`,
+`start()`. Calling a positional function is Tier 0 vocabulary — he calls `print()` and `len()`
+from week one — so the shim teaches him nothing he has not earned. It measures 0% ceremony
+beyond a one-line import floor, against 100% for raw Ursina.
+
+**It comes down on schedule.** `BLOCKS` and `place()` are replaced by his own dict and his own
+`def` at Tier 4; `start()` by his own `class World` at Tier 5, landing the last removal on
+Boss 5. Half of `world.py` is readable to him the day he first uses it, and all but one line
+by the time he retires it. Deleting `ground.combine()` from it and watching 1,424 fps become
+14.9 is the Tier 7 performance-intuition lesson, made runnable rather than merely suffered.
+
 **BOSS 3 — The Crafting Table:** a working crafting simulator with a real recipe book.
 
 ### Tier 4 — Functions and Decomposition (weeks 15–20)
@@ -629,6 +658,8 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | No daily streaks | Guilt against a 2–3x weekly cadence |
 | Ursina hardware gate before any build work | The continuity argument for Ursina collapses into the bait and switch it avoids if his laptop cannot run it |
 | Ursina from Tier 3, no `mcpi` | One repository, one story; work compounds into the capstone instead of being discarded at week 37 |
+| A `world.py` shim at Tier 3, retired by Boss 5 | Raw Ursina is 100% unearned vocabulary and hides its own failures; the shim costs no new syntax and comes down on a schedule |
+| `start()` combines the world into one mesh | One `Entity` per block dies below 2,500 blocks even on a 5090; a Tier 3 learner reaches 8,000 with three nested loops |
 | Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
 | Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |

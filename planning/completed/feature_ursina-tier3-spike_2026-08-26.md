@@ -1,6 +1,6 @@
 # Ursina Tier 3 Vocabulary Ceiling Spike
 
-**Status:** In Progress
+**Status:** Complete — 2026-08-27
 **Date:** 2026-08-26
 **Author:** Claude (Opus 5), with Steven Molen
 
@@ -46,72 +46,112 @@ measured is what he will actually use.
 
 ## Success Criteria
 
-**Gate — the son's laptop:** cleared 2026-08-27, one item outstanding
+**Gate — the son's laptop:** cleared 2026-08-27, one item deliberately left open (see below)
 
 - [x] `winver` and `dxdiag` recorded: Windows build, CPU, GPU, driver vendor and version
 - [x] Current Python installs and runs
 - [x] `pip install ursina` succeeds
 - [x] A single cube renders in a real window, hardware accelerated, no GDI Generic fallback
-- [ ] `minecraft_clone` sample runs, with its observed framerate recorded
+- [ ] `minecraft_clone` sample runs, with its observed framerate recorded — **left open on
+      purpose.** Phase 5 measured the sample's *pattern* instead, on the parent's machine, and
+      found it unusable at any real world size even on an RTX 5090. That settles the
+      architecture question the framerate number was there to answer. The sample is also no
+      longer shipped in the `ursina` pip package at 8.3.0. Two cheaper replacements are
+      recorded in the spike README under *Still open*
 - [x] Verdict written: capstone safe, capstone safe with constraints, or fallback required
 
 **Vocabulary:**
 
-- [ ] Three Tier-3-vocabulary probe programs written and running on Windows
-- [ ] Ceremony ratio measured for each probe against an explicit vocabulary list
-- [ ] Shim API surface defined, or documented as unnecessary
-- [ ] Retirement path mapped to specific Tier 4 and Tier 5 moments
-- [ ] Recommendation recorded in the spec's Tier 3 vehicle section
-- [ ] Every artifact under `spikes/` labeled throwaway in its header
+- [x] Three Tier-3-vocabulary probe programs written and running on Windows — each one twice,
+      raw and shimmed, with screenshots in `spikes/ursina-tier3/shots/`
+- [x] Ceremony ratio measured for each probe against an explicit vocabulary list
+- [x] Shim API surface defined — three names, 43 lines, `spikes/ursina-tier3/world.py`
+- [x] Retirement path mapped to specific Tier 4 and Tier 5 moments, landing on Boss 5
+- [x] Recommendation recorded in the spec's Tier 3 vehicle section
+- [x] Every artifact under `spikes/` labeled throwaway in its header
 
-## Next Up — handoff to the Windows session
+## Results — 2026-08-27
 
-**Read this first if you are picking this plan up cold.**
+**All phases complete.** Full write-up, numbers, and screenshots: `spikes/ursina-tier3/README.md`.
+Recommendation written into spec §4, Tier 3 vehicle, and the decisions table.
 
-### State as of 2026-08-27
+### Verdict: a shim is necessary, for a better reason than the one this plan predicted
 
-| | |
-|---|---|
-| Phase 0, hardware gate | **Passed.** See Phase 0 — Results below |
-| `minecraft_clone` benchmark | **Blocked** — the son reclaimed his laptop |
-| Phases 1 through 5 | Not started |
-| Spec | `docs/specs/2026-08-26-gamified-python-curriculum-design.md` |
+Phase 1 passed on the parent's machine (Windows 11, Python 3.14.6, ursina 8.3.0, Panda3D
+1.10.16, RTX 5090 on OpenGL 4.6, no GDI Generic). Phases 2 through 5 ran to completion. Three
+findings, in ascending order of how much they mattered:
 
-### Blocked item
+| | Raw Ursina | Through the shim |
+|---|---|---|
+| Ceremony, net of floor, all three probes | 9 of 52 lines (17.3%) | 0 of 41 (0%) |
+| **Ceremony among engine-touching lines** | **9 of 9 (100%)** | **0 of 7 (0%)** |
+| Unavoidable incantation floor | 3 lines | 1 line |
+| Readable failure on a realistic Tier 3 typo | 1 case of 3 | 3 of 3 |
+| 8,000-block world (three nested `range(20)`) | 14.9 fps | 1,424 fps |
 
-The `minecraft_clone` framerate benchmark needs his laptop and it is no longer available.
-**Trigger to unblock:** the next time the son's laptop is in reach, before Phase 5 sets performance
-constraints. Do not treat this as done — a single cube at 57 FPS proves a window opens, not
-that a voxel world is playable.
+### Where this plan was wrong, and it matters
 
-While confirming which display adapter Ursina bound to, check that too; `dxdiag` showed two
-Display tabs, so the machine likely has an Intel iGPU alongside a discrete Quadro.
+**The ceremony ratio was the wrong instrument.** Measured as the plan specified — ceremony
+lines over total lines — raw Ursina scores 17.3% across the three probes and *passes* the 20%
+threshold. It passes by dilution: probe B, which has the most engine ceremony in absolute
+terms, scores best because 24 of its 30 lines are crafting logic that never touches Ursina.
+Counted over engine-touching lines only, raw Ursina is 100% ceremony and the shim is 0%. Any
+future vehicle decision should use the second metric; it cannot be gamed by writing more
+logic around the problem.
 
-### Do this next, on Windows, on the parent's machine
+**The traceback fear was aimed at the wrong target.** The plan expected a twelve-frame Panda3D
+stack trace from a learner's `KeyError`. That case is fine — five lines, carets under the
+exact subexpression — because the error resolves while Python evaluates the arguments, before
+Ursina is entered, and at Tier 3 all learner code is module-level. The real damage is
+elsewhere and is worse: `color='green'`, the obvious guess, gives an eight-frame traceback
+ending in a complaint about hexadecimal, and a mistyped model name or a two-element `position`
+tuple produces **no error at all** — one warning lost in engine startup noise, or nothing,
+then a blank window. Raw Ursina violates §3 principle 5, *never hide failure*. That, not
+keyword arguments, is the load-bearing case for a shim, and it would hold even if the
+ceremony numbers had come in clean.
 
-**Phase 1 — parent-side environment.** Install Python from python.org and:
+**Performance is a Tier 3 problem, not a capstone problem.** The plan filed
+one-`Entity`-per-block under Phase 5 capstone constraints and under a future Tier 7 lesson. It
+arrives in week 10. The pattern drops below 60 fps between 1,000 and 2,500 blocks on an RTX
+5090; three nested `range(20)` loops is 8,000 blocks and 14.9 fps, and that is an ordinary
+thing for a learner discovering nested loops to write. So `start()` fuses placed blocks into a
+single mesh — 95× faster on that program, for two seconds of startup and no new vocabulary.
+The Tier 7 lesson is not lost but improved: deleting one line from `world.py` and watching
+1,424 fps become 14.9 is an experiment he can run, rather than a slowdown he suffers for four
+tiers with no vocabulary to diagnose it.
 
-```
-python -m pip install ursina
-python -c "from ursina import *; app=Ursina(); Entity(model='cube'); EditorCamera(); app.run()"
-```
+### What was built
 
-Match the son's runtime rather than the parent's habits. He is on Python 3.14. WSL2 is not
-a target — this repository is developed under WSL2, but the spike runs Windows-native
-because Windows-native is what he uses.
+`spikes/ursina-tier3/world.py` — three names, 43 lines, positional arguments only:
+`BLOCKS`, `place(x, y, z, kind)`, `start()`. Beyond the plan's sketch it does two things the
+spike proved necessary: it validates `kind` and raises an error naming the valid kinds, and
+`start()` auto-frames the camera on what was placed. The second earned its place when raw
+Ursina turned out to silently ignore `camera.position` whenever an `EditorCamera` exists — it
+lerps `camera.z` toward its own `target_z` every frame — making *"I placed blocks and see
+nothing"* a failure with no Tier 3 diagnosis.
 
-**Phase 2 — write the three probes.** `spikes/ursina-tier3/`, Tier 0–3 syntax only, under
-40 lines each. The probe table is in Phase 2 below. Header every file as throwaway.
+Retirement holds as designed: `BLOCKS` and `place()` at Tier 4, `start()` at Tier 5, last
+removal on Boss 5. 22 of its 43 lines are readable to him at Tier 3, 42 of 43 by Boss 5, and
+the one line that is never taught is `__all__`.
 
-Then Phases 3 through 5 in order.
+### On the son's Teach-back
 
-### Carry this into Phase 3
+Phase 0 recorded him restating `Entity(model='cube')` in his own words, four tiers early, and
+this plan asked Phase 3 to weigh that against the threshold. It cuts a different way than
+expected. He can *reason* about a call he cannot write — which is exactly why a shim of plain
+positional functions is legible to him. It says nothing about whether he could debug
+`ValueError: invalid literal for int() with base 16: 'gr'`, and that is the case the shim is
+really for.
 
-The ceremony threshold in the Approach section is a guess of roughly 20%. Phase 0 produced
-evidence it may be too strict: the son read `Entity(model='cube')` and restated it correctly
-in his own words, unprompted, four tiers before that syntax is taught. Measure the ratio
-honestly, but weigh it against the fact that he demonstrably reasons about calls he cannot
-yet write.
+### Open, and deliberately so
+
+The `minecraft_clone` framerate on his laptop. Phase 5 measured the sample's *pattern* rather
+than the sample and found it unusable at any real world size on hardware far stronger than
+his, which answers the architecture question the number existed to serve. The sample is also
+no longer shipped in the `ursina` pip package at 8.3.0. Two cheaper measurements to take next
+time the laptop is in reach — locating his machine on the scaling curve, and confirming
+whether Panda3D bound to the iGPU or the discrete Quadro — are in the spike README under
+*Still open*. Neither blocks Tier 3 authoring.
 
 ## Approach
 
@@ -329,13 +369,36 @@ document's Status block.
 - Shipping the shim. If a shim is warranted, it is written for real during Phase 2 content
   authoring, not here.
 
-## Anticipated Backlog
+## Anticipated Backlog — resolved 2026-08-27
 
-Promote to `planning/backlog/` if they surface:
+- ~~The gate fails and the capstone needs re-deciding.~~ **Did not surface.** The gate passed
+  on both machines.
+- ~~A standing performance budget for every graphical quest.~~ **Surfaced, promoted:**
+  `planning/backlog/feature_graphical-quest-performance-budget_2026-08-27.md`. It surfaced for
+  a different reason than anticipated — not because his laptop is marginal, but because the
+  stock voxel pattern is unusable on any machine.
+- ~~Ursina version churn needs a pinning and upgrade policy.~~ **Surfaced, promoted:**
+  `planning/backlog/feature_ursina-version-pinning-policy_2026-08-27.md`. Three pieces of
+  evidence in one afternoon on 8.3.0: the samples directory is gone from the pip package,
+  `Ursina` is a singleton wrapper rather than the class it appears to be, and
+  `ursina.__version__` does not exist.
 
-- The gate fails and the capstone needs re-deciding, which is a spec change and deserves
-  its own planning document rather than a status note here.
-- The son's laptop turns out to be viable but marginal, in which case the project needs a
-  standing performance budget for every graphical quest, not just the capstone.
-- Ursina's own version churn threatens a year-long campaign, which would need a pinning
-  and upgrade policy.
+## Status
+
+**Complete — 2026-08-27.** Both questions answered.
+
+**Hardware:** the capstone is safe. It is not safe with the stock sample's architecture, on any
+machine, which is an authoring constraint rather than a hardware verdict.
+
+**Vocabulary:** a shim is warranted. `spikes/ursina-tier3/world.py` — three names, 43 lines,
+positional arguments only, 0% ceremony against 100% for raw Ursina, retired by Boss 5.
+
+**Landed in:**
+
+- `docs/specs/2026-08-26-gamified-python-curriculum-design.md` — §4 Tier 3 vehicle, and two
+  rows in the decisions table
+- `spikes/ursina-tier3/` — probes, shim, benchmarks, screenshots, full write-up. All throwaway
+- `planning/backlog/` — two promoted items
+
+**Not done, on purpose:** the `minecraft_clone` framerate on the son's laptop. Reasoning in
+*Results* above and in the spike README under *Still open*. It does not block Tier 3 authoring.
