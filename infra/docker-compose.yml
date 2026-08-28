@@ -1,0 +1,144 @@
+# PyQuest — infrastructure stack (spec §6.1)
+#
+# This pass ships only the two services that need no code of ours: postgres and gitea.
+# The api, runner, and web services of §6.1 are reserved at the bottom of this file but
+# deliberately not implemented — see the comment block there.
+#
+# Images are pinned by tag AND digest. This campaign runs ~48 weeks; a floating tag that
+# drifts mid-campaign is a real failure mode for this project, not a hypothetical one.
+# See planning/backlog/feature_ursina-version-pinning-policy_2026-08-27.md for the same
+# class of problem on the Python side.
+
+name: pyquest
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # postgres — the single database server. Holds BOTH the pyquest progress
+  # database and gitea's database, per §6.1 ("gitea, backed by the same
+  # Postgres"). One server, two databases, two roles.
+  #
+  # §6.7: content lives in git, progress lives in Postgres, the two never mix.
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16.15-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+    container_name: pyquest-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required - copy .env.example to .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      # Consumed only by initdb/01-create-gitea-db.sh, on first boot.
+      GITEA_DB_NAME: ${GITEA_DB_NAME:?GITEA_DB_NAME is required}
+      GITEA_DB_USER: ${GITEA_DB_USER:?GITEA_DB_USER is required}
+      GITEA_DB_PASSWORD: ${GITEA_DB_PASSWORD:?GITEA_DB_PASSWORD is required}
+    ports:
+      # Bound to loopback on purpose. Only the api (which runs on this machine)
+      # talks to Postgres. Nothing on the LAN has any business reaching it.
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      # $$ escapes the $ so compose passes it through to the shell in the container.
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\" -q"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # gitea — the self-hosted git remote (§6.5). Push is the verification
+  # mechanism (§6.4), so this is reachable from the LAN: the son pushes to it
+  # from his own laptop.
+  #
+  # INSTALL_LOCK=true skips the first-run web wizard; every setting the wizard
+  # would have asked for is supplied here as an environment variable, so the
+  # stack is reproducible from .env alone.
+  # ---------------------------------------------------------------------------
+  gitea:
+    image: gitea/gitea:1.27.2@sha256:d20286ca2b2e170fdf628e7231b8a31a3220ade39ff462b55041d43d1fc757dd
+    container_name: pyquest-gitea
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+
+      GITEA__database__DB_TYPE: postgres
+      GITEA__database__HOST: postgres:5432
+      GITEA__database__NAME: ${GITEA_DB_NAME:?GITEA_DB_NAME is required}
+      GITEA__database__USER: ${GITEA_DB_USER:?GITEA_DB_USER is required}
+      GITEA__database__PASSWD: ${GITEA_DB_PASSWORD:?GITEA_DB_PASSWORD is required}
+      GITEA__database__SSL_MODE: disable
+
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__security__SECRET_KEY: ${GITEA_SECRET_KEY:?GITEA_SECRET_KEY is required}
+
+      GITEA__server__DOMAIN: ${GITEA_DOMAIN:-localhost}
+      GITEA__server__ROOT_URL: ${GITEA_ROOT_URL:-http://localhost:3080/}
+      GITEA__server__HTTP_PORT: "3000"
+      GITEA__server__SSH_DOMAIN: ${GITEA_DOMAIN:-localhost}
+      # SSH_PORT is the port Gitea ADVERTISES in the clone URLs it shows, so it
+      # must be the host port, not the container port.
+      #
+      GITEA__server__SSH_PORT: "${GITEA_SSH_PORT:-3022}"
+
+      # Must stay false, and must be stated rather than omitted. This image
+      # already runs OpenSSH on container port 22 and wires it to gitea via
+      # AuthorizedKeysCommand. Turning on Gitea's built-in Go SSH server makes
+      # the two fight over :22; the Go server loses, logs "bind: address
+      # already in use", and the container crash-loops. Observed, not theorised.
+      #
+      # Stated explicitly because app.ini is written into the gitea_data volume
+      # on first boot and environment-to-ini only overwrites keys that are
+      # PRESENT in the environment. Deleting this line does not restore the
+      # default; it freezes whatever the volume already holds.
+      GITEA__server__START_SSH_SERVER: "false"
+      GITEA__server__OFFLINE_MODE: "true"
+
+      # Two players, both provisioned by the parent. Nobody signs themselves up.
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__service__ENABLE_CAPTCHA: "false"
+
+      # §6.5: Gitea Actions is GitHub-Actions-compatible, and the pipeline is
+      # meant to port later almost verbatim. Enabled now; needs a registered
+      # act_runner before it does anything.
+      GITEA__actions__ENABLED: "true"
+    ports:
+      # LAN-reachable on purpose: §6.4, the son pushes from his own machine.
+      - "${GITEA_HTTP_PORT:-3080}:3000"
+      - "${GITEA_SSH_PORT:-3022}:22"
+    volumes:
+      - gitea_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/api/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 45s
+
+# -----------------------------------------------------------------------------
+# RESERVED, NOT YET IMPLEMENTED — §6.1
+#
+# Three more services are specified and are not built here, because none of
+# them can exist before the code they run does. Their host ports are reserved
+# now so nothing else claims them:
+#
+#   api     Fastify; serves the built SPA in production.        host 3081
+#   runner  Executes untrusted Python: --network none, 10s      (no host port;
+#           timeout, memory cap (§6.6).                          reached via the
+#                                                                api's job queue)
+#   web     Vite dev server, development only.                  host 3082
+#
+# Also to come, per §6.1: migrations as a job. That lands with the DB schema in
+# Wave 3, not here.
+# -----------------------------------------------------------------------------
+
+volumes:
+  postgres_data:
+    name: pyquest_postgres_data
+  gitea_data:
+    name: pyquest_gitea_data

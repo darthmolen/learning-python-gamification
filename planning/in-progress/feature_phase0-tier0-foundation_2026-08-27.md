@@ -256,3 +256,54 @@ describes. It still needs to be visible, because §5.5's whole argument is that 
 **Boss unlock is a 3-of-5 progress state, not a boolean.** §5.2 gives each tier five quests and
 unlocks the boss on any three. The engine returns a boolean, but the campaign map has to show
 how close he is, and §5.1a insists on a denominator everywhere.
+
+---
+
+## Wave 1 — complete, 2026-08-27
+
+All four workstreams landed. The Wave 1 gate in *Verification* above is met:
+
+1. 84 tests green across `packages/engine` and `packages/content`, output pristine
+2. Mutants demonstrated red and restored in all three code workstreams. **Two initially
+   survived and the tests were rejected and strengthened**, which is the process working rather
+   than a defect: the DC-2 commutativity property computed its expectation from the engine
+   itself and so could not see sum→max, and a scaffolder test accepted any file under `tiers/`
+3. `docker compose up -d` brings postgres and gitea to healthy from destroyed volumes —
+   verified independently on a cold boot, not taken from a report
+4. Backup produces a dated tarball and the restore rehearsal round-trips **both artifacts §6.9
+   names as irreplaceable** — a git commit and a Chronicle entry — by exact content. 28 of 28
+   composition checks pass
+5. `validate:content` passes on the authored root and fails, with the cycle named hop by hop,
+   on a deliberately cyclic fixture
+6. `new:quest` scaffolds a quest that validates with no hand-editing
+7. Tier 0 briefs written; `py -3.14 curriculum/tier-0/verify.py` reports 19 of 19
+
+### What Wave 1 changed about the plan
+
+**Three composition bugs, none of which any unit test could have caught.** `npm run new:quest --
+--id x` was unusable because the root script dropped a trailing `--`; a relative `--root`
+resolved against the package directory rather than where the command was typed; and Gitea
+crash-looped thirteen times against its own image's SSH daemon, with the bad setting persisting
+into `app.ini` so that removing the environment variable did not undo it. The plan predicted
+this axis would matter here and it did, three times over.
+
+**The `dist/` collection problem.** `tsc -b` emitted compiled `*.test.ts`, and vitest 4 no
+longer excludes `dist` by default, so a green run could be reporting on code that no longer
+exists. Fixed repo-wide in `vitest.config.ts`.
+
+### Backlog raised
+
+- `feature_scoring-model-single-source_2026-08-27.md` — the modifier table is published twice
+  in the spec and implemented a third time; Datamine is a modifier that is not a medal and has
+  no storage shape; the challenge-run magnitude is unvalidated
+- `feature_backup-destination-second-disk_2026-08-27.md` — §6.9 wants a second disk; this
+  machine has one. Due before week 3
+- `feature_gitea-lan-access-for-the-son_2026-08-27.md` — Gitea is healthy but advertises
+  `localhost`, so his laptop cannot reach it. Due by Tier 2a
+
+### Open question for the parent
+
+Tier 0 authoring **started the Chronicle in week 1 rather than week 3**, deviating from §5.6 on
+the grounds that §5.6 also requires re-reading it before Boss 1, and entries beginning in week 3
+leave almost nothing to re-read. The commit-and-push half still arrives at Tier 2a on schedule,
+and the six Tier 0 entries become his repository's first real commit. This needs a ruling.
