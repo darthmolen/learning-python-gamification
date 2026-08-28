@@ -130,6 +130,13 @@
       "y": 2330,
       "w": 1400,
       "text": "LEXICON - one vocabulary, everywhere\nPatrol → Invasion. Muster → Defend. Chronicle → Journal. Board → Party. Tier → Area.\n\nRenamed through spec, content schema, engine, curriculum and UI, not only here: at Boss 7 he opens the engine repository and reads area: 3 in the YAML, and it should be the word he has said out loud all year. Area beat Tier because the map is a place. Party beat Levels because level (from XP) and area (from position) are different numbers, and both on screen invites one question with a confusing answer."
+    },
+    {
+      "id": "note-overlay",
+      "x": 4560,
+      "y": 1030,
+      "w": 1400,
+      "text": "THE TOME OPENS OVER YOUR WORK — it is never navigated to\nIf looking something up costs a learner the code in his editor, he stops looking things up, and the Tome was the point. So it does not navigate: the quest stays mounted underneath and closing returns to it exactly.\n\nThis costs nothing. The Tome is 264 + 660 + 212 px wide and the content area beside the rail is 1368 — it already fits without going anywhere. It also disposes of the back-button question, because no history entry is created. The bar names what closing returns to, so the way out is on screen rather than in browser chrome.\n\nSame rule for the button below it: “Take the Boss” reads true whether he has cleared none of the quests or four. A label that has to change with state is a label the reader cannot trust — “Take it cold” was already false on this screen, which shows three cleared."
     }
   ],
   "launch": {
