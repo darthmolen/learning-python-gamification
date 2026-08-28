@@ -112,6 +112,10 @@
         <div class="mono" style="font-size:11px; color:#5d6878; margin-top:9px">
           2 of 5 earned · replaying to take one is a first-class move
         </div>
+        <div class="mono" style="font-size:11px; color:#5d6878; margin-top:5px">
+          A medal at the DC floor pays nothing and says <span style="color:#98a3b3">brag</span>
+          rather than +0 — the clamp ate it, and the medal was never the xp anyway
+        </div>
 
         <div class="eyebrow" style="margin:26px 0 10px">Datamine</div>
         <div style="border:1px dashed {{ dm.border }}; background:#12151c; padding:14px">
@@ -294,21 +298,33 @@ class Component extends DCLogic {
     var src = s.code.split('\n');
     var lineNos = src.map(function(_, i){ return i + 1; });
 
-    function slot(name, earned, note, pay, payFg){
+    /**
+     * `delta` is what the engine says this medal pays. A medal can legitimately
+     * pay nothing: effective DC is clamped to the 5-30 scale, so at the floor a
+     * negative modifier is absorbed and the difference really is 0. "+0 XP" reads
+     * as a broken app, so a zero renders as what the medal is actually worth.
+     */
+    function chip(delta){
+      if (delta === null) return 'locked';
+      if (delta === 'dc') return 'DC 12';
+      return delta > 0 ? '+' + delta : 'brag';
+    }
+    function slot(name, earned, note, delta, payFg){
+      var pay = chip(delta);
       return {
         name: name, earned: earned, note: note, pay: pay,
-        payFg: payFg || (earned ? '#5aa860' : '#3d4757'),
+        payFg: payFg || (pay === 'brag' ? '#98a3b3' : (earned ? '#5aa860' : '#3d4757')),
         fg: earned ? '#e8ecf2' : '#5d6878',
         border: earned ? '#3d4757' : '#232a35',
         bg: earned ? '#1e242e' : 'transparent'
       };
     }
     var medals = [
-      slot('Cleared', s.cleared, s.cleared ? 'tests pass' : 'tests must pass', s.cleared ? '+24' : 'DC 12'),
-      slot('Ironman', false, 'no docs, no autocomplete, from memory', '+10'),
-      slot('Idiomatic', true, 'ruff and pyright clean, plus one written line', '+6'),
-      slot('Teach-back', true, 'signed off by Dad, 2 days ago', '+6'),
-      slot('Conjured', false, 'AI-assisted — unlocks at Area 7', 'locked', '#3d4757')
+      slot('Cleared', s.cleared, s.cleared ? 'tests pass' : 'tests must pass', s.cleared ? 24 : 'dc'),
+      slot('Ironman', false, 'no docs, no autocomplete, from memory', 10),
+      slot('Idiomatic', true, 'ruff and pyright clean, plus one written line', 6),
+      slot('Teach-back', true, 'signed off by Dad, 2 days ago', 6),
+      slot('Conjured', false, 'AI-assisted — unlocks at Area 7', null, '#3d4757')
     ];
 
     var gated = s.scars >= 2;

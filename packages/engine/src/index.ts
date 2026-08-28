@@ -26,3 +26,11 @@ export {
   type ScaledXpKind,
   type XpKind,
 } from './scoring.ts';
+
+export {
+  FIRST_RUNG,
+  INVASION_LADDER,
+  TOP_RUNG,
+  intervalDays,
+  nextRung,
+} from './invasions.ts';

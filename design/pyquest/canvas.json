@@ -115,14 +115,14 @@
       "x": 1520,
       "y": 1030,
       "w": 1400,
-      "text": "THE INVASION LADDER - still needs your ruling\nProposed: an invasion arrives at 1, 3, 7, 16, then 35 days untouched. Repel one and it stays away longer; miss it and it returns a rung sooner rather than from zero, because resetting punishes a bad night and floods the next border."
+      "text": "THE INVASION LADDER - ruled 2026-08-28\n1, 3, 7, 16, 35 days. Repel one and it climbs a rung, so it stays away longer. Miss one and it steps back exactly one rung, never to the beginning.\n\nThat last clause is the decision. Resetting a well-known concept to day one punishes a single bad evening and then floods the next sessions with material he already had - which is the flaw this mechanic was built to prevent, reintroduced by its own scoring. Implemented and mutation-tested in packages/engine/src/invasions.ts."
     },
     {
       "id": "note-zero-xp",
       "x": 3040,
       "y": 1030,
       "w": 1400,
-      "text": "STILL OPEN: THE +0 XP MEDAL\nAt base DC 5 the clamp absorbs both negative modifiers, so a medal can legitimately pay nothing. Not solved on these boards - it needs a rendering that explains itself before it ships."
+      "text": "A MEDAL THAT PAYS NOTHING SAYS “BRAG” - ruled 2026-08-28\nEffective DC is clamped to the 5-30 scale, so at the floor a negative modifier is absorbed and the difference a medal pays really is 0. Rendering +0 XP reads as a broken app.\n\nThe chip says brag instead: honest about the payout, accurate about what the medal is worth, and true to what medals were always for - only Cleared was ever load-bearing. “Optional” was considered and dropped, because every medal but Cleared is already optional, so the word distinguishes nothing.\n\nThe engine still returns only the number. That a 0 becomes a word is a presentation decision, the same boundary §5.1 draws for the DC warning. The Recipe Book is DC 12, so no medal here pays 0 - faking one to show the chip would misrepresent the mechanic, so the rule lives in the logic."
     },
     {
       "id": "note-lexicon",

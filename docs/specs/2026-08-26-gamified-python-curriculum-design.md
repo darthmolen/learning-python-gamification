@@ -327,6 +327,19 @@ Every quest carries concept tags. When a concept passes its review interval unto
 
 This mechanic exists to kill the most-cited flaw in the research: learners complete a challenge and never revisit the topic.
 
+**The ladder — 1, 3, 7, 16, 35 days.** A concept sits on a rung; the rung says how
+long it may go untouched before it invades. Repel one and it climbs a rung, so it
+stays away longer. Miss one and it steps back **exactly one rung, never to the
+beginning.**
+
+That last clause is the whole decision. Resetting a well-known concept to day one
+punishes a single bad evening, and then floods the next several sessions with
+material he already had — which is the flaw this mechanic was built to prevent,
+reintroduced by its own scoring. One miss costs one repel to undo, and no more.
+
+The rungs live in `packages/engine/src/invasions.ts`. How many invasions a session
+shows and in what order is a Defend-screen decision, not an engine one.
+
 ### 5.5 Datamine
 
 After **two genuine attempts** and one written sentence describing what he tried, he may unlock the reference solution.
@@ -410,6 +423,16 @@ Rules:
 - **Only Cleared unlocks anything.** Medals are elective depth, which keeps autonomy intact.
 - Unearned slots render greyed on the quest card, borrowing the visible-but-locked
   psychology of the skill tree.
+- **A medal that pays nothing reads as a brag, not as a zero.** Effective DC is
+  clamped to the published 5–30 scale, so at the floor a negative modifier is
+  absorbed and the difference a medal pays is genuinely 0. Rendering `+0 XP` reads
+  as a broken app. The card shows `brag` instead — which is honest about the
+  payout, accurate about what the medal is actually worth, and true to what medals
+  are for. Only `Cleared` was ever load-bearing; the rest are the completionist
+  layer and always were.
+
+  The engine returns the number and nothing else. That 0 renders as a word is a
+  presentation decision, the same boundary §5.1 draws for the DC warning.
 
 Two consequences follow. The campaign map gains a completionist layer. More importantly,
 **voluntary replay becomes a second retrieval-practice engine** beside invasions: invasions are
@@ -677,6 +700,8 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Denominators everywhere, tildes when estimated | XP answers "how far have I come"; only a denominator answers "how much is left" |
 | Medals per quest, earned on replay | Makes replay rewarding, and adds voluntary retrieval practice beside forced invasions |
 | Only Cleared gates progression | Keeps medals elective, preserving autonomy |
+| Invasion ladder 1·3·7·16·35, a miss steps back one rung | Resetting to zero punishes one bad evening and floods the next session with what he already knew |
+| A zero-payout medal renders as "brag", not "+0 XP" | The clamp makes zero legitimate; "+0" reads as a bug, and bragging rights are what a medal is actually for |
 | `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
 | Challenge runs as the parent's gap detector | Measures gaps instead of asking the parent to introspect them |
 | Conjured is legal, logged, and costed | Disclosure beats prohibition; the son will grow up with these tools |
