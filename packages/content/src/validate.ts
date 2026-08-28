@@ -22,12 +22,12 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
-import { conceptTier } from './concepts.ts';
+import { conceptArea } from './concepts.ts';
 import {
   parseContentItem,
-  parseTierManifest,
+  parseAreaManifest,
   type ContentItem,
-  type TierManifest,
+  type AreaManifest,
 } from './schema.ts';
 
 /* -------------------------------------------------------------------------------------------
@@ -45,8 +45,8 @@ export type ValidationRule =
   | 'dangling-prerequisite'
   | 'prerequisite-cycle'
   | 'missing-file'
-  | 'concept-above-tier'
-  | 'missing-tier-manifest';
+  | 'concept-above-area'
+  | 'missing-area-manifest';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -68,7 +68,7 @@ export interface ContentSet {
   readonly root: string;
   /** Items that satisfied the schema. Everything downstream reads only these. */
   readonly items: readonly ContentItem[];
-  readonly manifests: readonly TierManifest[];
+  readonly manifests: readonly AreaManifest[];
   readonly issues: readonly ContentIssue[];
 }
 
@@ -253,7 +253,7 @@ export function checkContent(root: string): ContentSet {
   const abs = resolve(root);
   const issues: ContentIssue[] = [];
   const items: ContentItem[] = [];
-  const manifests: TierManifest[] = [];
+  const manifests: AreaManifest[] = [];
   const records: RawRecord[] = [];
   const sources = new Map<string, { doc: Document; counter: LineCounter }>();
 
@@ -277,7 +277,7 @@ export function checkContent(root: string): ContentSet {
     }
 
     const raw: unknown = doc.toJS();
-    const isManifest = file.startsWith('tiers/');
+    const isManifest = file.startsWith('areas/');
     const id =
       typeof (raw as { id?: unknown })?.id === 'string'
         ? ((raw as { id: string }).id)
@@ -293,7 +293,7 @@ export function checkContent(root: string): ContentSet {
     }
 
     try {
-      if (isManifest) manifests.push(parseTierManifest(raw));
+      if (isManifest) manifests.push(parseAreaManifest(raw));
       else items.push(parseContentItem(raw));
     } catch (error) {
       if (!(error instanceof z.ZodError)) throw error;
@@ -309,7 +309,7 @@ export function checkContent(root: string): ContentSet {
   issues.push(...identityIssues(records, locate));
   issues.push(...graphIssues(records, locate));
   issues.push(...referenceIssues(abs, items, byId(records), locate));
-  issues.push(...conceptTierIssues(items, byId(records), locate));
+  issues.push(...conceptAreaIssues(items, byId(records), locate));
   issues.push(...manifestIssues(items, manifests, byId(records), locate));
 
   issues.sort(
@@ -428,11 +428,11 @@ function referenceIssues(
 }
 
 /**
- * A quest may not tag vocabulary from a tier above its own. Spec §4 orders the vocabulary, and
- * a Tier 3 quest tagged `class` is tagging something the learner does not meet for eighteen
+ * A quest may not tag vocabulary from an area above its own. Spec §4 orders the vocabulary, and
+ * an Area 3 quest tagged `class` is tagging something the learner does not meet for eighteen
  * weeks — which would also queue an invasion (§5.4) for a concept never taught.
  */
-function conceptTierIssues(
+function conceptAreaIssues(
   items: readonly ContentItem[],
   files: ReadonlyMap<string, RawRecord>,
   locate: Locator,
@@ -441,16 +441,16 @@ function conceptTierIssues(
 
   for (const item of items) {
     for (const [index, concept] of item.concepts.entries()) {
-      const taught = conceptTier(concept);
-      if (taught === undefined || taught <= item.tier) continue;
+      const taught = conceptArea(concept);
+      if (taught === undefined || taught <= item.area) continue;
       const file = files.get(item.id)?.file ?? item.id;
       issues.push({
         file,
         id: item.id,
         ...locate(file, ['concepts', index]),
-        rule: 'concept-above-tier',
-        message: `tags "${concept}", first taught in tier ${taught}, but this item is tier ${item.tier}`,
-        fix: `drop the tag, or move the item to tier ${taught} — spec §4 orders the vocabulary and the learner has not met this one yet`,
+        rule: 'concept-above-area',
+        message: `tags "${concept}", first taught in area ${taught}, but this item is area ${item.area}`,
+        fix: `drop the tag, or move the item to area ${taught} — spec §4 orders the vocabulary and the learner has not met this one yet`,
       });
     }
   }
@@ -458,26 +458,26 @@ function conceptTierIssues(
   return issues;
 }
 
-/** Spec §5.1a: without a manifest a tier has no denominator, so no honest progress display. */
+/** Spec §5.1a: without a manifest an area has no denominator, so no honest progress display. */
 function manifestIssues(
   items: readonly ContentItem[],
-  manifests: readonly TierManifest[],
+  manifests: readonly AreaManifest[],
   files: ReadonlyMap<string, RawRecord>,
   locate: Locator,
 ): ContentIssue[] {
-  const described = new Set(manifests.map((m) => m.tier));
+  const described = new Set(manifests.map((m) => m.area));
   const authored = new Map<number, ContentItem>();
-  for (const item of items) if (!authored.has(item.tier)) authored.set(item.tier, item);
+  for (const item of items) if (!authored.has(item.area)) authored.set(item.area, item);
 
   return [...authored]
-    .filter(([tier]) => !described.has(tier as TierManifest['tier']))
-    .map(([tier, item]) => ({
+    .filter(([area]) => !described.has(area as AreaManifest['area']))
+    .map(([area, item]) => ({
       file: files.get(item.id)?.file ?? item.id,
       id: item.id,
-      ...locate(files.get(item.id)?.file ?? item.id, ['tier']),
-      rule: 'missing-tier-manifest' as const,
-      message: `tier ${tier} has authored content but no manifest at tiers/tier-${tier}.yml`,
-      fix: `add tiers/tier-${tier}.yml with a title and an authoring status — §5.1a needs a denominator to show "1 of ~5"`,
+      ...locate(files.get(item.id)?.file ?? item.id, ['area']),
+      rule: 'missing-area-manifest' as const,
+      message: `area ${area} has authored content but no manifest at areas/area-${area}.yml`,
+      fix: `add areas/area-${area}.yml with a title and an authoring status — §5.1a needs a denominator to show "1 of ~5"`,
     }));
 }
 

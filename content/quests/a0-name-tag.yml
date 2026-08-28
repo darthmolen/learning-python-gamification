@@ -1,0 +1,13 @@
+# Area 0 drill. Spec §6.3: Areas 0-1 use hidden-tests, because anything shipped to the
+# browser is readable and hidden tests shipped to the client are not hidden.
+id: a0-name-tag
+title: The Name Tag
+kind: quest
+area: 0
+concepts: [print, input, str, f-strings, variables]
+dc: 5
+brief: briefs/a0-name-tag.md
+verifier:
+  type: hidden-tests
+  starter: starters/a0-name-tag.py
+  tests: tests/a0-name-tag_test.py

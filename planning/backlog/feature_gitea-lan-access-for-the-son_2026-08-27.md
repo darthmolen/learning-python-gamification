@@ -29,6 +29,6 @@ person in the house can reach it", and it is invisible until someone tries.
 
 ## Trigger for Promotion
 
-**Tier 2a, weeks 6–7** — The Scribe's Rite, whose win condition is that he pushes and the board
+**Area 2a, weeks 6–7** — The Scribe's Rite, whose win condition is that he pushes and the board
 updates by itself. Worth doing earlier and opportunistically, since it needs his laptop in reach,
 which the two outstanding Ursina measurements also do.

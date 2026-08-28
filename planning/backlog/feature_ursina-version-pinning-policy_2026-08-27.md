@@ -27,8 +27,8 @@ different ursina versions mid-campaign breaks that verification quietly.
 
 - A pinned version in a requirements file, identical on both machines, with the pin recorded in
   the spec rather than only in a lockfile
-- A rule for when an upgrade is allowed at all — the honest default is *never mid-tier*, and
-  probably *only between tiers, and only if something is actually broken*
+- A rule for when an upgrade is allowed at all — the honest default is *never mid-area*, and
+  probably *only between areas, and only if something is actually broken*
 - A smoke test that runs after any upgrade: open a window, place blocks through the shim,
   trigger the shim's validation error, combine a world. The spike's probes are the seed, but
   they are throwaway and would need rewriting as something durable
@@ -37,10 +37,10 @@ different ursina versions mid-campaign breaks that verification quietly.
 
 ## Why it is not urgent yet
 
-Nothing is authored against Ursina yet. The cost of deciding this is lowest before Tier 3
+Nothing is authored against Ursina yet. The cost of deciding this is lowest before Area 3
 content exists and rises steadily afterward.
 
 ## Depends on
 
-- Tier 2b, which is where `pip` and venv enter the curriculum and where a requirements file
+- Area 2b, which is where `pip` and venv enter the curriculum and where a requirements file
   first becomes something he can be shown rather than something done for him

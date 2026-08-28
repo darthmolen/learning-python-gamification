@@ -7,29 +7,29 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { medalsFor, parseContentItem, parseTierManifest } from './index.ts';
+import { medalsFor, parseContentItem, parseAreaManifest } from './index.ts';
 
 /** The exact example from spec §6.2. If this stops parsing, the contract has drifted. */
 const SPEC_EXAMPLE = {
-  id: 't3-recipe-book',
+  id: 'a3-recipe-book',
   title: 'The Recipe Book',
   kind: 'quest',
-  tier: 3,
+  area: 3,
   concepts: ['dict', 'dict-methods', 'iteration'],
-  requires: ['t3-inventory-lists'],
+  requires: ['a3-inventory-lists'],
   dc: 12,
-  brief: 'briefs/t3-recipe-book.md',
+  brief: 'briefs/a3-recipe-book.md',
   verifier: {
     type: 'hidden-tests',
-    starter: 'starters/t3-recipe-book.py',
-    tests: 'tests/t3-recipe-book_test.py',
+    starter: 'starters/a3-recipe-book.py',
+    tests: 'tests/a3-recipe-book_test.py',
   },
 } as const;
 
 describe('accepts what the spec describes', () => {
   it('parses the §6.2 example unchanged', () => {
     const quest = parseContentItem(SPEC_EXAMPLE);
-    expect(quest.id).toBe('t3-recipe-book');
+    expect(quest.id).toBe('a3-recipe-book');
     expect(quest.dc).toBe(12);
     expect(quest.concepts).toEqual(['dict', 'dict-methods', 'iteration']);
   });
@@ -49,7 +49,7 @@ describe('accepts what the spec describes', () => {
   it('parses a boss carrying its two-or-three theme framings (§5.2)', () => {
     const boss = parseContentItem({
       ...SPEC_EXAMPLE,
-      id: 't3-the-crafting-table',
+      id: 'a3-the-crafting-table',
       kind: 'boss',
       themes: ['A potion brewer', 'A blacksmith'],
       verifier: { type: 'peer-signoff', by: 'other-player' },
@@ -69,9 +69,9 @@ describe('accepts what the spec describes', () => {
     }
   });
 
-  it('records a partially authored tier as an estimate (§5.1a)', () => {
-    const manifest = parseTierManifest({
-      tier: 3, title: 'Collections', authoring: 'partial', estimatedQuests: 5,
+  it('records a partially authored area as an estimate (§5.1a)', () => {
+    const manifest = parseAreaManifest({
+      area: 3, title: 'Collections', authoring: 'partial', estimatedQuests: 5,
     });
     expect(manifest.authoring).toBe('partial');
     expect(manifest.estimatedQuests).toBe(5);
@@ -90,7 +90,7 @@ describe('refuses what an author would get wrong', () => {
     ['an absolute brief path', { ...SPEC_EXAMPLE, brief: '/etc/passwd' }],
     ['a Windows absolute brief path', { ...SPEC_EXAMPLE, brief: 'C:/Windows/win.ini' }],
     ['a brief path escaping the content root', { ...SPEC_EXAMPLE, brief: '../../secrets.md' }],
-    ['an item requiring itself', { ...SPEC_EXAMPLE, requires: ['t3-recipe-book'] }],
+    ['an item requiring itself', { ...SPEC_EXAMPLE, requires: ['a3-recipe-book'] }],
     ['medal slots omitting "cleared"', { ...SPEC_EXAMPLE, medals: ['ironman'] }],
     ['an unknown verifier type', { ...SPEC_EXAMPLE, verifier: { type: 'vibes' } }],
     ['a hidden-tests verifier missing its tests', {
@@ -99,15 +99,15 @@ describe('refuses what an author would get wrong', () => {
     ['no concept tags at all', { ...SPEC_EXAMPLE, concepts: [] }],
     ['a mistyped field name', { ...SPEC_EXAMPLE, tierr: 3 }],
     ['an id that is not kebab-case', { ...SPEC_EXAMPLE, id: 'T3_Recipe_Book' }],
-    ['a tier beyond the curriculum', { ...SPEC_EXAMPLE, tier: 8 }],
+    ['an area beyond the curriculum', { ...SPEC_EXAMPLE, area: 8 }],
   ];
 
   it.each(rejects)('rejects %s', (_label, input) => {
     expect(() => parseContentItem(input)).toThrow();
   });
 
-  it('rejects a partial tier that does not estimate its total (§5.1a)', () => {
-    expect(() => parseTierManifest({ tier: 3, title: 'Collections', authoring: 'partial' }))
+  it('rejects a partial area that does not estimate its total (§5.1a)', () => {
+    expect(() => parseAreaManifest({ area: 3, title: 'Collections', authoring: 'partial' }))
       .toThrow();
   });
 });

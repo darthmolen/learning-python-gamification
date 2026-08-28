@@ -31,7 +31,7 @@ const USAGE = `Usage: npm run validate:content [-- --root <dir>]
 
 Proves that a content root will load: every YAML file parses against the schema, the
 prerequisite graph is acyclic, every prerequisite and concept tag resolves, every referenced
-file exists, and no item tags vocabulary from a tier above its own.
+file exists, and no item tags vocabulary from an area above its own.
 
   --root <dir>   content root to check (default: the repository's content/)
   --help         this message
@@ -71,7 +71,7 @@ function main(argv: readonly string[]): number {
 
   if (issues.length === 0) {
     console.log(formatIssues(issues, root));
-    console.log(`    ${plural(items.length, 'item')} across ${plural(manifests.length, 'tier')}`);
+    console.log(`    ${plural(items.length, 'item')} across ${plural(manifests.length, 'area')}`);
     return 0;
   }
 

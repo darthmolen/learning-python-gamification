@@ -1,4 +1,4 @@
-# Phase 0 + Tier 0 — Foundation, then UI Design
+# Phase 0 + Area 0 — Foundation, then UI Design
 
 **Status:** Planned
 **Date:** 2026-08-27
@@ -9,19 +9,19 @@
 
 ## Context
 
-The Ursina Tier 3 spike closed on 2026-08-27. Both questions it existed to answer came back
+The Ursina Area 3 spike closed on 2026-08-27. Both questions it existed to answer came back
 clean: the son's laptop renders a hardware-accelerated cube at ~57 fps with no GDI
-Generic fallback, and a three-name shim (`BLOCKS`, `place`, `start`) closes the Tier 3
+Generic fallback, and a three-name shim (`BLOCKS`, `place`, `start`) closes the Area 3
 vocabulary gap at 0% ceremony against raw Ursina's 100%. Spec §8 Phase 0a is cleared. Nothing
 in the build order is gated on it any longer.
 
 The repository today holds a spec, a completed spike, and two backlog stubs. There is no
 application code. Phase 0 of the build order — compose stack, engine, schema, content
-validator — is due week 0, and Tier 0 teaching is due immediately, because §8 warns in as many
-words that if Tier 0 waits on Phase 1 *the app becomes a satisfying way to postpone teaching a
+validator — is due week 0, and Area 0 teaching is due immediately, because §8 warns in as many
+words that if Area 0 waits on Phase 1 *the app becomes a satisfying way to postpone teaching a
 child Python*.
 
-This plan delivers Phase 0 and Tier 0, then runs a Claude Design session for the seven screens
+This plan delivers Phase 0 and Area 0, then runs a Claude Design session for the seven screens
 of §6.8, then builds the teaching system against those screens rather than against a bullet
 list.
 
@@ -39,7 +39,7 @@ Almost nothing is blocked externally. The dependencies that remain are internal 
 | Compose stack (postgres, gitea) | nothing | **ready** |
 | Engine scoring core | the content contract (Wave 0) | **ready after ~30 min** |
 | Content validator, `new:quest` | the content contract (Wave 0) | **ready after ~30 min** |
-| Tier 0 curriculum | nothing at all | **ready — and on nobody's critical path** |
+| Area 0 curriculum | nothing at all | **ready — and on nobody's critical path** |
 | UI design session | Wave 1 landing, and a human | gated on wall-clock, not on code |
 | Engine query layer, DB schema, API contract | the UI design session | deliberately deferred |
 | Two remaining Ursina measurements | **physical access to the son's laptop** | the only hard external blocker |
@@ -72,7 +72,7 @@ it by rejecting the pair rather than by silently dropping one.
 
 **DC-4 — The concept tag registry is authored from §4.** §6.10 requires the validator to prove
 every concept tag is known, but the known set does not exist yet. It gets written as
-`packages/content/src/concepts.ts`, one entry per vocabulary item in the §4 tier listings.
+`packages/content/src/concepts.ts`, one entry per vocabulary item in the §4 area listings.
 
 **DC-5 — The challenge-run bonus is a +5 difficulty modifier, not a new concept.** §5.2 says
 beating a boss early "pays a bonus" without naming an amount. Expressing it as a modifier
@@ -101,10 +101,10 @@ also what makes it the one component that is trivially testable. It divides clea
 | Built in Wave 1 — pinned by spec | Deferred to Wave 3 — shaped by the UI |
 |---|---|
 | `effectiveDC(baseDC, modifiers)` | `availableQuests(state)` return shape |
-| `xpFor(kind, effectiveDC)` | `tierProgress()` → `{cleared, total, estimated}` |
+| `xpFor(kind, effectiveDC)` | `areaProgress()` → `{cleared, total, estimated}` |
 | `medalDelta(baseDC, earned, newMedal)` | `dueInvasions()` queue shape and cap |
 | modifier legality (DC-3) | `standings()` for Party |
-| `bossUnlocked(clearedInTier)` — any 3 of 5 | `level(xp)` — curve undefined |
+| `bossUnlocked(clearedInArea)` — any 3 of 5 | `level(xp)` — curve undefined |
 
 The left column is arithmetic the spec specifies to the number; it cannot move. The right
 column is a projection whose shape only a real screen can settle. Building the right column
@@ -133,7 +133,7 @@ A genuine barrier: Wave 1's agents would otherwise race on the same type files.
 | **A — engine core** | `packages/engine/` | Wave 0 types |
 | **B — infrastructure** | `infra/` | nothing |
 | **C — content tooling** | `packages/content/` beyond the schema | Wave 0 types |
-| **D — Tier 0 curriculum** | `curriculum/tier-0/` | nothing |
+| **D — Area 0 curriculum** | `curriculum/area-0/` | nothing |
 
 **A** builds the five pinned functions above under full test-filter discipline.
 
@@ -147,7 +147,7 @@ concept tag known, every referenced brief and test file present) and the `npm ru
 scaffolder. §6.10 notes the parent will run this more than 150 times and it should take two
 minutes.
 
-**D** authors `curriculum/tier-0/` — the §4 Tier 0 vocabulary as turtle-graphics session
+**D** authors `curriculum/area-0/` — the §4 Area 0 vocabulary as turtle-graphics session
 briefs, the exercises, and the Journal template of §5.6. No code dependency whatsoever. This
 is the workstream that lets teaching start this week.
 
@@ -158,10 +158,10 @@ Journal, Console. This is a wall-clock gate that agents cannot parallelise, whic
 why curriculum churn continues underneath it.
 
 Three things the artboards must settle, because Wave 3 reads them as inputs: how a quest card
-renders its medal slots greyed (§5.10), how a tier header renders `1 of ~5` (§5.1a), and where
+renders its medal slots greyed (§5.10), how an area header renders `1 of ~5` (§5.1a), and where
 the DC ≥ 20 warning lives.
 
-*Background, in parallel:* **agent D2** carries curriculum authoring forward into Tier 1.
+*Background, in parallel:* **agent D2** carries curriculum authoring forward into Area 1.
 
 ### Wave 3 — the teaching system, shaped by the design
 
@@ -171,7 +171,7 @@ the DC ≥ 20 warning lives.
   scars, datamines, concept reviews, journal entries, sessions, bounties
 - The API contract derived from the artboards
 
-*Background, in parallel:* curriculum churn continues into Tier 2a.
+*Background, in parallel:* curriculum churn continues into Area 2a.
 
 Phase 1 proper — Fastify, the runner container, the SPA, Pyodide, and the turtle-to-canvas shim
 of §8 — follows this pass and is not in scope here.
@@ -207,7 +207,7 @@ A checked box whose evidence cannot be produced is unchecked.
    verified — not assumed
 5. `npm run validate:content` passes on the fixtures and **fails** on a deliberately cyclic one
 6. `npm run new:quest` scaffolds a quest that validates without hand-editing
-7. Tier 0 briefs read start to finish by a human
+7. Area 0 briefs read start to finish by a human
 
 **End-to-end, after Wave 3:** author a quest with `new:quest`, validate it, load it, and have
 the engine return correct availability, effective DC, and XP for both players — with the medal
@@ -222,7 +222,7 @@ commutativity property holding across a randomised earn order.
 - `packages/content/src/validate.ts`, `scripts/new-quest.ts` — new, §6.10
 - `packages/engine/src/scoring.ts` + tests — new, the pinned arithmetic
 - `infra/docker-compose.yml`, `infra/.env.example`, `infra/backup.sh` — new, §6.1 and §6.9
-- `curriculum/tier-0/**` — new, §4 Tier 0
+- `curriculum/area-0/**` — new, §4 Area 0
 - `planning/in-progress/feature_phase0-tier0-foundation_2026-08-27.md` — this plan, per the
   project's kanban convention
 
@@ -253,7 +253,7 @@ costed move (§5.5), but it is not a medal, so it has no slot on the quest card 
 describes. It still needs to be visible, because §5.5's whole argument is that a costed, logged,
 *named* move beats a hidden one.
 
-**Boss unlock is a 3-of-5 progress state, not a boolean.** §5.2 gives each tier five quests and
+**Boss unlock is a 3-of-5 progress state, not a boolean.** §5.2 gives each area five quests and
 unlocks the boss on any three. The engine returns a boolean, but the campaign map has to show
 how close he is, and §5.1a insists on a denominator everywhere.
 
@@ -267,7 +267,7 @@ All four workstreams landed. The Wave 1 gate in *Verification* above is met:
 2. Mutants demonstrated red and restored in all three code workstreams. **Two initially
    survived and the tests were rejected and strengthened**, which is the process working rather
    than a defect: the DC-2 commutativity property computed its expectation from the engine
-   itself and so could not see sum→max, and a scaffolder test accepted any file under `tiers/`
+   itself and so could not see sum→max, and a scaffolder test accepted any file under `areas/`
 3. `docker compose up -d` brings postgres and gitea to healthy from destroyed volumes —
    verified independently on a cold boot, not taken from a report
 4. Backup produces a dated tarball and the restore rehearsal round-trips **both artifacts §6.9
@@ -276,7 +276,7 @@ All four workstreams landed. The Wave 1 gate in *Verification* above is met:
 5. `validate:content` passes on the authored root and fails, with the cycle named hop by hop,
    on a deliberately cyclic fixture
 6. `new:quest` scaffolds a quest that validates with no hand-editing
-7. Tier 0 briefs written; `py -3.14 curriculum/tier-0/verify.py` reports 19 of 19
+7. Area 0 briefs written; `py -3.14 curriculum/area-0/verify.py` reports 19 of 19
 
 ### What Wave 1 changed about the plan
 
@@ -299,11 +299,11 @@ exists. Fixed repo-wide in `vitest.config.ts`.
 - `feature_backup-destination-second-disk_2026-08-27.md` — §6.9 wants a second disk; this
   machine has one. Due before week 3
 - `feature_gitea-lan-access-for-the-son_2026-08-27.md` — Gitea is healthy but advertises
-  `localhost`, so his laptop cannot reach it. Due by Tier 2a
+  `localhost`, so his laptop cannot reach it. Due by Area 2a
 
 ### Open question for the parent
 
-Tier 0 authoring **started the Journal in week 1 rather than week 3**, deviating from §5.6 on
+Area 0 authoring **started the Journal in week 1 rather than week 3**, deviating from §5.6 on
 the grounds that §5.6 also requires re-reading it before Boss 1, and entries beginning in week 3
-leave almost nothing to re-read. The commit-and-push half still arrives at Tier 2a on schedule,
-and the six Tier 0 entries become his repository's first real commit. This needs a ruling.
+leave almost nothing to re-read. The commit-and-push half still arrives at Area 2a on schedule,
+and the six Area 0 entries become his repository's first real commit. This needs a ruling.

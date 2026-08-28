@@ -15,7 +15,7 @@ import { parseArgs } from 'node:util';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ScaffoldError, scaffoldQuest, type VerifierType } from '../scaffold.ts';
-import { TierSchema, type Kind, type Tier } from '../schema.ts';
+import { AreaSchema, type Kind, type Area } from '../schema.ts';
 
 /**
  * Resolve a user-supplied `--root` against the directory the command was typed in.
@@ -31,21 +31,21 @@ function resolveRoot(root: string): string {
 
 const DEFAULT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
 
-const USAGE = `Usage: npm run new:quest -- --id <id> --title <title> --tier <0-7> --concepts <a,b,c>
+const USAGE = `Usage: npm run new:quest -- --id <id> --title <title> --area <0-7> --concepts <a,b,c>
 
 Scaffolds a content item and everything it references, wired so that
 \`npm run validate:content\` passes with no hand-editing.
 
-  --id <id>            kebab-case, e.g. t3-recipe-book        (required)
+  --id <id>            kebab-case, e.g. a3-recipe-book        (required)
   --title <title>      what the player sees                   (required)
-  --tier <0-7>         which tier it belongs to               (required)
+  --area <0-7>         which area it belongs to               (required)
   --concepts <a,b,c>   comma-separated tags from concepts.ts  (required)
   --kind <k>           quest | invasion | boss                  (default: quest)
   --dc <5-30>          difficulty class, spec §5.1            (default: 10)
   --requires <a,b>     prerequisite ids, comma-separated
   --verifier <v>       hidden-tests | local-repo | peer-signoff | git-signal
-                       (default: peer-signoff for a boss, hidden-tests up to tier 1,
-                        local-repo from tier 2)
+                       (default: peer-signoff for a boss, hidden-tests up to area 1,
+                        local-repo from area 2)
   --themes <a;b;c>     semicolon-separated boss framings, §5.2 (default: three placeholders)
   --root <dir>         content root to write into             (default: the repository's content/)
   --force              overwrite files that already exist
@@ -67,7 +67,7 @@ async function main(argv: readonly string[]): Promise<number> {
       options: {
         id: { type: 'string' },
         title: { type: 'string' },
-        tier: { type: 'string' },
+        area: { type: 'string' },
         concepts: { type: 'string' },
         kind: { type: 'string' },
         dc: { type: 'string' },
@@ -91,7 +91,7 @@ async function main(argv: readonly string[]): Promise<number> {
   }
 
   /* Ask for what is missing, but only where there is someone to answer. */
-  const missing = (['id', 'title', 'tier', 'concepts'] as const).filter((key) => !values[key]);
+  const missing = (['id', 'title', 'area', 'concepts'] as const).filter((key) => !values[key]);
   if (missing.length > 0) {
     if (!process.stdin.isTTY) {
       console.error(
@@ -109,9 +109,9 @@ async function main(argv: readonly string[]): Promise<number> {
     }
   }
 
-  const tier = TierSchema.safeParse(Number(values.tier));
-  if (!tier.success) {
-    console.error(`--tier must be a whole number from 0 to 7, not ${JSON.stringify(values.tier)}`);
+  const area = AreaSchema.safeParse(Number(values.area));
+  if (!area.success) {
+    console.error(`--area must be a whole number from 0 to 7, not ${JSON.stringify(values.area)}`);
     return 2;
   }
 
@@ -120,7 +120,7 @@ async function main(argv: readonly string[]): Promise<number> {
       root: values.root === undefined ? DEFAULT_ROOT : resolveRoot(values.root),
       id: (values.id ?? '').trim(),
       title: (values.title ?? '').trim(),
-      tier: tier.data as Tier,
+      area: area.data as Area,
       concepts: list(values.concepts),
       kind: values.kind as Kind | undefined,
       dc: values.dc === undefined ? undefined : Number(values.dc),

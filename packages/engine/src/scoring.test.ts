@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import * as engine from './scoring.ts';
 import {
   IllegalModifierSetError,
-  QUESTS_PER_TIER,
+  QUESTS_PER_AREA,
   QUESTS_TO_UNLOCK_BOSS,
   bossUnlocked,
   effectiveDC,
@@ -100,7 +100,7 @@ describe('xpFor — spec §5.1', () => {
   it('pays the flat kinds their §5.1 table amount', () => {
     expect(xpFor('invasion')).toBe(5);
     expect(xpFor('journal-entry')).toBe(10);
-    expect(xpFor('tier-release-notes')).toBe(75);
+    expect(xpFor('area-release-notes')).toBe(75);
     expect(xpFor('co-op-session')).toBe(20);
   });
 
@@ -110,7 +110,7 @@ describe('xpFor — spec §5.1', () => {
       xpFor('boss', 15),
       xpFor('invasion'),
       xpFor('journal-entry'),
-      xpFor('tier-release-notes'),
+      xpFor('area-release-notes'),
       xpFor('co-op-session'),
     ];
     expect(new Set(paid).size).toBe(paid.length);
@@ -217,7 +217,7 @@ describe('medalDelta — spec §5.10 (DC-2)', () => {
 
 describe('bossUnlocked — spec §5.2', () => {
   it('unlocks on the third cleared quest', () => {
-    // "Each tier offers five quests; any three unlock the boss."
+    // "Each area offers five quests; any three unlock the boss."
     expect(bossUnlocked(3)).toBe(true);
   });
 
@@ -234,7 +234,7 @@ describe('bossUnlocked — spec §5.2', () => {
 
   it('publishes the two counts §5.2 fixes, so no caller has to hard-code three of five', () => {
     expect(QUESTS_TO_UNLOCK_BOSS).toBe(3);
-    expect(QUESTS_PER_TIER).toBe(5);
+    expect(QUESTS_PER_AREA).toBe(5);
   });
 });
 

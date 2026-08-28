@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+    .kw{color:#9c95e0;} .st{color:#5aa860;} .nu{color:#d9a441;} .cm{color:#5d6878;} .bi{color:#3f9fb5;}
+    .term{color:#e8ecf2;font-weight:600;}
+    .body p{margin:0 0 12px;color:#c6ced9;}
+    .code{background:#0e1116;border-left:2px solid #232a35;padding:12px 16px;margin:12px 0;
+      font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.75;white-space:pre;
+      overflow-x:auto;}
+    h2.sec{font-family:'Archivo Black',sans-serif;font-weight:400;font-size:17px;
+      margin:30px 0 10px;letter-spacing:-.01em;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 5.6c-1.9-1.3-4.1-1.7-6.6-1.4v9.8c2.5-.3 4.7.1 6.6 1.4" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 5.6c1.9-1.3 4.1-1.7 6.6-1.4v9.8c-2.5-.3-4.7.1-6.6 1.4" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 5.6v9.8" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Tome</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 2.8 16 5.1V10.3c0 3.4-2.5 5.8-6 6.9-3.5-1.1-6-3.5-6-6.9V5.1Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 6.5V13.3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path><path d="M7.9 8.9H12.1" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Defend</span><span style="position:absolute; top:6px; right:12px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="7.9" cy="7.3" r="2.7" fill="none" stroke="#5d6878" stroke-width="1.5"></circle><path d="M3.4 16.8v-.7c0-2.5 2-4.1 4.5-4.1s4.5 1.6 4.5 4.1v.7" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path><circle cx="14.7" cy="5.9" r="2" fill="none" stroke="#5d6878" stroke-width="1.3"></circle><path d="M14.1 10.1c2 0 3.4 1.5 3.4 3.7v.6" fill="none" stroke="#5d6878" stroke-width="1.3" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Console</span><span style="position:absolute; top:6px; right:12px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex">
+
+  <!-- the whole syllabus, always visible, nothing locked -->
+  <div style="width:264px; flex-shrink:0; border-right:1px solid #232a35; background:#161a22;
+              display:flex; flex-direction:column; min-height:0">
+    <div style="padding:22px 20px 14px; border-bottom:1px solid #232a35">
+      <h1 class="disp" style="margin:0 0 3px; font-size:20px">The Tome</h1>
+      <div class="mono" style="font-size:10.5px; color:#5d6878">48 weeks · 8 areas · 91 concepts</div>
+    </div>
+    <div style="flex-grow:1; overflow:auto; padding:10px 0">
+      <sc-for list="{{ syllabus }}" as="a" hint-placeholder-count="8">
+        <div style="padding:9px 20px; background:{{ a.bg }}; border-left:2px solid {{ a.accent }}">
+          <div style="display:flex; align-items:baseline; gap:8px">
+            <span class="mono" style="font-size:10px; color:{{ a.accent }}; width:14px">{{ a.n }}</span>
+            <span style="font-size:13px; color:{{ a.fg }}; font-weight:{{ a.weight }}; flex-grow:1">{{ a.name }}</span>
+            <span class="mono" style="font-size:10px; color:#5d6878">{{ a.weeks }}</span>
+          </div>
+          <div class="mono" style="font-size:10px; color:#4a5361; margin-left:22px">{{ a.concepts }}</div>
+        </div>
+      </sc-for>
+      <div style="height:1px; background:#232a35; margin:12px 20px"></div>
+      <div style="padding:4px 20px 12px">
+        <div class="mono" style="font-size:10.5px; color:#5d6878; line-height:1.7">
+          Every page is open from day one. Nothing here unlocks — you may read
+          ahead, and beating a boss early is a legal move.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- the field manual -->
+  <div style="flex-grow:1; min-width:0; overflow:auto; padding:34px 46px 60px">
+    <div style="max-width:660px">
+      <div class="eyebrow" style="color:#5aa860; margin-bottom:8px">Field manual · Area 3</div>
+      <h1 class="disp" style="margin:0 0 6px; font-size:38px; line-height:1.05">Collections</h1>
+      <p style="margin:0 0 4px; color:#98a3b3">
+        Weeks 9–14 · 16 concepts · everything below is on the Boss 3 specification.
+      </p>
+      <div style="height:1px; background:#232a35; margin:24px 0"></div>
+
+      <div class="body">
+        <p>
+          So far every variable has held exactly one thing. One number, one word, one
+          answer. That runs out fast: a player has an <em>inventory</em>, a crafting
+          table has a <em>book</em> of recipes, a world has a <em>palette</em> of blocks.
+          This area is the four shapes Python gives you for holding many things at once,
+          and the rule for choosing between them.
+        </p>
+
+        <h2 class="sec">1 · Lists — things in order</h2>
+        <p>
+          A <span class="term">list</span> holds items in the order you put them, and it
+          can change after you make it. Square brackets, commas between.
+        </p>
+        <div class="code"><span class="cm"># an inventory is a list</span>
+inventory = [<span class="st">"stick"</span>, <span class="st">"coal"</span>, <span class="st">"stick"</span>, <span class="st">"wood"</span>]
+
+inventory.append(<span class="st">"flint"</span>)     <span class="cm"># add to the end</span>
+inventory.remove(<span class="st">"coal"</span>)      <span class="cm"># take the first one out</span>
+<span class="bi">len</span>(inventory)                <span class="cm"># how many -> 4</span></div>
+        <p>
+          Order is the whole point. <span class="mono st">"stick"</span> appears twice and
+          that is fine — a list does not care about duplicates.
+        </p>
+
+        <h2 class="sec">2 · Indexing and slicing — reaching in</h2>
+        <p>
+          <span class="term">Indexing</span> takes one item by position, counting from
+          <span class="mono nu">0</span>. <span class="term">Slicing</span> takes a run of
+          them, and the second number is where to <em>stop</em>, not the last one kept.
+        </p>
+        <div class="code">blocks = [<span class="st">"dirt"</span>, <span class="st">"stone"</span>, <span class="st">"coal"</span>, <span class="st">"iron"</span>, <span class="st">"gold"</span>]
+
+blocks[<span class="nu">0</span>]        <span class="cm"># "dirt"   — the first</span>
+blocks[-<span class="nu">1</span>]       <span class="cm"># "gold"   — the last</span>
+blocks[<span class="nu">1</span>:<span class="nu">3</span>]      <span class="cm"># ["stone", "coal"]  — stops before 3</span>
+blocks[<span class="nu">1</span>:-<span class="nu">1</span>]     <span class="cm"># everything but the ends</span></div>
+        <div style="border:1px solid #4a3a20; background:#1c1710; padding:12px 15px; margin:14px 0">
+          <div class="mono" style="font-size:10.5px; letter-spacing:.1em; color:#d9a441; margin-bottom:5px">TRAP</div>
+          <div style="color:#c6ced9; font-size:13px">
+            <span class="mono">blocks[5]</span> on a five-item list raises
+            <span class="mono" style="color:#cc5a5a">IndexError</span>. Five items means the
+            last index is <span class="mono nu">4</span>. Counting from zero costs you
+            exactly one mistake, once, and then never again.
+          </div>
+        </div>
+
+        <h2 class="sec">3 · Dicts — a key that finds a value</h2>
+        <p>
+          A <span class="term">dict</span> is a lookup. You give it a key and it hands back
+          the value you stored under that key. Unordered by intent — you do not ask a dict
+          for its third thing, you ask it for the thing called <span class="mono st">"coal"</span>.
+        </p>
+        <div class="code">recipe = {<span class="st">"stick"</span>: <span class="nu">1</span>, <span class="st">"coal"</span>: <span class="nu">1</span>}
+
+recipe[<span class="st">"coal"</span>]              <span class="cm"># 1</span>
+recipe[<span class="st">"gold"</span>]              <span class="cm"># KeyError — there is no such key</span>
+recipe.get(<span class="st">"gold"</span>, <span class="nu">0</span>)       <span class="cm"># 0  — a default instead of a crash</span>
+
+<span class="kw">for</span> block <span class="kw">in</span> recipe:        <span class="cm"># walks the KEYS</span>
+    <span class="bi">print</span>(block, recipe[block])</div>
+        <div style="border:1px solid #4a3a20; background:#1c1710; padding:12px 15px; margin:14px 0">
+          <div class="mono" style="font-size:10.5px; letter-spacing:.1em; color:#d9a441; margin-bottom:5px">TRAP — the one that will bite you</div>
+          <div style="color:#c6ced9; font-size:13px">
+            A <em>missing key is not zero</em>. If the inventory has never held coal, then
+            <span class="mono">inventory["coal"]</span> does not answer
+            <span class="mono nu">0</span> — it raises
+            <span class="mono" style="color:#cc5a5a">KeyError</span> and stops your program.
+            When you mean <em>"however many, possibly none"</em>, say
+            <span class="mono">.get(key, 0)</span>.
+          </div>
+        </div>
+
+        <h2 class="sec">4 · Sets — what is present, once</h2>
+        <p>
+          A <span class="term">set</span> answers one question fast: is this in here? No
+          order, no duplicates, no counting. A block palette is a set — a world either uses
+          sandstone or it does not.
+        </p>
+        <div class="code">palette = {<span class="st">"dirt"</span>, <span class="st">"stone"</span>, <span class="st">"dirt"</span>}   <span class="cm"># -> {"dirt", "stone"}</span>
+
+<span class="st">"stone"</span> <span class="kw">in</span> palette                   <span class="cm"># True</span>
+palette.add(<span class="st">"glass"</span>)
+palette | other                       <span class="cm"># in either</span>
+palette &amp; other                       <span class="cm"># in both</span></div>
+
+        <h2 class="sec">5 · Choosing between them</h2>
+        <div style="border:1px solid #232a35; margin:12px 0">
+          <sc-for list="{{ chooser }}" as="c" hint-placeholder-count="4">
+            <div style="display:flex; gap:16px; padding:11px 15px; border-bottom:1px solid #1c222b">
+              <span class="mono" style="font-size:12.5px; color:#5aa860; width:56px; flex-shrink:0">{{ c.kind }}</span>
+              <span style="color:#c6ced9; font-size:13px; flex-grow:1">{{ c.when }}</span>
+              <span class="mono" style="font-size:11.5px; color:#5d6878; width:150px; flex-shrink:0">{{ c.eg }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <h2 class="sec">6 · Nesting — collections inside collections</h2>
+        <p>
+          A recipe book is a dict whose values are themselves dicts. Nothing new is
+          happening: you reach in one layer at a time, left to right.
+        </p>
+        <div class="code">RECIPES = {
+    <span class="st">"torch"</span>: {<span class="st">"stick"</span>: <span class="nu">1</span>, <span class="st">"coal"</span>: <span class="nu">1</span>},
+    <span class="st">"chest"</span>: {<span class="st">"wood"</span>: <span class="nu">8</span>},
+}
+
+RECIPES[<span class="st">"torch"</span>]              <span class="cm"># {"stick": 1, "coal": 1}</span>
+RECIPES[<span class="st">"torch"</span>][<span class="st">"coal"</span>]      <span class="cm"># 1</span></div>
+
+        <h2 class="sec">7 · The five that work on all of them</h2>
+        <div class="code"><span class="bi">len</span>(x)        <span class="cm"># how many</span>
+item <span class="kw">in</span> x    <span class="cm"># is it there — fast on a set, slow on a long list</span>
+<span class="bi">sorted</span>(x)     <span class="cm"># a NEW list, in order; the original is untouched</span>
+<span class="bi">min</span>(x), <span class="bi">max</span>(x)</div>
+
+        <div style="border:1px solid #3f7844; background:#141d16; padding:18px 20px; margin:32px 0 0">
+          <div class="eyebrow" style="color:#5aa860; margin-bottom:10px">Before Boss 3 — read this page again</div>
+          <div style="color:#c6ced9; font-size:13px; margin-bottom:12px">
+            You should be able to answer these without running anything. If one of them
+            is a shrug, the section above it is the one to re-read.
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px">
+            <sc-for list="{{ checks }}" as="q" hint-placeholder-count="5">
+              <div style="display:flex; gap:11px; align-items:baseline">
+                <span class="mono" style="font-size:11px; color:#5aa860; flex-shrink:0">§{{ q.n }}</span>
+                <span style="color:#c6ced9; font-size:13px">{{ q.q }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- on this page -->
+  <div style="width:212px; flex-shrink:0; border-left:1px solid #232a35; padding:34px 22px;
+              background:#12151c">
+    <div class="eyebrow" style="margin-bottom:14px">On this page</div>
+    <div style="display:flex; flex-direction:column; gap:9px">
+      <sc-for list="{{ toc }}" as="t" hint-placeholder-count="8">
+        <div style="display:flex; gap:9px; align-items:baseline">
+          <span class="mono" style="font-size:10.5px; color:#3d4757; width:10px">{{ t.n }}</span>
+          <span style="font-size:12.5px; color:{{ t.fg }}">{{ t.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="height:1px; background:#232a35; margin:24px 0"></div>
+    <div class="eyebrow" style="margin-bottom:12px">Quests using this</div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <sc-for list="{{ quests }}" as="q" hint-placeholder-count="5">
+        <div style="font-size:12.5px; color:{{ q.fg }}">{{ q.title }}</div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals(){
+    var A = [
+      { n: '0', name: 'First Light', weeks: 'wk 1–2',   concepts: '9 concepts', accent: '#d9a441' },
+      { n: '1', name: 'Control',     weeks: 'wk 3–6',   concepts: '10 concepts', accent: '#d97742' },
+      { n: '2', name: 'Sandbox',     weeks: 'wk 6–8',   concepts: '14 concepts', accent: '#8b95a5' },
+      { n: '3', name: 'Collections', weeks: 'wk 9–14',  concepts: '16 concepts', accent: '#5aa860', here: true },
+      { n: '4', name: 'Functions',   weeks: 'wk 15–20', concepts: '15 concepts', accent: '#3f9fb5' },
+      { n: '5', name: 'Objects',     weeks: 'wk 21–28', concepts: '11 concepts', accent: '#7a72c9' },
+      { n: '6', name: 'Data',        weeks: 'wk 29–36', concepts: '9 concepts',  accent: '#b968a8' },
+      { n: '7', name: 'Craft',       weeks: 'wk 37–48', concepts: '10 concepts', accent: '#cc5a5a' }
+    ];
+    var syllabus = A.map(function(a){
+      return { n: a.n, name: a.name, weeks: a.weeks, concepts: a.concepts,
+               accent: a.here ? a.accent : '#2b323d',
+               bg: a.here ? '#1a2119' : 'transparent',
+               fg: a.here ? '#e8ecf2' : '#98a3b3',
+               weight: a.here ? '600' : '400' };
+    });
+
+    var chooser = [
+      { kind: 'list', when: 'Order matters, and the same thing may appear twice.', eg: 'an inventory' },
+      { kind: 'dict', when: 'You will look things up by name.', eg: 'a recipe book' },
+      { kind: 'set',  when: 'You only care whether something is present.', eg: 'a block palette' },
+      { kind: 'tuple', when: 'A fixed group that must not change.', eg: 'a position (x, y, z)' }
+    ];
+
+    var toc = [
+      { n: '1', label: 'Lists' }, { n: '2', label: 'Indexing and slicing' },
+      { n: '3', label: 'Dicts' }, { n: '4', label: 'Sets' },
+      { n: '5', label: 'Choosing between them' }, { n: '6', label: 'Nesting' },
+      { n: '7', label: 'The five built-ins' }, { n: '✓', label: 'Before Boss 3' }
+    ].map(function(t, i){ return { n: t.n, label: t.label, fg: i === 2 ? '#5aa860' : '#98a3b3' }; });
+
+    var checks = [
+      { n: '2', q: 'Why does blocks[1:3] give you two items, not three?' },
+      { n: '3', q: 'What does a dict do when the key is not there, and how do you ask nicely?' },
+      { n: '4', q: 'Why is a set the right shape for a block palette and the wrong one for an inventory?' },
+      { n: '6', q: 'Reach the number of sticks a torch needs, in one line.' },
+      { n: '7', q: 'After sorted(blocks), what is blocks?' }
+    ];
+
+    var quests = [
+      { title: 'Inventory Lists', done: true }, { title: 'The Block Palette', done: true },
+      { title: 'The Recipe Book', done: false }, { title: 'Shulker Sort', done: false },
+      { title: 'Nested Chests', done: false }
+    ].map(function(q){ return { title: q.title, fg: q.done ? '#5aa860' : '#98a3b3' }; });
+
+    return { syllabus: syllabus, chooser: chooser, toc: toc, checks: checks, quests: quests };
+  }
+}
+</script>
+</body>
+</html>

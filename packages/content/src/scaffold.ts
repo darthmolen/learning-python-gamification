@@ -6,7 +6,7 @@
  * placeholders the author has to notice and fix is not a two-minute quest, it is a two-minute
  * quest plus a run of the validator plus a hunt.
  *
- * So everything generated here is legal content: a real tier manifest if the tier is new, a
+ * So everything generated here is legal content: a real area manifest if the area is new, a
  * real brief, real starter and test files where the verifier needs them, and theme framings
  * already present on a boss (§5.2). The placeholders are all *prose*, which the validator
  * cannot check and a person will replace anyway.
@@ -15,9 +15,9 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { z } from 'zod';
-import { conceptTier } from './concepts.ts';
+import { conceptArea } from './concepts.ts';
 import { checkContent } from './validate.ts';
-import { parseContentItem, type Kind, type Tier } from './schema.ts';
+import { parseContentItem, type Kind, type Area } from './schema.ts';
 
 /** The verifier kinds a scaffold can wire up, by their §6.3 names. */
 export type VerifierType = 'hidden-tests' | 'local-repo' | 'peer-signoff' | 'git-signal';
@@ -26,7 +26,7 @@ export interface ScaffoldOptions {
   readonly root: string;
   readonly id: string;
   readonly title: string;
-  readonly tier: Tier;
+  readonly area: Area;
   readonly concepts: readonly string[];
   readonly kind?: Kind;
   readonly dc?: number;
@@ -46,13 +46,13 @@ export interface ScaffoldResult {
 export class ScaffoldError extends Error {}
 
 /**
- * Spec §6.3 maps verifier to phase: hidden-tests for the Tier 0–1 drills, local-repo from Tier
+ * Spec §6.3 maps verifier to phase: hidden-tests for the Area 0–1 drills, local-repo from Area
  * 2b onward once his code reaches the server by push, and peer-signoff for a boss, which has no
  * starter to run.
  */
-function defaultVerifier(kind: Kind, tier: Tier): VerifierType {
+function defaultVerifier(kind: Kind, area: Area): VerifierType {
   if (kind === 'boss') return 'peer-signoff';
-  return tier <= 1 ? 'hidden-tests' : 'local-repo';
+  return area <= 1 ? 'hidden-tests' : 'local-repo';
 }
 
 const DEFAULT_DC = 10;
@@ -68,7 +68,7 @@ const PLACEHOLDER_THEMES = [
  * Templates
  * ----------------------------------------------------------------------------------------- */
 
-function questYaml(o: Required<Pick<ScaffoldOptions, 'id' | 'title' | 'tier' | 'concepts'>> & {
+function questYaml(o: Required<Pick<ScaffoldOptions, 'id' | 'title' | 'area' | 'concepts'>> & {
   kind: Kind;
   dc: number;
   requires: readonly string[];
@@ -79,7 +79,7 @@ function questYaml(o: Required<Pick<ScaffoldOptions, 'id' | 'title' | 'tier' | '
     `id: ${o.id}`,
     `title: ${JSON.stringify(o.title)}`,
     `kind: ${o.kind}`,
-    `tier: ${o.tier}`,
+    `area: ${o.area}`,
     `concepts: [${o.concepts.join(', ')}]`,
   ];
   if (o.requires.length > 0) lines.push(`requires: [${o.requires.join(', ')}]`);
@@ -171,11 +171,11 @@ def test_hidden_tests_have_not_been_written_yet() -> None:
 `;
 }
 
-function tierManifestYaml(tier: Tier): string {
+function areaManifestYaml(area: Area): string {
   return `# Spec §5.1a - this is the denominator every progress display reads. \`partial\` means the
 # total below is an estimate, and the UI must render it with a tilde: "1 of ~5".
-tier: ${tier}
-title: "Tier ${tier}"
+area: ${area}
+title: "Area ${area}"
 authoring: partial
 estimatedQuests: 5
 `;
@@ -206,7 +206,7 @@ export function scaffoldQuest(options: ScaffoldOptions): ScaffoldResult {
   const kind = options.kind ?? 'quest';
   const dc = options.dc ?? DEFAULT_DC;
   const requires = options.requires ?? [];
-  const verifier = options.verifier ?? defaultVerifier(kind, options.tier);
+  const verifier = options.verifier ?? defaultVerifier(kind, options.area);
   const themes = kind === 'boss' ? (options.themes ?? PLACEHOLDER_THEMES) : options.themes;
 
   /* Refuse before writing. A half-written quest is worse than a rejected one. */
@@ -216,17 +216,17 @@ export function scaffoldQuest(options: ScaffoldOptions): ScaffoldResult {
   }
 
   for (const concept of options.concepts) {
-    const taught = conceptTier(concept);
+    const taught = conceptArea(concept);
     if (taught === undefined) {
       throw new ScaffoldError(
         `"${concept}" is not a known concept tag. Pick one from packages/content/src/concepts.ts, ` +
           'or add it there if the curriculum really teaches it.',
       );
     }
-    if (taught > options.tier) {
+    if (taught > options.area) {
       throw new ScaffoldError(
-        `"${concept}" is first taught in tier ${taught}, so a tier ${options.tier} item may not tag it. ` +
-          `Drop the tag, or author this as a tier ${taught} item.`,
+        `"${concept}" is first taught in area ${taught}, so an area ${options.area} item may not tag it. ` +
+          `Drop the tag, or author this as an area ${taught} item.`,
       );
     }
   }
@@ -235,7 +235,7 @@ export function scaffoldQuest(options: ScaffoldOptions): ScaffoldResult {
     id: options.id,
     title: options.title,
     kind,
-    tier: options.tier,
+    area: options.area,
     concepts: [...options.concepts],
     ...(requires.length > 0 ? { requires: [...requires] } : {}),
     dc,
@@ -276,7 +276,7 @@ export function scaffoldQuest(options: ScaffoldOptions): ScaffoldResult {
   const yaml = questYaml({
     id: options.id,
     title: options.title,
-    tier: options.tier,
+    area: options.area,
     concepts: [...options.concepts],
     kind,
     dc,
@@ -297,11 +297,11 @@ export function scaffoldQuest(options: ScaffoldOptions): ScaffoldResult {
     created.push(write(root, `tests/${options.id}_test.py`, testsPython(options.id), force));
   }
 
-  // Without a manifest the tier has no denominator (§5.1a) and the validator says so, which
+  // Without a manifest the area has no denominator (§5.1a) and the validator says so, which
   // would break the promise that a fresh scaffold validates.
-  const manifest = `tiers/tier-${options.tier}.yml`;
+  const manifest = `areas/area-${options.area}.yml`;
   if (!existsSync(join(root, manifest))) {
-    created.push(write(root, manifest, tierManifestYaml(options.tier), force));
+    created.push(write(root, manifest, areaManifestYaml(options.area), force));
   }
 
   return { created };

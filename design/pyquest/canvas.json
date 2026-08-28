@@ -6,24 +6,24 @@
       "y": 0,
       "w": 1440,
       "h": 900,
-      "title": "Campaign Map"
+      "title": "Map - the overland"
     },
     {
-      "file": "Main.dc.html",
+      "file": "Area.dc.html",
       "x": 1520,
       "y": 0,
       "w": 1440,
       "h": 900,
-      "title": "Quest — clickable",
-      "is_interactive": true
+      "title": "Area - brief, quests, boss"
     },
     {
-      "file": "Defend.dc.html",
+      "file": "Main.dc.html",
       "x": 3040,
       "y": 0,
       "w": 1440,
       "h": 900,
-      "title": "Defend"
+      "title": "Quest - clickable",
+      "is_interactive": true
     },
     {
       "file": "Boss.dc.html",
@@ -34,25 +34,41 @@
       "title": "Boss"
     },
     {
-      "file": "Party.dc.html",
+      "file": "Tome.dc.html",
       "x": 0,
-      "y": 1080,
+      "y": 1300,
+      "w": 1440,
+      "h": 900,
+      "title": "Tome - the field manual"
+    },
+    {
+      "file": "Defend.dc.html",
+      "x": 1520,
+      "y": 1300,
+      "w": 1440,
+      "h": 900,
+      "title": "Defend"
+    },
+    {
+      "file": "Party.dc.html",
+      "x": 3040,
+      "y": 1300,
       "w": 1440,
       "h": 900,
       "title": "Party"
     },
     {
       "file": "Journal.dc.html",
-      "x": 1520,
-      "y": 1080,
+      "x": 4560,
+      "y": 1300,
       "w": 1440,
       "h": 900,
       "title": "Journal"
     },
     {
       "file": "Console.dc.html",
-      "x": 3040,
-      "y": 1080,
+      "x": 0,
+      "y": 2600,
       "w": 1440,
       "h": 900,
       "title": "Console"
@@ -62,58 +78,58 @@
     {
       "id": "note-shell",
       "x": 0,
-      "y": -430,
-      "w": 920,
-      "text": "THE SHELL — these are one app, not seven pages\nEvery artboard carries the same 72px rail: Map, Quests, Defend, Boss, Party, Journal, Console. The active item is lit; badges carry live counts (4 invasions at the border, 2 sign-offs waiting), so the rail is the notification surface as well as the navigation.\n\nThe session loop runs Defend (repel invasions) -> Map (choose) -> Quests (build) -> Journal (write). Boss, Party and Console are entered from the rail whenever, not in sequence."
+      "y": -280,
+      "w": 1400,
+      "text": "THE OVERLAND, AND WHAT IS INSIDE A PLACE\nThe rail carries only what is true wherever you are standing: Map, Tome, Defend, Party, Journal, Console. Brief, quests and boss are not destinations - they are aspects of an area, so they live inside one. Having “Quests” in the rail implied you could be in Quests without being anywhere.\n\nThe top row is the drill-down: the overland, then a place, then the work, then the boss. Map stays lit across all four, because that is how you got there."
     },
     {
-      "id": "note-denominator",
-      "x": 0,
-      "y": -210,
-      "w": 440,
-      "text": "DENOMINATORS (§5.1a)\nThe tilde in \"3 of ~5\" is load-bearing, not decoration. Tier 3 is still being authored, so the total is an estimate and the UI says so. Content carries the fact (authoring: partial); this screen decides it renders as a tilde."
-    },
-    {
-      "id": "note-medals",
+      "id": "note-area",
       "x": 1520,
-      "y": -210,
-      "w": 440,
-      "text": "MEDALS AND DATAMINE (§5.10, §5.5)\nUnearned medal slots render greyed but present — visible-but-locked, same psychology as the skill tree.\n\nSubmit actually reads the editor. The starter indexes inventory[block] directly, so a missing block raises KeyError instead of answering False. It fails until you fix it — .get(), or a membership check. Two failures open the Datamine."
+      "y": -280,
+      "w": 1400,
+      "text": "THE AREA SCREEN\nOne page holding the three things about this place: what it teaches, the five quests, and the boss. The brief points at the Tome rather than trying to teach in a card - a paragraph in a panel is not instruction.\n\nThe challenge run sits in the sidebar on purpose. It is a legal opening move, not a reward for finishing."
     },
     {
-      "id": "note-invasions",
+      "id": "note-quest",
       "x": 3040,
-      "y": -210,
-      "w": 440,
-      "text": "THE INVASION LADDER — needs your ruling\nThe spec names a review interval and never specifies it. Proposed: an invasion arrives at 1, 3, 7, 16, then 35 days untouched. Repel one and it stays away longer; miss it and it returns a rung sooner rather than from zero, because resetting punishes a bad night and floods the next border."
+      "y": -280,
+      "w": 1400,
+      "text": "MEDALS, DATAMINE, AND A SUBMIT THAT READS THE CODE\nUnearned medal slots render greyed but present. Datamine gets its own panel because it is a modifier, not a medal, so it has no slot.\n\nSubmit actually parses the editor. The starter indexes inventory[block] directly, so a missing block raises KeyError instead of answering False - it fails until you handle the absent key with .get() or a membership test. Two failures open the Datamine."
     },
     {
       "id": "note-scars",
       "x": 4560,
-      "y": -210,
-      "w": 440,
-      "text": "SCARS (§5.3, §3.5)\nFailed attempts are listed with what actually went wrong, newest first, and never collapsed behind a toggle. Four attempts on a boss is not a bad record — it is the record."
+      "y": -280,
+      "w": 1400,
+      "text": "SCARS (§5.3, §3.5)\nFailed attempts listed with what actually went wrong, newest first, never collapsed behind a toggle. Four attempts on a boss is not a bad record - it is the record."
     },
     {
-      "id": "note-warning",
+      "id": "note-learning",
       "x": 0,
-      "y": 2030,
-      "w": 440,
-      "text": "THE DC WARNING LIVES HERE, NOT IN THE ENGINE (§5.1)\nThe engine returns 20. This layer decides that 20 earns a triangle. Every other surface reads the same number and renders it its own way, so no two can disagree."
+      "y": 1030,
+      "w": 1400,
+      "text": "THE TOME - where the learning actually lives\nThe gap this closes: §2.2 concedes that gamification has “minimal impact on competency”, and the spec's answer is that building things teaches. But that assumed he already knew what a dict was when he opened The Recipe Book. The only instruction in the system was a brief per quest - which is the fragmentation - plus session plans living nowhere near the app.\n\nDense on purpose, and open on purpose. Nothing here unlocks: a Tome that only opened what he had already met would break the challenge run, which §5.2 says may be taken cold on pre-knowledge. And finding what you need in a dense page is the actual skill - it is how every reference he will ever meet works.\n\nAuthoring rule: it teaches the language, never the quest. dict gets inventory[“coal”], never can_craft. Otherwise the reference becomes a solutions manual and Datamine stops meaning anything."
+    },
+    {
+      "id": "note-invasions",
+      "x": 1520,
+      "y": 1030,
+      "w": 1400,
+      "text": "THE INVASION LADDER - still needs your ruling\nProposed: an invasion arrives at 1, 3, 7, 16, then 35 days untouched. Repel one and it stays away longer; miss it and it returns a rung sooner rather than from zero, because resetting punishes a bad night and floods the next border."
     },
     {
       "id": "note-zero-xp",
-      "x": 1520,
-      "y": 2030,
-      "w": 440,
-      "text": "STILL OPEN: THE +0 XP MEDAL\nAt base DC 5 the clamp absorbs both negative modifiers, so a medal can legitimately pay nothing. Not solved on these boards — it needs a rendering that explains itself before it ships."
+      "x": 3040,
+      "y": 1030,
+      "w": 1400,
+      "text": "STILL OPEN: THE +0 XP MEDAL\nAt base DC 5 the clamp absorbs both negative modifiers, so a medal can legitimately pay nothing. Not solved on these boards - it needs a rendering that explains itself before it ships."
     },
     {
       "id": "note-lexicon",
-      "x": 3040,
-      "y": 2030,
-      "w": 900,
-      "text": "LEXICON RESET — 2026-08-27\nPatrol → Invasion, Muster → Defend, Chronicle → Journal, Board → Party, Quest → Quests in the rail.\n\nTwo reasons. The old words were ones an 11-year-old meets in late teens at best; and \"Board\" collided with \"quest board\" when quest was already in the lexicon. Party won over Levels because the curriculum already numbers Tiers 0–7, and level (from XP) is a different number than tier (from position) — putting both on screen invites exactly one question with a confusing answer.\n\nRenamed everywhere, not only here: spec, content schema (kind: invasion), engine XP kinds, curriculum. Boss 7 puts him inside the engine repo reading that YAML, so the authoring words and the playing words have to be the same words."
+      "x": 0,
+      "y": 2330,
+      "w": 1400,
+      "text": "LEXICON - one vocabulary, everywhere\nPatrol → Invasion. Muster → Defend. Chronicle → Journal. Board → Party. Tier → Area.\n\nRenamed through spec, content schema, engine, curriculum and UI, not only here: at Boss 7 he opens the engine repository and reads area: 3 in the YAML, and it should be the word he has said out loud all year. Area beat Tier because the map is a place. Party beat Levels because level (from XP) and area (from position) are different numbers, and both on screen invites one question with a confusing answer."
     }
   ],
   "launch": {

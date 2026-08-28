@@ -7,7 +7,7 @@
  * that is trivially testable.
  *
  * Scope is deliberately narrow. This module holds only the arithmetic §5.1, §5.2 and §5.10
- * pin to the number. `availableQuests`, `tierProgress`, `dueInvasions`, `standings` and `level`
+ * pin to the number. `availableQuests`, `areaProgress`, `dueInvasions`, `standings` and `level`
  * are projections whose shape only a real screen can settle, so they are deferred rather than
  * guessed at and built twice.
  */
@@ -111,7 +111,7 @@ export const XP_PER_DC = {
 export const FLAT_XP = {
   invasion: 5,
   'journal-entry': 10,
-  'tier-release-notes': 75,
+  'area-release-notes': 75,
   'co-op-session': 20,
 } as const;
 
@@ -182,8 +182,8 @@ export function medalDelta(
  * Boss unlock — spec §5.2
  * ----------------------------------------------------------------------------------------- */
 
-/** §5.2: "Each tier offers five quests; any three unlock the boss. He chooses which three." */
-export const QUESTS_PER_TIER = 5;
+/** §5.2: "Each area offers five quests; any three unlock the boss. He chooses which three." */
+export const QUESTS_PER_AREA = 5;
 export const QUESTS_TO_UNLOCK_BOSS = 3;
 
 /**
@@ -191,7 +191,7 @@ export const QUESTS_TO_UNLOCK_BOSS = 3;
  * the autonomy the rule exists to protect, so nothing here asks which quests they were.
  *
  * A challenge run (§5.2, §5.11) does not consult this at all: any boss may be attempted early.
- * This answers "has the tier been played through", not "may the boss be attempted".
+ * This answers "has the area been played through", not "may the boss be attempted".
  */
 export function bossUnlocked(clearedQuestCount: number): boolean {
   return clearedQuestCount >= QUESTS_TO_UNLOCK_BOSS;

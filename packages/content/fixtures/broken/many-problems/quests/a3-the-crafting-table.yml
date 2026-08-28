@@ -1,0 +1,14 @@
+id: a3-the-crafting-table
+title: The Crafting Table
+kind: boss
+area: 3
+concepts: [dict, class]
+requires: [a3-inventory-lists, a3-shulker-sort]
+dc: 16
+brief: briefs/b.md
+themes:
+  - A potion brewer
+  - A blacksmith
+verifier:
+  type: peer-signoff
+  by: other-player

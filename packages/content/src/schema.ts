@@ -86,7 +86,7 @@ const RelativePathSchema = z
 /**
  * Submit posts the code to the API, which runs tests the client never sees. Spec §6.3: anything
  * shipped to the browser is readable, so hidden tests shipped to the client are not hidden.
- * Used by the Tier 0–1 drills.
+ * Used by the Area 0–1 drills.
  */
 const HiddenTestsVerifierSchema = z.object({
   type: z.literal('hidden-tests'),
@@ -95,7 +95,7 @@ const HiddenTestsVerifierSchema = z.object({
 });
 
 /**
- * The API pulls his repository and runs the quest's pytest specification (§6.4). Tier 2b
+ * The API pulls his repository and runs the quest's pytest specification (§6.4). Area 2b
  * onward, once his code reaches the server the only way code travels between machines.
  */
 const LocalRepoVerifierSchema = z.object({
@@ -134,8 +134,8 @@ export type Verifier = z.infer<typeof VerifierSchema>;
  * Content items
  * ----------------------------------------------------------------------------------------- */
 
-export const TIERS = [0, 1, 2, 3, 4, 5, 6, 7] as const;
-export const TierSchema = z.union([
+export const AREAS = [0, 1, 2, 3, 4, 5, 6, 7] as const;
+export const AreaSchema = z.union([
   z.literal(0),
   z.literal(1),
   z.literal(2),
@@ -145,17 +145,17 @@ export const TierSchema = z.union([
   z.literal(6),
   z.literal(7),
 ]);
-export type Tier = z.infer<typeof TierSchema>;
+export type Area = z.infer<typeof AreaSchema>;
 
 export const KindSchema = z.enum(['quest', 'invasion', 'boss']);
 export type Kind = z.infer<typeof KindSchema>;
 
-/** Stable content id, e.g. `t3-recipe-book`. Referenced by `requires` and by progress rows. */
+/** Stable content id, e.g. `a3-recipe-book`. Referenced by `requires` and by progress rows. */
 const IdSchema = z
   .string()
   .regex(
     /^[a-z0-9]+(-[a-z0-9]+)*$/,
-    'must be lower-case kebab-case, e.g. "t3-recipe-book"',
+    'must be lower-case kebab-case, e.g. "a3-recipe-book"',
   );
 
 /**
@@ -172,7 +172,7 @@ export const ContentItemSchema = z
     id: IdSchema,
     title: z.string().min(1),
     kind: KindSchema,
-    tier: TierSchema,
+    area: AreaSchema,
 
     /** Non-empty: a quest that teaches nothing cannot be scheduled for review (§5.4). */
     concepts: z.array(ConceptTagSchema).min(1, 'needs at least one concept tag'),
@@ -241,20 +241,20 @@ export const ContentItemSchema = z
 export type ContentItem = z.infer<typeof ContentItemSchema>;
 
 /* -------------------------------------------------------------------------------------------
- * Tier manifests
+ * Area manifests
  * ----------------------------------------------------------------------------------------- */
 
 /**
  * Spec §5.1a — every progress display shows cleared of total, never a bare XP figure, and where
- * a tier is not yet fully authored the total wears a tilde: `1 of ~5`. An estimate marked as an
+ * an area is not yet fully authored the total wears a tilde: `1 of ~5`. An estimate marked as an
  * estimate is honest; an estimate presented as fact is not, and he will find out either way.
  *
  * The manifest carries the fact. Whether it renders as a tilde is the UI's decision, the same
  * layer boundary §5.1 draws for the DC warning threshold.
  */
-export const TierManifestSchema = z
+export const AreaManifestSchema = z
   .object({
-    tier: TierSchema,
+    area: AreaSchema,
     title: z.string().min(1),
     /**
      * `complete` means the authored quests are all of them; `partial` means the total is an
@@ -271,12 +271,12 @@ export const TierManifestSchema = z
         code: z.ZodIssueCode.custom,
         path: ['estimatedQuests'],
         message:
-          'a partially authored tier must estimate its total, so the UI can mark it as an estimate (spec §5.1a)',
+          'a partially authored area must estimate its total, so the UI can mark it as an estimate (spec §5.1a)',
       });
     }
   });
 
-export type TierManifest = z.infer<typeof TierManifestSchema>;
+export type AreaManifest = z.infer<typeof AreaManifestSchema>;
 
 /* -------------------------------------------------------------------------------------------
  * Parsing
@@ -287,9 +287,9 @@ export function parseContentItem(raw: unknown): ContentItem {
   return ContentItemSchema.parse(raw);
 }
 
-/** Parse and validate one tier manifest. */
-export function parseTierManifest(raw: unknown): TierManifest {
-  return TierManifestSchema.parse(raw);
+/** Parse and validate one area manifest. */
+export function parseAreaManifest(raw: unknown): AreaManifest {
+  return AreaManifestSchema.parse(raw);
 }
 
 /** The medal slots an item offers, applying the §5.10 default. */

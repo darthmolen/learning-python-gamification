@@ -8,7 +8,7 @@ player.
 
 | Directory | Holds |
 |---|---|
-| `tiers/` | One tier manifest per tier, `tier-<n>.yml` — the denominator of §5.1a |
+| `areas/` | One area manifest per area, `area-<n>.yml` — the denominator of §5.1a |
 | `quests/` | One YAML file per content item: quest, invasion, or boss (§6.2) |
 | `briefs/` | The markdown brief each item points at |
 | `starters/` | Starter files for `hidden-tests` verifiers |
@@ -16,7 +16,7 @@ player.
 | `transcripts/` | Canned AI conversations for the Scrollcraft arc (§6.2) |
 
 **Every path inside a YAML file is relative to this directory**, exactly as the §6.2 example
-writes them (`briefs/t3-recipe-book.md`). Absolute paths and `..` segments are refused by the
+writes them (`briefs/a3-recipe-book.md`). Absolute paths and `..` segments are refused by the
 schema: content may not reach outside the content root.
 
 The file name of a quest does not matter to the loader — the `id` field is the identity, and
@@ -26,11 +26,11 @@ The file name of a quest does not matter to the loader — the `id` field is the
 ## Working here
 
 ```
-npm run new:quest -- --id t3-recipe-book --title "The Recipe Book" --tier 3 --concepts dict,iteration --dc 12
+npm run new:quest -- --id a3-recipe-book --title "The Recipe Book" --area 3 --concepts dict,iteration --dc 12
 npm run validate:content
 ```
 
 `new:quest` scaffolds the YAML and its brief and stubs, wired so the result validates with no
 hand-editing. `validate:content` is the gate: it proves the prerequisite graph is acyclic,
 every concept tag is known, every referenced file exists, and no quest tags vocabulary from a
-tier above its own. It exits non-zero on any of those, and it is meant to be run constantly.
+area above its own. It exits non-zero on any of those, and it is meant to be run constantly.

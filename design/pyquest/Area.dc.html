@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 5.6c-1.9-1.3-4.1-1.7-6.6-1.4v9.8c2.5-.3 4.7.1 6.6 1.4" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 5.6c1.9-1.3 4.1-1.7 6.6-1.4v9.8c-2.5-.3-4.7.1-6.6 1.4" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 5.6v9.8" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Tome</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 2.8 16 5.1V10.3c0 3.4-2.5 5.8-6 6.9-3.5-1.1-6-3.5-6-6.9V5.1Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 6.5V13.3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path><path d="M7.9 8.9H12.1" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Defend</span><span style="position:absolute; top:6px; right:12px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="7.9" cy="7.3" r="2.7" fill="none" stroke="#5d6878" stroke-width="1.5"></circle><path d="M3.4 16.8v-.7c0-2.5 2-4.1 4.5-4.1s4.5 1.6 4.5 4.1v.7" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path><circle cx="14.7" cy="5.9" r="2" fill="none" stroke="#5d6878" stroke-width="1.3"></circle><path d="M14.1 10.1c2 0 3.4 1.5 3.4 3.7v.6" fill="none" stroke="#5d6878" stroke-width="1.3" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Console</span><span style="position:absolute; top:6px; right:12px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex; flex-direction:column">
+
+  <div style="display:flex; align-items:center; gap:10px; padding:0 30px; height:44px;
+              border-bottom:1px solid #232a35; background:#1a1f28; flex-shrink:0">
+    <span class="mono" style="font-size:11.5px; color:#5d6878">Map</span>
+    <span style="color:#3d4757">›</span>
+    <span class="mono" style="font-size:11.5px; color:#5aa860">Area 3 · Collections</span>
+    <div style="flex-grow:1"></div>
+    <span class="mono" style="font-size:11.5px; color:#98a3b3">week 10 of 48</span>
+  </div>
+
+  <div style="flex-grow:1; display:flex; min-height:0">
+    <div style="flex-grow:1; min-width:0; overflow:auto; padding:30px 40px 50px">
+
+      <div style="display:flex; align-items:flex-start; gap:22px; margin-bottom:8px">
+        <svg width="76" height="80" viewBox="-42 -26 84 92" style="flex-shrink:0">
+          <polygon points="0,-13 26,0 0,13 -26,0" fill="#5aa860"></polygon>
+          <polygon points="-26,0 0,13 0,34 -26,21" fill="#3d7343"></polygon>
+          <polygon points="26,0 0,13 0,34 26,21" fill="#294b2c"></polygon>
+          <polygon points="-13,-19 0,-13 0,-2 -13,-8" fill="#3d7343"></polygon>
+          <polygon points="13,-19 0,-13 0,-2 13,-8" fill="#294b2c"></polygon>
+          <polygon points="0,-26 13,-19 0,-13 -13,-19" fill="#8fd196"></polygon>
+        </svg>
+        <div style="flex-grow:1; min-width:0">
+          <div class="eyebrow" style="color:#5aa860; margin-bottom:6px">Area 3</div>
+          <h1 class="disp" style="margin:0 0 8px; font-size:36px; line-height:1.05">Collections</h1>
+          <p style="margin:0; color:#98a3b3; max-width:520px">
+            Weeks 9–14. Minecraft data: inventories are lists, recipes are dicts,
+            block palettes are sets.
+          </p>
+        </div>
+        <div style="text-align:right; flex-shrink:0">
+          <div style="display:flex; align-items:baseline; gap:7px; justify-content:flex-end">
+            <span class="disp" style="font-size:30px; line-height:1">3</span>
+            <span style="color:#5d6878">of</span>
+            <span class="disp" style="font-size:30px; line-height:1; color:#98a3b3">~5</span>
+          </div>
+          <div class="eyebrow" style="font-size:9px; margin-top:4px">cleared</div>
+        </div>
+      </div>
+
+      <!-- THE BRIEF -->
+      <div class="eyebrow" style="margin:34px 0 12px">The brief</div>
+      <div style="background:#161a22; border:1px solid #232a35; padding:22px 26px">
+        <p style="margin:0 0 14px; color:#c6ced9">
+          Every variable so far has held exactly one thing. That runs out the moment a
+          player has an inventory or a crafting table has a book of recipes. This area is
+          the four shapes Python gives you for holding many things at once — list, dict,
+          set, tuple — and, more importantly, the rule for choosing between them.
+        </p>
+        <p style="margin:0 0 18px; color:#c6ced9">
+          It ends with a working crafting simulator that you can hand to somebody else.
+        </p>
+        <div style="display:flex; align-items:center; gap:14px; padding-top:16px;
+                    border-top:1px solid #232a35">
+          <svg width="18" height="18" viewBox="0 0 20 20" style="flex-shrink:0">
+            <path d="M10 5.6c-1.9-1.3-4.1-1.7-6.6-1.4v9.8c2.5-.3 4.7.1 6.6 1.4" fill="none"
+                  stroke="#5aa860" stroke-width="1.5" stroke-linejoin="round"></path>
+            <path d="M10 5.6c1.9-1.3 4.1-1.7 6.6-1.4v9.8c-2.5-.3-4.7.1-6.6 1.4" fill="none"
+                  stroke="#5aa860" stroke-width="1.5" stroke-linejoin="round"></path>
+            <path d="M10 5.6v9.8" fill="none" stroke="#5aa860" stroke-width="1.5"
+                  stroke-linecap="round"></path>
+          </svg>
+          <div style="flex-grow:1">
+            <div style="font-weight:600; font-size:13.5px">Read the field manual before you start</div>
+            <div class="mono" style="font-size:11px; color:#5d6878">
+              Tome · Area 3 · seven sections, sixteen concepts, and the trap that will bite you
+            </div>
+          </div>
+          <div style="padding:8px 18px; border:1px solid #3f7844; color:#5aa860;
+                      font-weight:600; font-size:13px">Open the Tome</div>
+        </div>
+      </div>
+
+      <!-- QUESTS -->
+      <div style="display:flex; align-items:baseline; gap:12px; margin:34px 0 12px">
+        <span class="eyebrow">Quests</span>
+        <span class="mono" style="font-size:11px; color:#5d6878">any three unlock the boss · you choose which</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:2px">
+        <sc-for list="{{ quests }}" as="q" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; gap:13px; padding:14px 16px;
+                      background:{{ q.bg }}; border-left:2px solid {{ q.accent }}">
+            <span style="color:{{ q.markFill }}; font-size:13px; width:12px">{{ q.mark }}</span>
+            <div style="flex-grow:1; min-width:0">
+              <div style="font-weight:600; color:{{ q.fg }}">{{ q.title }}</div>
+              <div class="mono" style="font-size:11px; color:#5d6878">{{ q.concepts }}</div>
+            </div>
+            <sc-if value="{{ q.risky }}" hint-placeholder-val="{{ true }}">
+              <svg width="15" height="15" viewBox="0 0 14 14" style="flex-shrink:0">
+                <path d="M7 1.4 13 12.2 1 12.2 Z" fill="none" stroke="#d9a441" stroke-width="1.4"
+                      stroke-linejoin="round"></path>
+                <line x1="7" y1="5.4" x2="7" y2="8.6" stroke="#d9a441" stroke-width="1.4"></line>
+                <circle cx="7" cy="10.3" r="0.8" fill="#d9a441"></circle>
+              </svg>
+            </sc-if>
+            <span class="mono" style="font-size:12px; color:{{ q.dcFill }}; width:46px; text-align:right">DC {{ q.dc }}</span>
+            <div style="display:flex; gap:2px; width:46px; justify-content:flex-end">
+              <sc-for list="{{ q.medals }}" as="m" hint-placeholder-count="5">
+                <svg width="8" height="8" viewBox="0 0 8 8">
+                  <polygon points="4,0 8,4 4,8 0,4" fill="{{ m }}"></polygon>
+                </svg>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- BOSS -->
+      <div class="eyebrow" style="margin:34px 0 12px">Boss</div>
+      <div style="border:1px solid #3f7844; background:#182219; padding:20px 24px">
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:14px">
+          <svg width="34" height="38" viewBox="-20 -14 40 46" style="flex-shrink:0">
+            <polygon points="0,-7 13,0 0,7 -13,0" fill="#3f7844"></polygon>
+            <polygon points="-13,0 0,7 0,20 -13,13" fill="#2b5330"></polygon>
+            <polygon points="13,0 0,7 0,20 13,13" fill="#1f3d23"></polygon>
+            <polygon points="0,-17 13,-10 0,-3 -13,-10" fill="#d9a441"></polygon>
+          </svg>
+          <div style="flex-grow:1">
+            <div class="disp" style="font-size:19px">The Crafting Table</div>
+            <div class="mono" style="font-size:11.5px; color:#98a3b3">
+              two framings · effective DC 18 · 180 xp
+            </div>
+          </div>
+          <span class="mono" style="font-size:10px; letter-spacing:.1em; color:#5aa860;
+                                    border:1px solid #3f7844; padding:3px 9px">UNLOCKED</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px">
+          <div style="display:flex; gap:3px; flex-grow:1">
+            <sc-for list="{{ bossPips }}" as="b" hint-placeholder-count="5">
+              <div style="height:6px; flex-grow:1; background:{{ b }}"></div>
+            </sc-for>
+          </div>
+          <span class="mono" style="font-size:11.5px; color:#98a3b3">3 of 5 · needs 3</span>
+        </div>
+        <p style="margin:0; color:#98a3b3; font-size:13px">
+          A blank file, a specification, and no hints. It must run from a clean clone on
+          the other person's machine.
+        </p>
+      </div>
+    </div>
+
+    <div style="width:340px; flex-shrink:0; border-left:1px solid #232a35; background:#161a22;
+                padding:30px 26px; overflow:auto">
+      <div class="eyebrow" style="margin-bottom:14px">What this area teaches</div>
+      <div style="display:flex; flex-wrap:wrap; gap:5px">
+        <sc-for list="{{ concepts }}" as="c" hint-placeholder-count="16">
+          <span class="mono" style="font-size:11px; padding:4px 8px; border:1px solid {{ c.border }};
+                                    color:{{ c.fg }}">{{ c.id }}</span>
+        </sc-for>
+      </div>
+      <p class="mono" style="margin:14px 0 0; font-size:11px; color:#5d6878; line-height:1.7">
+        Filled means you have met it in a quest. Every one has a page in the Tome, whether
+        you have met it or not.
+      </p>
+
+      <div style="height:1px; background:#232a35; margin:26px 0"></div>
+
+      <div class="eyebrow" style="margin-bottom:14px">From this area</div>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <sc-for list="{{ fromHere }}" as="f" hint-placeholder-count="3">
+          <div style="display:flex; gap:11px; align-items:baseline">
+            <span class="mono" style="font-size:11px; color:{{ f.fill }}; width:64px; flex-shrink:0">{{ f.tag }}</span>
+            <span style="color:#98a3b3; font-size:12.5px">{{ f.text }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="height:1px; background:#232a35; margin:26px 0"></div>
+
+      <div class="eyebrow" style="margin-bottom:12px">Challenge run</div>
+      <p style="margin:0 0 12px; color:#98a3b3; font-size:12.5px">
+        You may take the boss now and skip the rest. Beat it and the area closes with the
+        bonus paid; lose and nothing is taken from you but the evening.
+      </p>
+      <div style="padding:9px; border:1px solid #4a3a20; color:#d9a441; text-align:center;
+                  font-weight:600; font-size:13px">Take it cold</div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals(){
+    function medalRow(n){
+      var out = [];
+      for (var i = 0; i < 5; i++) out.push(i < n ? '#5aa860' : '#2b323d');
+      return out;
+    }
+    var quests = [
+      { title: 'Inventory Lists', concepts: 'list · indexing · mutation', dc: '10', mark: '✓',
+        cleared: true, medals: medalRow(3) },
+      { title: 'The Block Palette', concepts: 'set · in · len', dc: '14', mark: '✓',
+        cleared: true, medals: medalRow(2) },
+      { title: 'The Recipe Book', concepts: 'dict · dict-methods · iteration', dc: '12', mark: '▸',
+        here: true, medals: medalRow(2) },
+      { title: 'Shulker Sort', concepts: 'sorted · min · max', dc: '18', mark: '',
+        medals: medalRow(0) },
+      { title: 'Nested Chests', concepts: 'nested-structures · iteration', dc: '20', mark: '',
+        risky: true, medals: medalRow(0) }
+    ].map(function(q){
+      return { title: q.title, concepts: q.concepts, dc: q.dc, mark: q.mark,
+               risky: !!q.risky, medals: q.medals,
+               bg: q.here ? '#1e2a20' : (q.cleared ? '#1a1f28' : 'transparent'),
+               accent: q.here ? '#5aa860' : (q.cleared ? '#3f7844' : '#232a35'),
+               fg: q.cleared || q.here ? '#e8ecf2' : '#98a3b3',
+               markFill: q.cleared ? '#5aa860' : '#8fd196',
+               dcFill: q.risky ? '#d9a441' : '#98a3b3' };
+    });
+
+    var met = ['list','indexing','mutation','list-methods','dict','dict-methods','set','in','len','iteration'];
+    var all = ['list','indexing','slicing','mutation','list-methods','tuple','dict','dict-methods',
+               'set','iteration','nested-structures','len','in','sorted','min','max'];
+    var concepts = all.map(function(id){
+      var on = met.indexOf(id) >= 0;
+      return { id: id, fg: on ? '#c6ced9' : '#5d6878', border: on ? '#3d4757' : '#232a35' };
+    });
+
+    var fromHere = [
+      { tag: 'invasions', fill: '#d9a441', text: 'slicing is due back tonight' },
+      { tag: 'scars', fill: '#cc5a5a', text: '4 kept, all on the Recipe Book' },
+      { tag: 'journal', fill: '#3f9fb5', text: '8 entries since this area opened' }
+    ];
+
+    return { quests: quests, concepts: concepts, fromHere: fromHere,
+             bossPips: ['#5aa860','#5aa860','#5aa860','#2b323d','#2b323d'] };
+  }
+}
+</script>
+</body>
+</html>

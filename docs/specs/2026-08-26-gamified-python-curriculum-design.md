@@ -78,14 +78,14 @@ Two independent criticisms share one root cause:
 
 ## 4. The Curriculum
 
-Sequenced by motivation-adjusted dependency order. Each tier's project makes the next concept necessary.
+Sequenced by motivation-adjusted dependency order. Each area's project makes the next concept necessary.
 
-### Tier 0 — First Light (weeks 1–2)
+### Area 0 — First Light (weeks 1–2)
 `print` · variables · `int` `float` `str` `bool` · `input` · f-strings · reading errors
 
 **Vehicle:** turtle graphics. The first line of code draws something.
 
-### Tier 1 — Control (weeks 3–6)
+### Area 1 — Control (weeks 3–6)
 `if` `elif` `else` · comparison and boolean operators · `while` · `for` and `range` · nesting · the accumulator pattern
 
 **Vehicle:** turtle to generative art. Spirals, polygons, mandalas, parameterized color.
@@ -93,29 +93,29 @@ Sequenced by motivation-adjusted dependency order. Each tier's project makes the
 **BOSS 1 — The Sigil:** an art generator that takes input and produces something worth hanging on a wall.
 
 ### The Journal (begins week 1, runs forever)
-A markdown journal, one entry per session. Three prompts: what I built, what broke, what I would do differently. It starts as a plain file in week 1 and *becomes* committed and pushed at Tier 2a, once he has git. See §5.6.
+A markdown journal, one entry per session. Three prompts: what I built, what broke, what I would do differently. It starts as a plain file in week 1 and *becomes* committed and pushed at Area 2a, once he has git. See §5.6.
 
-### Tier 2a — The Scribe's Rite (weeks 6–7)
+### Area 2a — The Scribe's Rite (weeks 6–7)
 what a repository is · `init` `add` `commit` · the log as a story · branches, lightly · `push` to origin
 
 **Win condition:** he pushes, and the board updates by itself. The game noticed.
 
-### Tier 2b — Escape the Sandbox (weeks 7–8)
+### Area 2b — Escape the Sandbox (weeks 7–8)
 files on disk · `python thing.py` · VS Code · venv · `pip` · tracebacks · `if __name__ == "__main__"`
 
-This tier is load-bearing. Every platform surveyed fails at this seam, so it comes early and earns a trophy.
+This area is load-bearing. Every platform surveyed fails at this seam, so it comes early and earns a trophy.
 
 **BOSS 2 — Escape the Sandbox:** rebuild an in-app program as a real project, push it, and the parent clones it cold and runs it. The win condition is not passing tests. The win condition is that his code ran on someone else's computer.
 
-### Tier 3 — Collections (weeks 9–14)
+### Area 3 — Collections (weeks 9–14)
 `list` · indexing · slicing · mutation · list methods · `tuple` · `dict` · `set` · iteration · nested structures · `len` `in` `sorted` `min` `max`
 
 **Vehicle:** Minecraft data. Inventories are lists. Crafting recipes are dicts. Block palettes are sets.
 
 **Graphics reach Ursina through a shim, `world.py`, not through Ursina directly.** The spike
 in `spikes/ursina-tier3/` measured this and the answer was not close. Ursina's surface is
-`Entity(model='cube', position=(x, y, z))` — keyword arguments (Tier 4), attribute access
-(Tier 5). Every line of raw Ursina a Tier 3 learner would write is vocabulary he has not
+`Entity(model='cube', position=(x, y, z))` — keyword arguments (Area 4), attribute access
+(Area 5). Every line of raw Ursina an Area 3 learner would write is vocabulary he has not
 earned; measured, 9 of 9 engine-touching lines, 100%.
 
 Two findings mattered more than the vocabulary gap:
@@ -128,43 +128,43 @@ Two findings mattered more than the vocabulary gap:
 - **The stock one-Entity-per-block pattern is unusable.** It drops below 60 fps between 1,000
   and 2,500 blocks *on an RTX 5090*. Three nested `range(20)` loops — which he will write —
   is 8,000 blocks at 14.9 fps. `start()` therefore fuses placed blocks into one mesh, taking
-  the same program to 1,424 fps. Authoring rule: cap Tier 3 worlds near 5,000 blocks.
+  the same program to 1,424 fps. Authoring rule: cap Area 3 worlds near 5,000 blocks.
 
 The surface is three names, positional arguments only: `BLOCKS`, `place(x, y, z, kind)`,
-`start()`. Calling a positional function is Tier 0 vocabulary — he calls `print()` and `len()`
+`start()`. Calling a positional function is Area 0 vocabulary — he calls `print()` and `len()`
 from week one — so the shim teaches him nothing he has not earned. It measures 0% ceremony
 beyond a one-line import floor, against 100% for raw Ursina.
 
 **It comes down on schedule.** `BLOCKS` and `place()` are replaced by his own dict and his own
-`def` at Tier 4; `start()` by his own `class World` at Tier 5, landing the last removal on
+`def` at Area 4; `start()` by his own `class World` at Area 5, landing the last removal on
 Boss 5. Half of `world.py` is readable to him the day he first uses it, and all but one line
 by the time he retires it. Deleting `ground.combine()` from it and watching 1,424 fps become
-14.9 is the Tier 7 performance-intuition lesson, made runnable rather than merely suffered.
+14.9 is the Area 7 performance-intuition lesson, made runnable rather than merely suffered.
 
 **BOSS 3 — The Crafting Table:** a working crafting simulator with a real recipe book.
 
-### Tier 4 — Functions and Decomposition (weeks 15–20)
+### Area 4 — Functions and Decomposition (weeks 15–20)
 `def` · parameters · `return` · defaults and keyword arguments · scope · docstrings · pure versus side-effecting · refactoring a long script · `import` · stdlib (`random`, `math`, `time`, `pathlib`, `json`)
 
 **Vehicle:** Pygame Zero. Game loop, sprites, keyboard input, collision, score.
 
 **BOSS 4 — The Loop:** a complete playable 2D game, then refactored into modules without breaking it.
 
-### Tier 5 — State and Objects (weeks 21–28)
+### Area 5 — State and Objects (weeks 21–28)
 `class` · `__init__` · attributes · methods · `__repr__` · instances versus class · composition · light inheritance · `try` `except` · `raise` · custom exceptions
 
-**Vehicle:** modeling a world. `Block`, `Player`, `Inventory`, `World`. Objects finally have an obvious reason to exist, because Tier 4 supplied the pain of living without them.
+**Vehicle:** modeling a world. `Block`, `Player`, `Inventory`, `World`. Objects finally have an obvious reason to exist, because Area 4 supplied the pain of living without them.
 
 **BOSS 5 — The Bestiary:** an object-oriented game with multiple entity types that behave differently.
 
-### Tier 6 — Data and the Outside World (weeks 29–36)
+### Area 6 — Data and the Outside World (weeks 29–36)
 file read and write · context managers · JSON · CSV · `pathlib` · HTTP and `requests` · `argparse` · dependencies
 
 **Vehicle:** save and load his world. Share a seed. Call a live API.
 
 **BOSS 6 — The Archive:** a tool with real persistence and a real command-line interface that the parent installs and uses.
 
-### Tier 7 — Craft (weeks 37–48)
+### Area 7 — Craft (weeks 37–48)
 `pytest` · the debugger · type hints · comprehensions · generators · refactoring · performance intuition · branches and pull requests · reading unfamiliar code
 
 **BOSS 7 — Visit Another Kingdom (Don't Break It):** he clones the parent's engine repository, branches, authors a new quest for the game he has played all year, opens a pull request, and receives a real review with comments he must address before merge. Then he plays the level he wrote.
@@ -210,14 +210,14 @@ Minecraft Java Edition modding is Java, not Python. The options are a Spigot ser
 RaspberryJuice driven by `mcpi`, Minecraft Education's Python mode, or building a voxel
 game outright.
 
-**This curriculum uses Ursina from Tier 3 through the capstone, and does not use `mcpi`.**
+**This curriculum uses Ursina from Area 3 through the capstone, and does not use `mcpi`.**
 
 `mcpi` buys a faster first thrill: one line places a block in a world he already loves.
-It costs continuity. Tiers 3–5 written against `mcpi` would be abandoned at week 37 when
+It costs continuity. Areas 3–5 written against `mcpi` would be abandoned at week 37 when
 the capstone starts over in a different framework, and a learner who has spent thirty
 weeks on something reads that as a bait and switch — correctly.
 
-Ursina compounds instead. Every tier's work survives into the next, the repository tells
+Ursina compounds instead. Every area's work survives into the next, the repository tells
 one story, and the capstone is the culmination of the campaign rather than a fresh start.
 It also carries no server, no Java, and no version-pinned plugin to keep alive for a year.
 
@@ -267,7 +267,7 @@ tuning.
 | Boss | effective DC × 10 |
 | Invasion | 5 flat |
 | Journal entry | 10 flat |
-| Tier release notes | 75 flat |
+| Area release notes | 75 flat |
 | Co-op session | 20 flat |
 
 A DC 5 quest pays 10 and a DC 20 quest pays 40. A DC 15 boss pays 150 and a DC 30 boss
@@ -296,11 +296,11 @@ Every progress display shows **cleared of total**, never a bare XP figure. XP is
 numerator with no denominator: it says how far he has come and nothing about how far
 remains, and "how much more?" is the question a learner actually asks.
 
-- Tier headers read `7 of 12 cleared`.
-- Where a tier is not yet fully authored, the total wears a tilde: `1 of ~5`. **An
+- Area headers read `7 of 12 cleared`.
+- Where an area is not yet fully authored, the total wears a tilde: `1 of ~5`. **An
   estimate marked as an estimate is honest; an estimate presented as fact is not**, and
   he will find out either way.
-- Medal counts get their own denominators per tier, since medals are the completionist layer.
+- Medal counts get their own denominators per area, since medals are the completionist layer.
 
 ### 5.2 The skill tree
 
@@ -308,9 +308,9 @@ The curriculum rendered as a node graph. Locked nodes stay visible and greyed, s
 
 **Autonomy rules:**
 
-- Each tier offers **five quests; any three unlock the boss.** He chooses which three.
+- Each area offers **five quests; any three unlock the boss.** He chooses which three.
 - Each boss offers **two or three theme framings.** He chooses.
-- **Challenge run:** he may attempt any boss early. Beating it skips the tier's remaining quests and pays a bonus. This directly answers the criticism that locked linear progression frustrates learners who already know the material.
+- **Challenge run:** he may attempt any boss early. Beating it skips the area's remaining quests and pays a bonus. This directly answers the criticism that locked linear progression frustrates learners who already know the material.
 
 ### 5.3 Boss fights
 
@@ -342,19 +342,19 @@ Shame produces hiding, and hiding destroys the parent's signal about what the le
 A markdown journal, one entry per session, which becomes committed and pushed once he has git.
 
 **It begins in week 1, not week 3.** The reason is inside this section: he re-reads his Journal
-from the start of a tier before every boss fight, and a journal that starts in week 3 leaves
+from the start of an area before every boss fight, and a journal that starts in week 3 leaves
 almost nothing to re-read before Boss 1. Writing three sentences after a session is also the
 cheapest habit in the curriculum to start and the most expensive to retrofit, and in week 1 it
 costs him nothing he would rather be doing.
 
-The git half still arrives at Tier 2a on schedule (§4). The Tier 0 and Tier 1 entries are plain
+The git half still arrives at Area 2a on schedule (§4). The Area 0 and Area 1 entries are plain
 markdown until then, and they become the first real commit in his repository — which is a better
 first commit than an empty one.
 
 - **Ten XP per entry, paid for substance rather than existence.** Three prompts: what I built, what broke, what I would do differently. Empty prompts pay nothing.
 - **The parent replies**, as comments in Gitea. Relatedness, plus code-review culture learned before he writes code worth reviewing.
-- **Before every boss fight he re-reads his own Journal from the start of that tier.** Reading something he wrote six weeks ago and finding it easy is the strongest evidence a learner will ever get that he is not stupid. Badges cannot fake that.
-- **At the end of each tier he writes release notes** in a real `CHANGELOG.md` against a real version tag. That yields one versioned release per tier, each with written release notes, before he ever reaches the capstone.
+- **Before every boss fight he re-reads his own Journal from the start of that area.** Reading something he wrote six weeks ago and finding it easy is the strongest evidence a learner will ever get that he is not stupid. Badges cannot fake that.
+- **At the end of each area he writes release notes** in a real `CHANGELOG.md` against a real version tag. That yields one versioned release per area, each with written release notes, before he ever reaches the capstone.
 
 Git also gets learned here by low-stakes repetition, weeks before it has to carry anything.
 
@@ -379,7 +379,7 @@ Relatedness is the hardest need to satisfy at scale, which is why commercial pla
 
 - **The parent has his own track**, with real quests at his real level, on the same board.
 - **The son watches the parent fail.** This is the highest-value mechanic in the design. A child who has never seen a competent adult get stuck concludes that being stuck means being stupid.
-- **A leaderboard of two**, Advent-of-Code style, **reset each tier** so neither player runs away with it.
+- **A leaderboard of two**, Advent-of-Code style, **reset each area** so neither player runs away with it.
 - **Co-op quests:** pair programming, driver and navigator, roles swapped every ten minutes. The son drives more.
 - **Bounties:** either player posts a bug or feature bounty for the other. Both pay XP.
 
@@ -423,13 +423,13 @@ constraint is abstaining from AI. The same medal costs each player something rea
 
 **One content set, two players.** Quest YAML is player-agnostic; the completion bar differs.
 
-**The challenge run is the parent's gap detector.** Playing Tier 0–3 quests straight would
+**The challenge run is the parent's gap detector.** Playing Area 0–3 quests straight would
 teach the parent nothing and distort the leaderboard, so the parent instead challenge-runs
 the bosses under the mechanic already defined in §5.2.
 
-- Beat the boss cold: the tier is skipped and the bonus paid.
+- Beat the boss cold: the area is skipped and the bonus paid.
 - **Fail it: a real gap has surfaced**, measured rather than self-assessed. The parent then
-  plays that tier's quests in earnest.
+  plays that area's quests in earnest.
 
 *"I can write Python, but that does not mean I learned it"* is a problem introspection
 cannot solve. The bosses solve it by measurement.
@@ -454,9 +454,9 @@ for Ironman, which is exactly the return-to-basics move an AI-fluent adult needs
 | Player | Conjured unlocks |
 |---|---|
 | Parent | Day one |
-| Son | **Tier 7** |
+| Son | **Area 7** |
 
-Before Tier 7, AI would rob the son of the struggle that does the teaching. From Tier 7
+Before Area 7, AI would rob the son of the struggle that does the teaching. From Area 7
 onward, refusing to teach him to use it well would be its own failure. The Scrollcraft arc
 (§4) exists to teach the discipline, and the Scrolls of Conjure Helper economy (§9) later
 governs how many conjures a quest permits.
@@ -482,18 +482,18 @@ Environment-variable configuration, migrations as a job, healthchecks throughout
 A drill, a quest, and a boss are the same object. Only the verifier differs.
 
 ```yaml
-id: t3-recipe-book
+id: a3-recipe-book
 title: The Recipe Book
 kind: quest          # quest | invasion | boss
-tier: 3
+area: 3
 concepts: [dict, dict-methods, iteration]
-requires: [t3-inventory-lists]
+requires: [a3-inventory-lists]
 dc: 12               # XP and risk label both derive from this; see §5.1
-brief: briefs/t3-recipe-book.md
+brief: briefs/a3-recipe-book.md
 verifier:
   type: hidden-tests
-  starter: starters/t3-recipe-book.py
-  tests:   tests/t3-recipe-book_test.py
+  starter: starters/a3-recipe-book.py
+  tests:   tests/a3-recipe-book_test.py
 ```
 
 Adding content means editing a file. That is the entire justification for the engine.
@@ -510,8 +510,8 @@ versioned in git and validated on load.
 
 | Type | Mechanism | Used by |
 |---|---|---|
-| `hidden-tests` | Submit posts the code to the API, which runs tests the client never sees | Tiers 0–1 drills |
-| `local-repo` | API pulls his repo, runs the quest's pytest specification | Tier 2b onward |
+| `hidden-tests` | Submit posts the code to the API, which runs tests the client never sees | Areas 0–1 drills |
+| `local-repo` | API pulls his repo, runs the quest's pytest specification | Area 2b onward |
 | `peer-signoff` | The other player presses the button, named by a `by` field | Bosses, and every Teach-back medal |
 | `git-signal` | Reads his git log for commits and streaks | Journal, streaks |
 
@@ -543,7 +543,7 @@ The API-to-runner interface is a job queue in both cases, so hardening it touche
 
 ### 6.7 `packages/engine`
 
-Pure functions over state and content. Given completions, XP, scars, datamines, and concept review timestamps, it returns available quests, tier progress, boss unlock status, due invasions, level, and standings.
+Pure functions over state and content. Given completions, XP, scars, datamines, and concept review timestamps, it returns available quests, area progress, boss unlock status, due invasions, level, and standings.
 
 **No I/O, no database, no network.** This is the one component that must never be wrong, so it is the one component that is trivially testable.
 
@@ -555,7 +555,7 @@ Pure functions over state and content. Given completions, XP, scars, datamines, 
 2. **Quest** — brief, CodeMirror editor, Run and Submit, Datamine
 3. **Defend** — session start, queued invasion drills
 4. **Boss** — specification, attempt log, scars, sign-off
-5. **Party** — two-player XP, levels, tier standings, open bounties
+5. **Party** — two-player XP, levels, area standings, open bounties
 6. **Journal** — entries, prompts, parent replies
 7. **Console** — sign-off, authoring, streak forgiveness. Both players have one, since sign-off runs both directions
 
@@ -592,7 +592,7 @@ The parent will do this more than 150 times. It should take two minutes.
 
 One repository for all his projects, not one per project. Ceremony kills momentum, and the single continuous history is the point.
 
-**Working inside someone else's repository is not abandoned, only scheduled.** It needs branches, pull requests, review, and the ability to read unfamiliar code — all Tier 7 material. Boss 7 delivers exactly that lesson, authentically, against the engine repository, with the highest-stakes reviewer he will ever have.
+**Working inside someone else's repository is not abandoned, only scheduled.** It needs branches, pull requests, review, and the ability to read unfamiliar code — all Area 7 material. Boss 7 delivers exactly that lesson, authentically, against the engine repository, with the highest-stakes reviewer he will ever have.
 
 ---
 
@@ -623,7 +623,7 @@ thing that could still qualify it.
 
 See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 
-**Start the curriculum before the app is finished.** Tier 0 needs a markdown file and a REPL. If Tier 0 waits on Phase 1, the app becomes a satisfying way to postpone teaching a child Python.
+**Start the curriculum before the app is finished.** Area 0 needs a markdown file and a REPL. If Area 0 waits on Phase 1, the app becomes a satisfying way to postpone teaching a child Python.
 
 **Build a turtle-to-canvas shim for Pyodide** (roughly one to two days). Turtle does not render in Pyodide unaided, and six weeks of text-only drills will lose a learner who chose creative art as an interest. Boss 2 keeps its meaning regardless, because that boss concerns files, venv, and git rather than graphics.
 
@@ -658,19 +658,19 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Data-driven engine over bespoke screens | Content throughput is the year-long bottleneck |
 | Phased puzzles then real repo | Smooths the difficulty curve without abandoning transfer |
 | Son owns a separate repository | Engine holds the answers; ownership buys autonomy |
-| Boss 7 covers contributing to another repository | Needs Tier 7 prerequisites; premature at week 6 |
+| Boss 7 covers contributing to another repository | Needs Area 7 prerequisites; premature at week 6 |
 | Postgres and Docker Compose over SQLite | Beefy host available; pipeline-shaped from day one |
 | Gitea over GitHub | No age gate, private, GitHub-compatible Actions |
 | Push as the verification mechanism | Two machines; also honest engineering culture |
 | Git split across Journal, Scribe's Rite, Escape | Verification depends on git, so git must precede it |
 | Journal scored rather than ritual | Reflection is a skill the industry lost |
-| Journal begins week 1, git arrives at Tier 2a | Pre-boss re-reading needs something to re-read; the habit is cheap to start and expensive to retrofit |
+| Journal begins week 1, git arrives at Area 2a | Pre-boss re-reading needs something to re-read; the habit is cheap to start and expensive to retrofit |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
 | Ursina hardware gate before any build work | The continuity argument for Ursina collapses into the bait and switch it avoids if his laptop cannot run it |
-| Ursina from Tier 3, no `mcpi` | One repository, one story; work compounds into the capstone instead of being discarded at week 37 |
-| A `world.py` shim at Tier 3, retired by Boss 5 | Raw Ursina is 100% unearned vocabulary and hides its own failures; the shim costs no new syntax and comes down on a schedule |
-| `start()` combines the world into one mesh | One `Entity` per block dies below 2,500 blocks even on a 5090; a Tier 3 learner reaches 8,000 with three nested loops |
+| Ursina from Area 3, no `mcpi` | One repository, one story; work compounds into the capstone instead of being discarded at week 37 |
+| A `world.py` shim at Area 3, retired by Boss 5 | Raw Ursina is 100% unearned vocabulary and hides its own failures; the shim costs no new syntax and comes down on a schedule |
+| `start()` combines the world into one mesh | One `Entity` per block dies below 2,500 blocks even on a 5090; an Area 3 learner reaches 8,000 with three nested loops |
 | Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
 | Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |
@@ -680,7 +680,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
 | Challenge runs as the parent's gap detector | Measures gaps instead of asking the parent to introspect them |
 | Conjured is legal, logged, and costed | Disclosure beats prohibition; the son will grow up with these tools |
-| Son's AI unlock at Tier 7 | Struggle teaches before Tier 7; refusing to teach the tool after Tier 7 fails him |
+| Son's AI unlock at Area 7 | Struggle teaches before Area 7; refusing to teach the tool after Area 7 fails him |
 | Canned transcripts as Scrollcraft content | Makes AI-usage discipline deterministic and gradeable |
 
 ---

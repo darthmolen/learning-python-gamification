@@ -1,0 +1,10 @@
+id: a4-unlisted
+title: Fixture a4-unlisted
+kind: quest
+area: 4
+concepts: [def]
+dc: 10
+brief: briefs/b.md
+verifier:
+  type: git-signal
+  signal: commit
