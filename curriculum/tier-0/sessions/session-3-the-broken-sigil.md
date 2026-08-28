@@ -2,7 +2,7 @@
 
 **Concepts:** `reading-errors` · `print`, `variables`, `int`, `str` resurfacing
 **Files:** `exercises/session-3/`
-**Chronicle:** entry 3
+**Journal:** entry 3
 
 Tonight he breaks things on purpose, seven times, and reads what falls out.
 
@@ -22,7 +22,7 @@ look, in more detail than any human would bother with.
 
 ---
 
-## Beat 1 — Patrol (3 minutes)
+## Beat 1 — Invasion (3 minutes)
 
 1. What does `side = side + 20` do, in two steps?
 2. Why use a name instead of just typing the number?
@@ -176,7 +176,7 @@ free.
 
 ---
 
-## Beat 5 — Chronicle (5 minutes)
+## Beat 5 — Journal (5 minutes)
 
 Entry 3. Tonight *what broke* writes itself, so push on **what I would do differently**
 instead — and the honest answer for tonight is usually about reading rather than about

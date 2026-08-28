@@ -19,7 +19,7 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
    stall predicted here. Read this before session 1. It is the load-bearing document.
 2. **`sessions/session-1-first-light.md`** — then one per session, on the night.
 3. **`reference/session-3-answers.md`** — before session 3. Not during.
-4. **`chronicle/entry-01-prompt.md`** — at the end of session 1.
+4. **`journal/entry-01-prompt.md`** — at the end of session 1.
 
 ---
 
@@ -99,7 +99,7 @@ padded out with make-work. Tier 1 opens with `if` and gives it a job on day one.
 **The concepts each file resurfaces are tagged, not just the ones it introduces.** Spec
 §3 principle 7 and §5.4 schedule retrieval off these tags, so a file that quietly needs
 `variables` should say so even when variables are not its subject. `parent-guide.md` §5
-carries hand-run patrol questions until the engine exists.
+carries hand-run invasion questions until the engine exists.
 
 ---
 
@@ -143,7 +143,7 @@ Per the brief, this directory does not contain quest YAML and does not touch
 | `s5e2_the_nameplate.py` | 14 | It draws. Someone has to see it. |
 | **The Commission** | 18 | Win condition is "it ran on your dad's machine". That is `local-repo` in spirit and peer-signoff in week two. |
 
-**Do not turn into quests:** the session plans, the Chronicle prompts, or the reversal
+**Do not turn into quests:** the session plans, the Journal prompts, or the reversal
 exercise in session 3. They are parent-delivered and lose their point when automated.
 
 Two notes for whoever builds this:
@@ -158,14 +158,14 @@ Two notes for whoever builds this:
 
 ---
 
-## The Chronicle, and a deliberate deviation from the spec
+## The Journal, and a deliberate deviation from the spec
 
-Spec §4 says the Chronicle **begins week 3**. This tier starts it in **week 1**, and the
+Spec §4 says the Journal **begins week 3**. This tier starts it in **week 1**, and the
 reason is worth recording rather than hiding.
 
-§5.6 defines the Chronicle as "committed and pushed", and git is Tier 2a, week 6. Read
-strictly, the Chronicle cannot start before the thing that carries it. But §5.6 also
-says he rereads his Chronicle *from the start of that tier* before every boss fight, and
+§5.6 defines the Journal as "committed and pushed", and git is Tier 2a, week 6. Read
+strictly, the Journal cannot start before the thing that carries it. But §5.6 also
+says he rereads his Journal *from the start of that tier* before every boss fight, and
 Boss 1 lands at the end of Tier 1 — so if entries begin at week 3 the first boss fight
 has almost nothing to reread, which is the one moment §5.6 says the mechanic earns its
 keep.
@@ -222,7 +222,7 @@ tier-0/
   exercises/             the .py files he actually runs
     session-3/error-log.md   the table he fills in while breaking things
     session-6/commission-brief.md
-  chronicle/
+  journal/
     TEMPLATE.md          copied once per session
     entry-01-prompt.md   what to say the first time, and how to score it
     entries/             his, empty

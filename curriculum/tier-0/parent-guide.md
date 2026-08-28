@@ -18,11 +18,11 @@ attention after week one.
 
 | Beat | Minutes | What happens |
 |---|---|---|
-| **Patrol** | 3–5 | Three questions from last time. Out loud, no computer. |
+| **Invasion** | 3–5 | Three questions from last time. Out loud, no computer. |
 | **The hook** | 5–10 | You show one thing. Short. He has the keyboard by minute ten. |
 | **The work** | 25–30 | He types. You sit beside him and do not touch the keyboard. |
 | **The choice** | included above | He picks which extension to chase. Every session has a choice board. |
-| **Chronicle** | 5 | Three prompts, in his own words. |
+| **Journal** | 5 | Three prompts, in his own words. |
 
 **The keyboard rule.** You do not touch it. Not to "just show you quickly", not to fix
 a typo, not while he is in the bathroom. If you take the keyboard you have taken the
@@ -138,10 +138,10 @@ failure and not cheating.
 Tier 0 has no app to press the button in, so you are the button:
 
 > "Alright. That's two goes. Tell me in one sentence what you tried, write it in the
-> Chronicle, and I'll show you. It costs you difficulty, not honour."
+> Journal, and I'll show you. It costs you difficulty, not honour."
 
 Then show him properly — the whole thing, no drip-feed — and ask him to explain it back.
-Come back to that concept in the next session's patrol. Deliberately. That is the point
+Come back to that concept in the next session's invasion. Deliberately. That is the point
 of the cost.
 
 ### He is right and you are wrong
@@ -231,7 +231,7 @@ advance taught nobody anything.
 
 **Let him get wrong:** the crash on bad input. He cannot fix it — the fix needs `if` and
 `try`, which are Tiers 1 and 5. Let it stand as an open wound. Write it into the
-Chronicle under *what I would do differently*. Coming back in week 22 to fix a bug he
+Journal under *what I would do differently*. Coming back in week 22 to fix a bug he
 logged in week 2 is worth planning for.
 
 ### Session 6 — The Commission
@@ -246,7 +246,7 @@ logged in week 2 is worth planning for.
 
 ---
 
-## 5. Patrols
+## 5. Invasions
 
 Spec §5.4 queues retrieval automatically. The engine does not exist yet, so you do it by
 hand: three questions at the start of each session, out loud, no computer, nothing
@@ -275,7 +275,7 @@ it on purpose and why. He should know retrieval is a mechanism, not a quiz.
 
 ---
 
-## 6. Scoring the Chronicle
+## 6. Scoring the Journal
 
 Ten XP per entry, and spec §5.6 is explicit that it is **paid for substance rather than
 existence**. An entry that says "did turtle, it was fine" pays nothing. Say so once, in
@@ -292,7 +292,7 @@ session it was, without the date?
 
 **"What broke: nothing" is almost always false**, and the honest version of it is
 *"nothing broke, which surprised me"* or *"the only thing that broke was..."*. Push back
-on it once, gently, then let it go. Pushing twice turns the Chronicle into homework and
+on it once, gently, then let it go. Pushing twice turns the Journal into homework and
 it will die.
 
 You reply to each entry. In Tier 0 that is a line written underneath, in the file, in
@@ -311,7 +311,7 @@ not get the keyboard until minute 25.
 - **Cut the hook, never the work.** Short on time means dropping the teaching, not the
   typing.
 - **Cut the choice board, never the choice.** One choice is enough. Zero is not.
-- **Never cut the Chronicle.** It takes four minutes and it is the artifact that
+- **Never cut the Journal.** It takes four minutes and it is the artifact that
   survives the year. Take it out of the work time instead.
 
 If he is genuinely fed up, stop early and end on something that works. Ending on a

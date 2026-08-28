@@ -7,7 +7,7 @@
  * that is trivially testable.
  *
  * Scope is deliberately narrow. This module holds only the arithmetic §5.1, §5.2 and §5.10
- * pin to the number. `availableQuests`, `tierProgress`, `duePatrols`, `standings` and `level`
+ * pin to the number. `availableQuests`, `tierProgress`, `dueInvasions`, `standings` and `level`
  * are projections whose shape only a real screen can settle, so they are deferred rather than
  * guessed at and built twice.
  */
@@ -104,13 +104,13 @@ export const XP_PER_DC = {
 } as const;
 
 /**
- * The four kinds §5.1 prices flat. They have no DC to scale from: a patrol is two to three
- * minutes by construction (§5.4) and a Chronicle entry is paid for substance rather than for
+ * The four kinds §5.1 prices flat. They have no DC to scale from: an invasion is two to three
+ * minutes by construction (§5.4) and a Journal entry is paid for substance rather than for
  * difficulty (§5.6).
  */
 export const FLAT_XP = {
-  patrol: 5,
-  'chronicle-entry': 10,
+  invasion: 5,
+  'journal-entry': 10,
   'tier-release-notes': 75,
   'co-op-session': 20,
 } as const;

@@ -1,4 +1,4 @@
-# Chronicle — Session NN
+# Journal — Session NN
 
 **Date:**
 **Tier:** 0 — First Light

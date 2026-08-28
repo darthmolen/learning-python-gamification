@@ -6,7 +6,7 @@
 
 ## Context
 
-Spec §6.9 specifies a dated tarball "on a second disk", and names why: the Chronicle and his
+Spec §6.9 specifies a dated tarball "on a second disk", and names why: the Journal and his
 commit history become irreplaceable quickly and are the two artifacts this project cannot
 regenerate.
 
@@ -27,6 +27,6 @@ volume. It does not survive the disk failing, which is the case §6.9 is actuall
 
 ## Trigger for Promotion
 
-**Before week 3**, which is when the Chronicle starts accumulating entries that cannot be
+**Before week 3**, which is when the Journal starts accumulating entries that cannot be
 regenerated. Spec §6.9 already sets that deadline for the restore rehearsal; this is the other
 half of the same requirement.

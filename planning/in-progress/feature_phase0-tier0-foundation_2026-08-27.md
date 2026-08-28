@@ -81,12 +81,12 @@ not be a special case bolted onto scoring. Skipped quests pay nothing, because t
 done.
 
 **Deferred to the design session, on purpose:** the level curve (§6.7 returns a level; no
-formula is given, and how often a level should fire is a presentation question), the patrol
+formula is given, and how often a level should fire is a presentation question), the invasion
 review interval ladder (§5.4 names an interval and never specifies it — proposal below, but
-the queue shape belongs to the Muster screen), and the estimated-total tilde of §5.1a. All
+the queue shape belongs to the Defend screen), and the estimated-total tilde of §5.1a. All
 three are shaped by screens that do not exist yet.
 
-*Proposed patrol ladder, to confirm at the design session:* fixed rungs at 1, 3, 7, 16, and 35
+*Proposed invasion ladder, to confirm at the design session:* fixed rungs at 1, 3, 7, 16, and 35
 days, advancing on a successful retrieval and stepping back one rung on a failure rather than
 resetting to zero — resetting punishes and floods the queue. §5.5's guaranteed +3 and +10 day
 reviews after a Datamine are a second, additive source, not a ladder position.
@@ -102,8 +102,8 @@ also what makes it the one component that is trivially testable. It divides clea
 |---|---|
 | `effectiveDC(baseDC, modifiers)` | `availableQuests(state)` return shape |
 | `xpFor(kind, effectiveDC)` | `tierProgress()` → `{cleared, total, estimated}` |
-| `medalDelta(baseDC, earned, newMedal)` | `duePatrols()` queue shape and cap |
-| modifier legality (DC-3) | `standings()` for The Board |
+| `medalDelta(baseDC, earned, newMedal)` | `dueInvasions()` queue shape and cap |
+| modifier legality (DC-3) | `standings()` for Party |
 | `bossUnlocked(clearedInTier)` — any 3 of 5 | `level(xp)` — curve undefined |
 
 The left column is arithmetic the spec specifies to the number; it cannot move. The right
@@ -148,13 +148,13 @@ scaffolder. §6.10 notes the parent will run this more than 150 times and it sho
 minutes.
 
 **D** authors `curriculum/tier-0/` — the §4 Tier 0 vocabulary as turtle-graphics session
-briefs, the exercises, and the Chronicle template of §5.6. No code dependency whatsoever. This
+briefs, the exercises, and the Journal template of §5.6. No code dependency whatsoever. This
 is the workstream that lets teaching start this week.
 
 ### Wave 2 — Claude Design session for the UI (me + you, human-in-the-loop)
 
-A canvas with one artboard per §6.8 screen: Campaign Map, Quest, Muster, Boss, The Board,
-Chronicle, Console. This is a wall-clock gate that agents cannot parallelise, which is exactly
+A canvas with one artboard per §6.8 screen: Campaign Map, Quest, Defend, Boss, Party,
+Journal, Console. This is a wall-clock gate that agents cannot parallelise, which is exactly
 why curriculum churn continues underneath it.
 
 Three things the artboards must settle, because Wave 3 reads them as inputs: how a quest card
@@ -168,7 +168,7 @@ the DC ≥ 20 warning lives.
 - The deferred engine query layer, now with known return shapes
 - DB schema and migrations job — progress in Postgres, content in git, the two never mixing
   (§6.7). Tables for players, `quest_medals` keyed exactly as §6.2 specifies, attempts as
-  scars, datamines, concept reviews, chronicle entries, sessions, bounties
+  scars, datamines, concept reviews, journal entries, sessions, bounties
 - The API contract derived from the artboards
 
 *Background, in parallel:* curriculum churn continues into Tier 2a.
@@ -230,7 +230,7 @@ commutativity property holding across a randomised earn order.
 
 ## Backlog expected to surface
 
-- The level curve and the patrol interval ladder, if the design session does not settle them
+- The level curve and the invasion interval ladder, if the design session does not settle them
 - The two Ursina measurements already stubbed in `planning/backlog/`, unchanged by this work
 - A decision on whether the son's repository is created by hand or scaffolded by the Gitea
   bootstrap — it is Phase 1.5 work, but the compose stack makes it answerable early
@@ -271,7 +271,7 @@ All four workstreams landed. The Wave 1 gate in *Verification* above is met:
 3. `docker compose up -d` brings postgres and gitea to healthy from destroyed volumes —
    verified independently on a cold boot, not taken from a report
 4. Backup produces a dated tarball and the restore rehearsal round-trips **both artifacts §6.9
-   names as irreplaceable** — a git commit and a Chronicle entry — by exact content. 28 of 28
+   names as irreplaceable** — a git commit and a Journal entry — by exact content. 28 of 28
    composition checks pass
 5. `validate:content` passes on the authored root and fails, with the cycle named hop by hop,
    on a deliberately cyclic fixture
@@ -303,7 +303,7 @@ exists. Fixed repo-wide in `vitest.config.ts`.
 
 ### Open question for the parent
 
-Tier 0 authoring **started the Chronicle in week 1 rather than week 3**, deviating from §5.6 on
+Tier 0 authoring **started the Journal in week 1 rather than week 3**, deviating from §5.6 on
 the grounds that §5.6 also requires re-reading it before Boss 1, and entries beginning in week 3
 leave almost nothing to re-read. The commit-and-push half still arrives at Tier 2a on schedule,
 and the six Tier 0 entries become his repository's first real commit. This needs a ruling.

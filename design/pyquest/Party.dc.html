@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M7.5 5.5 3.5 10 7.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 5.5 16.5 10 12.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Quests</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M16.2 10a6.2 6.2 0 1 1-1.9-4.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.5 2.6 16.5 6.1 13 6.1" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Defend</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V8l5-4 5 4v8.5Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 4V1.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Boss</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V10M10 16.5V4.5M15 16.5V12" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Console</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex; flex-direction:column">
+
+  <div style="display:flex; align-items:center; gap:16px; padding:0 32px; height:56px;
+              border-bottom:1px solid #333c4a; background:#1a1f28; flex-shrink:0">
+    <span class="eyebrow">Party</span>
+    <div style="flex-grow:1"></div>
+    <span class="mono" style="font-size:12px; color:#98a3b3">Tier 3 standings · resets when the tier clears</span>
+  </div>
+
+  <div style="flex-grow:1; display:flex; min-height:0">
+    <div style="flex-grow:1; padding:34px 40px; overflow:auto; min-width:0">
+
+      <div style="display:flex; gap:16px; margin-bottom:16px">
+        <sc-for list="{{ players }}" as="p" hint-placeholder-count="2">
+          <div style="flex-grow:1; background:{{ p.bg }}; border:1px solid {{ p.border }}; padding:24px 26px">
+            <div style="display:flex; align-items:center; gap:13px; margin-bottom:20px">
+              <svg width="30" height="33" viewBox="-17 -11 34 40" style="flex-shrink:0">
+                <polygon points="0,-8 15,0 0,8 -15,0" fill="{{ p.top }}"></polygon>
+                <polygon points="-15,0 0,8 0,22 -15,14" fill="{{ p.left }}"></polygon>
+                <polygon points="15,0 0,8 0,22 15,14" fill="{{ p.right }}"></polygon>
+              </svg>
+              <div>
+                <div class="disp" style="font-size:19px">{{ p.name }}</div>
+                <div class="eyebrow" style="font-size:10px; color:{{ p.top }}">{{ p.role }}</div>
+              </div>
+              <div style="flex-grow:1"></div>
+              <div style="text-align:right">
+                <div class="disp" style="font-size:26px; line-height:1">{{ p.tierXp }}</div>
+                <div class="eyebrow" style="font-size:9px">xp this tier</div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:7px">
+              <span class="mono" style="font-size:12px; color:#98a3b3">level {{ p.level }}</span>
+              <div style="flex-grow:1"></div>
+              <span class="mono" style="font-size:11px; color:#5d6878">{{ p.toNext }}</span>
+            </div>
+            <div style="height:6px; background:#12151c; margin-bottom:20px">
+              <div style="height:6px; width:{{ p.pct }}; background:{{ p.top }}"></div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:9px">
+              <sc-for list="{{ p.stats }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex; align-items:baseline; gap:12px">
+                  <span class="mono" style="font-size:11px; color:#5d6878; width:98px; flex-shrink:0">{{ s.k }}</span>
+                  <span class="mono" style="font-size:12.5px; color:{{ s.fill }}">{{ s.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <p class="mono" style="margin:0 0 30px; font-size:11px; color:#5d6878; line-height:1.7; max-width:760px">
+        Standings reset every tier so neither player runs away with it. Dad plays
+        the same quest files at his own level, and he challenge-runs the bosses
+        cold — when one beats him, the gap is measured rather than guessed at,
+        and he plays that tier for real.
+      </p>
+
+      <div class="eyebrow" style="margin-bottom:12px">Open bounties</div>
+      <div style="display:flex; flex-direction:column; gap:8px">
+        <sc-for list="{{ bounties }}" as="b" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:16px; padding:15px 20px;
+                      background:#1a1f28; border-left:3px solid {{ b.accent }}">
+            <span class="mono" style="font-size:10.5px; letter-spacing:.1em; color:{{ b.accent }};
+                                      width:64px; flex-shrink:0">{{ b.kind }}</span>
+            <div style="flex-grow:1; min-width:0">
+              <div style="font-weight:600; font-size:13.5px">{{ b.title }}</div>
+              <div class="mono" style="font-size:11px; color:#5d6878">{{ b.meta }}</div>
+            </div>
+            <span class="mono" style="font-size:12px; color:#98a3b3">{{ b.xp }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="width:400px; flex-shrink:0; border-left:1px solid #333c4a; background:#161a22;
+                padding:32px 30px; overflow:auto">
+
+      <div class="eyebrow" style="margin-bottom:16px">Tier by tier</div>
+      <div style="display:flex; flex-direction:column; gap:3px; margin-bottom:32px">
+        <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="8">
+          <div style="display:flex; align-items:center; gap:11px; padding:9px 11px; background:{{ t.bg }}">
+            <span class="mono" style="font-size:11px; color:{{ t.accent }}; width:16px; flex-shrink:0">{{ t.n }}</span>
+            <span style="font-size:12.5px; color:{{ t.fg }}; width:96px; flex-shrink:0">{{ t.name }}</span>
+            <div style="flex-grow:1; display:flex; gap:2px">
+              <sc-for list="{{ t.bars }}" as="b" hint-placeholder-count="5">
+                <div style="height:5px; flex-grow:1; background:{{ b }}"></div>
+              </sc-for>
+            </div>
+            <span class="mono" style="font-size:11px; color:{{ t.countFill }}; width:52px; text-align:right">{{ t.count }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div class="eyebrow" style="margin-bottom:14px">Medals, both players</div>
+      <div style="display:flex; flex-direction:column; gap:11px">
+        <sc-for list="{{ medalTotals }}" as="m" hint-placeholder-count="5">
+          <div>
+            <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:5px">
+              <span style="font-size:12.5px; color:#c6ced9; width:82px; flex-shrink:0">{{ m.name }}</span>
+              <div style="flex-grow:1"></div>
+              <span class="mono" style="font-size:11px; color:#5aa860">{{ m.son }}</span>
+              <span class="mono" style="font-size:11px; color:#5d6878">/</span>
+              <span class="mono" style="font-size:11px; color:#3f9fb5">{{ m.dad }}</span>
+            </div>
+            <div style="display:flex; gap:2px">
+              <sc-for list="{{ m.bars }}" as="b" hint-placeholder-count="14">
+                <div style="height:4px; flex-grow:1; background:{{ b }}"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <p class="mono" style="margin:16px 0 0; font-size:11px; color:#5d6878; line-height:1.6">
+        Ironman costs each of them something different — he works without
+        documentation, Dad works without AI.
+      </p>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals(){
+    var players = [
+      { name: 'Kai', role: 'son · tier 3', top: '#5aa860', left: '#3d7343', right: '#294b2c',
+        tierXp: '412', level: '7', toNext: '88 to level 8', pct: '64%', lead: true,
+        stats: [
+          { k: 'quests cleared', v: '3 of ~5', fill: '#e8ecf2' },
+          { k: 'medals', v: '7 of 25', fill: '#e8ecf2' },
+          { k: 'scars', v: '11 kept', fill: '#cc5a5a' },
+          { k: 'journal', v: '30 entries, unbroken', fill: '#5aa860' }
+        ] },
+      { name: 'Dad', role: 'parent · challenge run', top: '#3f9fb5', left: '#2c6f7e', right: '#1e4c57',
+        tierXp: '300', level: '9', toNext: '450 to level 10', pct: '31%', lead: false,
+        stats: [
+          { k: 'quests cleared', v: '0 — skipped by boss', fill: '#98a3b3' },
+          { k: 'medals', v: '4 of 25', fill: '#e8ecf2' },
+          { k: 'scars', v: '2 kept', fill: '#cc5a5a' },
+          { k: 'teach-backs owed', v: '1 — Kai has not signed', fill: '#d9a441' }
+        ] }
+    ].map(function(p){
+      return { name: p.name, role: p.role, top: p.top, left: p.left, right: p.right,
+               tierXp: p.tierXp, level: p.level, toNext: p.toNext, pct: p.pct, stats: p.stats,
+               bg: p.lead ? '#1a2119' : '#161a22',
+               border: p.lead ? '#3f7844' : '#232a35' };
+    });
+
+    var bounties = [
+      { kind: 'BUG', accent: '#cc5a5a', title: 'The staircase draws backwards above 12 steps',
+        meta: 'posted by Kai · 2 days ago · unclaimed', xp: '30 xp' },
+      { kind: 'FEATURE', accent: '#3f9fb5', title: 'Make the block palette accept colour names',
+        meta: 'posted by Dad · 4 days ago · unclaimed', xp: '40 xp' },
+      { kind: 'CO-OP', accent: '#d9a441', title: 'Pair on nested chests — Kai drives first',
+        meta: 'scheduled for Sunday · both paid', xp: '20 xp each' }
+    ];
+
+    var T = [
+      { n: '0', name: 'First Light', c: 5, total: 4, done: 4, accent: '#d9a441', est: false },
+      { n: '1', name: 'Control', c: 5, total: 5, done: 5, accent: '#d97742', est: false },
+      { n: '2', name: 'Sandbox', c: 4, total: 4, done: 4, accent: '#8b95a5', est: false },
+      { n: '3', name: 'Collections', c: 5, total: 5, done: 3, accent: '#5aa860', est: true, here: true },
+      { n: '4', name: 'Functions', c: 5, total: 5, done: 0, accent: '#3f9fb5', est: true },
+      { n: '5', name: 'Objects', c: 5, total: 5, done: 0, accent: '#7a72c9', est: true },
+      { n: '6', name: 'Data', c: 5, total: 5, done: 0, accent: '#b968a8', est: true },
+      { n: '7', name: 'Craft', c: 5, total: 5, done: 0, accent: '#cc5a5a', est: true }
+    ];
+    var tiers = T.map(function(t){
+      var bars = [];
+      for (var i = 0; i < t.total; i++) bars.push(i < t.done ? t.accent : '#242b36');
+      return { n: t.n, name: t.name, bars: bars,
+               count: t.done + ' of ' + (t.est ? '~' : '') + t.total,
+               bg: t.here ? '#1a2119' : 'transparent',
+               fg: t.done > 0 ? '#e8ecf2' : '#5d6878',
+               accent: t.done > 0 ? t.accent : '#4a5361',
+               countFill: t.here ? '#5aa860' : (t.done > 0 ? '#98a3b3' : '#4a5361') };
+    });
+
+    var MT = [
+      { name: 'Cleared', son: 12, dad: 4 },
+      { name: 'Ironman', son: 2, dad: 3 },
+      { name: 'Idiomatic', son: 4, dad: 4 },
+      { name: 'Teach-back', son: 5, dad: 3 },
+      { name: 'Conjured', son: 0, dad: 6 }
+    ];
+    var medalTotals = MT.map(function(m){
+      var bars = [];
+      for (var i = 0; i < 14; i++) {
+        if (i < m.son) bars.push('#5aa860');
+        else if (i >= 14 - m.dad) bars.push('#3f9fb5');
+        else bars.push('#242b36');
+      }
+      return { name: m.name, son: m.son, dad: m.dad, bars: bars };
+    });
+
+    return { players: players, bounties: bounties, tiers: tiers, medalTotals: medalTotals };
+  }
+}
+</script>
+</body>
+</html>

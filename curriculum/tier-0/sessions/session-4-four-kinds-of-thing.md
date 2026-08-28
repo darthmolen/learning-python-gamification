@@ -2,7 +2,7 @@
 
 **Concepts:** `int` · `float` · `str` · `bool` · `variables`, `print` resurfacing
 **Files:** `exercises/session-4/`
-**Chronicle:** entry 4
+**Journal:** entry 4
 
 This is the least visual session in the tier, and the one most likely to lose him. It is
 also the one that makes session 5 possible, because `input` hands back a `str` and
@@ -15,7 +15,7 @@ the string in `color("red")`, the decimals from the 1.5 staircase in session 2, 
 
 ---
 
-## Beat 1 — Patrol (3 minutes)
+## Beat 1 — Invasion (3 minutes)
 
 1. Name three errors you caused on purpose last session.
 2. Which line of a traceback do you read first?
@@ -110,7 +110,7 @@ Then move on — the mechanism is not Tier 0 material, but the fact that it exis
 the day he meets it in anger he will remember he saw it before.
 
 Task 4 asks him to keep adding dashes until the ring closes, and to write down how many
-blocks of four lines he pasted. That number goes in the Chronicle. It is the single best
+blocks of four lines he pasted. That number goes in the Journal. It is the single best
 argument for Tier 1 and it is better made by his own hands than by you.
 
 ---
@@ -124,7 +124,7 @@ argument for Tier 1 and it is better made by his own hands than by you.
 
 ---
 
-## Beat 5 — Chronicle (5 minutes)
+## Beat 5 — Journal (5 minutes)
 
 Entry 4. Good prompt for tonight if he is stuck for *what broke*: **which prediction were
 you most confident about and most wrong about?**

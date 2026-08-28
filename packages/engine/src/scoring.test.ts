@@ -98,8 +98,8 @@ describe('xpFor — spec §5.1', () => {
   });
 
   it('pays the flat kinds their §5.1 table amount', () => {
-    expect(xpFor('patrol')).toBe(5);
-    expect(xpFor('chronicle-entry')).toBe(10);
+    expect(xpFor('invasion')).toBe(5);
+    expect(xpFor('journal-entry')).toBe(10);
     expect(xpFor('tier-release-notes')).toBe(75);
     expect(xpFor('co-op-session')).toBe(20);
   });
@@ -108,8 +108,8 @@ describe('xpFor — spec §5.1', () => {
     const paid = [
       xpFor('quest', 15),
       xpFor('boss', 15),
-      xpFor('patrol'),
-      xpFor('chronicle-entry'),
+      xpFor('invasion'),
+      xpFor('journal-entry'),
       xpFor('tier-release-notes'),
       xpFor('co-op-session'),
     ];
@@ -253,7 +253,7 @@ describe('the boundaries this module is not allowed to cross', () => {
     const results: unknown[] = [
       effectiveDC(15, ['ironman']),
       xpFor('quest', 20),
-      xpFor('patrol'),
+      xpFor('invasion'),
       medalDelta(15, ['cleared'], 'ironman'),
       questXpEarned(15, ['cleared']),
       bossUnlocked(3),

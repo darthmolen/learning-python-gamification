@@ -1,6 +1,6 @@
 # Curriculum
 
-The teaching material itself — session plans, exercises, and the Chronicle. Prose and
+The teaching material itself — session plans, exercises, and the Journal. Prose and
 Python, delivered by a parent to one learner.
 
 **This directory has no dependency on the application.** Every tier here must be
@@ -24,7 +24,7 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`.
 Established by Tier 0 and worth keeping.
 
 - **One directory per tier**, holding `README.md`, `parent-guide.md`, `verify.py`,
-  `sessions/`, `exercises/`, `chronicle/`, `reference/`.
+  `sessions/`, `exercises/`, `journal/`, `reference/`.
 - **Every exercise `.py` carries three header tags** — `# concepts:`, `# dc:`,
   `# expect:` — and an optional `# stdin:`. Concept ids come from
   `packages/content/src/concepts.ts` verbatim, and tag what a file *resurfaces* as well

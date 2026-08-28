@@ -1,4 +1,4 @@
-# Chronicle — the first entry
+# Journal — the first entry
 
 Read this out loud before he writes entry 1. Once, at the end of session 1. It never
 needs reading again.
@@ -32,7 +32,7 @@ shoulder while he types.
 
 ## The first entry's prompts
 
-Copy `TEMPLATE.md` to `chronicle/entries/session-01.md` and let him work through it.
+Copy `TEMPLATE.md` to `journal/entries/session-01.md` and let him work through it.
 
 If he is stuck on **what I built**, these are legal nudges — they are questions about the
 session, not about what to write:
@@ -61,7 +61,7 @@ acceptable for the first entry to be thin here. One nudge:
 ## Your reply, that same evening
 
 Written under the line in the same file, before he goes to bed. Non-negotiable — a
-Chronicle nobody answers becomes a diary, and a diary becomes an unfilled form.
+Journal nobody answers becomes a diary, and a diary becomes an unfilled form.
 
 Reply to the **content**. Ask one real question about something he wrote. Tell him
 something true about your own week that connects to it — you got an error today too, and
@@ -76,7 +76,7 @@ that already exists rather than the other way round.
 ## Where the entries live
 
 ```
-chronicle/
+journal/
   TEMPLATE.md          copy this each time
   entry-01-prompt.md   this file
   entries/
@@ -87,5 +87,5 @@ chronicle/
 
 In Tier 0 this is a folder on his machine and nothing more. In Tier 2a it becomes a git
 repository, and these first six entries become its first real commit — which is a much
-better first commit than an empty README, and is the reason the Chronicle starts here
+better first commit than an empty README, and is the reason the Journal starts here
 rather than waiting for the tooling the spec schedules for week 3.

@@ -40,7 +40,7 @@ Scaffolds a content item and everything it references, wired so that
   --title <title>      what the player sees                   (required)
   --tier <0-7>         which tier it belongs to               (required)
   --concepts <a,b,c>   comma-separated tags from concepts.ts  (required)
-  --kind <k>           quest | patrol | boss                  (default: quest)
+  --kind <k>           quest | invasion | boss                  (default: quest)
   --dc <5-30>          difficulty class, spec §5.1            (default: 10)
   --requires <a,b>     prerequisite ids, comma-separated
   --verifier <v>       hidden-tests | local-repo | peer-signoff | git-signal

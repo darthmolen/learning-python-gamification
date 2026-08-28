@@ -2,7 +2,7 @@
 
 **Concepts:** `input` · `f-strings` · `str`, `int`, `variables`, `print` resurfacing
 **Files:** `exercises/session-5/`
-**Chronicle:** entry 5
+**Journal:** entry 5
 
 Tonight his program stops being a drawing and starts being a **tool**, because someone
 else can use it without editing it.
@@ -13,7 +13,7 @@ and she can use it.
 
 ---
 
-## Beat 1 — Patrol (3 minutes)
+## Beat 1 — Invasion (3 minutes)
 
 1. Four kinds of thing — name them.
 2. What does `100 / 4` give, and what kind of thing is it?
@@ -97,7 +97,7 @@ The four tasks in it are all deliberate re-breakings:
    b6 was his own bug in his own file, and this one is a *user* doing something
    reasonable that his program cannot survive.
    **He cannot fix this tonight and should not try.** The fix needs `if` (Tier 1) or
-   `try` (Tier 5). Say so plainly, and get it written into the Chronicle under *what I
+   `try` (Tier 5). Say so plainly, and get it written into the Journal under *what I
    would do differently*. It becomes a real thing to come back to.
 3. Ask for a colour as well. Ask him first whether a colour needs converting, and why
    not.
@@ -140,7 +140,7 @@ depend on.** That sentence is design, and he cannot implement it yet, which is f
 
 ---
 
-## Beat 5 — Chronicle (5 minutes)
+## Beat 5 — Journal (5 minutes)
 
 Entry 5.
 

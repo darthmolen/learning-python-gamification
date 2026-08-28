@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+    button{font-family:inherit;font-size:inherit;cursor:pointer;border:0;}
+    textarea{font-family:'IBM Plex Mono',monospace;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M7.5 5.5 3.5 10 7.5 14.5" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 5.5 16.5 10 12.5 14.5" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Quests</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M16.2 10a6.2 6.2 0 1 1-1.9-4.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.5 2.6 16.5 6.1 13 6.1" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Defend</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V8l5-4 5 4v8.5Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 4V1.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Boss</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V10M10 16.5V4.5M15 16.5V12" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Console</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex; flex-direction:column">
+
+  <div style="display:flex; align-items:center; gap:16px; padding:0 24px; height:56px; border-bottom:1px solid #333c4a; background:#1a1f28; flex-shrink:0">
+    <div style="display:flex; align-items:baseline; gap:8px">
+      <span class="eyebrow" style="color:#5aa860">Tier 3 · Collections</span>
+      <span style="color:#5d6878">/</span>
+      <span class="mono" style="font-size:12px; color:#98a3b3">t3-recipe-book</span>
+    </div>
+    <div style="flex-grow:1"></div>
+    <div style="display:flex; align-items:center; gap:8px">
+      <span class="eyebrow">viewing as</span>
+      <div style="display:flex; gap:2px; background:#12151c; padding:2px; border:1px solid #333c4a">
+        <div style="padding:3px 10px; background:#5aa860; color:#12151c; font-weight:600; font-size:12px">Son</div>
+        <div style="padding:3px 10px; color:#98a3b3; font-size:12px">Parent</div>
+      </div>
+    </div>
+    <div class="mono" style="font-size:12px; color:#98a3b3">
+      <span style="color:#e8ecf2; font-weight:600">{{ xpTotal }}</span> xp
+    </div>
+  </div>
+
+  <div style="display:flex; flex-grow:1; min-height:0">
+
+    <div style="width:520px; flex-shrink:0; border-right:1px solid #333c4a; display:flex; flex-direction:column; min-height:0; background:#161a22">
+
+      <div style="padding:24px 28px 20px; border-bottom:1px solid #232a35">
+        <div style="display:flex; align-items:flex-start; gap:14px">
+          <div style="flex-grow:1">
+            <h1 class="disp" style="margin:0 0 6px; font-size:26px; line-height:1.15">The Recipe Book</h1>
+            <div class="eyebrow">quest · dict, dict-methods, iteration</div>
+          </div>
+          <div style="text-align:center; border:1px solid #333c4a; background:#12151c; padding:6px 12px; flex-shrink:0">
+            <div class="disp" style="font-size:22px; line-height:1; color:#e8ecf2">12</div>
+            <div class="eyebrow" style="font-size:9px; margin-top:3px">DC</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex-grow:1; overflow:auto; padding:20px 28px">
+        <p style="margin:0 0 14px; color:#c6ced9">
+          A crafting table needs to know what it can make. You are going to teach it.
+        </p>
+        <p style="margin:0 0 14px; color:#c6ced9">
+          <span class="mono" style="color:#5aa860">RECIPES</span> maps a result to the blocks it costs.
+          Write <span class="mono" style="color:#5aa860">can_craft</span> so it answers
+          <span class="mono" style="color:#9c95e0">True</span> only when the inventory holds
+          <em>every</em> ingredient, in enough quantity.
+        </p>
+        <div style="border-left:2px solid #333c4a; padding:2px 0 2px 14px; margin:18px 0; color:#98a3b3">
+          Three of these five quests unlock the boss. You have cleared two.
+        </div>
+
+        <div class="eyebrow" style="margin:26px 0 10px">Medals</div>
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <sc-for list="{{ medals }}" as="m" hint-placeholder-count="5">
+            <div style="display:flex; align-items:center; gap:11px; padding:9px 12px; border:1px solid {{ m.border }}; background:{{ m.bg }}">
+              <svg width="16" height="16" viewBox="0 0 16 16" style="flex-shrink:0">
+                <polygon points="8,1 15,8 8,15 1,8" fill="none" stroke="{{ m.fg }}" stroke-width="1.5"></polygon>
+                <sc-if value="{{ m.earned }}" hint-placeholder-val="{{ true }}">
+                  <polygon points="8,4.5 11.5,8 8,11.5 4.5,8" fill="{{ m.fg }}"></polygon>
+                </sc-if>
+              </svg>
+              <span style="font-weight:600; color:{{ m.fg }}; width:78px; flex-shrink:0">{{ m.name }}</span>
+              <span style="color:#5d6878; font-size:12px; flex-grow:1">{{ m.note }}</span>
+              <span class="mono" style="font-size:11px; color:{{ m.payFg }}">{{ m.pay }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div class="mono" style="font-size:11px; color:#5d6878; margin-top:9px">
+          2 of 5 earned · replaying to take one is a first-class move
+        </div>
+
+        <div class="eyebrow" style="margin:26px 0 10px">Datamine</div>
+        <div style="border:1px dashed {{ dm.border }}; background:#12151c; padding:14px">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:8px">
+            <span style="font-weight:600; color:{{ dm.fg }}">{{ dm.title }}</span>
+            <span class="mono" style="font-size:11px; color:#d9a441">−5 DC</span>
+          </div>
+          <p style="margin:0 0 12px; color:#98a3b3; font-size:13px">{{ dm.body }}</p>
+          <div style="display:flex; align-items:center; gap:10px">
+            <button onClick="{{ onDatamine }}" style="padding:7px 14px; background:{{ dm.btnBg }}; color:{{ dm.btnFg }}; border:1px solid {{ dm.border }}; font-weight:600; font-size:13px">{{ dm.btn }}</button>
+            <span class="mono" style="font-size:11px; color:#5d6878">{{ dm.gate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex-grow:1; display:flex; flex-direction:column; min-height:0">
+
+      <div style="display:flex; align-items:center; gap:12px; padding:0 20px; height:42px; border-bottom:1px solid #333c4a; background:#1a1f28; flex-shrink:0">
+        <span class="mono" style="font-size:12px; color:#98a3b3">recipe_book.py</span>
+        <div style="flex-grow:1"></div>
+        <span class="mono" style="font-size:11px; color:#5d6878">{{ attemptLabel }}</span>
+        <button onClick="{{ onRun }}" style="padding:6px 16px; background:#232a35; color:#e8ecf2; border:1px solid #3d4757; font-weight:600; font-size:13px">Run</button>
+        <button onClick="{{ onSubmit }}" style="padding:6px 18px; background:#5aa860; color:#12151c; border:1px solid #5aa860; font-weight:700; font-size:13px">Submit</button>
+      </div>
+
+      <div style="flex-grow:1; display:flex; background:#12151c; overflow:hidden; min-height:0">
+        <div class="mono" style="width:58px; flex-shrink:0; text-align:right; padding:16px 14px 16px 0;
+                                 background:#141821; color:#3d4757; font-size:13px; line-height:22px;
+                                 user-select:none; overflow:hidden">
+          <sc-for list="{{ lineNos }}" as="n" hint-placeholder-count="12">
+            <div style="height:22px">{{ n }}</div>
+          </sc-for>
+        </div>
+        <textarea onInput="{{ onEdit }}" spellcheck="false"
+                  style="flex-grow:1; min-width:0; padding:16px 22px 16px 14px; background:transparent;
+                         color:#e8ecf2; border:0; outline:none; resize:none; font-size:13px;
+                         line-height:22px; white-space:pre; overflow:auto;
+                         caret-color:#5aa860">{{ code }}</textarea>
+      </div>
+
+      <div style="height:238px; flex-shrink:0; border-top:1px solid #333c4a; background:#1a1f28; display:flex; flex-direction:column">
+        <div style="display:flex; align-items:center; gap:10px; padding:0 20px; height:34px; border-bottom:1px solid #232a35; flex-shrink:0">
+          <span class="eyebrow">{{ consoleTitle }}</span>
+          <span style="width:7px; height:7px; background:{{ statusDot }}"></span>
+          <div style="flex-grow:1"></div>
+          <span class="mono" style="font-size:11px; color:#5d6878">{{ consoleMeta }}</span>
+        </div>
+        <div class="mono" style="flex-grow:1; overflow:auto; padding:12px 20px; font-size:12.5px; line-height:1.65; white-space:pre-wrap">
+          <sc-for list="{{ out }}" as="o" hint-placeholder-count="5">
+            <div style="color:{{ o.c }}">{{ o.t }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    this.state = {
+      code: [
+        'RECIPES = {',
+        '    "torch": {"stick": 1, "coal": 1},',
+        '    "chest": {"wood": 8},',
+        '}',
+        '',
+        'def can_craft(inventory, result):',
+        '    # every ingredient, in enough quantity',
+        '    needed = RECIPES[result]',
+        '    for block in needed:',
+        '        if inventory[block] < needed[block]:',
+        '            return False',
+        '    return True'
+      ].join('\n'),
+      attempts: 0,
+      scars: 0,
+      cleared: false,
+      phase: 'idle',
+      datamined: false,
+      out: [
+        { t: 'Run executes in the browser and records nothing. Submit sends it to the', c: '#5d6878' },
+        { t: 'API, where the hidden tests live — and that is the one the game sees.', c: '#5d6878' }
+      ]
+    };
+  }
+
+  say(rows){ this.setState({ out: rows }); }
+
+  /**
+   * The starter indexes `inventory[block]` directly, so a block the inventory
+   * lacks entirely raises KeyError instead of answering False. Passing means
+   * handling the absent key — via .get(), or by testing membership first.
+   */
+  isFixed(code){
+    var body = code.replace(/#.*/g, '');
+    if (/inventory\s*\.\s*get\s*\(/.test(body)) return true;
+    if (/\bin\s+inventory\b/.test(body)) return true;
+    return false;
+  }
+
+  onRun = () => {
+    var fixed = this.isFixed(this.state.code);
+    var rows = [
+      { t: '$ pyodide · recipe_book.py', c: '#5d6878' },
+      { t: 'can_craft({"stick": 2, "coal": 1}, "torch")  ->  True', c: '#e8ecf2' },
+      { t: 'can_craft({"wood": 3}, "chest")              ->  False', c: '#e8ecf2' }
+    ];
+    if (fixed) {
+      rows.push({ t: 'can_craft({"stick": 2}, "torch")             ->  False', c: '#e8ecf2' });
+      rows.push({ t: ' ', c: '#e8ecf2' });
+      rows.push({ t: 'Ran in the browser. Nothing was recorded — Submit is what the game sees.', c: '#5d6878' });
+    } else {
+      rows.push({ t: 'can_craft({"stick": 2}, "torch")', c: '#e8ecf2' });
+      rows.push({ t: '  File "recipe_book.py", line 10, in can_craft', c: '#98a3b3' });
+      rows.push({ t: '    if inventory[block] < needed[block]:', c: '#98a3b3' });
+      rows.push({ t: '       ~~~~~~~~~^^^^^^^', c: '#98a3b3' });
+      rows.push({ t: "KeyError: 'coal'", c: "#cc5a5a" });
+      rows.push({ t: ' ', c: '#e8ecf2' });
+      rows.push({ t: 'Ran in the browser, and nothing was recorded. Better to find this here.', c: '#5d6878' });
+    }
+    this.setState({ phase: fixed ? 'ran' : 'ranfail' });
+    this.say(rows);
+  };
+
+  onSubmit = () => {
+    var fixed = this.isFixed(this.state.code);
+    var n = this.state.attempts + 1;
+    if (!fixed) {
+      this.setState({ attempts: n, scars: this.state.scars + 1, phase: 'failed' });
+      this.say([
+        { t: '$ api · hidden tests · t3-recipe-book', c: '#5d6878' },
+        { t: ' ', c: '#e8ecf2' },
+        { t: 'FAILED  6 of 7 tests', c: '#cc5a5a' },
+        { t: ' ', c: '#e8ecf2' },
+        { t: 'test_missing_ingredient_entirely', c: '#cc5a5a' },
+        { t: "    KeyError: 'coal'", c: "#e8ecf2" },
+        { t: '    The inventory has no "coal" key at all, and you indexed it', c: '#98a3b3' },
+        { t: '    directly. A missing block is not the same as zero of it —', c: '#98a3b3' },
+        { t: '    unless you say so.', c: '#98a3b3' },
+        { t: ' ', c: '#e8ecf2' },
+        { t: 'Attempt ' + n + ' recorded as a scar. Scars are kept, not hidden.', c: '#5d6878' }
+      ]);
+    } else {
+      this.setState({ attempts: n, cleared: true, phase: 'passed' });
+      this.say([
+        { t: '$ api · hidden tests · t3-recipe-book', c: '#5d6878' },
+        { t: ' ', c: '#e8ecf2' },
+        { t: 'PASSED  7 of 7 tests', c: '#5aa860' },
+        { t: ' ', c: '#e8ecf2' },
+        { t: 'Cleared earned  ·  DC 12  ->  +24 xp', c: '#5aa860' },
+        { t: 'Boss unlocked: 3 of 5 quests cleared in Tier 3.', c: '#d9a441' },
+        { t: ' ', c: '#e8ecf2' },
+        { t: n + ' attempts, ' + this.state.scars + ' scars. That is the record and it stays.', c: '#5d6878' }
+      ]);
+    }
+  };
+
+  onDatamine = () => {
+    if (this.state.scars < 2 || this.state.datamined) return;
+    this.setState({ datamined: true });
+    this.say([
+      { t: 'Datamine unlocked · t3-recipe-book', c: '#d9a441' },
+      { t: ' ', c: '#e8ecf2' },
+      { t: 'The reference solution is now on the brief. This quest re-prices at DC 7.', c: '#e8ecf2' },
+      { t: 'Invasions on dict and dict-methods are scheduled for +3 and +10 days.', c: '#98a3b3' },
+      { t: ' ', c: '#e8ecf2' },
+      { t: 'Logged as a legal move. Not cheating — costed and named.', c: '#5d6878' }
+    ]);
+  };
+
+  onEdit = (e) => this.setState({ code: e.target.value });
+
+  renderVals(){
+    var s = this.state;
+    var src = s.code.split('\n');
+    var lineNos = src.map(function(_, i){ return i + 1; });
+
+    function slot(name, earned, note, pay, payFg){
+      return {
+        name: name, earned: earned, note: note, pay: pay,
+        payFg: payFg || (earned ? '#5aa860' : '#3d4757'),
+        fg: earned ? '#e8ecf2' : '#5d6878',
+        border: earned ? '#3d4757' : '#232a35',
+        bg: earned ? '#1e242e' : 'transparent'
+      };
+    }
+    var medals = [
+      slot('Cleared', s.cleared, s.cleared ? 'tests pass' : 'tests must pass', s.cleared ? '+24' : 'DC 12'),
+      slot('Ironman', false, 'no docs, no autocomplete, from memory', '+10'),
+      slot('Idiomatic', true, 'ruff and pyright clean, plus one written line', '+6'),
+      slot('Teach-back', true, 'signed off by Dad, 2 days ago', '+6'),
+      slot('Conjured', false, 'AI-assisted — unlocks at Tier 7', 'locked', '#3d4757')
+    ];
+
+    var gated = s.scars >= 2;
+    var dm;
+    if (s.datamined) {
+      dm = { title: 'Unlocked',
+        body: 'The reference solution is on the brief, and this quest is re-priced at DC 7. Invasions on dict and dict-methods are queued for +3 and +10 days.',
+        btn: 'Reference open', btnBg: '#232a35', btnFg: '#5d6878', border: '#333c4a', fg: '#d9a441', gate: 'logged 19:42' };
+    } else if (gated) {
+      dm = { title: 'Available',
+        body: 'Two genuine attempts are on the record. Write one sentence about what you tried, and the reference solution opens.',
+        btn: 'Unlock reference', btnBg: '#d9a441', btnFg: '#12151c', border: '#d9a441', fg: '#d9a441', gate: '2 of 2 attempts' };
+    } else {
+      dm = { title: 'Not yet',
+        body: 'Two genuine attempts and one written sentence about what you tried. It is a legal move with a name and a cost, not cheating.',
+        btn: 'Unlock reference', btnBg: '#1a1f28', btnFg: '#3d4757', border: '#232a35', fg: '#5d6878',
+        gate: s.scars + ' of 2 attempts' };
+    }
+
+    var dot = s.phase === 'passed' ? '#5aa860'
+            : s.phase === 'failed' ? '#cc5a5a'
+            : s.phase === 'ran' ? '#3f9fb5' : s.phase === 'ranfail' ? '#cc5a5a' : '#3d4757';
+    var title = s.phase === 'passed' ? 'Submit · passed'
+              : s.phase === 'failed' ? 'Submit · failed'
+              : s.phase === 'ran' ? 'Run · browser' : s.phase === 'ranfail' ? 'Run · raised' : 'Console';
+
+    return {
+      code: s.code, lineNos: lineNos,
+      medals: medals, dm: dm, out: s.out,
+      onRun: this.onRun, onSubmit: this.onSubmit, onDatamine: this.onDatamine, onEdit: this.onEdit,
+      statusDot: dot, consoleTitle: title,
+      consoleMeta: s.attempts === 0 ? 'no attempts yet' : s.attempts + ' attempts · ' + s.scars + ' scars',
+      attemptLabel: s.attempts === 0 ? '' : s.attempts + ' attempts',
+      xpTotal: s.cleared ? '1,284' : '1,260'
+    };
+  }
+}
+</script>
+</body>
+</html>

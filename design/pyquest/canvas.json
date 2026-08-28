@@ -1,0 +1,122 @@
+{
+  "artboards": [
+    {
+      "file": "CampaignMap.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "title": "Campaign Map"
+    },
+    {
+      "file": "Main.dc.html",
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "title": "Quest — clickable",
+      "is_interactive": true
+    },
+    {
+      "file": "Defend.dc.html",
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "title": "Defend"
+    },
+    {
+      "file": "Boss.dc.html",
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "title": "Boss"
+    },
+    {
+      "file": "Party.dc.html",
+      "x": 0,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "title": "Party"
+    },
+    {
+      "file": "Journal.dc.html",
+      "x": 1520,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "title": "Journal"
+    },
+    {
+      "file": "Console.dc.html",
+      "x": 3040,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "title": "Console"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-shell",
+      "x": 0,
+      "y": -430,
+      "w": 920,
+      "text": "THE SHELL — these are one app, not seven pages\nEvery artboard carries the same 72px rail: Map, Quests, Defend, Boss, Party, Journal, Console. The active item is lit; badges carry live counts (4 invasions at the border, 2 sign-offs waiting), so the rail is the notification surface as well as the navigation.\n\nThe session loop runs Defend (repel invasions) -> Map (choose) -> Quests (build) -> Journal (write). Boss, Party and Console are entered from the rail whenever, not in sequence."
+    },
+    {
+      "id": "note-denominator",
+      "x": 0,
+      "y": -210,
+      "w": 440,
+      "text": "DENOMINATORS (§5.1a)\nThe tilde in \"3 of ~5\" is load-bearing, not decoration. Tier 3 is still being authored, so the total is an estimate and the UI says so. Content carries the fact (authoring: partial); this screen decides it renders as a tilde."
+    },
+    {
+      "id": "note-medals",
+      "x": 1520,
+      "y": -210,
+      "w": 440,
+      "text": "MEDALS AND DATAMINE (§5.10, §5.5)\nUnearned medal slots render greyed but present — visible-but-locked, same psychology as the skill tree.\n\nSubmit actually reads the editor. The starter indexes inventory[block] directly, so a missing block raises KeyError instead of answering False. It fails until you fix it — .get(), or a membership check. Two failures open the Datamine."
+    },
+    {
+      "id": "note-invasions",
+      "x": 3040,
+      "y": -210,
+      "w": 440,
+      "text": "THE INVASION LADDER — needs your ruling\nThe spec names a review interval and never specifies it. Proposed: an invasion arrives at 1, 3, 7, 16, then 35 days untouched. Repel one and it stays away longer; miss it and it returns a rung sooner rather than from zero, because resetting punishes a bad night and floods the next border."
+    },
+    {
+      "id": "note-scars",
+      "x": 4560,
+      "y": -210,
+      "w": 440,
+      "text": "SCARS (§5.3, §3.5)\nFailed attempts are listed with what actually went wrong, newest first, and never collapsed behind a toggle. Four attempts on a boss is not a bad record — it is the record."
+    },
+    {
+      "id": "note-warning",
+      "x": 0,
+      "y": 2030,
+      "w": 440,
+      "text": "THE DC WARNING LIVES HERE, NOT IN THE ENGINE (§5.1)\nThe engine returns 20. This layer decides that 20 earns a triangle. Every other surface reads the same number and renders it its own way, so no two can disagree."
+    },
+    {
+      "id": "note-zero-xp",
+      "x": 1520,
+      "y": 2030,
+      "w": 440,
+      "text": "STILL OPEN: THE +0 XP MEDAL\nAt base DC 5 the clamp absorbs both negative modifiers, so a medal can legitimately pay nothing. Not solved on these boards — it needs a rendering that explains itself before it ships."
+    },
+    {
+      "id": "note-lexicon",
+      "x": 3040,
+      "y": 2030,
+      "w": 900,
+      "text": "LEXICON RESET — 2026-08-27\nPatrol → Invasion, Muster → Defend, Chronicle → Journal, Board → Party, Quest → Quests in the rail.\n\nTwo reasons. The old words were ones an 11-year-old meets in late teens at best; and \"Board\" collided with \"quest board\" when quest was already in the lexicon. Party won over Levels because the curriculum already numbers Tiers 0–7, and level (from XP) is a different number than tier (from position) — putting both on screen invites exactly one question with a confusing answer.\n\nRenamed everywhere, not only here: spec, content schema (kind: invasion), engine XP kinds, curriculum. Boss 7 puts him inside the engine repo reading that YAML, so the authoring words and the playing words have to be the same words."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

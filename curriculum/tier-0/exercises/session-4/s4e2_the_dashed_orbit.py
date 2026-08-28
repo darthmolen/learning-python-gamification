@@ -66,7 +66,7 @@ print("after four dashes, heading is", turtle.heading())
 #    dad about it; he has been bitten by it at work, with real money.
 #
 # 4. Keep adding dashes until the ring closes. Count how many blocks of four
-#    lines you had to paste. Write that number in your Chronicle. It is the
+#    lines you had to paste. Write that number in your Journal. It is the
 #    single best argument for the thing you learn in Tier 1.
 # -----------------------------------------------------------------------------
 

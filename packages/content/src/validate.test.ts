@@ -101,7 +101,7 @@ describe('concept tags', () => {
   });
 
   it('allows a tag from a tier below the quest, which is what review looks like', () => {
-    // The guard is one-directional on purpose: a Tier 3 quest revisiting `print` is a patrol.
+    // The guard is one-directional on purpose: a Tier 3 quest revisiting `print` is an invasion.
     const issues = validateContent(CONTENT_ROOT);
     expect(byRule(issues, 'concept-above-tier')).toEqual([]);
   });

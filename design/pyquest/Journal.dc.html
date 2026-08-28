@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M7.5 5.5 3.5 10 7.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 5.5 16.5 10 12.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Quests</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M16.2 10a6.2 6.2 0 1 1-1.9-4.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.5 2.6 16.5 6.1 13 6.1" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Defend</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V8l5-4 5 4v8.5Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 4V1.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Boss</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V10M10 16.5V4.5M15 16.5V12" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Console</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex">
+
+  <div style="width:296px; flex-shrink:0; border-right:1px solid #333c4a; background:#161a22;
+              display:flex; flex-direction:column; min-height:0">
+    <div style="padding:24px 24px 16px; border-bottom:1px solid #232a35">
+      <h1 class="disp" style="margin:0 0 4px; font-size:22px">The Journal</h1>
+      <div class="mono" style="font-size:11px; color:#5d6878">31 entries · since week 1</div>
+    </div>
+    <div style="flex-grow:1; overflow:auto; padding:12px 0">
+      <sc-for list="{{ entries }}" as="e" hint-placeholder-count="7">
+        <div style="padding:11px 24px; background:{{ e.bg }}; border-left:2px solid {{ e.accent }}">
+          <div style="display:flex; align-items:baseline; gap:9px">
+            <span class="mono" style="font-size:11px; color:{{ e.accent }}; width:22px">{{ e.n }}</span>
+            <span style="font-size:12.5px; color:{{ e.fg }}; font-weight:{{ e.weight }}">{{ e.date }}</span>
+            <div style="flex-grow:1"></div>
+            <sc-if value="{{ e.replied }}" hint-placeholder-val="{{ true }}">
+              <svg width="12" height="12" viewBox="0 0 12 12">
+                <path d="M1 2h10v6H5.5L3 10.5V8H1z" fill="none" stroke="#3f9fb5" stroke-width="1.2"></path>
+              </svg>
+            </sc-if>
+          </div>
+          <div class="mono" style="font-size:10.5px; color:#5d6878; margin-left:31px">{{ e.snip }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex-shrink:0; padding:16px 24px; border-top:1px solid #232a35">
+      <div style="padding:10px; background:#5aa860; color:#12151c; text-align:center;
+                  font-weight:700; font-size:13px">Write tonight's entry</div>
+    </div>
+  </div>
+
+  <div style="flex-grow:1; display:flex; flex-direction:column; min-width:0">
+
+    <div style="padding:30px 44px 22px; border-bottom:1px solid #232a35; flex-shrink:0">
+      <div style="display:flex; align-items:baseline; gap:14px">
+        <span class="eyebrow">Entry 31 · draft</span>
+        <div style="flex-grow:1"></div>
+        <span class="mono" style="font-size:11px; color:#5d6878">will commit to kai-code/journal/031.md</span>
+      </div>
+      <h2 class="disp" style="margin:10px 0 0; font-size:28px">Thursday, week 10</h2>
+    </div>
+
+    <div style="flex-grow:1; overflow:auto; padding:28px 44px">
+      <div style="display:flex; flex-direction:column; gap:24px; max-width:720px">
+        <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3">
+          <div>
+            <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:9px">
+              <span class="eyebrow" style="color:{{ p.accent }}">{{ p.label }}</span>
+              <div style="flex-grow:1"></div>
+              <span class="mono" style="font-size:10.5px; color:{{ p.stateFill }}">{{ p.state }}</span>
+            </div>
+            <div style="background:{{ p.bg }}; border:1px solid {{ p.border }}; padding:16px 18px;
+                        min-height:{{ p.minH }}">
+              <p style="margin:0; color:{{ p.textFill }}; font-size:14px; line-height:1.65">{{ p.text }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:16px; margin-top:30px; max-width:720px">
+        <div style="padding:11px 26px; background:#232a35; color:#5d6878; font-weight:600; font-size:14px">
+          Commit and push
+        </div>
+        <span class="mono" style="font-size:11.5px; color:#5d6878">
+          one prompt still empty · empty prompts pay nothing
+        </span>
+        <div style="flex-grow:1"></div>
+        <span class="mono" style="font-size:12px; color:#98a3b3">10 xp</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:404px; flex-shrink:0; border-left:1px solid #333c4a; background:#161a22;
+              display:flex; flex-direction:column; min-height:0">
+    <div style="padding:24px 28px 16px; border-bottom:1px solid #232a35">
+      <div class="eyebrow">Dad replied · entry 30</div>
+    </div>
+    <div style="flex-grow:1; overflow:auto; padding:22px 28px">
+      <div style="display:flex; flex-direction:column; gap:22px">
+        <sc-for list="{{ replies }}" as="r" hint-placeholder-count="2">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px">
+              <div style="width:26px; height:26px; background:#1e4c57; display:flex;
+                          align-items:center; justify-content:center; flex-shrink:0">
+                <span class="disp" style="font-size:11px; color:#7fc7d9">D</span>
+              </div>
+              <span style="font-weight:600; font-size:12.5px">Dad</span>
+              <span class="mono" style="font-size:10.5px; color:#5d6878">{{ r.when }}</span>
+            </div>
+            <div style="border-left:2px solid #2c6f7e; padding-left:14px">
+              <p style="margin:0; color:#c6ced9; font-size:13px; line-height:1.7">{{ r.text }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="height:1px; background:#232a35; margin:28px 0"></div>
+
+      <div class="eyebrow" style="margin-bottom:14px">Before Boss 3</div>
+      <div style="border:1px solid #3f7844; background:#182219; padding:16px">
+        <p style="margin:0 0 12px; color:#c6ced9; font-size:13px; line-height:1.6">
+          Re-read entries 24 to 31 before you open the arena. That is eight
+          sessions of Tier 3, in your own words.
+        </p>
+        <p class="mono" style="margin:0; font-size:11px; color:#5d6878; line-height:1.6">
+          Finding something you wrote six weeks ago easy is the strongest
+          evidence you will ever get that you are not stupid. No badge can
+          fake that.
+        </p>
+      </div>
+
+      <div class="eyebrow" style="margin:28px 0 12px">This tier's release notes</div>
+      <div style="border:1px dashed #3d4757; padding:14px; background:#12151c">
+        <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px">
+          <span class="mono" style="font-size:12px; color:#98a3b3">CHANGELOG.md</span>
+          <div style="flex-grow:1"></div>
+          <span class="mono" style="font-size:11px; color:#5d6878">75 xp</span>
+        </div>
+        <p class="mono" style="margin:0; font-size:11px; color:#5d6878; line-height:1.6">
+          Written against a real v0.3.0 tag when Tier 3 closes. One versioned
+          release per tier, with notes, before he ever reaches the capstone.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals(){
+    var E = [
+      { n: '31', date: 'Thu, week 10', snip: 'draft — one prompt empty', cur: true, replied: false },
+      { n: '30', date: 'Tue, week 10', snip: 'the block palette finally cleared', replied: true },
+      { n: '29', date: 'Sun, week 9', snip: 'sets are not lists and I found out', replied: true },
+      { n: '28', date: 'Thu, week 9', snip: 'started tier 3, made a staircase', replied: true },
+      { n: '27', date: 'Tue, week 9', snip: 'boss 2 — it ran on Dad’s laptop', replied: true },
+      { n: '26', date: 'Sat, week 8', snip: 'venv broke twice, then worked', replied: true },
+      { n: '25', date: 'Thu, week 8', snip: 'first push to origin', replied: true }
+    ];
+    var entries = E.map(function(e){
+      return { n: e.n, date: e.date, snip: e.snip, replied: e.replied,
+               bg: e.cur ? '#1e2a20' : 'transparent',
+               accent: e.cur ? '#5aa860' : '#2b323d',
+               fg: e.cur ? '#e8ecf2' : '#98a3b3',
+               weight: e.cur ? '600' : '400' };
+    });
+
+    var prompts = [
+      { label: 'What I built', accent: '#5aa860', state: 'substantial · counts',
+        stateFill: '#5aa860', bg: '#1a1f28', border: '#2f3a2f', textFill: '#e8ecf2', minH: '96px',
+        text: 'Got can_craft working for the torch and the chest. It walks the recipe dict and checks the inventory has enough of each block. I used a for loop over needed instead of comparing the two dicts, because comparing them straight up said False even when I had extra coal.' },
+      { label: 'What broke', accent: '#cc5a5a', state: 'substantial · counts',
+        stateFill: '#5aa860', bg: '#1a1f28', border: '#2f3a2f', textFill: '#e8ecf2', minH: '96px',
+        text: 'Twice. First a KeyError because I looked up "coal" when the inventory had no coal at all — I thought a missing key would just be zero. Then the tests still failed and I could not see why for about ten minutes, and it was that I returned True inside the loop instead of after it.' },
+      { label: 'What I would do differently', accent: '#d9a441', state: 'empty · pays nothing',
+        stateFill: '#5d6878', bg: '#12151c', border: '#232a35', textFill: '#3d4757', minH: '72px',
+        text: 'Write here. One or two honest sentences is enough; this is the prompt that pays for thinking, not for typing.' }
+    ];
+
+    var replies = [
+      { when: 'yesterday, 21:06',
+        text: 'The bit about returning True inside the loop is the whole lesson and you found it yourself. I have shipped that exact bug to production, twice, with a salary.' },
+      { when: 'yesterday, 21:09',
+        text: 'Question, not an answer: what would happen if a recipe needed a block that was in the inventory with a count of zero? Try it before Thursday.' }
+    ];
+
+    return { entries: entries, prompts: prompts, replies: replies };
+  }
+}
+</script>
+</body>
+</html>

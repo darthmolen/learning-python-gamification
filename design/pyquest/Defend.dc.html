@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M7.5 5.5 3.5 10 7.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 5.5 16.5 10 12.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Quests</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M16.2 10a6.2 6.2 0 1 1-1.9-4.5" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.5 2.6 16.5 6.1 13 6.1" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Defend</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V8l5-4 5 4v8.5Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 4V1.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Boss</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V10M10 16.5V4.5M15 16.5V12" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Console</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex; flex-direction:column">
+
+  <div style="display:flex; align-items:center; gap:16px; padding:0 32px; height:56px;
+              border-bottom:1px solid #333c4a; background:#1a1f28; flex-shrink:0">
+    <span class="eyebrow">Defend · session 31</span>
+    <div style="flex-grow:1"></div>
+    <span class="mono" style="font-size:12px; color:#98a3b3">Thursday · 19:20</span>
+  </div>
+
+  <div style="flex-grow:1; display:flex; min-height:0">
+
+    <div style="flex-grow:1; padding:44px 56px; overflow:auto; min-width:0">
+
+      <div class="eyebrow" style="margin-bottom:10px">Four invasions at the border</div>
+      <h1 class="disp" style="margin:0 0 10px; font-size:40px; line-height:1.05">
+        Something you knew<br>is trying to slip away.
+      </h1>
+      <p style="margin:0 0 34px; color:#98a3b3; max-width:560px">
+        You learned each of these and then left it alone long enough for it to
+        start fading. Two or three minutes each, and nothing here is new — that
+        is the whole point. Hold the ground you already took.
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:8px; max-width:840px">
+        <sc-for list="{{ drills }}" as="d" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; gap:18px; padding:16px 20px;
+                      background:#1a1f28; border-left:3px solid {{ d.accent }}">
+            <svg width="26" height="28" viewBox="-15 -9 30 34" style="flex-shrink:0">
+              <polygon points="0,-7 13,0 0,7 -13,0" fill="{{ d.top }}"></polygon>
+              <polygon points="-13,0 0,7 0,19 -13,12" fill="{{ d.left }}"></polygon>
+              <polygon points="13,0 0,7 0,19 13,12" fill="{{ d.right }}"></polygon>
+            </svg>
+            <div style="width:150px; flex-shrink:0">
+              <div class="mono" style="font-size:14px; font-weight:600; color:#e8ecf2">{{ d.concept }}</div>
+              <div class="eyebrow" style="font-size:10px; color:{{ d.accent }}">{{ d.tier }}</div>
+            </div>
+            <div style="flex-grow:1; min-width:0">
+              <div style="color:#c6ced9; font-size:13px">{{ d.prompt }}</div>
+            </div>
+            <div style="text-align:right; flex-shrink:0; width:130px">
+              <div class="mono" style="font-size:12px; color:#98a3b3">{{ d.lastSeen }}</div>
+              <div class="mono" style="font-size:10.5px; color:#5d6878">{{ d.why }}</div>
+            </div>
+            <span class="mono" style="font-size:11px; color:#5d6878; width:36px; text-align:right">+5</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:18px; margin-top:32px">
+        <div style="padding:12px 30px; background:#5aa860; color:#12151c; font-weight:700; font-size:15px">
+          Repel them
+        </div>
+        <span class="mono" style="font-size:12px; color:#5d6878">about 9 minutes · 20 xp</span>
+        <div style="flex-grow:1"></div>
+        <span class="mono" style="font-size:12px; color:#5d6878">Skip to the map</span>
+      </div>
+
+      <p class="mono" style="margin:34px 0 0; font-size:11px; color:#5d6878; line-height:1.7; max-width:640px">
+        An invasion arrives when a concept has gone untouched for its interval —
+        1, 3, 7, 16, then 35 days. Repel one and it stays away longer; miss it
+        and it comes back a rung sooner, not from the beginning, because
+        resetting to zero punishes a bad night and floods the next border.
+      </p>
+    </div>
+
+    <div style="width:400px; flex-shrink:0; border-left:1px solid #333c4a; background:#161a22;
+                padding:36px 32px; display:flex; flex-direction:column; gap:32px">
+
+      <div>
+        <div class="eyebrow" style="margin-bottom:14px">Attendance</div>
+        <div style="display:flex; align-items:baseline; gap:10px">
+          <span class="disp" style="font-size:44px; line-height:1; color:#5aa860">11</span>
+          <span style="color:#98a3b3; font-size:14px">scheduled sessions<br>in a row</span>
+        </div>
+        <div style="display:flex; gap:3px; margin-top:16px">
+          <sc-for list="{{ streak }}" as="s" hint-placeholder-count="14">
+            <div style="width:100%; height:22px; background:{{ s.bg }}; border:{{ s.border }}"></div>
+          </sc-for>
+        </div>
+        <p class="mono" style="margin:12px 0 0; font-size:11px; color:#5d6878; line-height:1.6">
+          Scheduled sessions, not days. A daily streak against a twice-weekly
+          cadence only manufactures guilt and then collapses. The pale one was
+          forgiven — there was a soccer game.
+        </p>
+      </div>
+
+      <div style="height:1px; background:#232a35"></div>
+
+      <div>
+        <div class="eyebrow" style="margin-bottom:14px">Last session</div>
+        <div style="display:flex; flex-direction:column; gap:11px">
+          <sc-for list="{{ recap }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex; gap:12px; align-items:baseline">
+              <span class="mono" style="font-size:12px; color:{{ r.fill }}; width:52px; flex-shrink:0">{{ r.tag }}</span>
+              <span style="color:#98a3b3; font-size:13px">{{ r.text }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="height:1px; background:#232a35"></div>
+
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px">Journal</div>
+        <div style="border:1px dashed #3d4757; padding:15px; background:#12151c">
+          <p style="margin:0 0 10px; color:#c6ced9; font-size:13px">
+            Thursday's entry is not written yet.
+          </p>
+          <p class="mono" style="margin:0; font-size:11px; color:#5d6878; line-height:1.6">
+            Three prompts, ten xp, paid for substance. Dad replies to every one.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals(){
+    function block(hex, f){
+      var n = parseInt(hex.slice(1), 16);
+      return 'rgb(' + Math.round(((n >> 16) & 255) * f) + ',' +
+                      Math.round(((n >> 8) & 255) * f) + ',' +
+                      Math.round((n & 255) * f) + ')';
+    }
+    var raw = [
+      { concept: 'f-strings', tier: 'Tier 0', color: '#d9a441', lastSeen: '9 days ago', why: 'rung 4 · due at 7',
+        prompt: 'Print a line that reads "torch x3" using the variables name and count.' },
+      { concept: 'accumulator', tier: 'Tier 1', color: '#d97742', lastSeen: '17 days ago', why: 'rung 5 · due at 16',
+        prompt: 'Total the values in a list without using sum().' },
+      { concept: 'venv', tier: 'Tier 2', color: '#8b95a5', lastSeen: '8 days ago', why: 'rung 4 · due at 7',
+        prompt: 'You open a new project folder. What are the first two commands?' },
+      { concept: 'slicing', tier: 'Tier 3', color: '#5aa860', lastSeen: '4 days ago', why: 'datamined · forced +3',
+        prompt: 'Take everything but the first and last item of a list.' }
+    ];
+    var drills = raw.map(function(d){
+      return { concept: d.concept, tier: d.tier, prompt: d.prompt, lastSeen: d.lastSeen, why: d.why,
+               accent: d.color, top: d.color, left: block(d.color, 0.68), right: block(d.color, 0.46) };
+    });
+
+    var streak = [];
+    for (var i = 0; i < 14; i++) {
+      if (i === 6) streak.push({ bg: '#2f3a2f', border: '1px dashed #5aa860' });
+      else if (i < 2) streak.push({ bg: '#232a35', border: 'none' });
+      else streak.push({ bg: '#5aa860', border: 'none' });
+    }
+
+    var recap = [
+      { tag: 'built', fill: '#5aa860', text: 'The Block Palette — cleared on the second attempt' },
+      { tag: 'scar', fill: '#cc5a5a', text: 'One failed submit: a set was compared to a list' },
+      { tag: 'wrote', fill: '#98a3b3', text: 'Journal entry 30, replied to by Dad' }
+    ];
+
+    return { drills: drills, streak: streak, recap: recap };
+  }
+}
+</script>
+</body>
+</html>

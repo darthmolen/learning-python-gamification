@@ -115,10 +115,10 @@ const PeerSignoffVerifierSchema = z.object({
   by: z.enum(['other-player', 'parent', 'son']),
 });
 
-/** Reads his git log for commits and streaks (§6.3). Chronicle and streaks. */
+/** Reads his git log for commits and streaks (§6.3). Journal and streaks. */
 const GitSignalVerifierSchema = z.object({
   type: z.literal('git-signal'),
-  signal: z.enum(['commit', 'push', 'chronicle-entry', 'tag']),
+  signal: z.enum(['commit', 'push', 'journal-entry', 'tag']),
 });
 
 export const VerifierSchema = z.discriminatedUnion('type', [
@@ -147,7 +147,7 @@ export const TierSchema = z.union([
 ]);
 export type Tier = z.infer<typeof TierSchema>;
 
-export const KindSchema = z.enum(['quest', 'patrol', 'boss']);
+export const KindSchema = z.enum(['quest', 'invasion', 'boss']);
 export type Kind = z.infer<typeof KindSchema>;
 
 /** Stable content id, e.g. `t3-recipe-book`. Referenced by `requires` and by progress rows. */

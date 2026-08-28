@@ -2,12 +2,12 @@
 
 **Concepts:** `print` · first contact with `reading-errors`
 **Files:** `exercises/session-1/`
-**Chronicle:** entry 1, prompt in `chronicle/entry-01-prompt.md`
+**Journal:** entry 1, prompt in `journal/entry-01-prompt.md`
 
 The whole session earns one sentence: **the first line he types draws something.**
 Everything else is arranged around protecting that.
 
-No patrol — there is nothing yet to retrieve.
+No invasion — there is nothing yet to retrieve.
 
 ---
 
@@ -117,10 +117,10 @@ anything else before you cut that.
 
 ---
 
-## Beat 4 — Chronicle (5 minutes)
+## Beat 4 — Journal (5 minutes)
 
-Copy `chronicle/TEMPLATE.md` to `chronicle/entries/session-01.md`. Read him
-`chronicle/entry-01-prompt.md`.
+Copy `journal/TEMPLATE.md` to `journal/entries/session-01.md`. Read him
+`journal/entry-01-prompt.md`.
 
 Before he writes a word, say the scoring rule once: **ten XP, paid for substance, not
 for existence.** "Did turtle, was fine" is worth zero and you will say zero.
@@ -151,7 +151,7 @@ That exchange, in session 1, minute 12, is the single most load-bearing thing in
 ## If you have 45 minutes and not 60
 
 Cut `s1e3` and set it as something to play with on his own. Do not cut the REPL hook and
-do not cut the Chronicle.
+do not cut the Journal.
 
 ## If it goes fast
 

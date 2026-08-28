@@ -2,7 +2,7 @@
 
 **Concepts:** `variables` · `int` · `print`
 **Files:** `exercises/session-2/`
-**Chronicle:** entry 2
+**Journal:** entry 2
 
 Variables are usually taught as "a box that holds a value". That metaphor breaks by
 Tier 3 and has to be unlearned. This session teaches them as **names**, and teaches them
@@ -10,7 +10,7 @@ by first making him feel the pain of not having any.
 
 ---
 
-## Beat 1 — Patrol (3 minutes)
+## Beat 1 — Invasion (3 minutes)
 
 Out loud, no computer, nothing looked up.
 
@@ -134,13 +134,13 @@ if none of them appeal.
 
 ---
 
-## Beat 5 — Chronicle (5 minutes)
+## Beat 5 — Journal (5 minutes)
 
 Entry 2. Same three prompts.
 
 If he wrote "nothing broke", ask what happened when the square did not close during the
 hook. Something did break, twenty minutes ago, and forgetting that is the habit the
-Chronicle exists to fight.
+Journal exists to fight.
 
 ---
 

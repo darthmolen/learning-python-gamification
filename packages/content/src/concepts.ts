@@ -11,7 +11,7 @@
  * will not meet for eighteen weeks (spec §4, Tier 5), and the prerequisite graph cannot see
  * that on its own.
  *
- * Concepts are also the unit of spaced repetition. Spec §5.4 queues a patrol when a concept
+ * Concepts are also the unit of spaced repetition. Spec §5.4 queues an invasion when a concept
  * passes its review interval untouched, so every id here is a thing that can come back around.
  */
 

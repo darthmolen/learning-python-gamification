@@ -9,7 +9,7 @@ player.
 | Directory | Holds |
 |---|---|
 | `tiers/` | One tier manifest per tier, `tier-<n>.yml` — the denominator of §5.1a |
-| `quests/` | One YAML file per content item: quest, patrol, or boss (§6.2) |
+| `quests/` | One YAML file per content item: quest, invasion, or boss (§6.2) |
 | `briefs/` | The markdown brief each item points at |
 | `starters/` | Starter files for `hidden-tests` verifiers |
 | `tests/` | Hidden test files. These never reach the browser (§6.3) |

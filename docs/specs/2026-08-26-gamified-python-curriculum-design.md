@@ -92,7 +92,7 @@ Sequenced by motivation-adjusted dependency order. Each tier's project makes the
 
 **BOSS 1 — The Sigil:** an art generator that takes input and produces something worth hanging on a wall.
 
-### The Chronicle (begins week 1, runs forever)
+### The Journal (begins week 1, runs forever)
 A markdown journal, one entry per session. Three prompts: what I built, what broke, what I would do differently. It starts as a plain file in week 1 and *becomes* committed and pushed at Tier 2a, once he has git. See §5.6.
 
 ### Tier 2a — The Scribe's Rite (weeks 6–7)
@@ -265,8 +265,8 @@ tuning.
 |---|---|
 | Quest | effective DC × 2 |
 | Boss | effective DC × 10 |
-| Patrol | 5 flat |
-| Chronicle entry | 10 flat |
+| Invasion | 5 flat |
+| Journal entry | 10 flat |
 | Tier release notes | 75 flat |
 | Co-op session | 20 flat |
 
@@ -321,7 +321,7 @@ Rules hold for the whole campaign:
 - **It must run from a clean clone on the other person's machine.**
 - Unlimited attempts. Failures are recorded as **scars** and displayed with pride.
 
-### 5.4 Patrols
+### 5.4 Invasions
 
 Every quest carries concept tags. When a concept passes its review interval untouched, the engine queues a two-to-three minute drill at the start of the next session. Three to five per session.
 
@@ -332,16 +332,16 @@ This mechanic exists to kill the most-cited flaw in the research: learners compl
 After **two genuine attempts** and one written sentence describing what he tried, he may unlock the reference solution.
 
 - Applies a −5 difficulty modifier (§5.1), re-pricing the quest at the lower effective DC.
-- Guarantees a patrol on that concept at +3 days and again at +10 days.
+- Guarantees an invasion on that concept at +3 days and again at +10 days.
 - Carries a name and a button, because it is a **legal move, not cheating**.
 
 Shame produces hiding, and hiding destroys the parent's signal about what the learner actually knows. A costed, logged, named move keeps both.
 
-### 5.6 The Chronicle
+### 5.6 The Journal
 
 A markdown journal, one entry per session, which becomes committed and pushed once he has git.
 
-**It begins in week 1, not week 3.** The reason is inside this section: he re-reads his Chronicle
+**It begins in week 1, not week 3.** The reason is inside this section: he re-reads his Journal
 from the start of a tier before every boss fight, and a journal that starts in week 3 leaves
 almost nothing to re-read before Boss 1. Writing three sentences after a session is also the
 cheapest habit in the curriculum to start and the most expensive to retrofit, and in week 1 it
@@ -353,7 +353,7 @@ first commit than an empty one.
 
 - **Ten XP per entry, paid for substance rather than existence.** Three prompts: what I built, what broke, what I would do differently. Empty prompts pay nothing.
 - **The parent replies**, as comments in Gitea. Relatedness, plus code-review culture learned before he writes code worth reviewing.
-- **Before every boss fight he re-reads his own Chronicle from the start of that tier.** Reading something he wrote six weeks ago and finding it easy is the strongest evidence a learner will ever get that he is not stupid. Badges cannot fake that.
+- **Before every boss fight he re-reads his own Journal from the start of that tier.** Reading something he wrote six weeks ago and finding it easy is the strongest evidence a learner will ever get that he is not stupid. Badges cannot fake that.
 - **At the end of each tier he writes release notes** in a real `CHANGELOG.md` against a real version tag. That yields one versioned release per tier, each with written release notes, before he ever reaches the capstone.
 
 Git also gets learned here by low-stakes repetition, weeks before it has to carry anything.
@@ -412,7 +412,7 @@ Rules:
   psychology of the skill tree.
 
 Two consequences follow. The campaign map gains a completionist layer. More importantly,
-**voluntary replay becomes a second retrieval-practice engine** beside patrols: patrols are
+**voluntary replay becomes a second retrieval-practice engine** beside invasions: invasions are
 retrieval the engine forces, medals are retrieval the player chooses. Both build retention.
 
 Ironman is not auto-granted to the son. His binding constraint is working from memory
@@ -484,7 +484,7 @@ A drill, a quest, and a boss are the same object. Only the verifier differs.
 ```yaml
 id: t3-recipe-book
 title: The Recipe Book
-kind: quest          # quest | patrol | boss
+kind: quest          # quest | invasion | boss
 tier: 3
 concepts: [dict, dict-methods, iteration]
 requires: [t3-inventory-lists]
@@ -513,7 +513,7 @@ versioned in git and validated on load.
 | `hidden-tests` | Submit posts the code to the API, which runs tests the client never sees | Tiers 0–1 drills |
 | `local-repo` | API pulls his repo, runs the quest's pytest specification | Tier 2b onward |
 | `peer-signoff` | The other player presses the button, named by a `by` field | Bosses, and every Teach-back medal |
-| `git-signal` | Reads his git log for commits and streaks | Chronicle, streaks |
+| `git-signal` | Reads his git log for commits and streaks | Journal, streaks |
 
 **Run and Submit are deliberately different paths.** Pyodide runs his code in the browser for **Run**, giving instant feedback with no round trip. **Submit** goes to the API, because anything shipped to the browser is readable, and hidden tests shipped to the client are not hidden.
 
@@ -543,7 +543,7 @@ The API-to-runner interface is a job queue in both cases, so hardening it touche
 
 ### 6.7 `packages/engine`
 
-Pure functions over state and content. Given completions, XP, scars, datamines, and concept review timestamps, it returns available quests, tier progress, boss unlock status, due patrols, level, and standings.
+Pure functions over state and content. Given completions, XP, scars, datamines, and concept review timestamps, it returns available quests, tier progress, boss unlock status, due invasions, level, and standings.
 
 **No I/O, no database, no network.** This is the one component that must never be wrong, so it is the one component that is trivially testable.
 
@@ -553,10 +553,10 @@ Pure functions over state and content. Given completions, XP, scars, datamines, 
 
 1. **Campaign Map** — the skill tree as regions, locked nodes visible
 2. **Quest** — brief, CodeMirror editor, Run and Submit, Datamine
-3. **Muster** — session start, queued patrol drills
+3. **Defend** — session start, queued invasion drills
 4. **Boss** — specification, attempt log, scars, sign-off
-5. **The Board** — two-player XP, levels, tier standings, open bounties
-6. **Chronicle** — entries, prompts, parent replies
+5. **Party** — two-player XP, levels, tier standings, open bounties
+6. **Journal** — entries, prompts, parent replies
 7. **Console** — sign-off, authoring, streak forgiveness. Both players have one, since sign-off runs both directions
 
 ### 6.9 Backup policy
@@ -565,7 +565,7 @@ Nightly job: `pg_dump` of Postgres plus a mirror of every Gitea repository, writ
 dated tarball on a second disk. Thirty-day retention, with a restore rehearsed once before
 week 3.
 
-The Chronicle becomes irreplaceable quickly, and so does his commit history. Those are the
+The Journal becomes irreplaceable quickly, and so does his commit history. Those are the
 two artifacts this project cannot regenerate.
 
 ### 6.10 Authoring is a first-class feature
@@ -581,7 +581,7 @@ The parent will do this more than 150 times. It should take two minutes.
 | Repository | Owner | Contents |
 |---|---|---|
 | `pyquest` | parent | SPA, engine, quest YAML, verifiers, hidden tests |
-| `<his choice>` | son | One directory per project, plus the Chronicle |
+| `<his choice>` | son | One directory per project, plus the Journal |
 
 **The son owns a separate repository.** Reasons, in order of weight:
 
@@ -605,9 +605,9 @@ Driven by the learner's calendar, not by feature completeness.
 | **0a** | **Ursina hardware gate on the son's laptop** | **week 0, before anything else** |
 | 0 | Compose stack, engine, schema, content validator | week 0 |
 | 1 | Quest view, Pyodide run, API verify, campaign map | week 1 |
-| 1.5 | Gitea, `git-signal`, Chronicle | week 3 |
+| 1.5 | Gitea, `git-signal`, Journal | week 3 |
 | 2 | `local-repo` verifier, boss flow, peer sign-off | week 6 |
-| 3 | Patrols and spaced repetition | week 9 |
+| 3 | Invasions and spaced repetition | week 9 |
 | 4 | Two-player board, bounties | week 12 |
 | 5 | See roadmap | later |
 
@@ -662,9 +662,9 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Postgres and Docker Compose over SQLite | Beefy host available; pipeline-shaped from day one |
 | Gitea over GitHub | No age gate, private, GitHub-compatible Actions |
 | Push as the verification mechanism | Two machines; also honest engineering culture |
-| Git split across Chronicle, Scribe's Rite, Escape | Verification depends on git, so git must precede it |
-| Chronicle scored rather than ritual | Reflection is a skill the industry lost |
-| Chronicle begins week 1, git arrives at Tier 2a | Pre-boss re-reading needs something to re-read; the habit is cheap to start and expensive to retrofit |
+| Git split across Journal, Scribe's Rite, Escape | Verification depends on git, so git must precede it |
+| Journal scored rather than ritual | Reflection is a skill the industry lost |
+| Journal begins week 1, git arrives at Tier 2a | Pre-boss re-reading needs something to re-read; the habit is cheap to start and expensive to retrofit |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
 | Ursina hardware gate before any build work | The continuity argument for Ursina collapses into the bait and switch it avoids if his laptop cannot run it |
@@ -675,7 +675,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
 | Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |
 | Denominators everywhere, tildes when estimated | XP answers "how far have I come"; only a denominator answers "how much is left" |
-| Medals per quest, earned on replay | Makes replay rewarding, and adds voluntary retrieval practice beside forced patrols |
+| Medals per quest, earned on replay | Makes replay rewarding, and adds voluntary retrieval practice beside forced invasions |
 | Only Cleared gates progression | Keeps medals elective, preserving autonomy |
 | `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
 | Challenge runs as the parent's gap detector | Measures gaps instead of asking the parent to introspect them |

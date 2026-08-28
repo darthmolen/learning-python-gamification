@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:#12151c;color:#e8ecf2;
+      font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:#5aa860;text-decoration:none;} a:hover{color:#7cc182;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;}
+    .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
+    .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+      text-transform:uppercase;color:#5d6878;}
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; background:#12151c">
+<div style="width:72px; flex-shrink:0; background:#0d1014; border-right:1px solid #232a35; display:flex; flex-direction:column; align-items:center; padding:13px 0">
+  <svg width="22" height="24" viewBox="-14 -8 28 30" style="margin-bottom:16px; flex-shrink:0">
+    <polygon points="0,-7 13,0 0,7 -13,0" fill="#5aa860"></polygon>
+    <polygon points="-13,0 0,7 0,18 -13,11" fill="#3f7844"></polygon>
+    <polygon points="13,0 0,7 0,18 13,11" fill="#2d5731"></polygon>
+  </svg>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3 17 7 10 11 3 7Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 11 10 15 17 11" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Map</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M7.5 5.5 3.5 10 7.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 5.5 16.5 10 12.5 14.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Quests</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M16.2 10a6.2 6.2 0 1 1-1.9-4.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.5 2.6 16.5 6.1 13 6.1" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Defend</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">4</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V8l5-4 5 4v8.5Z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 4V1.5" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Boss</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 16.5V10M10 16.5V4.5M15 16.5V12" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Party</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; border-left:2px solid transparent"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.5 3.5h11v13h-11z" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 3.5v13M10.5 7.5h3M10.5 11h3" fill="none" stroke="#5d6878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#5d6878">Journal</span></div>
+  <div style="position:relative; width:72px; padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:5px; background:#171d17; border-left:2px solid #5aa860"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 6.5h14M3 13.5h14" fill="none" stroke="#e8ecf2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.05em; text-transform:uppercase; color:#e8ecf2">Console</span><span style="position:absolute; top:6px; right:13px; min-width:14px; height:14px; background:#d9a441; color:#12151c; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center">2</span></div>
+  <div style="flex-grow:1"></div>
+  <div style="width:32px; height:32px; background:#1e2a20; border:1px solid #3f7844; display:flex; align-items:center; justify-content:center">
+    <span style="font-family:'Archivo Black',sans-serif; font-size:13px; color:#8fd196">K</span>
+  </div>
+</div>
+<div style="flex-grow:1; min-width:0; display:flex; flex-direction:column">
+
+  <div style="display:flex; align-items:center; gap:16px; padding:0 32px; height:56px;
+              border-bottom:1px solid #333c4a; background:#1a1f28; flex-shrink:0">
+    <span class="eyebrow">Console · Dad</span>
+    <span class="mono" style="font-size:11px; color:#5d6878">both players have one — sign-off runs both directions</span>
+    <div style="flex-grow:1"></div>
+    <span class="mono" style="font-size:12px; color:#d9a441">2 waiting on you</span>
+  </div>
+
+  <div style="flex-grow:1; display:flex; min-height:0">
+
+    <div style="flex-grow:1; padding:32px 40px; overflow:auto; min-width:0">
+
+      <div class="eyebrow" style="margin-bottom:14px">Waiting on your sign-off</div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:38px">
+        <sc-for list="{{ signoffs }}" as="s" hint-placeholder-count="2">
+          <div style="background:#1a1f28; border-left:3px solid {{ s.accent }}; padding:18px 22px">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px">
+              <span class="mono" style="font-size:10.5px; letter-spacing:.1em; color:{{ s.accent }}">{{ s.kind }}</span>
+              <span class="disp" style="font-size:16px">{{ s.title }}</span>
+              <div style="flex-grow:1"></div>
+              <span class="mono" style="font-size:11px; color:#5d6878">{{ s.when }}</span>
+            </div>
+            <p style="margin:0 0 14px; color:#98a3b3; font-size:13px">{{ s.body }}</p>
+            <div style="display:flex; align-items:center; gap:10px">
+              <div style="padding:8px 20px; background:{{ s.accent }}; color:#12151c;
+                          font-weight:700; font-size:13px">{{ s.action }}</div>
+              <div style="padding:8px 18px; border:1px solid #333c4a; color:#98a3b3; font-size:13px">
+                Not yet — say why
+              </div>
+              <div style="flex-grow:1"></div>
+              <span class="mono" style="font-size:11px; color:#5d6878">{{ s.pays }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div class="eyebrow" style="margin-bottom:14px">Authoring</div>
+      <div style="background:#161a22; border:1px solid #232a35; padding:24px 26px; margin-bottom:20px">
+        <div style="display:flex; gap:36px; margin-bottom:22px">
+          <sc-for list="{{ authorStats }}" as="a" hint-placeholder-count="4">
+            <div>
+              <div class="disp" style="font-size:24px; line-height:1; color:{{ a.fill }}">{{ a.v }}</div>
+              <div class="eyebrow" style="font-size:9px; margin-top:5px">{{ a.k }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div class="mono" style="background:#12151c; padding:15px 18px; font-size:12px; line-height:1.8">
+          <div style="color:#5d6878">$ npm run validate:content</div>
+          <div style="color:#5aa860">OK  no problems found in content/</div>
+          <div style="color:#98a3b3">    26 items across 4 tiers</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:18px">
+          <div style="padding:9px 20px; background:#232a35; color:#e8ecf2; font-weight:600; font-size:13px">
+            New quest
+          </div>
+          <div style="padding:9px 20px; border:1px solid #333c4a; color:#98a3b3; font-size:13px">
+            Validate
+          </div>
+          <div style="flex-grow:1"></div>
+          <span class="mono" style="font-size:11px; color:#5d6878">
+            Tier 4 is 0 of ~5 — the tilde comes off when it is finished
+          </span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px">
+        <sc-for list="{{ tierAuthoring }}" as="t" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:14px; padding:12px 18px; background:#1a1f28">
+            <span class="mono" style="font-size:11px; color:{{ t.accent }}; width:52px">{{ t.tier }}</span>
+            <span style="font-size:13px; color:#c6ced9; width:112px">{{ t.name }}</span>
+            <div style="flex-grow:1; display:flex; gap:2px">
+              <sc-for list="{{ t.bars }}" as="b" hint-placeholder-count="5">
+                <div style="height:6px; flex-grow:1; background:{{ b }}"></div>
+              </sc-for>
+            </div>
+            <span class="mono" style="font-size:11.5px; color:{{ t.stateFill }}; width:118px; text-align:right">{{ t.state }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="width:420px; flex-shrink:0; border-left:1px solid #333c4a; background:#161a22;
+                padding:32px 30px; overflow:auto">
+
+      <div class="eyebrow" style="margin-bottom:14px">Attendance</div>
+      <div style="background:#12151c; border:1px solid #232a35; padding:18px">
+        <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:14px">
+          <span class="disp" style="font-size:30px; line-height:1; color:#5aa860">11</span>
+          <span style="color:#98a3b3; font-size:13px">sessions in a row</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; background:#1a1f28;
+                    border-left:2px solid #d9a441; margin-bottom:14px">
+          <div style="flex-grow:1">
+            <div style="font-size:12.5px; color:#e8ecf2">Sunday, week 9 — missed</div>
+            <div class="mono" style="font-size:11px; color:#5d6878">forgiven by you · "soccer"</div>
+          </div>
+          <span class="mono" style="font-size:11px; color:#d9a441">kept</span>
+        </div>
+        <p class="mono" style="margin:0; font-size:11px; color:#5d6878; line-height:1.6">
+          The only counter you may adjust by hand, and the only one that
+          should be adjustable — because sometimes there is a soccer game.
+        </p>
+      </div>
+
+      <div class="eyebrow" style="margin:30px 0 14px">Your own track</div>
+      <div style="background:#12151c; border:1px solid #232a35; padding:18px">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px">
+          <div style="flex-grow:1">
+            <div class="disp" style="font-size:15px">Boss 4 — The Loop</div>
+            <div class="mono" style="font-size:11px; color:#5d6878">challenge run · not yet attempted</div>
+          </div>
+          <span class="mono" style="font-size:11px; color:#3f9fb5">DC 20</span>
+        </div>
+        <p class="mono" style="margin:0 0 14px; font-size:11px; color:#5d6878; line-height:1.6">
+          Beat it cold and Tier 4 is skipped. Fail it and you have found a real
+          gap — measured, not introspected — and you play that tier for real.
+        </p>
+        <div style="padding:9px; background:#1e4c57; color:#cfeaf2; text-align:center;
+                    font-weight:600; font-size:13px">Take the challenge run</div>
+      </div>
+
+      <div class="eyebrow" style="margin:30px 0 14px">Backups</div>
+      <div style="background:#12151c; border:1px solid #232a35; padding:18px">
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <sc-for list="{{ backups }}" as="b" hint-placeholder-count="3">
+            <div style="display:flex; align-items:baseline; gap:11px">
+              <span style="width:7px; height:7px; background:{{ b.dot }}; flex-shrink:0"></span>
+              <span class="mono" style="font-size:11.5px; color:#98a3b3; flex-grow:1">{{ b.k }}</span>
+              <span class="mono" style="font-size:11.5px; color:{{ b.fill }}">{{ b.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <p class="mono" style="margin:14px 0 0; font-size:11px; color:#d9a441; line-height:1.6">
+          Destination is still the same disk. It survives a bad migration, not
+          a dead drive.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals(){
+    var signoffs = [
+      { kind: 'TEACH-BACK', accent: '#5aa860', title: 'The Block Palette', when: 'asked 2 days ago',
+        body: 'Kai wants the Teach-back medal on t3-block-palette. He explains why a set is the right shape for a palette and what it costs him. You sign only if the explanation actually lands.',
+        action: 'He explained it — sign', pays: '+6 xp to Kai' },
+      { kind: 'BOSS', accent: '#d9a441', title: 'Boss 2 — Escape the Sandbox', when: 'passed 8 days ago · unsigned',
+        body: 'His repository is pushed. The win condition is not that tests pass — it is that you clone it cold, on your machine, and it runs. Do that before you press this.',
+        action: 'It ran on my machine', pays: '+150 xp to Kai' }
+    ];
+
+    var authorStats = [
+      { v: '26', k: 'items authored', fill: '#e8ecf2' },
+      { v: '4', k: 'tiers started', fill: '#e8ecf2' },
+      { v: '0', k: 'validation errors', fill: '#5aa860' },
+      { v: '~124', k: 'still to write', fill: '#98a3b3' }
+    ];
+
+    var TA = [
+      { tier: 'TIER 3', name: 'Collections', done: 5, total: 5, accent: '#5aa860',
+        state: 'complete', fill: '#5aa860' },
+      { tier: 'TIER 4', name: 'Functions', done: 1, total: 5, accent: '#3f9fb5',
+        state: '1 of ~5 · partial', fill: '#d9a441' },
+      { tier: 'TIER 5', name: 'Objects', done: 0, total: 5, accent: '#7a72c9',
+        state: 'not started', fill: '#5d6878' }
+    ];
+    var tierAuthoring = TA.map(function(t){
+      var bars = [];
+      for (var i = 0; i < t.total; i++) bars.push(i < t.done ? t.accent : '#242b36');
+      return { tier: t.tier, name: t.name, bars: bars, state: t.state,
+               accent: t.accent, stateFill: t.fill };
+    });
+
+    var backups = [
+      { k: 'last tarball', v: 'today 03:00', dot: '#5aa860', fill: '#98a3b3' },
+      { k: 'restore rehearsed', v: 'week 0 · passed', dot: '#5aa860', fill: '#5aa860' },
+      { k: 'destination', v: 'same disk', dot: '#d9a441', fill: '#d9a441' }
+    ];
+
+    return { signoffs: signoffs, authorStats: authorStats, tierAuthoring: tierAuthoring, backups: backups };
+  }
+}
+</script>
+</body>
+</html>

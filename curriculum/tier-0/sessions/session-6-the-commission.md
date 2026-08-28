@@ -3,7 +3,7 @@
 **Concepts:** all nine — `print`, `variables`, `int`, `float`, `str`, `bool`, `input`,
 `f-strings`, `reading-errors`
 **Files:** `exercises/session-6/` — `commission-brief.md` and `s6_starter.py`
-**Chronicle:** entry 6, plus the Tier 0 closing entry
+**Journal:** entry 6, plus the Tier 0 closing entry
 
 No teaching tonight. Nothing new. He builds one thing, of his choosing, to a
 specification, and then it has to run on your machine.
@@ -16,7 +16,7 @@ week two, when the stakes are a picture of a nameplate.
 
 ---
 
-## Beat 1 — Patrol (4 minutes)
+## Beat 1 — Invasion (4 minutes)
 
 1. What kind of thing does `input` always hand back?
 2. What does the `f` in front of a string do?
@@ -113,7 +113,7 @@ That note is worth more than the drawing.
 
 ---
 
-## Beat 5 — Chronicle, and closing the tier (10 minutes)
+## Beat 5 — Journal, and closing the tier (10 minutes)
 
 Two things tonight.
 
@@ -128,7 +128,7 @@ Make him answer it in specifics, not feelings. Not "I know Python now". Things l
 can read an error and say what kind it is"* or *"I can write a program that asks
 somebody a question"*.
 
-Spec §5.6 has him reread his Chronicle from the start of the tier before every boss
+Spec §5.6 has him reread his Journal from the start of the tier before every boss
 fight, on the grounds that reading something you wrote six weeks ago and finding it easy
 is the strongest evidence a learner will ever get that he is not stupid. Tonight is the
 first deposit into that account. Tell him that is what it is for.
@@ -144,9 +144,9 @@ first deposit into that account. Tell him that is what it is for.
 - He has used `input`, converted it, and understood why the conversion was necessary.
 - He has written an f-string with something worked out inside the braces.
 - **A program of his has run on a machine that is not his.**
-- Six Chronicle entries exist and you have replied to all six.
+- Six Journal entries exist and you have replied to all six.
 
 None of those is a test and none of them needs marking. If four of the seven are true,
 move on to Tier 1 — Control opens with loops, which is what he has been wanting since
-the staircase in session 2, and the concepts he is shaky on come back as patrols anyway.
+the staircase in session 2, and the concepts he is shaky on come back as invasions anyway.
 Spec §3 principle 7 is that nothing is taught once and abandoned. Do not hold him here.

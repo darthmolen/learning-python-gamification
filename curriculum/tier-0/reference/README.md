@@ -12,12 +12,12 @@ These are the payloads for the Tier 0 exercises most likely to need one.
 ## The rules that come with using one
 
 1. **Two genuine attempts first.** Not two minutes of staring. Two attempts.
-2. **One written sentence** in the Chronicle about what he tried. This is the price and
+2. **One written sentence** in the Journal about what he tried. This is the price and
    it is not optional, because it is the part that does the teaching.
 3. **Show him the whole thing**, not a drip-feed. A half-revealed answer is the worst of
    both.
 4. **Ask him to explain it back.** If he cannot, he has not received it.
-5. **Patrol that concept next session, and again the session after.** §5.5 guarantees a
+5. **Invasion that concept next session, and again the session after.** §5.5 guarantees a
    review at +3 days and +10 days. Do it by hand; there is no engine yet.
 
 ## What is here

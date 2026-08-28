@@ -430,7 +430,7 @@ function referenceIssues(
 /**
  * A quest may not tag vocabulary from a tier above its own. Spec §4 orders the vocabulary, and
  * a Tier 3 quest tagged `class` is tagging something the learner does not meet for eighteen
- * weeks — which would also queue a patrol (§5.4) for a concept never taught.
+ * weeks — which would also queue an invasion (§5.4) for a concept never taught.
  */
 function conceptTierIssues(
   items: readonly ContentItem[],
