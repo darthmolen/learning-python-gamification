@@ -92,8 +92,8 @@ Sequenced by motivation-adjusted dependency order. Each tier's project makes the
 
 **BOSS 1 — The Sigil:** an art generator that takes input and produces something worth hanging on a wall.
 
-### The Chronicle (begins week 3, runs forever)
-A markdown journal in his repo, one entry per session, committed and pushed. Three prompts: what I built, what broke, what I would do differently. See §5.6.
+### The Chronicle (begins week 1, runs forever)
+A markdown journal, one entry per session. Three prompts: what I built, what broke, what I would do differently. It starts as a plain file in week 1 and *becomes* committed and pushed at Tier 2a, once he has git. See §5.6.
 
 ### Tier 2a — The Scribe's Rite (weeks 6–7)
 what a repository is · `init` `add` `commit` · the log as a story · branches, lightly · `push` to origin
@@ -339,7 +339,17 @@ Shame produces hiding, and hiding destroys the parent's signal about what the le
 
 ### 5.6 The Chronicle
 
-A markdown journal in his repository, one entry per session, committed and pushed.
+A markdown journal, one entry per session, which becomes committed and pushed once he has git.
+
+**It begins in week 1, not week 3.** The reason is inside this section: he re-reads his Chronicle
+from the start of a tier before every boss fight, and a journal that starts in week 3 leaves
+almost nothing to re-read before Boss 1. Writing three sentences after a session is also the
+cheapest habit in the curriculum to start and the most expensive to retrofit, and in week 1 it
+costs him nothing he would rather be doing.
+
+The git half still arrives at Tier 2a on schedule (§4). The Tier 0 and Tier 1 entries are plain
+markdown until then, and they become the first real commit in his repository — which is a better
+first commit than an empty one.
 
 - **Ten XP per entry, paid for substance rather than existence.** Three prompts: what I built, what broke, what I would do differently. Empty prompts pay nothing.
 - **The parent replies**, as comments in Gitea. Relatedness, plus code-review culture learned before he writes code worth reviewing.
@@ -654,6 +664,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Push as the verification mechanism | Two machines; also honest engineering culture |
 | Git split across Chronicle, Scribe's Rite, Escape | Verification depends on git, so git must precede it |
 | Chronicle scored rather than ritual | Reflection is a skill the industry lost |
+| Chronicle begins week 1, git arrives at Tier 2a | Pre-boss re-reading needs something to re-read; the habit is cheap to start and expensive to retrofit |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
 | Ursina hardware gate before any build work | The continuity argument for Ursina collapses into the bait and switch it avoids if his laptop cannot run it |
