@@ -285,7 +285,7 @@ class Component extends DCLogic {
       { t: 'Datamine unlocked · a3-recipe-book', c: '#d9a441' },
       { t: ' ', c: '#e8ecf2' },
       { t: 'The reference solution is now on the brief. This quest re-prices at DC 7.', c: '#e8ecf2' },
-      { t: 'Invasions on dict and dict-methods are scheduled for +3 and +10 days.', c: '#98a3b3' },
+      { t: 'dict and dict-methods will come for you at +3 and +10 days.', c: '#98a3b3' },
       { t: ' ', c: '#e8ecf2' },
       { t: 'Logged as a legal move. Not cheating — costed and named.', c: '#5d6878' }
     ]);
@@ -331,7 +331,7 @@ class Component extends DCLogic {
     var dm;
     if (s.datamined) {
       dm = { title: 'Unlocked',
-        body: 'The reference solution is on the brief, and this quest is re-priced at DC 7. Invasions on dict and dict-methods are queued for +3 and +10 days.',
+        body: 'The reference solution is on the brief, and this quest is re-priced at DC 7. dict and dict-methods will come for you at +3 and +10 days.',
         btn: 'Reference open', btnBg: '#232a35', btnFg: '#5d6878', border: '#333c4a', fg: '#d9a441', gate: 'logged 19:42' };
     } else if (gated) {
       dm = { title: 'Available',

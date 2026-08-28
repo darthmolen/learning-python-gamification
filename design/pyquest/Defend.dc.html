@@ -54,12 +54,12 @@
 
       <div class="eyebrow" style="margin-bottom:10px">Four invasions at the border</div>
       <h1 class="disp" style="margin:0 0 10px; font-size:40px; line-height:1.05">
-        Something you knew<br>is trying to slip away.
+        Something you knew<br>has come back with a vengeance.
       </h1>
       <p style="margin:0 0 34px; color:#98a3b3; max-width:560px">
-        You learned each of these and then left it alone long enough for it to
-        start fading. Two or three minutes each, and nothing here is new — that
-        is the whole point. Hold the ground you already took.
+        It wants proof you still know it. You learned each of these, then left it
+        alone long enough that it came looking. Two or three minutes each, and
+        nothing here is new — that is the point. Hold the ground you already took.
       </p>
 
       <div style="display:flex; flex-direction:column; gap:8px; max-width:840px">
@@ -97,10 +97,10 @@
       </div>
 
       <p class="mono" style="margin:34px 0 0; font-size:11px; color:#5d6878; line-height:1.7; max-width:640px">
-        An invasion arrives when a concept has gone untouched for its interval —
-        1, 3, 7, 16, then 35 days. Repel one and it stays away longer; miss it
-        and it comes back a rung sooner, not from the beginning, because
-        resetting to zero punishes a bad night and floods the next border.
+        Leave a concept alone for 1, 3, 7, 16, then 35 days and it comes for you.
+        Beat it back and it waits longer before trying again. Let one through and
+        it returns a single rung sooner — never from the beginning, because losing
+        one evening should not cost you everything you already held.
       </p>
     </div>
 
@@ -168,13 +168,13 @@ class Component extends DCLogic {
                       Math.round((n & 255) * f) + ')';
     }
     var raw = [
-      { concept: 'f-strings', area: 'Area 0', color: '#d9a441', lastSeen: '9 days ago', why: 'rung 4 · due at 7',
+      { concept: 'f-strings', area: 'Area 0', color: '#d9a441', lastSeen: '9 days ago', why: 'rung 4 · through at 7',
         prompt: 'Print a line that reads "torch x3" using the variables name and count.' },
-      { concept: 'accumulator', area: 'Area 1', color: '#d97742', lastSeen: '17 days ago', why: 'rung 5 · due at 16',
+      { concept: 'accumulator', area: 'Area 1', color: '#d97742', lastSeen: '17 days ago', why: 'rung 5 · through at 16',
         prompt: 'Total the values in a list without using sum().' },
       { concept: 'venv', area: 'Area 2', color: '#8b95a5', lastSeen: '8 days ago', why: 'rung 4 · due at 7',
         prompt: 'You open a new project folder. What are the first two commands?' },
-      { concept: 'slicing', area: 'Area 3', color: '#5aa860', lastSeen: '4 days ago', why: 'datamined · forced +3',
+      { concept: 'slicing', area: 'Area 3', color: '#5aa860', lastSeen: '4 days ago', why: 'datamined · sent back early',
         prompt: 'Take everything but the first and last item of a list.' }
     ];
     var drills = raw.map(function(d){
