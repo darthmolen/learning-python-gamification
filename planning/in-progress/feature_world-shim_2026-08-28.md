@@ -1,6 +1,6 @@
 # The `world.py` Shim — Promote the Spike to Shipping Code
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** world-shim
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
