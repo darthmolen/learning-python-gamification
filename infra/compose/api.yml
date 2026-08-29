@@ -19,9 +19,14 @@ services:
     working_dir: /workspace
     command: ["npm", "run", "start", "--workspace", "@pyquest/api"]
     environment:
+      CONTENT_ROOT: /content
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     volumes:
       - ../../pyquest:/workspace
+      # Content is read from git on boot and validated on load (§6.10), so the api needs the
+      # content root as well as the workspace. Read-only: §6.10 makes authoring a CLI, and an
+      # api that cannot write content cannot grow an authoring endpoint by accident.
+      - ../../content:/content:ro
     ports:
       # 3081, reserved for this service before it existed.
       - "${API_PORT:-3081}:3081"
