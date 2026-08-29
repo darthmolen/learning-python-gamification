@@ -37,6 +37,38 @@ defaults to root.
 
 ---
 
+## The compose fragments — who owns what
+
+`docker-compose.yml` holds only the two services that need no code of ours, postgres and
+gitea. Everything that runs our code lives in `compose/`, one file per track:
+
+| Fragment | Services | Owned by | Profile |
+|---|---|---|---|
+| `compose/api.yml` | `api`, `runner` | the `api` track | `--profile api` |
+| `compose/migrate.yml` | `migrate` | the `db` track | `--profile migrate` |
+| `compose/web.yml` | `web` | the `spa` track | `--profile web` |
+
+**Every fragment is profile-gated, so `docker compose up` still means postgres and gitea.**
+Ask for more by name:
+
+```sh
+docker compose --profile web up web
+```
+
+The split exists because three plans each needed to add a service to one file, and
+`plan-workflow` only lets plans run in parallel when their file sets are disjoint. They
+would have queued behind each other over a YAML file rather than over any real dependency.
+A fragment each removes the collision instead of scheduling around it.
+
+**If you are adding a service, add it to your track's fragment, not to
+`docker-compose.yml`.** The root file is `main`'s, and after this split nothing else should
+need it. A fragment named in `include:` that does not exist fails immediately and by name,
+which is why all three were created at once rather than arriving with the code they run.
+
+The images in the fragments are pinned by tag *and* digest, the same as the root file, for
+the same reason: this campaign runs ~48 weeks and a floating tag that drifts mid-campaign is
+a real failure mode here, not a hypothetical one.
+
 ## Ports
 
 | Service | Host port | Container | Bound on | Why |

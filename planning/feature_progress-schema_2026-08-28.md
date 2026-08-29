@@ -1,6 +1,7 @@
 # The Progress Schema
 
 **Status:** Planned
+**Track:** db
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **blocks the API**
@@ -85,7 +86,8 @@ the duplicate.
 ## Files Expected to Change
 
 - `pyquest/packages/db/**` — new: migrations, repository, integration tests
-- `infra/docker-compose.yml` — the migration job
+- `infra/compose/migrate.yml` — the migration job; this track owns the file,
+  and the root `docker-compose.yml` is not the place
 - `infra/smoke.sh` — assert migrations applied and restore still round-trips
 
 ## Out of Scope

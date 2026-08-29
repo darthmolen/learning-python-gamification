@@ -1,6 +1,7 @@
 # The SPA
 
 **Status:** Planned
+**Track:** spa
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **not blocked by the API**
@@ -86,7 +87,8 @@ One module changes. If more than one does, the contract was not doing its job.
 ## Files Expected to Change
 
 - `pyquest/apps/web/**` — new
-- `infra/docker-compose.yml` — the `web` service, development only
+- `infra/compose/web.yml` — the `web` service, development only; this track owns the
+  file, and the root `docker-compose.yml` is not the place
 
 ## Out of Scope
 

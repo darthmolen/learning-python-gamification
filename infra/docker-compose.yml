@@ -1,8 +1,13 @@
 # PyQuest — infrastructure stack (spec §6.1)
 #
-# This pass ships only the two services that need no code of ours: postgres and gitea.
-# The api, runner, and web services of §6.1 are reserved at the bottom of this file but
-# deliberately not implemented — see the comment block there.
+# This file owns the two services that need no code of ours: postgres and gitea. The three
+# that run our code — api, runner, web — plus the migration job live in compose/, one
+# fragment per Lane A track, included below.
+#
+# The split is not tidiness. Three queued plans each needed to add a service here, and
+# plan-workflow only admits plans to in-progress/ when their file sets are disjoint, so
+# they could not have started in parallel while sharing this file. A fragment each removes
+# the collision instead of scheduling around it.
 #
 # Images are pinned by tag AND digest. This campaign runs ~48 weeks; a floating tag that
 # drifts mid-campaign is a real failure mode for this project, not a hypothetical one.
@@ -10,6 +15,17 @@
 # class of problem on the Python side.
 
 name: pyquest
+
+# Each fragment is owned by the track named in its own header, and carries a `profiles:`
+# key so nothing it defines starts by default. `docker compose up` still means postgres
+# and gitea; `docker compose --profile web up web` is how you ask for more.
+#
+# A fragment that is missing fails immediately and by name, which is why all three exist
+# from the start rather than arriving with the code they run.
+include:
+  - compose/api.yml
+  - compose/migrate.yml
+  - compose/web.yml
 
 services:
 
@@ -119,23 +135,6 @@ services:
       timeout: 5s
       retries: 12
       start_period: 45s
-
-# -----------------------------------------------------------------------------
-# RESERVED, NOT YET IMPLEMENTED — §6.1
-#
-# Three more services are specified and are not built here, because none of
-# them can exist before the code they run does. Their host ports are reserved
-# now so nothing else claims them:
-#
-#   api     Fastify; serves the built SPA in production.        host 3081
-#   runner  Executes untrusted Python: --network none, 10s      (no host port;
-#           timeout, memory cap (§6.6).                          reached via the
-#                                                                api's job queue)
-#   web     Vite dev server, development only.                  host 3082
-#
-# Also to come, per §6.1: migrations as a job. That lands with the DB schema in
-# Wave 3, not here.
-# -----------------------------------------------------------------------------
 
 volumes:
   postgres_data:

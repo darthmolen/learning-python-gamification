@@ -1,0 +1,24 @@
+# migrate — migrations as a job (§6.1). Owned by the `db` track.
+#
+# Forward-only plain SQL, applied against the shared Postgres. This is one household's
+# data, not a fleet, so there is no down-migration story and that is deliberate.
+#
+# A job, not a service: it runs to completion and exits. `restart: "no"` says so out loud,
+# because a migration job that restarts on failure re-applies migrations in a loop.
+
+services:
+
+  migrate:
+    profiles: ["migrate"]
+    image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+    container_name: pyquest-migrate
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    command: ["npm", "run", "migrate", "--workspace", "@pyquest/db"]
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      - ../../pyquest:/workspace

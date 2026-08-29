@@ -1,0 +1,28 @@
+# web — the Vite dev server (§6.1). Owned by the `spa` track.
+#
+# Development only. In production the api serves the built SPA, which is why §6.1 gives
+# this service a host port and no deployment story.
+#
+# Profile-gated: `docker compose up` must keep meaning "postgres and gitea" until someone
+# asks for more. Start it with `docker compose --profile web up web`.
+#
+# No build context on purpose. A Dockerfile that does not exist yet is a trap for whoever
+# first runs the wrong command, and a dev server wants the workspace mounted anyway — an
+# image rebuild per edit is the opposite of what Vite is for.
+
+services:
+
+  web:
+    profiles: ["web"]
+    image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+    container_name: pyquest-web
+    working_dir: /workspace
+    command: ["npm", "run", "dev", "--workspace", "@pyquest/web"]
+    environment:
+      # Vite binds loopback by default, which is invisible from outside the container.
+      HOST: "0.0.0.0"
+    volumes:
+      - ../../pyquest:/workspace
+    ports:
+      # 3082, reserved for this service before it existed.
+      - "${WEB_PORT:-3082}:3082"

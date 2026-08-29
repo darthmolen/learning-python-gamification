@@ -1,0 +1,41 @@
+# api and runner (§6.1, §6.6). Owned by the `api` track.
+#
+# The api is the only thing that talks to Postgres, and it is where Submit runs the hidden
+# tests a browser must never see (§6.3). The runner executes untrusted Python under the §6.6
+# constraints; whether it is a long-lived service or a container the api spawns per job is
+# the api plan's decision, and this file is where that decision gets written down.
+#
+# Profile-gated, and no build context yet — see compose/web.yml for why.
+
+services:
+
+  api:
+    profiles: ["api"]
+    image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+    container_name: pyquest-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /workspace
+    command: ["npm", "run", "start", "--workspace", "@pyquest/api"]
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      - ../../pyquest:/workspace
+    ports:
+      # 3081, reserved for this service before it existed.
+      - "${API_PORT:-3081}:3081"
+
+  runner:
+    profiles: ["api"]
+    image: python:3.14-alpine@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc
+    container_name: pyquest-runner
+    # §6.6: untrusted Python. No network at all, a hard memory cap, and a timeout the api
+    # enforces per job. These are the constraints that make running a child's unreviewed
+    # code on the parent's machine defensible.
+    network_mode: "none"
+    mem_limit: 512m
+    pids_limit: 128
+    read_only: true
+    command: ["sleep", "infinity"]
+    # No host port. Reached through the api's job queue, never directly.

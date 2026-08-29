@@ -1,6 +1,7 @@
 # The API and the Runner
 
 **Status:** Planned
+**Track:** api
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **blocked by the engine query layer and the progress schema**
@@ -91,7 +92,8 @@ Every write goes through the repository layer; the engine decides, the API recor
 
 - `pyquest/apps/api/**` — new
 - `pyquest/apps/runner/**` — new
-- `infra/docker-compose.yml` — `api` and `runner` services
+- `infra/compose/api.yml` — the `api` and `runner` services; this track owns the file,
+  and the root `docker-compose.yml` is not the place
 
 ## Out of Scope
 
