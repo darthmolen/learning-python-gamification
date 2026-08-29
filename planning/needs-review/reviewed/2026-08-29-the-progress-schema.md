@@ -175,3 +175,90 @@ is not to be edited here.
 ## Out of Scope
 
 Content of any kind. If a migration inserts a quest, this plan has gone wrong.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-29 18:07
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- Content-in-git / progress-in-Postgres boundary maintained clearly; `quests` table explicitly forbidden.
+- Correctly ties repository return shapes to `@pyquest/contract` validation in tests.
+- Calls out real unresolved design points instead of hiding them (`forced_reviews` shape, column naming, date types).
+- Contract shapes `QuestMedalRecord`, `ConceptReview`, `ForcedReview`, `PlayerProgress` all confirmed to exist in `packages/contract`.
+- `infra/compose/migrate.yml` already exists; `infra/smoke.sh` already does health, backup, restore, and scratch restore.
+- `pyquest/packages/db` does not exist yet — all new work, no collision.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Phase 1 — migration tool choice not made**
+  - Section: Phase 1
+  - What's wrong: The plan says choosing the tool is "the first thing to make" but leaves it open. The migration file format, scripts, and compose job contract all depend on this.
+  - Suggested fix: Commit to either `node-pg-migrate` or a homegrown SQL runner; name the migration file layout and exact `npm run migrate` behavior before Phase 1 begins.
+
+- **`runner_jobs` table has no schema**
+  - Section: Approach table
+  - What's wrong: Listed as a deliverable with no columns, PK, type/status enum, payload, error, or locking fields.
+  - Suggested fix: Define columns before migration is written — at minimum: id, type, status (enum + check), payload (jsonb), error, created_at, claimed_at, claimed_by.
+
+- **`sessions` and `bounties` under-specified**
+  - Section: Approach table
+  - What's wrong: Both have name-hints but no PKs, FK targets, required columns, state constraints, or date/timestamp choices.
+  - Suggested fix: Add full row shapes with keys, nullability, checks, and per-column types for both.
+
+- **Forced reviews / concept reviews composite FK — decision not made**
+  - Section: Approach
+  - What's wrong: The plan discusses both options (composite FK vs engine skip) but makes no choice.
+  - Suggested fix: State the decision explicitly and include the exact FK constraint or rationale for omitting it.
+
+- **`concept` vs `concept_id` column naming — acknowledged, not resolved**
+  - Section: Approach
+  - What's wrong: The mismatch is named but no canonical DB column name is chosen.
+  - Suggested fix: Pick one now; `concept_id` in SQL with repository mapping to camelCase is the natural choice.
+
+#### Important (Should Address)
+
+- **`forced_reviews` table shape still thin**
+  - Contract shape exists but DB shape has no PK, unique key, or source provenance.
+  - Suggested fix: Specify PK/unique key (likely `player_id, concept_id, due_on`), a source enum/check, and FK behavior.
+
+- **`players` table under-specified**
+  - "handle, display name, roles" is insufficient to implement.
+  - Suggested fix: Name `id`, `handle`, `display_name`, created/updated timestamps, uniqueness rules; keep roles in `player_roles` as stated.
+
+- **Phase 3 scratch DB mechanics still left to the reader**
+  - "Created and dropped per run; the plan should say which" — the plan says this but still leaves it open.
+  - Suggested fix: Specify exact lifecycle: create uniquely named scratch DB before suite, migrate, run tests, drop in teardown.
+
+- **Constraint mutant list incomplete**
+  - Missing: FK integrity, uniqueness on roles, valid state enums, non-empty required text, duplicate datamine/forced review rows.
+  - Suggested fix: Extend the list to cover these invariants.
+
+- **`forced_reviews` / invasions coverage unclear**
+  - Whether `forced_reviews` fully covers §5.5's scheduling needs is not stated.
+  - Suggested fix: State explicitly whether invasions are derived from `forced_reviews` + engine time, or whether a separate schedule/audit table is needed.
+
+#### Minor (Consider)
+
+- **DATE vs TIMESTAMPTZ — framing is good, enumeration missing**
+  - The plan argues the decision correctly; a per-column table would make it unambiguous.
+  - Suggested fix: Add a mapping of every date-like column to `DATE` or `TIMESTAMPTZ`.
+
+- **Track discipline — `vitest.config.ts` is already a declared coordination point**
+  - The SPA v2 plan also lists `pyquest/vitest.config.ts` in Files Expected to Change. The claim that it is "uncontended in practice" is already out of date.
+  - Suggested fix: Acknowledge active coordination with the `spa` track on this file; `tsconfig.json` appears genuinely uncontended.
+
+### Recommendations
+
+Start Phase 1 with a concrete decision block: migration tool, file naming convention, compose command, rollback policy. Add a schema appendix enumerating every table with columns, types, PKs, uniques, FKs, checks. Keep `vitest.config.ts` as a declared coordination point with the SPA track.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The architectural direction is sound and the boundary discipline is good, but several Phase 1 essentials are undecided — migration tooling, `runner_jobs` shape, and full table definitions for `sessions`, `bounties`, and `forced_reviews` — which blocks starting work.
