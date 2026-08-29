@@ -106,13 +106,19 @@ const LocalRepoVerifierSchema = z.object({
 });
 
 /**
- * The other player presses the button. Spec §6.3 names it by a `by` field, and §5.11 is the
- * reason it is `peer-signoff` rather than `parent-signoff`: sign-off runs both directions, so
- * the son signing off the parent's teach-back is the same mechanism, not a special case.
+ * Somebody other than the submitter presses the button. Spec §6.3 names them by a `by` field,
+ * and §5.11 is the reason it is `peer-signoff` rather than `parent-signoff`: sign-off runs both
+ * directions, so the son signing off the parent's teach-back is the same mechanism, not a
+ * special case.
+ *
+ * `by` names a ROLE, never a person. `peer` is any other player in the party; `dm` is whoever
+ * holds the DM seat. In Kitchen Table mode one adult holds both roles, which makes that setup a
+ * configuration rather than a special case — and keeps a classroom, a second sibling, or a
+ * teacher standing in as DM from being a schema change later.
  */
 const PeerSignoffVerifierSchema = z.object({
   type: z.literal('peer-signoff'),
-  by: z.enum(['other-player', 'parent', 'son']),
+  by: z.enum(['peer', 'dm']),
 });
 
 /** Reads his git log for commits and streaks (§6.3). Journal and streaks. */

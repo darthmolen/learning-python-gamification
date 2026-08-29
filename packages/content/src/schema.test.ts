@@ -52,7 +52,7 @@ describe('accepts what the spec describes', () => {
       id: 'a3-the-crafting-table',
       kind: 'boss',
       themes: ['A potion brewer', 'A blacksmith'],
-      verifier: { type: 'peer-signoff', by: 'other-player' },
+      verifier: { type: 'peer-signoff', by: 'peer' },
     });
     expect(boss.themes).toHaveLength(2);
   });
@@ -61,7 +61,7 @@ describe('accepts what the spec describes', () => {
     const verifiers = [
       { type: 'hidden-tests', starter: 's.py', tests: 't.py' },
       { type: 'local-repo', tests: 'tests/t.py' },
-      { type: 'peer-signoff', by: 'other-player' },
+      { type: 'peer-signoff', by: 'peer' },
       { type: 'git-signal', signal: 'push' },
     ];
     for (const verifier of verifiers) {

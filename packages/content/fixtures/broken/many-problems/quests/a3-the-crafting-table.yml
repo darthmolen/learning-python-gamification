@@ -11,4 +11,4 @@ themes:
   - A blacksmith
 verifier:
   type: peer-signoff
-  by: other-player
+  by: peer

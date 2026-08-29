@@ -104,7 +104,7 @@ function questYaml(o: Required<Pick<ScaffoldOptions, 'id' | 'title' | 'area' | '
       break;
     case 'peer-signoff':
       lines.push('  type: peer-signoff');
-      lines.push('  by: other-player');
+      lines.push('  by: peer');
       break;
     case 'git-signal':
       lines.push('  type: git-signal');
@@ -247,7 +247,7 @@ export function scaffoldQuest(options: ScaffoldOptions): ScaffoldResult {
         : verifier === 'local-repo'
           ? { type: verifier, tests: `tests/${options.id}_test.py` }
           : verifier === 'peer-signoff'
-            ? { type: verifier, by: 'other-player' }
+            ? { type: verifier, by: 'peer' }
             : { type: verifier, signal: 'commit' },
   };
 

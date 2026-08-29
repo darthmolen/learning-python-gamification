@@ -15,4 +15,4 @@ themes:
   - The Dungeon Character Sheet
 verifier:
   type: peer-signoff
-  by: other-player
+  by: peer

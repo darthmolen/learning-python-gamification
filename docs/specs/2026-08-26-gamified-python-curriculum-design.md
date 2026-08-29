@@ -446,6 +446,23 @@ constraint is abstaining from AI. The same medal costs each player something rea
 
 **One content set, two players.** Quest YAML is player-agnostic; the completion bar differs.
 
+**Roles, not people — and the current setup is a named mode.** A person holds one
+or more roles in a campaign. The **player** does quests, earns XP and takes
+bosses. The **DM** authors content, signs off, adjudicates, forgives a streak, and
+asks the Socratic questions §3.6 requires.
+
+This campaign runs in **Kitchen Table** mode: one household, the parent holding
+both seats and the son holding one. That is a configuration, not a special case,
+which is the same argument §6.3 makes when it names a `by` role rather than a
+family member. A second sibling, a classroom, or a teacher standing in as DM
+changes the roster and nothing else.
+
+Naming the mode has one immediate benefit and one deferred one. Immediately, it
+stops "the parent" leaking into places that mean "the DM" and "the other player"
+alike — two different things that happen to be the same man this year. Later, it
+is the seam any other arrangement plugs into. See
+`planning/backlog/feature_roles-modes-and-the-dm-seat_2026-08-28.md`.
+
 **The challenge run is the parent's gap detector.** Playing Area 0–3 quests straight would
 teach the parent nothing and distort the leaderboard, so the parent instead challenge-runs
 the bosses under the mechanic already defined in §5.2.
@@ -535,7 +552,7 @@ versioned in git and validated on load.
 |---|---|---|
 | `hidden-tests` | Submit posts the code to the API, which runs tests the client never sees | Areas 0–1 drills |
 | `local-repo` | API pulls his repo, runs the quest's pytest specification | Area 2b onward |
-| `peer-signoff` | The other player presses the button, named by a `by` field | Bosses, and every Teach-back medal |
+| `peer-signoff` | Somebody other than the submitter presses the button, named by a `by` field holding a **role** — `peer` or `dm`, never a person | Bosses, and every Teach-back medal |
 | `git-signal` | Reads his git log for commits and streaks | Journal, streaks |
 
 **Run and Submit are deliberately different paths.** Pyodide runs his code in the browser for **Run**, giving instant feedback with no round trip. **Submit** goes to the API, because anything shipped to the browser is readable, and hidden tests shipped to the client are not hidden.
@@ -762,6 +779,8 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Button labels never change with state | A label that shifts is one the reader cannot trust; "take it cold" was already false on the screen it sat on |
 | The Tome opens over the work rather than replacing it | If looking something up costs him his unsaved code, he stops looking things up — and the Tome is where the teaching lives |
 | `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
+| `by` names a role (`peer`, `dm`), never a household member | A two-person family in the content contract becomes a migration the moment a sibling, a class, or a teacher appears |
+| The current arrangement is named: Kitchen Table mode | An unnamed default is one nobody can vary from; naming it makes every other roster a configuration |
 | Challenge runs as the parent's gap detector | Measures gaps instead of asking the parent to introspect them |
 | Conjured is legal, logged, and costed | Disclosure beats prohibition; the son will grow up with these tools |
 | Son's AI unlock at Area 7 | Struggle teaches before Area 7; refusing to teach the tool after Area 7 fails him |
