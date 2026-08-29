@@ -1,0 +1,12 @@
+{
+  // The tests, typechecked but not built: `composite` projects must emit, and emitting a test
+  // is what puts a duplicate suite in `dist`. Run via `npm run typecheck --workspace @pyquest/contract`.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
+}

@@ -19,6 +19,7 @@ export default defineConfig({
      */
     alias: {
       '@pyquest/content': src('content'),
+      '@pyquest/contract': src('contract'),
       '@pyquest/engine': src('engine'),
     },
   },

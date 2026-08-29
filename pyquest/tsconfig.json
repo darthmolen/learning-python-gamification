@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/content" },
+    { "path": "./packages/contract" },
     { "path": "./packages/engine" }
   ]
 }
