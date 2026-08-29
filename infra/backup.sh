@@ -5,7 +5,7 @@
 #    written to a dated tarball on a second disk. Thirty-day retention, with a
 #    restore rehearsed once before week 3."
 #
-# The Journal and the son's commit history are the two artifacts this project
+# The Journal and a learner's commit history are the two artifacts this project
 # cannot regenerate. Everything else here can be rebuilt from git and a compose up.
 #
 # Usage:   ./backup.sh [-d DESTINATION_DIR]

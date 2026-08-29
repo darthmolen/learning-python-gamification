@@ -144,7 +144,7 @@ Per the brief, this directory does not contain quest YAML and does not touch
 | **The Commission** | 18 | Win condition is "it ran on your dad's machine". That is `local-repo` in spirit and peer-signoff in week two. |
 
 **Do not turn into quests:** the session plans, the Journal prompts, or the reversal
-exercise in session 3. They are parent-delivered and lose their point when automated.
+exercise in session 3. They are DM-delivered and lose their point when automated.
 
 Two notes for whoever builds this:
 
@@ -207,7 +207,7 @@ cursor is itself a drawing — so counting canvas items would have passed a file
 nothing at all. The harness counts pen-down moves instead. That was measured, not
 assumed.
 
-**Use `py -3.14` explicitly.** On the parent's machine `python` is 3.12 in PowerShell and
+**Use `py -3.14` explicitly.** On the DM's machine `python` is 3.12 in PowerShell and
 3.14 in Git Bash. The son is on 3.14.
 
 ---

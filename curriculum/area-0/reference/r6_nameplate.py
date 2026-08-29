@@ -1,6 +1,6 @@
 """REFERENCE -- Datamine payload for Commission A. Parent's copy.
 
-Do not put this on his machine. See README.md in this directory for the rules
+Do not put this on the learner's machine. See README.md in this directory for the rules
 that come with unlocking it.
 
 This is what a good Area 0 answer looks like: it uses nothing he has not been
@@ -55,7 +55,7 @@ turtle.write(f"{title}", False, "center", ("Arial", 14, "normal"))
 print("Plate finished.")
 
 
-# Notes for the parent, not for him:
+# Notes for the DM, not for the learner:
 #
 # * `0 - width / 2` rather than `-width / 2` is deliberate. Unary minus on an
 #   expression is not something Area 0 has been shown, and writing it the long

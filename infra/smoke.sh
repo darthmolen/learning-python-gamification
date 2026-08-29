@@ -152,7 +152,7 @@ fi
 step "4. create a real repository with a real commit"
 # =============================================================================
 # A backup is only meaningful if there is history to lose. This stands in for
-# the son's repository (spec 6.4 and 7).
+# a learner's repository (spec 6.4 and 7).
 # --user git, not root: the gitea CLI hard-refuses to run as root, and
 # `docker compose exec` defaults to root. Swallowing that error into a cheerful
 # "already exists, reusing" is how this check silently tested nothing.

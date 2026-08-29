@@ -122,7 +122,7 @@ def check(path):
     headline = [ln for ln in err.strip().splitlines() if ln.startswith(expect)]
     # The line number is reported because reference/session-3-answers.md quotes
     # these tracebacks verbatim, and editing a docstring silently shifts them.
-    # Drift there is invisible until the parent reads the wrong number aloud.
+    # Drift there is invisible until the DM reads the wrong number aloud.
     # Match only frames naming THIS file -- the harness's own frame is in there too.
     at = [
         ln for ln in err.splitlines()

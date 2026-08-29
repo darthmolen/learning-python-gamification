@@ -9,7 +9,7 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Areas 2a
 `main-guard`
 
 **Vehicle: the toolchain itself.** There is no drawing in this area. The thing being built
-is the ability to put code somewhere other than this laptop.
+is the ability to put code somewhere other than ttheir own machine.
 
 **This area is load-bearing.** §2.3 diagnoses the failure every platform surveyed shares —
 graduates who "cannot ship an original project, having never left the browser sandbox or
@@ -40,7 +40,7 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 
 **Two things gate the rest**, and the first gates the second:
 
-1. **The VS Code profile has not been imported on the son's laptop.** Session 6 is the VS
+1. **The VS Code profile has not been imported on the target machine.** Session 6 is the VS
    Code session, and the entire argument for a stripped profile is that stock defaults are
    what is being rejected. An exported profile is a JSON blob and reading one proves
    nothing. Work the checklist in `tools/vscode/README.md` §4 on that machine.
@@ -148,7 +148,7 @@ before it — 5 to 22 — and that is a decision rather than a smear.**
 
 §5.1 renders DC ≥ 20 with a warning, and **here the warning is correct and wanted.**
 Boss 2 is the hardest thing he will have done, harder than Boss 1, because it is the first
-task whose failure mode is invisible from where he is standing: it works on his machine
+task whose failure mode is invisible from where he is standing: it works on the learner's machine
 and that tells him nothing. Area 1 avoided the band deliberately, to keep a week-three
 learner from being taught fear. By week eight an honest warning is information rather than
 intimidation.

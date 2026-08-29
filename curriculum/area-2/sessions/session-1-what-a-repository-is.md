@@ -31,7 +31,7 @@ should know retrieval is a mechanism and not a quiz.
 
 **Give him the problem before you give him the tool.** No computer for this.
 
-Ask him to name a file on his laptop — game, homework, Minecraft world, anything — that
+Ask him to name a file on their own machine — game, homework, Minecraft world, anything — that
 exists in more than one copy because he was about to change something and did not want
 to lose the old one. He will have several. Let him list them.
 
@@ -47,7 +47,7 @@ living with it for years without a name for it.
 
 Then say the sentence, once, plainly:
 
-> "Tonight your code folder becomes the only folder on this laptop that can answer both
+> "Tonight your code folder becomes the only folder on ttheir own machine that can answer both
 > of those questions about itself, forever, for free."
 
 **Do not explain the object model.** Not blobs, not trees, not SHAs. He needs one true

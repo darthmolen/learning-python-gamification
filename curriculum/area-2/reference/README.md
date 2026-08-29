@@ -1,6 +1,6 @@
 # Reference — Datamine payloads
 
-**This directory is yours, not his.** Do not copy it onto his machine.
+**This directory is yours, not the learner's.** Do not copy it onto the learner's machine.
 
 Spec §5.5 defines **Datamine**: after two genuine attempts and one written sentence about
 what he tried, he may unlock the answer. It is a legal, named, costed move — not cheating

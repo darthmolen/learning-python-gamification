@@ -85,7 +85,7 @@ journal/
     ...
 ```
 
-In Area 0 this is a folder on his machine and nothing more. In Area 2a it becomes a git
+In Area 0 this is a folder on the learner's machine and nothing more. In Area 2a it becomes a git
 repository, and these first six entries become its first real commit — which is a much
 better first commit than an empty README, and is the reason the Journal starts here
 rather than waiting for the tooling the spec schedules for week 3.

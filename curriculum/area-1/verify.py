@@ -172,7 +172,7 @@ def failure_line(path: pathlib.Path, expect: str, stderr: str) -> str:
 
     The line number is reported because reference/session-6-answers.md quotes these
     tracebacks, and editing a docstring silently shifts them. Drift there is
-    invisible until the parent reads the wrong number aloud. Match only frames
+    invisible until the DM reads the wrong number aloud. Match only frames
     naming this file -- the harness's own frame is in there too.
     """
     headline = [ln for ln in stderr.strip().splitlines() if ln.startswith(expect)]

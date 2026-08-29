@@ -32,7 +32,7 @@ services:
     container_name: pyquest-runner
     # §6.6: untrusted Python. No network at all, a hard memory cap, and a timeout the api
     # enforces per job. These are the constraints that make running a child's unreviewed
-    # code on the parent's machine defensible.
+    # code on the host machine defensible.
     network_mode: "none"
     mem_limit: 512m
     pids_limit: 128

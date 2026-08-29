@@ -44,7 +44,7 @@ However many commits are in there — his journal, his motto, his branch, his me
 Then the question, and let it land properly rather than rushing past it:
 
 > "Every one of those exists in exactly one place, on one laptop, in one folder. What
-> happens to all of it if this laptop gets dropped tomorrow?"
+> happens to all of it if ttheir own machine gets dropped tomorrow?"
 
 Do not soften the answer. It is gone. All of it.
 

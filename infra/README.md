@@ -73,8 +73,8 @@ a real failure mode here, not a hypothetical one.
 
 | Service | Host port | Container | Bound on | Why |
 |---|---|---|---|---|
-| postgres | **5433** | 5432 | `127.0.0.1` only | Only the `api` talks to it, and the `api` runs on this machine. |
-| gitea HTTP | **3080** | 3000 | all interfaces | §6.4 makes `git push` the verification mechanism; the son pushes from his own laptop. |
+| postgres | **5433** | 5432 | `127.0.0.1` only | Only the `api` talks to it, and the `api` runs on this host. |
+| gitea HTTP | **3080** | 3000 | all interfaces | §6.4 makes `git push` the verification mechanism; learners push from their own machines. |
 | gitea SSH | **3022** | 22 | all interfaces | Same reason. |
 | *(reserved)* api | 3081 | — | — | Not yet implemented. |
 | *(reserved)* web | 3082 | — | — | Not yet implemented. |
@@ -86,9 +86,9 @@ outbound socket.
 
 Every port is overridable in `.env`.
 
-### Letting the son reach Gitea
+### Letting other machines reach Gitea
 
-`GITEA_DOMAIN=localhost` works for the parent's browser and for `smoke.sh`, but the son cannot
+`GITEA_DOMAIN=localhost` works for a browser on this host and for `smoke.sh`, but nobody else can
 push to `localhost`. Before handing out the remote, set `GITEA_DOMAIN` and `GITEA_ROOT_URL` to
 this machine's LAN name or IP and `docker compose up -d` to apply — the value is baked into the
 clone URLs Gitea displays. You will also need a Windows Firewall rule for 3080 and 3022.
@@ -107,7 +107,7 @@ docker compose down -v        # remove containers AND DESTROY ALL DATA
 ```
 
 `down -v` deletes `pyquest_postgres_data` and `pyquest_gitea_data`. That is every quest
-attempt, every Journal entry, and every commit the son has pushed. There is no undo except a
+attempt, every Journal entry, and every commit any learner has pushed. There is no undo except a
 backup.
 
 ---
@@ -171,7 +171,7 @@ not a backup either.
 ## Restoring — and rehearsing it
 
 **A backup that has never been restored is a hope, not a backup.** §6.9 requires the restore to
-be rehearsed once before week 3, because the Journal and the son's commit history are the two
+be rehearsed once before week 3, because the Journal and a learner's commit history are the two
 artifacts this project cannot regenerate.
 
 ### The rehearsal (safe, non-destructive — run this monthly)
@@ -270,7 +270,7 @@ Two Git Bash behaviours cost real debugging time and are worth knowing before th
 | `pg_dumpall --globals-only` included | Roles are not in a per-database dump; a restore without them fails on ownership. |
 | Scratch rehearsal is the **default** mode of `restore.sh` | The safe mode should be the one you get by accident. |
 | Gitea Actions enabled but no runner | §6.5 and the §9 roadmap want it; enabling the section now costs nothing and needs a registered `act_runner` before it does anything. |
-| Registration disabled | Two players, both provisioned by the parent. |
+| Registration disabled | Two players, both provisioned by the DM. |
 | `START_SSH_SERVER=false`, **stated not omitted** | See below. |
 
 ### Why `START_SSH_SERVER` is written out explicitly

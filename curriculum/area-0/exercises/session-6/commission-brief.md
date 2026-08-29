@@ -68,6 +68,6 @@ the world fails at. You are getting an early look at it.
 
 Nothing. There is no failing this session.
 
-If it crashes on his machine, that is not a fail — that is the single most useful
+If it crashes on the learner's machine, that is not a fail — that is the single most useful
 piece of information the session can produce, and you write it down in the
 Journal under *what broke* and it is worth exactly as much as a success.

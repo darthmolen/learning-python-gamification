@@ -65,8 +65,8 @@ services:
 
   # ---------------------------------------------------------------------------
   # gitea — the self-hosted git remote (§6.5). Push is the verification
-  # mechanism (§6.4), so this is reachable from the LAN: the son pushes to it
-  # from his own laptop.
+  # mechanism (§6.4), so this is reachable from the LAN: other learners push to it
+  # from their own machines.
   #
   # INSTALL_LOCK=true skips the first-run web wizard; every setting the wizard
   # would have asked for is supplied here as an environment variable, so the
@@ -115,7 +115,7 @@ services:
       GITEA__server__START_SSH_SERVER: "false"
       GITEA__server__OFFLINE_MODE: "true"
 
-      # Two players, both provisioned by the parent. Nobody signs themselves up.
+      # Two players, both provisioned by the DM. Nobody signs themselves up.
       GITEA__service__DISABLE_REGISTRATION: "true"
       GITEA__service__ENABLE_CAPTCHA: "false"
 
@@ -124,7 +124,7 @@ services:
       # act_runner before it does anything.
       GITEA__actions__ENABLED: "true"
     ports:
-      # LAN-reachable on purpose: §6.4, the son pushes from his own machine.
+      # LAN-reachable on purpose: §6.4, learners push from their own machines.
       - "${GITEA_HTTP_PORT:-3080}:3000"
       - "${GITEA_SSH_PORT:-3022}:22"
     volumes:

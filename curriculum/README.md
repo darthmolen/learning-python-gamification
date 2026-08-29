@@ -1,7 +1,8 @@
 # Curriculum
 
 The teaching material itself — session plans, exercises, and the Journal. Prose and
-Python, delivered by a parent to one learner.
+Python, delivered face to face by whoever holds the DM seat — in the arrangement this was
+built for, a parent.
 
 **This directory has no dependency on the application.** Every area here must be
 runnable with a text editor, a terminal, and Python. That is a standing constraint, not
@@ -11,9 +12,9 @@ a temporary state of affairs: spec §8 warns that if the curriculum waits on the
 **`lib/` is the one thing here that is not an area, and it is the one exception to that
 constraint.** It holds `world.py` — the three-name Ursina shim Areas 3 to 5 import and then
 progressively delete — and it carries a pytest suite, `ruff` and `pyright`, because it is
-code the learner *depends on* rather than code he writes. The constraint still binds
-everything he touches: `lib/smoke.py` needs nothing but Python and ursina, so the check that
-matters on his machine runs there as it stands. The test suite is the parent's.
+code a learner *depends on* rather than code they write. The constraint still binds
+everything they touch: `lib/smoke.py` needs nothing but Python and ursina, so the check that
+matters on the learner's machine runs there as it stands. The test suite is the DM's.
 
 Content for the game engine — quest YAML, briefs, hidden tests — lives in
 `content/` and is authored separately. Each area's README records which of its
@@ -23,13 +24,13 @@ exercises should later become quests, and of what kind.
 |---|---|---|---|
 | [area-0](area-0/) | 1–2 | First Light — `print`, variables, the four types, `input`, f-strings, reading errors | **authored** |
 | [area-1](area-1/) | 3–6 | Control — `if`/`while`/`for`, nesting, the accumulator pattern | **authored** |
-| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **2a authored**; 2b blocked on the son's laptop |
+| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **2a authored**; 2b blocked on hardware verification |
 | area-3 | 9–14 | Collections — `list`, `dict`, `set`, iteration, nested structures | planned, blocked on the shim's measurement |
 
-Area 2's remaining half needs one sitting at the son's laptop: the VS Code profile has to be
+Area 2's remaining half needs one sitting at the machine the profile is for: the VS Code profile has to be
 imported and confirmed there before sessions 5–8 can be finalised. Five of its strips are
 view-visibility state rather than settings keys, so they can only be captured by exporting
-from a configured running editor — the laptop step produces them, it does not merely check
+from a configured running editor — that step produces them, it does not merely check
 them. Area 3 waits on `curriculum/lib/`'s framerate measurement on the same machine.
 
 Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`.
@@ -55,7 +56,7 @@ Established by Area 0 and worth keeping.
 - **Every area has a `verify.py`** that runs every exercise and checks it against its own
   tags. A curriculum whose exercises are not known to run is not delivered.
 - **Shipped exercise code runs and does something, but is never the answer.** Reference
-  solutions live in `reference/` and are the parent's copy — they are Datamine payloads
+  solutions live in `reference/` and are the DM's copy — they are Datamine payloads
   under spec §5.5, not handouts.
-- **The parent guide predicts named stalls and gives the exact question to ask.** "Ask a
+- **The DM guide predicts named stalls and gives the exact question to ask.** "Ask a
   Socratic question" is not usable advice at 7pm on a Tuesday.

@@ -45,7 +45,7 @@ cp curriculum/lib/world.py <his-repo>/world.py
 ```
 
 That is deliberate and it is not laziness about packaging. A file he owns is a file he can
-delete, and **deleting it in Area 4 and Area 5 has to be his action, not the parent's.** A
+delete, and **deleting it in Area 4 and Area 5 has to be his action, not the DM's.** A
 shim installed as a dependency is a shim that never comes down, and scaffolding that never
 comes down is the thing this curriculum refuses to become.
 
@@ -139,13 +139,13 @@ vocabulary to understand why, which reads as *my computer is bad* rather than as
 
 ### The authoring cap, and what is still unmeasured
 
-**Soft-cap Area 3 worlds near 5,000 blocks.** Startup is 1.6 s there on the parent's machine.
+**Soft-cap Area 3 worlds near 5,000 blocks.** Startup is 1.6 s there on the DM's machine.
 
-> **Every number above is from an RTX 5090 and none of them transfer.** The son's the son's laptop
+> **Every number above is from an RTX 5090 and none of them transfer.** The target machine (a 2017 mobile workstation)
 > — 2017, i7-7820HQ — has passed a viability check (a cube renders, hardware accelerated, no
 > GDI Generic fallback, ~57 fps vsync-locked) and **has not been placed on the scaling
 > curve.** Until it is, the 5,000-block cap is an estimate with a single-threaded-Python
-> scaling guess on top of it, and **if 5,000 fused blocks does not hold 60 fps on his machine,
+> scaling guess on top of it, and **if 5,000 fused blocks does not hold 60 fps on the target machine,
 > the cap moves and Area 3's exercises are written against the smaller number.**
 >
 > Phase 3 of `planning/in-progress/feature_world-shim_2026-08-28.md` is that measurement.

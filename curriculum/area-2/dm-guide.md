@@ -43,7 +43,7 @@ learned that git is magic, which is the exact belief this area exists to destroy
 
 ## 2. Setup, once, before session 1
 
-On his machine:
+On the learner's machine:
 
 ```
 git --version
@@ -218,7 +218,7 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | `py -3.14 thing.py` — file not found | He is not in the directory the file is in | "Where is the file? Where are you? Which of those two do you want to change?" |
-| Edits one copy and runs another | The same file is open in two places | "How many copies of this file exist on this laptop? How could you prove it?" |
+| Edits one copy and runs another | The same file is open in two places | "How many copies of this file exist on ttheir own machine? How could you prove it?" |
 | Types a whole script into the REPL by habit | Areas 0–1 were mostly a prompt | "Which prompt are you at? What happens to everything you typed when you close it?" |
 | Uses `python` instead of `py -3.14` | Two interpreters, one machine | "Which Python did that use? What could you print that would tell you?" |
 | Wants to double-click the file | Entirely reasonable | "Try it. What happened to the window? Now run it the other way. Which one let you read the error?" |
@@ -364,7 +364,7 @@ is the lesson:
 | Failed at | The missing idea |
 |---|---|
 | 1 | What a repository actually contains, as opposed to what his folder contains |
-| 3 | What an environment is, and that his machine's Python is not everybody's |
+| 3 | What an environment is, and that their machine's Python is not everybody's |
 | 4 | Who his code is for. A README is a message to a person who is not him |
 
 ### The three failures worth predicting
@@ -373,7 +373,7 @@ Every one of these is a real thing an 11-14-year-old does, and each is a differe
 lesson:
 
 - **A file that was never `git add`ed**, so it is not in the clone. He will insist it
-  exists, and he is right — on his laptop. Ask: "Show me `git status` on your machine.
+  exists, and he is right — on their own machine. Ask: "Show me `git status` on your machine.
   Read me the untracked list."
 - **An absolute path** — `C:\Users\<his name>\Documents\code\...` — written into the file.
   Ask: "That path exists on your laptop. Does it exist on mine? What did you assume?"

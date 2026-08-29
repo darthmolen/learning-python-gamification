@@ -10,7 +10,7 @@ folder.
 py -3.14 s1e1_first_light.py
 ```
 
-Use `py -3.14`, not `python`. On the parent's machine `python` is 3.12 in PowerShell and
+Use `py -3.14`, not `python`. On the DM's machine `python` is 3.12 in PowerShell and
 3.14 in Git Bash, and using the one command everywhere avoids a whole category of
 confusing evening.
 
@@ -32,7 +32,7 @@ Every file has:
 
 **The shipped code always runs and always draws.** It is a starting point, never a
 finished answer. Nothing in this directory contains the solution to its own tasks; the
-few reference solutions that exist live in `../reference/` and are the parent's.
+few reference solutions that exist live in `../reference/` and are the DM's.
 
 ## Predictions
 

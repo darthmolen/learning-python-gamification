@@ -1,6 +1,6 @@
 """REFERENCE -- Datamine payload for s5e1 tasks 3 and 4. Parent's copy.
 
-Do not put this on his machine. See README.md in this directory for the rules
+Do not put this on the learner's machine. See README.md in this directory for the rules
 that come with unlocking it.
 
 Run:  py -3.14 r5_ask_and_draw.py
@@ -37,7 +37,7 @@ turtle.left(turn)
 print(f"Done. Four sides of {size}, turning {turn} each time.")
 
 
-# Notes for the parent, not for him:
+# Notes for the DM, not for the learner:
 #
 # * `shade` is not converted, and he should be able to say why: turtle.color
 #   wants text, and input already hands back text. The conversion in int() is

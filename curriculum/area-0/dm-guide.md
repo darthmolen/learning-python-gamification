@@ -1,7 +1,7 @@
 # Area 0 — DM Guide
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11)
-that is his father, who is also a player — but the two roles want different things
+that is a parent, who is also a player — but the two roles want different things
 from you, and this guide is written for the DM one. Where it says *parent* rather
 than *DM*, it means the relationship rather than the seat, and the difference is
 deliberate: §2.4 counts a parent in the room as the design's single largest
@@ -47,7 +47,7 @@ outcome than ending at 80 with him done. The next session then starts itself.
 
 ## 2. Setup, once
 
-On his machine:
+On the learner's machine:
 
 ```
 py -3.14 --version

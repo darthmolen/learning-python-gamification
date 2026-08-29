@@ -252,7 +252,7 @@ ask which. The YAML says so where the field would go.
 broken file, test is that it behaves — and that is exactly the problem. Three of the six
 are *silent*, and the win condition for those is that **he says what is wrong**, which no
 test can check. A quest that accepted "it ran" would accept deleting the loop, which is
-the wrong lesson taught by the right mechanism. They stay parent-delivered.
+the wrong lesson taught by the right mechanism. They stay DM-delivered.
 
 **`s1e2_what_range_gives.py` and `s5e1_and_or_not.py`.** Both are prediction exercises.
 The value is in the wrong prediction he wrote down before running, and automating them
@@ -321,7 +321,7 @@ pen-down moves instead of canvas items.
 **Editing a docstring in `session-6/` shifts them.** Re-run the harness after any edit
 there and check the numbers still match.
 
-**Use `py -3.14` explicitly.** On the parent's machine `python` is 3.12 in PowerShell and
+**Use `py -3.14` explicitly.** On the DM's machine `python` is 3.12 in PowerShell and
 3.14 in Git Bash. The son is on 3.14.
 
 ---

@@ -36,7 +36,7 @@ git remote -v
 Nothing comes back. There is no away yet. Everything you have made in three sessions
 exists in exactly one place, on one laptop, in one folder.
 
-**Say out loud what happens to all of it if this laptop is dropped tomorrow.**
+**Say out loud what happens to all of it if ttheir own machine is dropped tomorrow.**
 
 ---
 
@@ -46,7 +46,7 @@ The address comes from the DM. It is one of:
 
 - a Gitea URL, like `http://<machine>:3080/<him>/<repo>.git`
 - a path on a USB stick or a share, like `/d/pyquest-remote/<repo>.git`
-- a path on this laptop, like `~/remotes/<repo>.git`
+- a path on ttheir own machine, like `~/remotes/<repo>.git`
 
 ```
 git remote add origin <the address>

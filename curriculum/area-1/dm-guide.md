@@ -261,7 +261,7 @@ things that go wrong in it are the list of what to watch for in session 10.
 | Rebuilds session 9's mandala exactly | Safe, and it is not the brief | "That one already exists. What does the person who asked for this get to choose?" |
 | No `input` anywhere | The brief requires it and he forgot, not refused | "Read the specification back to me. Which line have you not done?" |
 | Crashes on an input he did not expect | Correct behaviour, correctly discovered | "Is that your bug, or the person's? What would you *want* to happen? Can you do that now?" — **he can. This is the first boss where the answer is yes.** |
-| It runs on his machine and not on yours | **The best outcome available** | "Excellent. This is the real thing. What is different between our two machines?" |
+| It runs on the learner's machine and not on yours | **The best outcome available** | "Excellent. This is the real thing. What is different between our two machines?" |
 | Declares it finished in twenty minutes | Possible, and probably true | "Show me. Now change one number at the top and show me again." |
 
 **The last one is the boss's real test.** A sigil generator that produces one picture is

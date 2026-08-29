@@ -48,7 +48,7 @@ read back afterwards, and this is an unusually good subject for it: the honest g
 
 ## The two numbers
 
-Measured on the **parent's machine**, 2026-08-29, ursina 8.3.0, Python 3.14.6, RTX 5090,
+Measured on the **DM's machine**, 2026-08-29, ursina 8.3.0, Python 3.14.6, RTX 5090,
 vsync off, 1280×720, 120 frames after 30 warm-up frames:
 
 | `ground.combine()` | Build | FPS | Frame time |
@@ -65,11 +65,11 @@ shape of most performance work, and it is a better thing to learn than "combinin
 
 ### Read these numbers with the machine attached to them
 
-They are from an RTX 5090. **The figures for the son's laptop have not been measured
+They are from an RTX 5090. **The figures for the target machine (a 2017 mobile workstation) have not been measured
 yet** — Phase 3 of `planning/in-progress/feature_world-shim_2026-08-28.md` is that
-measurement and it is waiting on the laptop. Both numbers will be smaller on his machine and
+measurement and it is waiting on the laptop. Both numbers will be smaller on the learner's machine and
 the ratio may not survive intact. When it is run, the table above gets a second half rather
-than a correction: the parent's row stays, because *the same program on two machines* is
+than a correction: the DM machine's row stays, because *the same program on two machines* is
 itself part of the lesson.
 
 For context, the spike recorded **14.9 fps** for the same 8,000-block world written against
