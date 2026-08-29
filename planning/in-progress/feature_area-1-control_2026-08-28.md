@@ -1,6 +1,6 @@
 # Area 1 — Control
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** area-1
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
