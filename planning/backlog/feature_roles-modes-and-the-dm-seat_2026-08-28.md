@@ -37,9 +37,57 @@ its own name in the lexicon before it needs code.
 exactly one other player — one sign-off queue, one streak to forgive, one challenge
 run. With four players the sign-off queue is the whole screen.
 
-**A decision on the leaderboard.** §5.8 specifies "a leaderboard of two, reset each
-area, so neither player runs away with it." Reset-each-area exists to stop a runaway;
-with six players, whether that still holds is an open question.
+**A decision on the leaderboard.** *Ruled 2026-08-29.* §5.8 no longer describes a
+ranking at all. It is a **completion board**: per area, who cleared what and which
+medals they took, medals as the stars. The anti-runaway rationale — "reset each area so
+neither player runs away with it" — is gone, because it contradicted the rest of the
+design. §5.10 makes replaying a cleared quest for a medal a first-class action, lets only
+Cleared unlock anything, and rules that a medal paying zero XP reads as a brag; a board
+built to compress the gap between players was fighting all three. Player count no longer
+bears on any of it, which is what stopped this being a multiplayer question.
+
+**What is left is the reset, and it is a mode question.** Clearing the board is an
+agreement rather than an event: the players consent, the DM performs it. An arcade
+high-score table, wiped deliberately or not at all. Three things it needs before it is
+built:
+
+- **Where it lives.** A Console action. Console today binds `signoffs`, `authorStats`,
+  `areaAuthoring` and `backups`; this is a fifth.
+- **What consent means.** At a kitchen table with two people it is a conversation and
+  then a button. In a classroom it is a flow with a record of who agreed. The mode
+  decides which, which is why the question belongs to this item and not to §5.8.
+- **What it does to history.** A wipe that destroys the record contradicts calling the
+  thing a monument. Prefer a new epoch to a delete — the board shows the current one and
+  the previous ones survive. The engine helps here by having no opinion: `standings` is a
+  pure projection over the whole completion history and implements no reset
+  (`planning/feature_engine-query-layer_2026-08-28.md`), so an epoch is one timestamp in
+  the state it already takes and the filter is a single line, whenever this is ruled.
+
+**A DM who also plays runs one area ahead.** *Proposed 2026-08-29; not yet in the spec.*
+The reason the parent is further along is not that he is the father — it is that he holds
+the DM seat, and a DM who has not cleared the material cannot author it, sign it off, or
+ask the §3.6 questions about it. Stated as a rule about the seat it survives the roster
+changing: whoever holds both seats runs an area ahead of the players they adjudicate.
+
+The challenge run already makes this affordable. §5.11 has the DM beating a boss cold to
+skip the area, which is how a person stays an area ahead without playing 150 quests twice.
+The rule and the mechanic were built for each other; only the rule is missing.
+
+That is the shape §5.11 should eventually take. Today it is titled "The Parent's Track" and
+argues from the man rather than the seat. The rewrite strips it back to the Kitchen Table
+declaration plus this rule — and leaves the dad-and-son story intact, because it is the
+flavor that drove this whole design and worth keeping as history, just not as the thing the
+rules are stated in.
+
+**It does not collide with the board above, though an earlier draft of this item said it
+did.** That draft assumed standings were scoped to "the current area," and worried that a
+DM an area ahead would leave the phrase without a referent. Two things dissolve it. The
+board is a per-area record rather than a single-area ranking, so a DM in Area 4 simply has
+more rows filled in. And being ahead never erased what came before — he acted in Area 3
+and left his history there, medals included. The rule and the board are independent.
+
+This piece can land in the spec on its own. It is a rule about seats, so it does not wait
+on the AI-DM decision below.
 
 ## The policy collision that has to be ruled on first
 
