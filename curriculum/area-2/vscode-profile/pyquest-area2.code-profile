@@ -1,0 +1,9 @@
+{
+    "name": "PyQuest Area 2",
+    "icon": "rocket",
+    "settings": "{\"settings\": \"{\\n    \\\"workbench.activityBar.location\\\": \\\"hidden\\\",\\n    \\\"workbench.statusBar.visible\\\": false,\\n    \\\"workbench.editor.showTabs\\\": \\\"single\\\",\\n    \\\"workbench.editor.empty.hint\\\": \\\"hidden\\\",\\n    \\\"workbench.startupEditor\\\": \\\"none\\\",\\n    \\\"editor.minimap.enabled\\\": false,\\n    \\\"breadcrumbs.enabled\\\": false,\\n    \\\"editor.stickyScroll.enabled\\\": false,\\n    \\\"editor.lightbulb.enabled\\\": \\\"off\\\",\\n    \\\"workbench.tips.enabled\\\": false,\\n    \\\"workbench.enableExperiments\\\": false,\\n    \\\"workbench.welcomePage.walkthroughs.openOnInstall\\\": false,\\n    \\\"extensions.ignoreRecommendations\\\": true,\\n    \\\"update.showReleaseNotes\\\": false,\\n    \\\"telemetry.telemetryLevel\\\": \\\"off\\\",\\n    \\\"git.enabled\\\": false,\\n    \\\"git.decorations.enabled\\\": false,\\n    \\\"git.openRepositoryInParentFolders\\\": \\\"never\\\",\\n    \\\"editor.fontSize\\\": 15,\\n    \\\"editor.lineNumbers\\\": \\\"on\\\",\\n    \\\"editor.renderWhitespace\\\": \\\"none\\\",\\n    \\\"editor.inlineSuggest.enabled\\\": false,\\n    \\\"editor.formatOnSave\\\": false,\\n    \\\"explorer.compactFolders\\\": false,\\n    \\\"workbench.editor.enablePreview\\\": false,\\n    \\\"files.autoSave\\\": \\\"off\\\",\\n    \\\"terminal.integrated.fontSize\\\": 14,\\n    \\\"python.terminal.activateEnvironment\\\": false\\n}\"}",
+    "keybindings": "{\"keybindings\": \"[]\"}",
+    "snippets": "{\"snippets\": {}}",
+    "extensions": "[{\"identifier\": {\"id\": \"ms-python.python\"}, \"displayName\": \"Python\"}]",
+    "globalState": "{\"storage\": {}}"
+}
