@@ -46,7 +46,7 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
       terminal. Verified by importing it, never by reading the JSON
 - [ ] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**,
       not just Area 2b's rung, so Areas 3, 4, 6 and 7 can find theirs without archaeology
-- [ ] `cd pyquest && npm run validate:content` exits 0 with five `a2-` quests and Boss 2
+- [ ] `cd pyquest && npm run validate:content` exits 0 with **five quests plus Boss 2 (six items total)**
 - [ ] `py -3.14 verify.py` reports **N of N over the runnable `.py` exercises only**, and the
       README separately carries a completion checklist for the markdown and git walkthroughs
 - [ ] Area 2 reported to the `main` track for the `curriculum/README.md` status table
@@ -235,15 +235,33 @@ mid-area, so *which* type each quest gets is a decision, not a default.
 | id | Title | Session | Concepts | Verifier | DC |
 |---|---|---|---|---|---|
 | `a2-the-first-commit` | The First Commit | 2 | `repository`, `git-init`, `git-add`, `git-commit` | `git-signal: commit` | 5 |
-| `a2-the-log-as-a-story` | The Log As A Story | 3 | `git-log`, `git-commit` | `peer-signoff: dm` | 8 |
+| `a2-the-log-as-a-story` | The Log As A Story | 3 | `git-log`, `git-branch`, `git-commit` | `peer-signoff: dm` | 8 |
 | `a2-it-is-somewhere-else` | It Is Somewhere Else | 4 | `git-push`, `repository` | `git-signal: push` | 8 |
 | `a2-where-the-file-lives` | Where The File Lives | 5 | `files-on-disk`, `running-scripts` | `local-repo` | 10 |
 | `a2-its-own-python` | Its Own Python | 7 | `venv`, `pip`, `running-scripts` | `local-repo` | 12 |
-| `a2-escape-the-sandbox` | **Boss 2 — Escape the Sandbox** | 8 | all fourteen | `local-repo` + `peer-signoff: dm` | **22** |
+| `a2-escape-the-sandbox` | **Boss 2 — Escape the Sandbox** | 8 | all fourteen | `peer-signoff: dm` | **22** |
 
 Boss 2 carries `requires: []`, for the reason Area 1's plan sets out: the 3-of-5 rule lives
 in the engine as `bossUnlocked(clearedQuestCount)` and nothing reads `requires`. Three theme
 framings per §5.2.
+
+**Boss 2 is `peer-signoff: dm`, not `local-repo`, and an earlier draft of this matrix said
+"`local-repo` + `peer-signoff`" — which is not a thing.** `VerifierSchema` is a discriminated
+union on `type`: one verifier per item, never two. Forcing the choice is clarifying rather
+than annoying. `local-repo` means the API pulls his repository and runs a pytest
+specification — automated, and it proves the tests pass. The cold-clone procedure above is
+not automated and does not care whether tests pass: a **person** clones into a fresh
+directory, builds a venv, types the command from his README, and judges whether it ran. That
+is `peer-signoff` by definition, and §5.3's win condition — *it must run from a clean clone
+on the other person's machine* — is a human judgement or it is nothing.
+
+**The cold-clone procedure is therefore the sign-off checklist**, not documentation beside
+one. The dm works the five steps and presses the button, or records which step failed.
+
+`git-branch` is tagged on `a2-the-log-as-a-story` because a log with a branch in it is a
+better story than a linear one — that is the quest's whole point. §4 says "branches,
+lightly" and `concepts.ts` labels it exactly that, so it stays light: one branch, one merge,
+read the log, done. It is not inflated into a quest of its own.
 
 **`a2-the-log-as-a-story` is deliberately not a `git-signal`.** A signal can prove commits
 exist; it cannot prove the log reads as a story, which is the entire concept. That one needs
@@ -387,7 +405,20 @@ session is written to say *his entries*, never a count, so it does not go stale 
 - `curriculum/area-2/vscode-profile/README.md` — the install and import steps, and the full
   un-stripping ladder for Areas 3, 4, 6 and 7
 - `content/areas/area-2.yml` — new
-- `content/quests/a2-*.yml` + briefs, tests — new, six items
+- `content/quests/a2-*.yml` — new, **six**: five quests plus Boss 2
+- `content/briefs/a2-*.md` — new, **six**: every item has a brief
+- `content/tests/a2-*_test.py` — new, **two**, and only two
+- `content/starters/a2-*.py` — **none**
+
+  The counts follow from the verifier column, and they are not the shape Area 1 has.
+  `scaffold.ts` writes a starter only for `hidden-tests`, and §6.3 confines that to Areas 0–1
+  — so **Area 2 ships no starters at all.** It writes a test file for `hidden-tests` and
+  `local-repo` only, and just two items here are `local-repo`: `a2-where-the-file-lives` and
+  `a2-its-own-python`. The two `git-signal` quests and the two `peer-signoff` items — the log
+  quest and Boss 2 — get YAML and a brief and nothing else, because there is nothing to run.
+
+  An author who scaffolds six quests and finds two test stubs has not lost four; a
+  `git-signal` quest that grew a hidden test would be checking the wrong thing entirely.
 - `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` — **moved to
   `completed/` when Phase 3 ships the profile and the ladder, and not before.** This track
   owns that move. The stub carries no work of its own any more; it is a pointer at Phase 3

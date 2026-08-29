@@ -179,13 +179,27 @@ here because the rung is the one `peer-signoff` item in an otherwise `local-repo
 | `a3-set-a-breakpoint` | Set A Breakpoint | 8 | `breakpoints` | `dict`, `nesting` | `peer-signoff: dm` | 12 |
 | `a3-the-recipe` | The Recipe | 9 | `dict`, `dict-methods`, `in` | `list`, `iteration` | `local-repo` | 16 |
 | `a3-what-am-i-missing` | What Am I Missing | 11 | `set`, `in` | `dict`, `list` | `local-repo` | 18 |
-| `a3-the-crafting-table` | **Boss 3 — The Crafting Table** | 13 | `nested-structures`, all sixteen | everything | `local-repo` + `peer-signoff: dm` | **24** |
+| `a3-the-crafting-table` | **Boss 3 — The Crafting Table** | 13 | `nested-structures`, all sixteen | everything | `local-repo` | **24** |
 
 That is six quests against §5.2's five, because the breakpoints rung is a tool quest rather
 than a collections quest and should not displace one. Any three of the five collections
 quests unlock the boss; the rung is elective depth. Boss 3 carries `requires: []` for the
 reason Area 1's plan sets out — the 3-of-5 rule is `bossUnlocked(clearedQuestCount)` in the
 engine and nothing reads `requires`. Three theme framings per §5.2.
+
+**One verifier per item, never two.** `VerifierSchema` is a discriminated union on `type`, so
+"`local-repo` + `peer-signoff`" — which an earlier draft of this matrix wrote for Boss 3 — is
+not expressible. Boss 3 is **`local-repo`**: a crafting simulator is testable, recipes in and
+items out, which is exactly what `local-repo` runs against his repository. That differs from
+Boss 2, whose win condition *is* the clone and so needs a person. §5.3's clean-clone rule
+still binds here — it binds every boss — but it is a standing rule the dm enforces, not the
+verifier type.
+
+**File counts follow the verifier column**, and Area 3's are not Area 1's. `scaffold.ts`
+writes a starter only for `hidden-tests`, which §6.3 confines to Areas 0–1, so **Area 3 ships
+no starters.** It writes a test file for `hidden-tests` and `local-repo`, so the five
+`local-repo` items get one each and the `peer-signoff` breakpoints rung gets none: **seven
+YAML, seven briefs, no starters, five tests.**
 
 `tuple`, `sorted`, `min` and `max` are taught and drilled but carry no quest of their own.
 That is honest rather than an oversight, the way Area 0 said `bool` was thin: a quest whose
@@ -321,8 +335,12 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 - `curriculum/area-3/**` — new, the whole area
 - `content/areas/area-3.yml` — new
-- `content/quests/a3-*.yml` + briefs and tests — new, seven items (five quests, one boss,
-  one breakpoints quest)
+- `content/quests/a3-*.yml` — new, **seven**: five collections quests, the breakpoints rung,
+  and Boss 3
+- `content/briefs/a3-*.md` — new, **seven**: every item has a brief
+- `content/tests/a3-*_test.py` — new, **five**, the `local-repo` items only
+- `content/starters/a3-*.py` — **none**; starters are a `hidden-tests` artifact and §6.3
+  confines that to Areas 0–1
 **Owned by other tracks, not this one:** `curriculum/README.md` (`main`) and
 `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` (`area-2`). The Area 3
 rung ships here and is recorded in `curriculum/area-3/README.md`; the stub's status note is
