@@ -427,13 +427,13 @@ Titles and sigils exist as flavor. **No currency, no shop, no gems.** Purchase p
 
 ### 5.8 The co-op layer
 
-Relatedness is the hardest need to satisfy at scale, which is why commercial platforms simulate it. Here it is real, so the app is genuinely two-player.
+Relatedness is the hardest need to satisfy at scale, which is why commercial platforms simulate it. Here it is real. The rules below are written against **roles**, not against the two people currently holding them — how many players sit at the table is a mode (§5.11), not a constant baked into this section.
 
-- **The parent has his own track**, with real quests at his real level, on the same board.
-- **The son watches the parent fail.** This is the highest-value mechanic in the design. A child who has never seen a competent adult get stuck concludes that being stuck means being stupid.
-- **A leaderboard of two**, Advent-of-Code style, **reset each area** so neither player runs away with it.
-- **Co-op quests:** pair programming, driver and navigator, roles swapped every ten minutes. The son drives more.
-- **Bounties:** either player posts a bug or feature bounty for the other. Both pay XP.
+- **Every player has their own track**, with real quests at their real level, on the same board.
+- **A player watches a stronger player fail.** This is the highest-value mechanic in the design. Someone who has never seen a competent practitioner get stuck concludes that being stuck means being stupid. In Kitchen Table mode this is the son watching the parent, which is the arrangement that makes it land — but the mechanic is about the gap in skill, not about the family.
+- **A completion board, Advent-of-Code style** — per area, who cleared what and which medals they took, with medals as the stars. **It is a record, not a race.** The design already ruled against scoring it three separate times: replaying a cleared quest for a medal is "a first-class action" (§5.10), only Cleared unlocks anything, and a medal that pays no XP "reads as a brag, not as a zero." A board that existed to compress the gap between players would be fighting all three. If everyone finishes everything it says nothing at all — most do not, and what it shows is what each player chose to go back for. **It does not reset itself.** Clearing it is an agreement rather than an event; the mechanism is deferred to `planning/backlog/feature_roles-modes-and-the-dm-seat_2026-08-28.md`.
+- **Co-op quests:** pair programming, driver and navigator, roles swapped every ten minutes. The less experienced player drives more.
+- **Bounties:** any player posts a bug or feature bounty for another. Both pay XP.
 
 ### 5.9 Streaks
 
@@ -483,7 +483,7 @@ constraint is abstaining from AI. The same medal costs each player something rea
 
 ### 5.11 The Parent's Track
 
-**One content set, two players.** Quest YAML is player-agnostic; the completion bar differs.
+**One content set, every player.** Quest YAML is player-agnostic; the completion bar differs.
 
 **Roles, not people — and the current setup is a named mode.** A person holds one
 or more roles in a campaign. The **player** does quests, earns XP and takes
@@ -639,9 +639,9 @@ standing, so they are always one click away and never nested.
 1. **Map** — the campaign as areas, locked ones visible but drained of colour
 2. **Tome** — the field manual and the whole syllabus. See below
 3. **Defend** — the session's invasions (§5.4)
-4. **Party** — two players, levels, area standings, open bounties (§5.8)
+4. **Party** — players, levels, area standings, open bounties (§5.8)
 5. **Journal** — entries, prompts, parent replies (§5.6)
-6. **Console** — sign-off, authoring, streak forgiveness. Both players have one,
+6. **Console** — sign-off, authoring, streak forgiveness. Every player has one,
    since sign-off runs both directions (§5.11)
 
 **Sub-areas — reached through a place, never from the rail.**
