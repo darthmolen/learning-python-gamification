@@ -192,6 +192,16 @@ editing the index.
 
 ## Dependencies / Prerequisites
 
+**Authoring order and delivery order are different things, and only the first one gates
+this plan.** Area 2 is delivered to the learner after Area 1, because weeks 6–8 follow
+weeks 3–6. It is *authored* independently of Area 1 and can be written in parallel with it:
+nothing in these sessions reads an Area 1 exercise, quest or journal entry.
+
+The one place that looked like a dependency is the Journal migration in session 2a-2, and
+it is not one. The beat is "put your journal under version control," and it works with
+whatever entries exist on the night — six if Area 1 has not run, sixteen if it has. The
+session is written to say *his entries*, never a count, so it does not go stale either way.
+
 - **Nothing blocking the curriculum.** Git and Python are enough.
 - **`feature_gitea-lan-access-for-the-son_2026-08-27.md`** blocks the *game* half — the
   `git-signal` quest and the "board updates by itself" moment. Named, not absorbed.
@@ -205,14 +215,18 @@ editing the index.
 - `curriculum/area-2/vscode-profile/` — the exportable profile and its install note
 - `content/areas/area-2.yml` — new
 - `content/quests/a2-*.yml` + briefs, tests — new, six items
-- `curriculum/area-0/journal/entries/`, `curriculum/area-1/journal/entries/` — read only,
-  migrated into his repository rather than moved in this one
 - `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` — status note.
   **This track owns the stub**; Area 3 ships its own rung but does not edit this file
 
 **Owned by `main`, not this track:** `curriculum/README.md`, and
 `pyquest/packages/content/src/concepts.ts` — the `breakpoints` line this plan argues for is
 a prerequisite `main` lands before the track starts.
+
+**Owned by the `area-1` track:** `curriculum/area-1/**`, including the journal entries this
+area's session 2a-2 puts under version control. An earlier draft listed those entries here
+as "read only," which was wrong twice over — this plan does not write them, and a file it
+does not write does not belong in a list of files expected to change. The learner's entries
+are copied into **his** repository during the session; nothing in this repository moves.
 
 ## Out of Scope
 
