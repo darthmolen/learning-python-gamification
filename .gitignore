@@ -7,3 +7,8 @@ dist/
 
 .env
 .env.local
+
+# Agent worktrees. Sub-agents run in isolated checkouts under here; each is a
+# full copy of the repository (154MB for three) and none of it belongs in history.
+# The branches are the durable artifact -- the checkouts are scratch.
+.claude/worktrees/
