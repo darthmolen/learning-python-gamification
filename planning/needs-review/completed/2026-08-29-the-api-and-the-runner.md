@@ -173,3 +173,87 @@ root `docker-compose.yml` is not to be edited here.
 
 Anything a screen renders. The API returns the contract's shapes and stops; the DC warning
 threshold, the `~`, and a zero payout reading as "brag" are all the UI's.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-29 18:10
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- Lane A boundary is mostly correct: content loads from git on boot; progress stays in Postgres; API records while engine decides.
+- Phase 1 puts contract additions first, correctly unblocking SPA stubs.
+- Plan correctly identifies that `packages/contract` currently has payload schemas but no endpoint table, request bodies, or shared error shape.
+- `apps/api` does not exist yet — all new work. `infra/compose/api.yml` already exists and reserves both `api` and `runner` services.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **`runner_jobs` columns still unspecified (Approach / Phase 2)**
+  - What's wrong: Plan says it owns the columns and the db plan implements them — but names none.
+  - Why it matters: The db plan cannot implement the queue handoff without a schema.
+  - Suggested fix: Specify columns now: `id`, `job_type`, `status` (enum + check), `payload jsonb`, `result jsonb`, `error_code`, `error_detail`, `created_at`, `claimed_at`, `finished_at`, `claimed_by`, lease/retry fields, claim semantics, and required indexes.
+
+- **Route table not actually listed (Approach / Phase 1)**
+  - What's wrong: Plan says the route table goes into `packages/contract` first, but names no concrete endpoints.
+  - Why it matters: SPA still cannot stub against prose.
+  - Suggested fix: Add an explicit route inventory with method, path, request schema, response schema, and error cases for every endpoint.
+
+- **Error shape asserted, not designed (Approach)**
+  - What's wrong: One error shape is promised but no schema is sketched.
+  - Why it matters: Client behavior and test assertions cannot be written consistently without it.
+  - Suggested fix: Define a discriminated error schema — e.g. `{ code, message, details?, retryable, jobStatus? }`.
+
+- **`local-repo`, `peer-signoff`, `git-signal` under-specified (Phase 3)**
+  - What's wrong: Each verifier is described at slogan level only.
+  - Why it matters: None is implementable from what is written.
+  - Suggested fix:
+    - `local-repo`: clone/fetch path, checked-out ref, where quest spec lives, command run.
+    - `peer-signoff`: persisted pending/approved record, POST/GET endpoints, `by` role enforcement.
+    - `git-signal`: source of truth (Gitea API, mirrored git command, or webhook), journal detection rule, polling/webhook contract.
+
+- **Phase 4 awarding flow too vague**
+  - What's wrong: "Attempts recorded, medals written, invasion rungs advanced" names effects, not flow.
+  - Why it matters: Risks putting engine logic in the API; rung advancement is an engine decision, not an API one.
+  - Suggested fix: Specify exact repository writes and exact engine calls. Rung advancement = engine computes next rung → API writes it.
+
+- **Runner isolation understated for §6.6**
+  - What's wrong: subprocess + `--network none` + wall timeout + `RLIMIT_AS` leaves fork bombs, disk fill, process spawning, stdout spam, and CPU burn unaddressed.
+  - Why it matters: A `while True: os.fork()` or `open('/dev/zero').read()` bypasses the stated controls.
+  - Suggested fix: Add: per-job temp workspace, output cap, bounded-write area, process limit (`RLIMIT_NPROC`), CPU quota/ulimit, non-root user, cleanup semantics.
+
+#### Important (Should Address)
+
+- **`xpSources` decision left at "may land here"**
+  - API arithmetic over medals risks crossing the §6.7 boundary.
+  - Suggested fix: Either defer to engine ownership, or constrain API implementation to pure projection over already-recorded XP-source facts — not recomputation.
+
+- **Content load on boot lacks shape detail**
+  - Boot-load and zod-validate stated, but what tree is loaded from `/content` and whether failure is whole-corpus fail-fast is unspecified.
+  - Suggested fix: Specify root paths and manifests loaded, and define startup failure behavior.
+
+- **Track discipline — `vitest.config.ts` claim is inaccurate**
+  - "No line in root `vitest.config.ts`" — the SPA plan already named that file as a coordination point.
+  - Suggested fix: Acknowledge `vitest.config.ts` as shared with the `spa` track; `tsconfig.json` appears uncontended.
+
+- **`runner_jobs` coordination with db plan too informal**
+  - "API owns columns, db implements them" is sensible but not bound to a reviewed appendix.
+  - Suggested fix: Add a schema appendix in this plan and reference it explicitly from the db plan's v2.
+
+#### Minor (Consider)
+
+- **Security test list incomplete** — missing: subprocess spawn explosion, huge stdout, disk write denial, deep recursion/zip bomb, many small allocations. Add representative tests.
+- **Runner in `api.yml`** — no separate `runner.yml` exists; runner is currently stubbed inside `infra/compose/api.yml`. Either keep it there or explain when/why to split.
+
+### Recommendations
+
+Add an appendix before Phase 1 begins: concrete endpoint table, request/response schemas, shared error schema, `runner_jobs` column definition, verifier mechanics for all four types, and awarding write-flow. Correct the `vitest.config.ts` coordination claim. Strengthen the runner threat model.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The architecture is pointed correctly and Phase 1 ordering is sound, but the key implementation contracts — routes, error schema, `runner_jobs`, verifier mechanics, and awarding flow — are all still prose-only and must be specified before any phase can begin.
