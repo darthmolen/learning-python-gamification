@@ -108,7 +108,7 @@ This area is load-bearing. Every platform surveyed fails at this seam, so it com
 **BOSS 2 — Escape the Sandbox:** rebuild an in-app program as a real project, push it, and the parent clones it cold and runs it. The win condition is not passing tests. The win condition is that his code ran on someone else's computer.
 
 ### Area 3 — Collections (weeks 9–14)
-`list` · indexing · slicing · mutation · list methods · `tuple` · `dict` · `set` · iteration · nested structures · `len` `in` `sorted` `min` `max`
+`list` · indexing · slicing · mutation · list methods · `tuple` · `dict` · `set` · iteration · nested structures · `len` `in` `sorted` `min` `max` · breakpoints
 
 **Vehicle:** Minecraft data. Inventories are lists. Crafting recipes are dicts. Block palettes are sets.
 
