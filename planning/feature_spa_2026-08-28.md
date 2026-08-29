@@ -56,14 +56,17 @@ one of these is a presentation decision the engine deliberately does not make (�
 ## Phases
 
 ### Phase 1 — shell and design system [needs nothing]
+
 Tokens from the artboards, the 72px rail with its six destinations, breadcrumbs as a
 component, routing, and the Tome's expand-in-place behaviour. No data.
 
 ### Phase 2 — screens against stubs
+
 The nine screens rendering contract shapes from fixtures. Reviewable, clickable, and
 honest about being stubbed.
 
 ### Phase 3 — the Quest screen for real [ASYNC]
+
 CodeMirror, Pyodide, Run. The prototype's Submit already parses the editor rather than
 counting clicks — keep that property: a Submit that passes on unchanged code is a lie
 about the mechanic.
@@ -71,6 +74,7 @@ about the mechanic.
 ### Phase 4 — the turtle shim [ASYNC, and do not schedule it last]
 
 ### Phase 5 — swap stubs for the API
+
 One module changes. If more than one does, the contract was not doing its job.
 
 ## Dependencies / Prerequisites

@@ -304,7 +304,9 @@ Sketch the smallest module that closes the measured gap. Working hypothesis, to 
 validated rather than assumed:
 
 ```python
+
 # world.py — positional functions only, no keyword arguments
+
 place(x, y, z, kind)     # hides Entity construction
 start()                  # hides Ursina() and app.run()
 BLOCKS                   # a dict of kind -> colour or texture

@@ -63,17 +63,21 @@ boundary you have assumed.
 ## Phases
 
 ### Phase 1 — skeleton and content loading
+
 Fastify, health, content loaded and validated on boot, contract types wired. Integration
 test asserts a bad content root fails startup loudly rather than serving a half-campaign.
 
 ### Phase 2 — the runner and `hidden-tests`
+
 The container, the queue, the caps, and the attack tests above. Then Submit end to end.
 
 ### Phase 3 — the remaining verifiers
+
 `peer-signoff` and `git-signal` first (no runner needed), then `local-repo` once Gitea is
 reachable from his laptop.
 
 ### Phase 4 — awarding
+
 Attempts recorded, medals written at the delta §5.10 prices, invasion rungs advanced.
 Every write goes through the repository layer; the engine decides, the API records.
 

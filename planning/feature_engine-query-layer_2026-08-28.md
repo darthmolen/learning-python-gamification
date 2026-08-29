@@ -62,15 +62,18 @@ shapes, the API invents response shapes, and they meet for the first time at int
 ## Phases
 
 ### Phase 1 — the contract package
+
 `pyquest/packages/contract`, depending on `@pyquest/content` and nothing else. Zod schemas
 per endpoint payload. No logic.
 
 ### Phase 2 — the query layer [ASYNC with Phase 3]
+
 The six functions, full test-filter discipline. Named mutants that must be caught: return
 a constant progress; drop the `estimated` flag; let `dueInvasions` ignore the cap; make
 `bossState.unlocked` true at two cleared; off-by-one on a ladder rung.
 
 ### Phase 3 — property tests
+
 XP totals are order-independent (already pinned for medals — extend across areas). Progress
 never exceeds its total. A due queue never exceeds its cap. No function reads `Date`.
 

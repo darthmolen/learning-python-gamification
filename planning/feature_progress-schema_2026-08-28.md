@@ -61,15 +61,18 @@ drift the first time a medal is corrected.
 ## Phases
 
 ### Phase 1 — schema and migrations
+
 Plain SQL migrations, applied by a job in `infra/docker-compose.yml`, per §6.1's
 "migrations as a job". Forward-only; this is one household's data, not a fleet.
 
 ### Phase 2 — the repository layer
+
 Thin functions returning the shapes `@pyquest/contract` declares. No business logic — the
 engine owns that, and a rule the SQL knows but the engine does not is a rule with two
 homes.
 
 ### Phase 3 — integration tests
+
 Against the real container. Per the test-filter skill, a mock here *is* the schema you
 forgot to write. Seed a player, award a medal, replay it, prove the primary key refuses
 the duplicate.
