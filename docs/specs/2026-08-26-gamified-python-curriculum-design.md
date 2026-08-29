@@ -623,6 +623,13 @@ Rail destinations have no breadcrumb, because they have no ancestor. Overlays ha
 none either — they close rather than navigate, and their bar names what closing
 returns to.
 
+**A crumb names the activity, not the object.** The trail reads `… › Quests › The
+Recipe Book` even though there is no standalone Quests screen — clicking it
+returns to the area, whose quest list is what he actually went back for. The area
+also holds a brief and a boss, but the quests are why he is there, and a crumb
+that says what he will be doing answers "why would I click this?" in a way a bare
+noun does not.
+
 **Labels do not change with state.** A button whose words depend on what you have
 already done is one the reader cannot trust. `Find the Boss` on the area card and
 `Take the Boss` on the boss screen both read true whether he has cleared none of
