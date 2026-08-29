@@ -34,15 +34,14 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
 - [ ] All fourteen Area 2 concepts covered
 - [ ] **The curriculum runs with no application and no Gitea.** A reader with git, Python
       and a USB stick can deliver every session. This is verified by reading, not assumed
-- [ ] Boss 2 passes the cold-clone procedure below, step by step, with the result recorded.
-      Not "tests pass," and not "it worked on his machine"
+- [ ] Boss 2 passes its real win condition: the parent clones his repository **cold**, on a
+      different machine, and it runs. Not "tests pass"
 - [ ] Area 0's and Area 1's Journal entries become the first real commit in his repository
-- [x] `breakpoints` at area 3 exists in `concepts.ts` — **landed by `main` on 2026-08-29**
-      (`c90202e`), argued here. This track is no longer gated on it
-- [ ] The stripped VS Code profile ships as a `.code-profile` export, installed in session 2b-1
-- [ ] `cd pyquest && npm run validate:content` exits 0 with five `a2-` quests and Boss 2
-- [ ] `py -3.14 verify.py` reports **N of N over the runnable `.py` exercises only**, and the
-      README separately carries a completion checklist for the markdown and git walkthroughs
+- [ ] `breakpoints` at area 3 exists in `concepts.ts` **before this track starts** — the
+      one Lane A/B crossing, argued here and landed by `main`
+- [ ] The stripped VS Code profile exists as one exportable file, installed in session 2b-1
+- [ ] `npm run validate:content` exits 0 with five `a2-` quests and Boss 2
+- [ ] `py -3.14 verify.py` reports N of N
 - [ ] Area 2 reported to the `main` track for the `curriculum/README.md` status table
 
 ## Approach
@@ -54,44 +53,9 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
 - **2b:** `files-on-disk` · `running-scripts` · `vscode` · `venv` · `pip` · `tracebacks` ·
   `main-guard`
 
-Eight sessions across three weeks, numbered 1–8 in one `sessions/` directory with the 2a/2b
-boundary marked in the README rather than in the filesystem. One area, one verify harness,
-one DM guide.
-
-| # | Half | Title | Introduces | Resurfaces |
-|---|---|---|---|---|
-| 1 | 2a | What A Repository Is | `repository`, `git-init` | — |
-| 2 | 2a | The First Commit | `git-add`, `git-commit` | `repository` |
-| 3 | 2a | The Log As A Story | `git-log`, `git-branch` | `git-commit` |
-| 4 | 2a | Push, And It Is Somewhere Else | `git-push` | `git-log`, `git-commit` |
-| 5 | 2b | Where A File Actually Goes | `files-on-disk`, `running-scripts` | `print`, `git-add` |
-| 6 | 2b | A Real Editor | `vscode` | `files-on-disk`, `running-scripts` |
-| 7 | 2b | Its Own Python | `venv`, `pip` | `running-scripts` |
-| 8 | 2b | Read The Stack | `tracebacks`, `main-guard` | `reading-errors`, `venv` |
-
-**The boundary sits between 4 and 5**, and it is a real one: session 4 ends with his code on
-another machine, session 5 starts with the question of where a file lives. Sessions 1–4 need
-no Python at all, which is why 2a survives Gitea being down.
-
-**Session 2 is the Journal migration** — see the session beat below. **Session 8 is the boss
-rehearsal**, since Boss 2 is a traceback away from failure on someone else's machine.
-
-### DC band
-
-Area 0 ran 5–18, Area 1 runs 8–20. **Area 2's spread is wider than either — 5 to 22 — and
-the reason is worth stating rather than smoothing over.**
-
-Individually, git commands are the easiest material in the campaign. `git add` is one word
-and there is nothing to reason about; a DC above 8 for any single 2a command would be
-dishonest. But **Boss 2 is the hardest thing he will have done**, harder than Boss 1, because
-it is the first task whose failure mode is invisible from where he is standing — it works on
-his machine and that tells him nothing. §4 calls this area load-bearing for exactly that
-reason.
-
-So Boss 2 sits at **22**, and it is the campaign's first item over 20. §5.1 renders DC ≥ 20
-with a warning, and here the warning is correct and wanted: this one is genuinely hard, and
-he should know before he starts. Area 1 avoided the band to keep a week-three learner from
-being taught fear; by week eight, an honest warning is information rather than intimidation.
+Roughly eight sessions across three weeks, numbered 1–8 in one `sessions/` directory with the
+2a/2b boundary marked in the README rather than in the filesystem. One area, one verify
+harness, one DM guide.
 
 ### The tension this plan has to name, and how it resolves
 
@@ -129,15 +93,8 @@ and un-strip it one rung at a time, rather than build a custom editor.
 
 This plan delivers **the profile and the Area 2b rung only.** Later rungs (Area 3
 breakpoints, Area 4 outline, Area 6 extensions, Area 7 problems and source control) are
-authored by their own area plans.
-
-**The stub stays in `planning/backlog/`, with a status note recording that its Area 2b rung
-shipped.** It does not move to `in-progress/` alongside this plan and it does not go to
-`completed/`. Four rungs are still live after this track finishes — Area 3 breakpoints, Area
-4 outline, Area 6 extensions, Area 7 problems and source control — and a stub with four
-unshipped rungs is not a completed item. This track owns the file and is the only one that
-edits it; the later areas ship their rungs and report, the same way they report to `main`
-for the status table.
+authored by their own area plans. Move the stub to `in-progress/` alongside this plan or
+leave it in backlog with a note that its first rung shipped — the plan should say which.
 
 **The `concepts.ts` edit — argued here, landed by `main`.** The stub's open decision is
 settled here: register **`breakpoints` at area 3** for stepping and the Variables panel,
@@ -147,18 +104,10 @@ this edit the validator's `concept-above-area` rule correctly rejects an Area 3 
 quest, and the rule is right — the fix is a decision, not a bypass.
 
 This is **the only file Lane B and Lane A share**, and it is read by every area track through
-`validate:content` — an id moving under a running track breaks it. So this plan made the
-decision and `main` made the edit, on a track no area holds.
-
-**That has happened.** `planning/completed/feature_shared-index-and-concepts_2026-08-29.md`
-landed it on 2026-08-29: `d3eb9f7` added `breakpoints` to spec §4's Area 3 vocabulary line,
-`c90202e` registered `{ id: 'breakpoints', label: 'breakpoints', area: 3 }`. It was proved in
-both directions before closing — an area 3 quest tagged `breakpoints` scaffolds and validates,
-and the same tag at area 2 is still refused with *"breakpoints is first taught in area 3."*
-
-So this section is now the **argument of record** for a decision already in the tree, not a
-gate. Neither this track nor Area 3 waits on it, and neither adds the id itself — it is
-already there.
+`validate:content` — an id moving under a running track breaks it. So this plan makes the
+decision and `main` makes the edit, before any area track starts, as its own commit:
+`planning/feature_shared-index-and-concepts_2026-08-29.md`. If that has not landed, this
+track and Area 3 are both blocked and neither adds the id itself.
 
 ### Verifiers, and where they change
 
@@ -172,61 +121,6 @@ This is the area where the verifier story turns over:
   parent clones it cold and runs it. §5.3: *it must run from a clean clone on the other
   person's machine.* The win condition is not passing tests. The win condition is that his
   code ran on someone else's computer, and the plan should refuse any softer phrasing.
-
-### The cold clone, defined
-
-"Clones it cold and it runs" is the win condition of the campaign's load-bearing area, and
-asserting it three times is not the same as being able to check it. This is the procedure.
-The **dm** runs it, on the dm's machine, with the learner watching and not touching.
-
-1. **A directory that has never seen his code.** A fresh path outside every existing tree —
-   not next to his repo, not a directory that once held it. Anything with a stale `.venv`,
-   `__pycache__` or `.env` invalidates the run.
-2. **Clone by URL, not by copy.** `git clone <remote-url>`. Copying a folder proves the code
-   works; cloning proves *he pushed it*, which is the half that fails.
-3. **A venv created from scratch**, inside the clone, on the dm's Python. Never a reused or
-   activated-from-elsewhere environment. If the project needs dependencies, they come from a
-   file in the repository — that is what makes `pip` Area 2b vocabulary rather than trivia.
-4. **The exact command comes from his README**, typed as written. If the dm has to guess the
-   entry point, improvise a flag, or ask him what to run, **the boss has not been beaten** —
-   §5.3's "no hints" applies to the run, not only to the writing.
-5. **"Runs" means:** it exits 0, and it produces the output his own specification says it
-   produces. Not "no traceback." A program that starts, prints nothing and exits cleanly has
-   not run in any sense he should be paid for.
-
-**Recorded either way.** A pass goes in the Journal entry for that session with the dm's
-machine named. A failure is a **scar** under §5.3 — unlimited attempts, failures displayed
-with pride — and the scar records *which step* failed, because the step is the lesson. Most
-first attempts fail at 1, 3 or 4, and each of those is a different missing idea: what a repo
-contains, what an environment is, and who your code is actually for.
-
-The three failures worth predicting in the DM guide, since every one of them is a real thing
-an 11-14-year-old does: a file that was never `git add`ed and so is not in the clone; an
-absolute path to `C:\Users\<his name>\...`; and a dependency he installed months ago
-globally and has never thought about again.
-
-### The quest matrix
-
-Five quests plus the boss, per §5.2. The verifier column is the reason this matrix belongs in
-the plan rather than being left to the author — Area 2 is where the verifier story turns over
-mid-area, so *which* type each quest gets is a decision, not a default.
-
-| id | Title | Session | Concepts | Verifier | DC |
-|---|---|---|---|---|---|
-| `a2-the-first-commit` | The First Commit | 2 | `repository`, `git-init`, `git-add`, `git-commit` | `git-signal: commit` | 5 |
-| `a2-the-log-as-a-story` | The Log As A Story | 3 | `git-log`, `git-commit` | `peer-signoff: dm` | 8 |
-| `a2-it-is-somewhere-else` | It Is Somewhere Else | 4 | `git-push`, `repository` | `git-signal: push` | 8 |
-| `a2-where-the-file-lives` | Where The File Lives | 5 | `files-on-disk`, `running-scripts` | `local-repo` | 10 |
-| `a2-its-own-python` | Its Own Python | 7 | `venv`, `pip`, `running-scripts` | `local-repo` | 12 |
-| `a2-escape-the-sandbox` | **Boss 2 — Escape the Sandbox** | 8 | all fourteen | `local-repo` + `peer-signoff: dm` | **22** |
-
-Boss 2 carries `requires: []`, for the reason Area 1's plan sets out: the 3-of-5 rule lives
-in the engine as `bossUnlocked(clearedQuestCount)` and nothing reads `requires`. Three theme
-framings per §5.2.
-
-**`a2-the-log-as-a-story` is deliberately not a `git-signal`.** A signal can prove commits
-exist; it cannot prove the log reads as a story, which is the entire concept. That one needs
-a person, and the dm reads it back to him.
 
 ### The session beat worth planning around
 
@@ -265,35 +159,18 @@ the DM can substitute on the night.
 
 Sessions 1–4. Git is not `.py`, so most of this area's exercise directory is markdown
 walk-throughs, a `.gitignore`, and a small number of Python files that exist to be committed.
-
-**`verify.py`'s contract, stated because "N of N" is meaningless otherwise.** The harness
-covers **runnable `.py` exercises only**, and N is the count of those — likely three or four
-in this area, against Area 0's nineteen. That is honest, not a shortfall: there is nothing to
-execute in "make a commit, then read the log." The markdown and git walkthroughs are audited
-by a **completion checklist in the README** — one line per walkthrough, checked by the author
-having followed it — and the README states both numbers so nobody reads a small N as thin
-coverage. A harness that silently counts zero files is worse than one that says what it does
-not cover.
+`verify.py` still runs what Python there is.
 
 The Journal migration lands here.
 
-### Phase 3 — the VS Code profile [ASYNC with Phase 2, but must finish before Phase 4]
+### Phase 3 — the VS Code profile [ASYNC with Phase 2]
 
-A **`.code-profile`** file, produced by VS Code's own *Profiles: Export Profile* command and
-installed with *Profiles: Import Profile*. One artifact, checked into
-`curriculum/area-2/vscode-profile/`, so his laptop is set up by importing a file rather than
-by twenty minutes of settings-toggling on a school night.
+One exportable profile file. Visible: explorer, editor, integrated terminal. Hidden: activity
+bar, minimap, breadcrumbs, status bar, editor tabs, outline, problems, source control,
+testing, extensions. Exactly one extension — `ms-python.python`, which brings `debugpy`.
+Running a file needs no extension; stepping through one does, and that rung is Area 3's.
 
-Visible: explorer, editor, integrated terminal. Hidden: activity bar, minimap, breadcrumbs,
-status bar, editor tabs, outline, problems, source control, testing, extensions. Exactly one
-extension — `ms-python.python`, which brings `debugpy`. Running a file needs no extension;
-stepping through one does, and that rung is Area 3's.
-
-**This phase gates Phase 4.** It can be authored in parallel with the 2a sessions, but
-session 6 *is* the VS Code session and sessions 5–8 cannot be finalised against a profile
-that does not exist yet.
-
-### Phase 4 — 2b sessions and exercises [needs Phase 3]
+### Phase 4 — 2b sessions and exercises
 
 Sessions 5–8: files on disk and where a file actually goes; `python thing.py`; VS Code; venv
 and `pip` and the two-interpreter trap this machine actually has; tracebacks with real
@@ -360,3 +237,68 @@ The later VS Code un-stripping rungs. Area 2b restores nothing; it ships the str
 and the ladder is authored per-area from Area 3 onward.
 
 Any hook, linter or CI on **his** repository. §7 reason 3 is explicit and this is week 6.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-29 10:26
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- **Objective / Why this exists:** Strong case for keeping 2a+2b in one plan; matches spec §4's shared Area 2/boss structure.
+- **Tension / resolution:** "Teaching vs. applause" split is clear and correctly keeps Lane B independent of Gitea.
+- **Files ownership:** Correctly keeps `curriculum/README.md` and `concepts.ts` on `main`. Journal ownership framing is correct.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Prerequisite plan reference (Approach / Success Criteria)**
+  - What's wrong: `planning/feature_shared-index-and-concepts_2026-08-29.md` was not found at that exact path during review grounding.
+  - Why it matters: The plan treats it as a gating prerequisite for `breakpoints`; a nonexistent reference means the gate cannot be checked.
+  - Suggested fix: Verify the path and file name match the actual `main`-track plan once it is created. (Note: the shared-index plan is in `planning/in-progress/` and may have a different filename.)
+
+- **File set / stub ownership ambiguity (Files Expected to Change)**
+  - What's wrong: This plan claims ownership of `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md`, and Area 3 also references that stub as area-2-owned. `planning/in-progress/` is currently empty, so no live collision now, but the canonical plan path and ownership need to be unambiguous before either track starts.
+  - Suggested fix: Name exactly where the stub will be moved and by whom, once.
+
+- **Boss 2 cold-clone win condition under-specified (Success Criteria / Verifiers)**
+  - "Parent clones cold on a different machine and it runs" stated but not procedurally defined.
+  - Why it matters: Cannot write the session, quest verifier notes, or README acceptance proof consistently without concrete steps.
+  - Suggested fix: Add required evidence: fresh directory, no reused venv, exact run command, what "runs" means, and what artifact records pass/fail.
+
+#### Important (Should Address)
+
+- **Quest/Boss specification missing (Phase 5)**
+  - Five quests + Boss 2 with no concept/verifier/DC matrix.
+  - Suggested fix: Add a quest matrix with id, title, concepts, verifier type (`git-signal`/`local-repo`/`peer-signoff`), and DC target.
+
+- **`verify.py` scope for git-heavy area (Phase 2 / Phase 6)**
+  - Most 2a exercises are markdown/git workflows, not `.py` files. "N of N" is undefined for non-Python artifacts.
+  - Suggested fix: Specify whether `verify.py` covers only runnable `.py` exercises, with README separately auditing markdown/git walkthrough completeness.
+
+- **Phase 2/3/4 dependency partially wrong (Phases)**
+  - Phase 2 and 3 marked async, but Phase 4 (sessions 5–8) depends on the Phase 3 VS Code profile for session 2b-1.
+  - Suggested fix: State Phase 3 can run parallel with 2a authoring but must finish before finalizing sessions 5–8.
+
+- **DC band missing (Phase 6)**
+  - Plan promises README "DC choices" but never states Area 2's target band.
+  - Suggested fix: Add an explicit DC range and where Boss 2 sits within it.
+
+#### Minor (Consider)
+
+- **VS Code profile format:** "One exportable file" is vague. Name the VS Code profile export/import flow and artifact type.
+- **Session table missing:** Eight sessions numbered 1–8 is stated; a session title table in the plan would reduce authoring ambiguity about the 2a/2b boundary.
+- **Area 0 is the only existing area yml exemplar** in `content/areas/` — worth stating explicitly as the model.
+
+### Recommendations
+
+Fix the prerequisite path reference first. Add the Boss 2 cold-clone acceptance procedure and a quest/concept/DC matrix. Clarify `verify.py`'s contract for non-Python exercises. State the DC band explicitly.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The instructional direction is strong and spec-consistent, but the missing prerequisite file reference, ownership ambiguity on the VS Code stub, and under-specified Boss 2 win condition and quest details would create execution drift.
