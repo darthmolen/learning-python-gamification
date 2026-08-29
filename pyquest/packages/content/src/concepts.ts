@@ -87,6 +87,7 @@ export const CONCEPTS: readonly Concept[] = [
   { id: 'sorted', label: 'sorted', area: 3 },
   { id: 'min', label: 'min', area: 3 },
   { id: 'max', label: 'max', area: 3 },
+  { id: 'breakpoints', label: 'breakpoints', area: 3 },
 
   // Area 4 — Functions and Decomposition (weeks 15–20)
   { id: 'def', label: 'def', area: 4 },
