@@ -110,7 +110,7 @@ a clean clone on the other person's machine.**
 
 ### The VS Code rung
 
-`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md` restores breakpoints
+`planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` restores breakpoints
 and the Run and Debug view here, because nested loops and dict iteration are where stepping
 becomes revelatory. It is a `peer-signoff` quest: the parent watches him set a breakpoint and
 step to the failing line, then presses the button.
@@ -195,7 +195,7 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 - `content/quests/a3-*.yml` + briefs and tests — new, seven items (five quests, one boss,
   one breakpoints quest)
 **Owned by other tracks, not this one:** `curriculum/README.md` (`main`) and
-`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md` (`area-2`). The Area 3
+`planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` (`area-2`). The Area 3
 rung ships here and is recorded in `curriculum/area-3/README.md`; the stub's status note is
 written once, by the track that owns it.
 

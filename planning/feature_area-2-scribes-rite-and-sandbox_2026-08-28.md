@@ -126,9 +126,9 @@ a bare repository on a USB stick or a LAN share; a second directory on his own l
 three teach `git push` identically. The third is not a compromise on the teaching, only on
 the drama — and it is worth writing the session so the DM can pick one on the night.
 
-### The VS Code profile, absorbed from the promoted stub
+### The VS Code profile, absorbed from the backlog stub
 
-`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md` is Area 2b material —
+`planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` is Area 2b material —
 its own trigger said "Area 2b, week 7, when VS Code enters the curriculum and the profile has
 to exist." Its decision is already made and argued: strip VS Code via an exportable profile
 and un-strip it one rung at a time, rather than build a custom editor.
@@ -137,15 +137,15 @@ This plan delivers **the profile and the Area 2b rung only.** Later rungs (Area 
 breakpoints, Area 4 outline, Area 6 extensions, Area 7 problems and source control) are
 authored by their own area plans.
 
-**The stub has left `planning/backlog/`, because its trigger fired.** It read *"Area 2b, week
-7, when VS Code enters the curriculum and the profile has to exist"* — and that is this plan.
-A backlog item whose trigger has fired is promoted, not annotated. It now sits at
-`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md`, completed **as a
-planning item**: the decision is made and assigned, and the artifact is this plan's to build.
+**The stub stays in `planning/backlog/` until the profile exists, and then closes.** Its
+planning is finished — this plan is where it landed — but a backlog item is not done when it
+has been thought about, only when the thing exists. `curriculum/area-2/` does not exist yet
+and neither does the `.code-profile`.
 
 It is **absorbed here rather than promoted to its own track**, and the reason is mechanical:
 this plan already claims `curriculum/area-2/vscode-profile/` in Files Expected to Change, so
-a separate plan would collide on the exact file it exists to produce. It becomes Phase 3.
+a separate plan would collide on the exact file it exists to produce. It becomes Phase 3, and
+when Phase 3 ships the stub moves straight to `completed/` without ever being promoted.
 
 **The profile is a prerequisite for teaching this area, not a nice-to-have.** Session 6 is
 `vscode`, and the stub's whole argument is that VS Code's defaults are hostile to a
@@ -388,10 +388,10 @@ session is written to say *his entries*, never a count, so it does not go stale 
   un-stripping ladder for Areas 3, 4, 6 and 7
 - `content/areas/area-2.yml` — new
 - `content/quests/a2-*.yml` + briefs, tests — new, six items
-The VS Code stub is **not** in this list. It was promoted out of `backlog/` to
-`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md` on 2026-08-29, when
-its trigger fired, and its Status block records that its Area 2b rung is this plan's Phase 3.
-This track inherits the work, not the file.
+- `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` — **moved to
+  `completed/` when Phase 3 ships the profile and the ladder, and not before.** This track
+  owns that move. The stub carries no work of its own any more; it is a pointer at Phase 3
+  and a record that the item is still open until the artifact exists
 
 **Owned by `main`, not this track:** `curriculum/README.md`, and
 `pyquest/packages/content/src/concepts.ts` — the `breakpoints` line this plan argues for is
