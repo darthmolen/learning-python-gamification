@@ -3,7 +3,7 @@
 > ## ⚠ NOT YET VERIFIED
 >
 > `pyquest-area2.code-profile` in this directory is **hand-authored, not exported**, and
-> **has not been imported on the son's laptop.** Until §4 has been worked through on that
+> **has not been imported on a learner's machine.** Until §4 has been worked through on that
 > machine and this banner deleted, **Area 2 is not ready to be taught** — session 6 is the
 > VS Code session and the whole argument for a profile is that stock defaults are the
 > thing being rejected.
@@ -22,9 +22,10 @@ file tree on the left, editor above, terminal below. The answer was no, for thre
 reasons, and they are worth keeping because they will be asked again.
 
 1. **It fights §6.4.** Push is the verification mechanism precisely because the API runs
-   on the parent's machine and the code lives on the son's. A browser IDE served from the
-   parent's PC edits the wrong filesystem; making it real needs a local agent on the
-   laptop, so it becomes a bespoke editor *and* a sync daemon, maintained for a year, for
+   on the DM's machine and the code lives on another learner's. A browser IDE served from
+   the host edits the wrong filesystem; making it real needs a local agent on the
+   learner's machine, so it becomes a bespoke editor *and* a sync daemon, maintained for a
+   year, for
    one user.
 2. **It rebuilds the trap the spec exists to avoid.** §2.3 diagnoses graduates who
    "cannot ship an original project, having never left the browser sandbox or learned
@@ -53,30 +54,30 @@ problems, source control, testing, extensions.
 file needs no extension at all; stepping through one does, and that rung is Area 3's.
 
 **Git integration is off** (`git.enabled: false`). That is not chrome-trimming, it is the
-last rung of the ladder being enforced: he learns git as commands at a terminal, for four
-sessions, before a GUI ever offers to do it for him. Source control comes back at Area 7,
+last rung of the ladder being enforced: git is learned as commands at a terminal, for four
+sessions, before a GUI ever offers to do it for you. Source control comes back at Area 7,
 after the commands are muscle memory, so the GUI is a convenience and never a crutch.
 
 ---
 
 ## 3. Installing it
 
-On his laptop, with VS Code already installed:
+On the learner's machine, with VS Code already installed:
 
 1. `Ctrl+Shift+P` → **Profiles: Import Profile**
 2. Choose **Select File**, and pick `pyquest-area2.code-profile`
 3. Name it `PyQuest` when asked, and switch to it
 
 To go back to a normal VS Code at any time: `Ctrl+Shift+P` → **Profiles: Switch
-Profile** → *Default*. **Say this to him out loud in session 6.** A stripped editor he
-cannot escape is a cage; a stripped editor he chose and can leave is a tool with the
-noise turned down, and the difference is entirely in whether he knows about that command.
+Profile** → *Default*. **Say this out loud in session 6.** A stripped editor a learner
+cannot escape is a cage; one they chose and can leave is a tool with the noise turned
+down, and the difference is entirely in whether they know about that command.
 
 ---
 
-## 4. The verification checklist — the son's laptop gate
+## 4. The verification checklist — the hardware gate
 
-**Work this on the son's laptop, not on the parent's machine.** An artifact that has only
+**Work this on the machine the profile is for, not on the machine it was authored on.** An artifact that has only
 been authored has not been verified. Tick every line, then delete the banner at the top
 of this file and record the date.
 
@@ -130,7 +131,8 @@ hand-authored file is empty because there was no editor to capture it from.
 **So the hand-authored file gets you most of the way and cannot get you all the way.**
 Import it, hide the remaining five views by hand, verify the whole checklist, and
 re-export. That single re-export is what turns this directory from a plan into an
-artifact — and it is the reason the plan made "imported and confirmed on his laptop" a
+artifact — and it is the reason the plan made "imported and confirmed on the target
+machine" a
 success criterion rather than a nicety.
 
 *(Hiding the activity bar removes the icons for Source Control, Testing and Extensions,
@@ -143,7 +145,7 @@ asks you to look rather than to reason.)*
 ## 5. The settings, and why each group is there
 
 Reproduced here in readable form. This is the review surface — nobody should have to
-read escaped JSON to find out what was done to his editor — and it is the fallback if
+read escaped JSON to find out what was done to their editor — and it is the fallback if
 the import does not work: paste it into `settings.json` on the `PyQuest` profile.
 
 ```jsonc
@@ -189,24 +191,24 @@ the import does not work: paste it into `settings.json` on the `PyQuest` profile
 Four of those are arguments rather than preferences:
 
 - **`editor.inlineSuggest.enabled: false`.** §5.12 makes AI a named, costed move with a
-  medal attached — Conjured, at −5 DC. Ambient autocomplete finishing his lines is that
-  move happening constantly, invisibly, and for free. It comes back when he asks for it,
+  medal attached — Conjured, at −5 DC. Ambient autocomplete finishing a learner's lines is that
+  move happening constantly, invisibly, and for free. It comes back when it is asked for,
   and asking for it is the point.
-- **`files.autoSave: "off"`.** Running a stale file because he did not save is session
+- **`files.autoSave: "off"`.** Running a stale file because it was never saved is session
   6's named stall, and it is a two-minute lesson about what the dot on the tab means. Auto
   save would remove the stall and the lesson with it.
 - **`python.terminal.activateEnvironment: false`.** Session 7 is entirely about which
-  Python is running. An editor that silently activates the venv for him teaches that
+  Python is running. An editor that silently activates the venv teaches that
   environments are something that happens to you. **Area 3 may flip this once the lesson
   has landed**, and flipping it is a fine thing to do deliberately.
-- **`editor.formatOnSave: false`.** §7 reason 3: no hooks, no CI, no linter on his
-  repository. A first commit rejected by a tool he did not install and cannot read is a
-  bad first day, and a formatter silently rewriting his file is the same idea wearing a
+- **`editor.formatOnSave: false`.** §7 reason 3: no hooks, no CI, no linter on a learner's
+  own repository. A first commit rejected by a tool they did not install and cannot read
+  is a bad first day, and a formatter silently rewriting the file is the same idea wearing a
   friendlier hat. Formatting arrives at Area 7 with the Idiomatic medal.
 
 **No `python.defaultInterpreterPath` and no `terminal.integrated.defaultProfile`.** Both
 are machine-specific, and a profile that hard-codes one machine's paths is a profile that
-breaks silently on the next machine. Set them locally on the son's laptop if needed; do not
+breaks silently on the next machine. Set them locally on the target machine if needed; do not
 commit them here.
 
 ---
@@ -243,14 +245,14 @@ tool-quest verifier to build and there never was.
 ### What an area does when its rung ships
 
 1. Author the quest, `peer-signoff: dm`, with the concept tag its area owns.
-2. Turn the setting back on in `pyquest-area2.code-profile` **on his laptop**, by using
+2. Turn the setting back on in `pyquest-area2.code-profile` **on the learner's machine**, by using
    the editor, and re-export over the file — the same loop as §4. The profile is the one
    artifact; it is not per-area and it is not copied.
 3. Add a line to the table below.
 
 | Rung | Shipped | By | Date |
 |---|---|---|---|
-| — | *(the strip itself)* | Area 2b | *pending laptop verification* |
+| — | *(the strip itself)* | Area 2b | *pending verification on the target machine* |
 
 ### The concept ids, settled
 

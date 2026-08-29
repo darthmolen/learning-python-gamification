@@ -18,20 +18,20 @@ py -3.14 --version
 
 ## The trap this repository keeps tripping over
 
-**On the parent's machine, `python` is 3.12 in PowerShell and 3.14 in Git Bash.** Two
-shells, two answers, and neither is wrong.
+**On one of the machines this was tested on, `python` resolves to 3.12 in PowerShell and
+3.14 in Git Bash.** Two shells, two answers, and neither is wrong.
 
 So: **always `py -3.14`, never `python`.** Every command in this repository is written that
 way, and where one is not, it is a bug. It matters more than it looks — a `pip install`
 under the wrong interpreter installs a package the other interpreter cannot see, and the
 failure surfaces later as a missing module rather than as a wrong shell.
 
-His machine is 3.14 only, so he will not hit this. The habit is still the one to teach,
+A machine with only 3.14 installed will not hit this. The habit is still the one to teach,
 because Area 2b's session 7 is about exactly this: a program gets its own Python.
 
-## The parent's machine also needs
+## The DM's machine also needs
 
-For `curriculum/lib/`'s test suite, which is the parent's and never his:
+For `curriculum/lib/`'s test suite, which is the DM's and is never run by another learner:
 
 ```
 py -3.14 -m pip install pytest ruff pyright
@@ -54,4 +54,4 @@ py -3.14 --version          → Python 3.14.x
 py -3.14 -c "print('ok')"   → ok
 ```
 
-For the parent, additionally: `py -3.14 -m pytest curriculum/lib/tests -q` passes.
+On the DM's machine, additionally: `py -3.14 -m pytest curriculum/lib/tests -q` passes.

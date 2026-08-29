@@ -2,31 +2,53 @@
 
 **This answers one question: what has to be installed before a session can run.**
 
-It exists because the answer used to be smeared across twelve files — two content briefs,
-four DM guides, three area READMEs, `curriculum/lib/README.md`, the spec and
-`infra/README.md` — and nobody could assemble it without reading all of them.
+It exists because the answer used to be smeared across a dozen files — content briefs, DM
+guides, area READMEs, `curriculum/lib/README.md`, the spec and `infra/README.md` — and
+nobody could assemble it without reading all of them.
 
-`infra/` is the parent's machine as a *server*: compose, Gitea, Postgres, backups. This
-directory is both machines as *workstations*. The two do not overlap.
+## Two machines, described by role
+
+A campaign has **players** and a **DM** (§5.11 — roles, not people). Two machines matter:
+
+| | What it is | Who holds it |
+|---|---|---|
+| **The DM's machine** | Also the **host**: it runs `infra/` — the stack, the git remote, the backups | Whoever holds the DM seat |
+| **A learner's machine** | A workstation. Editor, Python, git, and the learner's own repository | Every player, including the DM |
+
+**The DM is also a learner**, so "the learner's machine" is not a single machine. Where this
+directory needs to distinguish them it says *the DM's machine* and *another learner's
+machine*. `infra/` runs on the first and **must be reachable from the second** — §6.4 makes
+`git push` the verification mechanism, so a learner who cannot reach the remote cannot
+complete Area 2a.
+
+### What this project has actually been tested on
+
+Stated as evidence, not as a requirement. Nothing here needs this hardware.
+
+- **A learner's machine:** a 2017 mobile workstation — Windows 11 Pro 22H2, i7-7820HQ, 16GB RAM,
+  DirectX 12. This is the weaker of the two and the one the ursina hardware gate was run
+  against.
+- **The DM's machine:** a Windows desktop on the same home network, hosting the compose
+  stack, with an RTX 5090. **Where a number came off that GPU it says so**, because those
+  figures do not transfer to a laptop.
+- **Roster:** one household, two people, one holding both the DM and player seats. A
+  classroom, a troop, or two siblings changes the roster and nothing else.
 
 ## Why this is not split by person
 
-Most of these are needed on **both** machines and identical on both. Python, git and ursina
-all are, and the ursina pin rule is explicit that `smoke.py` must pass on *both* before an
-upgrade lands. A `learner/` and `dm/` split would restate three-quarters of itself and the
-two copies would drift.
+Most of these are needed on **every** machine and identical on all of them. Python, git and
+ursina all are, and the ursina pin rule is explicit that `smoke.py` must pass on *both*
+before an upgrade lands. A `learner/` and `dm/` split would restate three-quarters of itself
+and the two copies would drift.
 
-It is also ambiguous by now: **both people are learners.** §5.11 runs this campaign in
-Kitchen Table mode, one household, the parent holding both the player and DM seats — so
-"the learner's machine" names nobody. Directories are per tool; the checklists below are
-per machine.
+Directories are per tool. The checklists below are per role.
 
 ---
 
-## His machine — the son's laptop
+## Every learner's machine
 
-Everything here, in this order. Nothing needs the application, a server, or the internet
-beyond the installers themselves.
+In this order. Nothing here needs the application, the host, or the internet beyond the
+installers themselves.
 
 | # | Tool | Needed by | Notes |
 |---|---|---|---|
@@ -40,23 +62,24 @@ beyond the installers themselves.
 vocabulary and costs a session for no gain if it arrives early. The Quest screen is the
 gentle editor for Areas 0–1, and Area 0 wants no editor at all.
 
-## The parent's machine
+## The DM's machine
 
-Everything above, plus the server side.
+Everything above, because the DM is a player too — plus the host side and the authoring
+toolchain.
 
 | Tool | Where | Notes |
 |---|---|---|
-| Python 3.14, git, ursina | as above | Same versions. `smoke.py` must pass here too before any ursina upgrade |
-| `pytest`, `ruff`, `pyright` | [python/](python/) | For `curriculum/lib/`'s suite. Not needed on his machine — the test suite is the parent's |
-| VS Code | [vscode/](vscode/) | The parent's own setup is their business; only the exported profile is shared |
+| Python 3.14, git, ursina | as above | Same versions everywhere. `smoke.py` must pass here too before any ursina upgrade |
+| `pytest`, `ruff`, `pyright` | [python/](python/) | For `curriculum/lib/`'s suite. Not needed on a non-DM machine — the test suite is the DM's |
 | Docker, compose, Gitea, Postgres | [`infra/`](../infra/) | The stack. Not covered here |
+| Reachable on the LAN | [`infra/`](../infra/) | Other learners must be able to clone and push. A host bound to `localhost` fails Area 2a |
 
 ---
 
 ## Adding a tool
 
 One directory per tool, a `README.md` in it, and one row in the table above. Say **which
-machines**, **which week it is first needed**, and **what proves it works** — an install
+roles need it**, **which week it is first needed**, and **what proves it works** — an install
 that has not been exercised is not an install.
 
 **This directory is written by the `main` track.** Areas 2, 3, 4, 6 and 7 each restore a
