@@ -574,13 +574,62 @@ Pure functions over state and content. Given completions, XP, scars, datamines, 
 
 ### 6.8 Screens
 
-1. **Campaign Map** — the skill tree as regions, locked nodes visible
-2. **Quest** — brief, CodeMirror editor, Run and Submit, Datamine
-3. **Defend** — session start, queued invasion drills
-4. **Boss** — specification, attempt log, scars, sign-off
-5. **Party** — two-player XP, levels, area standings, open bounties
-6. **Journal** — entries, prompts, parent replies
-7. **Console** — sign-off, authoring, streak forgiveness. Both players have one, since sign-off runs both directions
+Three kinds of surface, and which kind a screen is decides how you get to it and
+how you leave.
+
+**The overland — six rail destinations.** These are true wherever you are
+standing, so they are always one click away and never nested.
+
+1. **Map** — the campaign as areas, locked ones visible but drained of colour
+2. **Tome** — the field manual and the whole syllabus. See below
+3. **Defend** — the session's invasions (§5.4)
+4. **Party** — two players, levels, area standings, open bounties (§5.8)
+5. **Journal** — entries, prompts, parent replies (§5.6)
+6. **Console** — sign-off, authoring, streak forgiveness. Both players have one,
+   since sign-off runs both directions (§5.11)
+
+**Sub-areas — reached through a place, never from the rail.**
+
+- **Area** — one page holding the three things about a place: the brief, its five
+  quests, and its boss. Brief, quests and boss are not destinations; they are
+  aspects of an area, and putting them in the rail implied you could be in Quests
+  without being anywhere
+- **Quest** — brief, CodeMirror editor, Run and Submit, Datamine, medal slots
+- **Boss** — specification, framings, attempt log, scars, sign-off
+
+**Overlays — opened over your work, never navigated to.**
+
+- **Tome** — it is also a rail destination, but it never replaces what you were
+  doing. Whatever is underneath stays mounted and closing returns to it exactly.
+  If looking something up costs a learner the code in his editor, he stops
+  looking things up, and the Tome is where the teaching lives
+
+#### Navigation: every sub-area carries a breadcrumb, and the breadcrumb is the way back
+
+**Rule: any screen reached through another screen shows the full trail, with every
+ancestor clickable and the current page plain.**
+
+`Map › Area 3 · Collections › Quests › The Recipe Book`
+
+The trail is not decoration. It is the only way back, so no screen can be one you
+are able to enter and unable to leave except through browser chrome — which in a
+single-page app is unreliable, and for an eleven-year-old is not an answer at all.
+Ancestors are underlined to say they can be clicked. An up-chevron sits at the
+head of the bar doing the same job as the second-to-last crumb, deliberately:
+going up one level is the most-used move on these screens and deserves a target
+he can hit without reading.
+
+Rail destinations have no breadcrumb, because they have no ancestor. Overlays have
+none either — they close rather than navigate, and their bar names what closing
+returns to.
+
+**Labels do not change with state.** A button whose words depend on what you have
+already done is one the reader cannot trust. `Find the Boss` on the area card and
+`Take the Boss` on the boss screen both read true whether he has cleared none of
+the quests or four; the earlier `Take it cold` was already false on a screen
+showing three cleared. The two labels also differ because the actions do: Find
+navigates and is reversible, Take creates the working directory and starts the
+clock.
 
 ### 6.9 Backup policy
 
@@ -702,6 +751,9 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Only Cleared gates progression | Keeps medals elective, preserving autonomy |
 | Invasion ladder 1·3·7·16·35, a miss steps back one rung | Resetting to zero punishes one bad evening and floods the next session with what he already knew |
 | A zero-payout medal renders as "brag", not "+0 XP" | The clamp makes zero legitimate; "+0" reads as a bug, and bragging rights are what a medal is actually for |
+| Every sub-area carries a breadcrumb, and it is the way back | A single-page app cannot lean on the browser's back button, and no screen may be enterable but not leavable |
+| Button labels never change with state | A label that shifts is one the reader cannot trust; "take it cold" was already false on the screen it sat on |
+| The Tome opens over the work rather than replacing it | If looking something up costs him his unsaved code, he stops looking things up — and the Tome is where the teaching lives |
 | `peer-signoff` replaces `parent-signoff` | Sign-off runs both directions; deletes a special case rather than adding one |
 | Challenge runs as the parent's gap detector | Measures gaps instead of asking the parent to introspect them |
 | Conjured is legal, logged, and costed | Disclosure beats prohibition; the son will grow up with these tools |

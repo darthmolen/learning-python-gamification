@@ -137,6 +137,13 @@
       "y": 1030,
       "w": 1400,
       "text": "THE TOME OPENS OVER YOUR WORK — it is never navigated to\nIf looking something up costs a learner the code in his editor, he stops looking things up, and the Tome was the point. So it does not navigate: the quest stays mounted underneath and closing returns to it exactly.\n\nThis costs nothing. The Tome is 264 + 660 + 212 px wide and the content area beside the rail is 1368 — it already fits without going anywhere. It also disposes of the back-button question, because no history entry is created. The bar names what closing returns to, so the way out is on screen rather than in browser chrome.\n\nTWO ACTIONS, TWO WORDS THAT ESCALATE. “Find the Boss” on the area card navigates — read the specification, see the scars, choose a framing, walk away. “Take the Boss” on the boss screen creates boss3/ in his repo and starts the clock, so the committing action gets the stronger verb. Both read true at any state; “Take it cold” and “Rush the boss” did not, and “Open the arena” borrowed a Colosseum this world never built.\n\nThe action also moved onto the boss card. It had been in a sidebar under a heading that said Challenge run — the thing described in one column and acted on in another, which is the same unpredictability. One way in, always the same place."
+    },
+    {
+      "id": "note-crumbs",
+      "x": 1520,
+      "y": 2330,
+      "w": 1400,
+      "text": "BREADCRUMBS ARE THE NAVIGATION — a rule, not a flourish\nAny screen reached through another screen shows the full trail, every ancestor clickable, the current page plain:\n\n    Map › Area 3 · Collections › Quests › The Recipe Book\n\nThe trail is the only way back, so no screen can be one he enters and cannot leave except through browser chrome — unreliable in a single-page app, and not an answer at all for an eleven-year-old. Ancestors are underlined to say they can be clicked. The up-chevron duplicates the second-to-last crumb on purpose: going up one level is the most-used move here and deserves a target he can hit without reading.\n\nRail destinations carry none — they have no ancestor. The Tome carries none either, because it closes rather than navigates, and its bar names what closing returns to."
     }
   ],
   "launch": {

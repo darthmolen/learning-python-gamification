@@ -18,6 +18,12 @@
     .disp{font-family:'Archivo Black','IBM Plex Sans',sans-serif;font-weight:400;letter-spacing:-.015em;}
     .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
       text-transform:uppercase;color:#5d6878;}
+    .crumb{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#98a3b3;
+      text-decoration:underline;text-decoration-color:#3d4757;text-underline-offset:3px;
+      cursor:pointer;}
+    .crumb:hover{color:#e8ecf2;text-decoration-color:#5aa860;}
+    .sep{color:#3d4757;font-size:12px;}
+    .here{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#e8ecf2;font-weight:500;}
   </style>
 </helmet>
 
@@ -41,11 +47,18 @@
 </div>
 <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column">
 
-  <div style="display:flex; align-items:center; gap:10px; padding:0 30px; height:44px;
+  <div style="display:flex; align-items:center; gap:10px; padding:0 26px; height:46px;
               border-bottom:1px solid #232a35; background:#1a1f28; flex-shrink:0">
-    <span class="mono" style="font-size:11.5px; color:#5d6878">Map</span>
-    <span style="color:#3d4757">›</span>
-    <span class="mono" style="font-size:11.5px; color:#5aa860">Area 3 · Collections</span>
+    <div style="display:flex; align-items:center; justify-content:center; width:26px;
+                height:26px; border:1px solid #333c4a; flex-shrink:0; cursor:pointer">
+      <svg width="12" height="12" viewBox="0 0 12 12">
+        <path d="M7.4 2 3.4 6 7.4 10" fill="none" stroke="#98a3b3" stroke-width="1.7"
+              stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </div>
+    <span class="crumb">Map</span>
+    <span class="sep">›</span>
+    <span class="here">Area 3 · Collections</span>
     <div style="flex-grow:1"></div>
     <span class="mono" style="font-size:11.5px; color:#98a3b3">week 10 of 48</span>
   </div>
