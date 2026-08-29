@@ -100,7 +100,7 @@ export function effectiveDC(baseDC: number, modifiers: readonly DifficultyModifi
 /** The two kinds §5.1 prices from the effective DC. */
 export const XP_PER_DC = {
   quest: 2,
-  boss: 10,
+  boss: 20,
 } as const;
 
 /**

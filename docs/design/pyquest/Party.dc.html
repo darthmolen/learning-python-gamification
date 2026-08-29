@@ -135,6 +135,29 @@
         </sc-for>
       </div>
 
+      <div class="eyebrow" style="margin-bottom:14px">Where your xp came from</div>
+      <div style="display:flex; height:9px; margin-bottom:12px">
+        <sc-for list="{{ sources }}" as="s" hint-placeholder-count="6">
+          <div style="width:{{ s.pct }}; background:{{ s.fill }}"></div>
+        </sc-for>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:7px">
+        <sc-for list="{{ sources }}" as="s" hint-placeholder-count="6">
+          <div style="display:flex; align-items:baseline; gap:10px">
+            <span style="width:8px; height:8px; background:{{ s.fill }}; flex-shrink:0"></span>
+            <span style="font-size:12.5px; color:{{ s.fg }}; flex-grow:1">{{ s.label }}</span>
+            <span class="mono" style="font-size:11.5px; color:#98a3b3">{{ s.xp }}</span>
+            <span class="mono" style="font-size:11px; color:#5d6878; width:34px; text-align:right">{{ s.pct }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p class="mono" style="margin:14px 0 0; font-size:11px; color:#5d6878; line-height:1.7">
+        One loud evening beat the boss. Fifteen quiet ones nearly matched it, five
+        experience points at a time. Both of those are you.
+      </p>
+
+      <div style="height:1px; background:#232a35; margin:26px 0"></div>
+
       <div class="eyebrow" style="margin-bottom:14px">Medals, both players</div>
       <div style="display:flex; flex-direction:column; gap:11px">
         <sc-for list="{{ medalTotals }}" as="m" hint-placeholder-count="5">
@@ -238,7 +261,25 @@ class Component extends DCLogic {
       return { name: m.name, son: m.son, dad: m.dad, bars: bars };
     });
 
-    return { players: players, bounties: bounties, areas: areas, medalTotals: medalTotals };
+    // Area 3, costed the way §5.1 prices it: boss at effective DC 18 x 20,
+    // fifteen sessions of four invasions at 5 flat, a journal entry a session.
+    var RAW = [
+      { label: 'the boss',        xp: 360, fill: '#d9a441', lead: true },
+      { label: 'invasions',       xp: 300, fill: '#5aa860', lead: true },
+      { label: 'journal entries', xp: 150, fill: '#3f9fb5' },
+      { label: 'quests',          xp: 130, fill: '#7a72c9' },
+      { label: 'co-op sessions',  xp: 80,  fill: '#b968a8' },
+      { label: 'release notes',   xp: 75,  fill: '#8b95a5' }
+    ];
+    var totalXp = RAW.reduce(function(a, r){ return a + r.xp; }, 0);
+    var sources = RAW.map(function(r){
+      return { label: r.label, xp: r.xp, fill: r.fill,
+               pct: Math.round(100 * r.xp / totalXp) + '%',
+               fg: r.lead ? '#e8ecf2' : '#98a3b3' };
+    });
+
+    return { players: players, bounties: bounties, areas: areas,
+             medalTotals: medalTotals, sources: sources };
   }
 }
 </script>

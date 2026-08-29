@@ -91,10 +91,14 @@ describe('xpFor — spec §5.1', () => {
     expect(xpFor('quest', 13)).toBe(26);
   });
 
-  it('pays a boss ten times its effective DC', () => {
-    // "A DC 15 boss pays 150 and a DC 30 boss pays 300."
-    expect(xpFor('boss', 15)).toBe(150);
-    expect(xpFor('boss', 30)).toBe(300);
+  it('pays a boss twenty times its effective DC', () => {
+    // §5.1: "A DC 15 boss pays 300 and a DC 30 boss pays 600."
+    //
+    // Raised from x10 on 2026-08-28. At x10 a boss paid about 0.75 xp per minute of
+    // work — less than a two-minute invasion drill, and the worst rate in the system
+    // for the hardest thing in it.
+    expect(xpFor('boss', 15)).toBe(300);
+    expect(xpFor('boss', 30)).toBe(600);
   });
 
   it('pays the flat kinds their §5.1 table amount', () => {

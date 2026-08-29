@@ -264,14 +264,14 @@ tuning.
 | Kind | XP |
 |---|---|
 | Quest | effective DC × 2 |
-| Boss | effective DC × 10 |
+| Boss | effective DC × 20 |
 | Invasion | 5 flat |
 | Journal entry | 10 flat |
 | Area release notes | 75 flat |
 | Co-op session | 20 flat |
 
-A DC 5 quest pays 10 and a DC 20 quest pays 40. A DC 15 boss pays 150 and a DC 30 boss
-pays 300. Each medal re-prices the quest at its new effective DC and pays the difference,
+A DC 5 quest pays 10 and a DC 20 quest pays 40. A DC 15 boss pays 300 and a DC 30 boss
+pays 600. Each medal re-prices the quest at its new effective DC and pays the difference,
 so replaying a DC 15 quest for Ironman pays the gap between DC 15 and DC 20.
 
 **Risk labels derive from DC. There is no separate flag.** A quest known to bite — a
@@ -287,6 +287,18 @@ Storing a boolean beside the number that already implies it would let the two di
 at which a number becomes a warning is a presentation decision and lives in the UI. Any
 other surface — console, notification, CLI — reads the same number and renders it however
 it likes, so no two surfaces can disagree about the underlying difficulty.
+
+**Why the boss multiplier is 20 and not 10.** Costed out over a real area — fifteen
+sessions, five quests, four invasions a session — a boss at ×10 paid about 0.75 XP per
+minute of work. That was the *worst* rate in the system, below a two-minute invasion
+drill, for the hardest thing in it. Raising it to ×20 makes the boss the single largest
+source of XP in an area, which is what it should feel like.
+
+Invasions were deliberately **not** cut to make room. The tension is a human one: everyone
+wants the hero moment, but the win actually comes from the small repeated thing — the
+habit, the return, the concept held across five weeks. That is not sexy and it is true, so
+repetition keeps its full value and simply stops being first. Across an area the boss pays
+about a third and invasions about a quarter, which is the honest shape of the thing.
 
 No XP for minutes logged, videos watched, or lessons read. Working code is the only currency.
 
@@ -768,6 +780,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | A `world.py` shim at Area 3, retired by Boss 5 | Raw Ursina is 100% unearned vocabulary and hides its own failures; the shim costs no new syntax and comes down on a schedule |
 | `start()` combines the world into one mesh | One `Entity` per block dies below 2,500 blocks even on a 5090; an Area 3 learner reaches 8,000 with three nested loops |
 | Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
+| Boss pays effective DC × 20, invasions stay at 5 | At ×10 the boss was the worst-paid work per minute in the system; repetition was not cut to fix it, because the habit is what actually wins |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
 | Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |
 | Denominators everywhere, tildes when estimated | XP answers "how far have I come"; only a denominator answers "how much is left" |
