@@ -1,0 +1,12 @@
+# Spec §5.1a - the manifest carries the denominator every progress display needs.
+# `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~5".
+#
+# Five quests is all of them (§5.2: five quests, any three unlock the boss), so this would
+# read `complete` were the area finished. It says `partial` because it is not: sessions 5-8
+# are unwritten and the VS Code profile has not been verified on the machine it is for.
+# An estimate presented as fact is dishonest, and so is a completion presented as fact.
+# Flip this to `complete` when curriculum/area-2/README.md's authoring status says so.
+area: 2
+title: The Scribe's Rite, and Escape the Sandbox
+authoring: partial
+estimatedQuests: 5

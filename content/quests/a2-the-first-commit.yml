@@ -1,0 +1,18 @@
+# Area 2a. Spec §6.3: `git-signal` reads his git log, which is exactly the right shape for
+# this one -- the win condition is that a commit exists, and a commit existing is a fact
+# about a repository rather than a fact about a program. There is nothing to run and so
+# there is no starter and no test file.
+#
+# §5.6: this is also the quest that makes the Journal's committed-and-pushed half real.
+# The first commit is his own writing, not an empty README.
+id: a2-the-first-commit
+title: "The First Commit"
+kind: quest
+area: 2
+concepts: [repository, git-init, git-add, git-commit]
+dc: 5                # XP and the risk label both derive from this (§5.1)
+brief: briefs/a2-the-first-commit.md
+
+verifier:
+  type: git-signal
+  signal: commit

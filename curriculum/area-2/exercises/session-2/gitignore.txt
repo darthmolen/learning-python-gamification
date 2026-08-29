@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# Copy this file into YOUR repository and rename it to  .gitignore
+# (a dot, then the word, and no .txt on the end)
+#
+# It ships here as gitignore.txt on purpose. A file actually named .gitignore,
+# sitting inside the curriculum's own repository, would quietly change what
+# THAT repository ignores -- which is a confusing bug to have shipped with a
+# lesson about not committing things by accident.
+#
+# On Windows, File Explorer will fight you about renaming a file to something
+# starting with a dot. Rename it from the terminal instead:
+#
+#     mv gitignore.txt .gitignore
+#
+# ---------------------------------------------------------------------------
+#
+# Every line below is a pattern. If a file matches one, git pretends it is not
+# there: it will not show up in `git status`, and `git add .` will not pick it
+# up. Nothing is deleted. Git just stops mentioning it.
+#
+# Three of these lines protect you from something you have not met yet. That
+# is fine -- put them in now, and in three weeks you will find out what one of
+# them just saved you from.
+
+# Python leaves these behind after it runs a file. You did not write them and
+# you cannot read them.
+__pycache__/
+*.pyc
+
+# Session 7. A virtual environment: thousands of files, none of them yours,
+# all of them rebuildable from one command.
+.venv/
+venv/
+
+# Passwords, keys, anything you would not read out loud. You have none yet.
+# Have the line anyway.
+.env
+
+# Rubbish your operating system leaves in folders it has looked at.
+.DS_Store
+Thumbs.db

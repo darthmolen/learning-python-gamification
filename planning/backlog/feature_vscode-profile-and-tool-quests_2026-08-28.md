@@ -56,14 +56,20 @@ Running a file needs no extension; stepping through one does.
 them: the parent watches him set a breakpoint and step to the failing line, then presses
 the button. Teach-back applies on top.
 
-## Open decision
+## The open decision — settled, and landed
 
-`debugger` is registered as a **Area 7** concept, so an Area 3 debugging quest is
-rejected by the validator's concept-above-area rule. That rule is working as designed;
-the fix is a decision, not a bypass. Preferred: add `breakpoints` at Area 3 for
+`debugger` was registered as an **Area 7** concept, so an Area 3 debugging quest was
+rejected by the validator's concept-above-area rule. That rule was working as designed;
+the fix was a decision, not a bypass. The decision: add `breakpoints` at Area 3 for
 stepping and the Variables panel, and keep `debugger` at Area 7 for the deep pass —
 conditional breakpoints, exception breakpoints, logpoints, the call stack. Two
 concepts, two passes, per §3.7.
+
+**Landed by `main` on 2026-08-29**, on a track no area holds, because `concepts.ts` is
+the one file Lane A and Lane B share and an id moving under a running area track breaks
+it: `d3eb9f7` added `breakpoints` to spec §4's Area 3 vocabulary line, and `c90202e`
+registered `{ id: 'breakpoints', label: 'breakpoints', area: 3 }`. Nothing here is
+waiting on it.
 
 **The best single feature for this curriculum** is the exception breakpoint: it stops
 at the moment `KeyError` is raised with the whole inventory still on screen. That is
@@ -89,8 +95,30 @@ existed to produce.
 **None — this item does not get promoted. It closes.**
 
 It moves straight to `planning/completed/` when Area 2's Phase 3 ships the profile and the
-ladder, and not before. As of 2026-08-29 no `.code-profile` exists and `curriculum/area-2/`
-has not been created.
+ladder, and not before.
+
+**Status as of 2026-08-29, evening.** Area 2's Phase 3 has shipped its authoring half and
+is stopped at its verification half:
+
+- `curriculum/area-2/vscode-profile/README.md` — **done.** Install steps, the son's laptop
+  verification checklist, the whole five-rung ladder, and the rule for how a rung ships.
+  Areas 3, 4, 6 and 7 can author their rung from that file alone and no longer need to
+  open this stub.
+- `curriculum/area-2/vscode-profile/pyquest-area2.code-profile` — **exists, and is not
+  verified.** It is hand-authored in VS Code's export shape, not produced by *Profiles:
+  Export Profile*, because the son's laptop was not available. It carries a NOT YET
+  VERIFIED banner.
+
+**So this item stays open, and the reason is sharper than "not finished yet."** Half the
+strip is not settings: activity bar, minimap, breadcrumbs, status bar, tabs and git
+integration are `settings.json` keys and travel in the JSON, but Outline, Problems, Source
+Control, Testing and Extensions are *view visibility* — UI state, captured in the
+profile's `globalState` on export, and empty in a hand-authored file because there was no
+running editor to capture it from. A hand-written profile therefore **cannot** get all the
+way there, whoever writes it.
+
+The remaining work is one sitting at the son's laptop: import, hide the five views by hand, work
+the checklist, re-export over the file, delete the banner. Then this closes.
 
 *This was briefly moved to `completed/` on 2026-08-29 on the reasoning that the stub's
 planning was finished even though its artifact was not. That was wrong, and it is recorded
