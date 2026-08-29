@@ -1,6 +1,6 @@
 # Shared Files the Area Tracks Cannot Own
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** main
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -129,3 +129,78 @@ and stops.
 noted in Approach.** That finding is worth keeping visible and worth a sweep; it is not
 worth widening this plan. One word lands, and the plan closes. A gate that grows while it
 is open stops being a gate.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Completed:** 2026-08-29
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+- `d3eb9f7` — spec §4 Area 3 vocabulary carries `breakpoints`, unbackticked, matching how
+  Area 7 writes "the debugger". Area 7 keeps the debugger; the two-passes reading survives.
+- `c90202e` — `concepts.ts` registers `{ id: 'breakpoints', label: 'breakpoints', area: 3 }`,
+  placed after `max` so the registry and the §4 line read as the same list.
+- `76198b1` — `curriculum/README.md` paths corrected, and the status table's owner named
+  after the table beside the spec pointer.
+- `02adb3f` — the one collision Phase 4 found, fixed on the area-2 track.
+
+Verified in both directions rather than assumed: an area 3 quest tagged `breakpoints`
+scaffolds and validates (exit 0), and the same tag at area 2 is still refused (exit 1,
+*"breakpoints is first taught in area 3"*). Passing the validator on existing content
+proves only that nothing broke; the second check proves the entry does its job.
+`validate:content` exit 0, `tsc -b` clean, 109 tests pass.
+
+Phase 4 disjointness, every pair that can be in progress at once:
+
+| Pair | Result |
+|---|---|
+| area-1 ↔ area-2 | clean |
+| area-1 ↔ area-3 | clean |
+| area-2 ↔ area-3 | clean |
+| shim ↔ area-1 | clean |
+| shim ↔ area-2 | clean |
+
+`shim ↔ area-3` and this gate against everything are sequenced, not concurrent, and need no
+disjointness.
+
+### Deviations
+
+**Phase 3 did not apply its own wording literally.** The plan said both stale
+`packages/content/` paths should read `pyquest/packages/content/`. That was right for the
+`concepts.ts` reference and wrong for the other, which is about quest YAML, briefs and
+hidden tests — those live in the repo-root `content/`, and the prescribed rewrite would
+have aimed the sentence at the schema and validator, which hold no quests. Each path was
+fixed to what is true, because the wording's intent was that the paths be correct.
+
+**Phase 4 found a collision and fixing it meant editing a file this plan does not own** —
+`planning/feature_area-2-scribes-rite-and-sandbox_2026-08-28.md`. Done on explicit
+instruction rather than silently, and committed separately as `02adb3f`.
+
+**The first Phase 4 report overstated the finding.** It read the area-2 collision as an
+undeclared authoring dependency on area-1. It was not: authoring order and delivery order
+are different, area-2's sessions read nothing of area-1's, and the Journal migration works
+with whatever entries exist. The real defect was narrower — a read-only path listed among
+files expected to change.
+
+### Lessons Learned
+
+**An unlisted read is a collision; a listed read is a different bug.** Both were in scope
+here and they want opposite fixes. `concepts.ts` was read by three tracks and named by one,
+so it moved to `main`. `curriculum/area-1/journal/entries/` was named by a track that never
+writes it, so it came off the list. A `Files Expected to Change` section is a claim about
+writes, and reads belong in Dependencies.
+
+**Authoring order is not delivery order.** The curriculum is sequenced for an 11-14-year-old
+across forty-eight weeks; the plans are sequenced by which files they touch. Conflating them
+would have serialised three tracks that can run in parallel, which is the opposite of what
+this gate was for.
+
+### Backlog Items Created
+
+None. The `dict-methods` discrepancy noted in Approach is still open and still wants a
+sweep — `concepts.ts` carries it at area 3 and §4's Area 3 line does not list it — but it
+was held out of scope deliberately and no stub was written for it here.
