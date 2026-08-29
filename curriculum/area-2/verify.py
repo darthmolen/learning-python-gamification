@@ -50,15 +50,20 @@ SEARCH = (ROOT / "exercises", ROOT / "reference")
 # (spec 5.4 schedules retrieval off these tags). An Area 2 file that quietly
 # needs the accumulator pattern should say so, and a registry holding only Area
 # 2 ids would reject it for telling the truth.
-KNOWN_CONCEPTS = frozenset(
-    """
-    print variables int float str bool input f-strings reading-errors
-    if elif else comparison-operators boolean-operators while for range
-    nesting accumulator-pattern
-    repository git-init git-add git-commit git-log git-branch git-push
-    files-on-disk running-scripts vscode venv pip tracebacks main-guard
-    """.split()
+AREA_0_CONCEPTS = (
+    "print", "variables", "int", "float", "str", "bool", "input", "f-strings",
+    "reading-errors",
 )
+AREA_1_CONCEPTS = (
+    "if", "elif", "else", "comparison-operators", "boolean-operators", "while",
+    "for", "range", "nesting", "accumulator-pattern",
+)
+AREA_2_CONCEPTS = (
+    "repository", "git-init", "git-add", "git-commit", "git-log", "git-branch",
+    "git-push", "files-on-disk", "running-scripts", "vscode", "venv", "pip",
+    "tracebacks", "main-guard",
+)
+KNOWN_CONCEPTS = frozenset(AREA_0_CONCEPTS + AREA_1_CONCEPTS + AREA_2_CONCEPTS)
 
 MIN_DC = 5
 MAX_DC = 30
