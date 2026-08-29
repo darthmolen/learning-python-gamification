@@ -5,7 +5,7 @@
 #    written to a dated tarball on a second disk. Thirty-day retention, with a
 #    restore rehearsed once before week 3."
 #
-# The Chronicle and the son's commit history are the two artifacts this project
+# The Journal and the son's commit history are the two artifacts this project
 # cannot regenerate. Everything else here can be rebuilt from git and a compose up.
 #
 # Usage:   ./backup.sh [-d DESTINATION_DIR]
@@ -67,7 +67,7 @@ dc exec -T postgres pg_dumpall -U "$POSTGRES_USER" --globals-only > "$STAGE/glob
 # Custom format (-Fc) rather than plain SQL: it is compressed, and pg_restore
 # can restore it selectively and into a differently-named database, which is
 # exactly what the scratch rehearsal in restore.sh needs.
-echo "backup: pg_dump $POSTGRES_DB (progress - the Chronicle lives here)"
+echo "backup: pg_dump $POSTGRES_DB (progress - the Journal lives here)"
 dc exec -T postgres pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc > "$STAGE/$POSTGRES_DB.dump"
 
 echo "backup: pg_dump $GITEA_DB_NAME (gitea metadata)"

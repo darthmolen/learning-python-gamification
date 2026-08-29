@@ -48,7 +48,7 @@ psql_super() { dc exec -T postgres psql -tAqX -U "$POSTGRES_USER" "$@" | tr -d '
 SMOKE_DEST="$SCRIPT_DIR/.smoke-backups"
 GITEA_HTTP=${GITEA_HTTP_PORT:-3080}
 TEST_USER=smoketest
-TEST_REPO=chronicle-smoke
+TEST_REPO=journal-smoke
 TEST_PW="smoke-$(date +%s)-Aa1x"
 
 # =============================================================================
@@ -190,12 +190,12 @@ else
   fi
 
   # A second commit carrying a sentinel we can hunt for after the restore.
-  SENTINEL="chronicle-entry-$(date +%s)"
-  B64=$(printf 'The Chronicle, entry one. %s\n' "$SENTINEL" | base64 | tr -d '\r\n')
+  SENTINEL="journal-entry-$(date +%s)"
+  B64=$(printf 'The Journal, entry one. %s\n' "$SENTINEL" | base64 | tr -d '\r\n')
   if curl -fsS -X POST -H "$AUTH" -H 'Content-Type: application/json' \
        -d "{\"content\":\"$B64\",\"message\":\"$SENTINEL\",\"branch\":\"main\"}" \
-       "$API/repos/$TEST_USER/$TEST_REPO/contents/chronicle.md" >/dev/null 2>&1; then
-    ok "committed chronicle.md with sentinel $SENTINEL"
+       "$API/repos/$TEST_USER/$TEST_REPO/contents/journal.md" >/dev/null 2>&1; then
+    ok "committed journal.md with sentinel $SENTINEL"
   else
     bad "could not commit to the test repository"
     SENTINEL=""
@@ -217,25 +217,25 @@ else
 fi
 
 # =============================================================================
-step "4b. seed the progress database with Chronicle-shaped rows"
+step "4b. seed the progress database with Journal-shaped rows"
 # =============================================================================
 # The progress database has no schema until Wave 3, so without this the restore
 # rehearsal would only ever prove that an EMPTY database round-trips. 6.9 names
-# the Chronicle as one of the two artifacts this project cannot regenerate, and
-# the Chronicle lives in Postgres. So put real rows through the round trip.
+# the Journal as one of the two artifacts this project cannot regenerate, and
+# the Journal lives in Postgres. So put real rows through the round trip.
 #
 # This table is a stand-in, not the real schema. It is dropped at the end.
-CHRONICLE_SENTINEL="the-day-the-turtle-drew-a-square-$(date +%s)"
+JOURNAL_SENTINEL="the-day-the-turtle-drew-a-square-$(date +%s)"
 if dc exec -T postgres psql -v ON_ERROR_STOP=1 -qX -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
-     -c "DROP TABLE IF EXISTS chronicle_rehearsal;" \
-     -c "CREATE TABLE chronicle_rehearsal (id serial primary key, entry text not null, written_at timestamptz default now());" \
-     -c "INSERT INTO chronicle_rehearsal (entry) VALUES ('$CHRONICLE_SENTINEL'), ('second entry'), ('third entry');" \
+     -c "DROP TABLE IF EXISTS journal_rehearsal;" \
+     -c "CREATE TABLE journal_rehearsal (id serial primary key, entry text not null, written_at timestamptz default now());" \
+     -c "INSERT INTO journal_rehearsal (entry) VALUES ('$JOURNAL_SENTINEL'), ('second entry'), ('third entry');" \
      >/dev/null 2>&1; then
-  SEEDED=$(psql_super -d "$POSTGRES_DB" -c 'SELECT count(*) FROM chronicle_rehearsal;')
-  ok "seeded $SEEDED rows into $POSTGRES_DB.chronicle_rehearsal"
+  SEEDED=$(psql_super -d "$POSTGRES_DB" -c 'SELECT count(*) FROM journal_rehearsal;')
+  ok "seeded $SEEDED rows into $POSTGRES_DB.journal_rehearsal"
 else
   bad "could not seed the progress database"
-  CHRONICLE_SENTINEL=""
+  JOURNAL_SENTINEL=""
 fi
 
 # =============================================================================
@@ -303,19 +303,19 @@ if [ -n "${ARCHIVE:-}" ]; then
 
   # The progress-database half of the round trip, asserted on the actual row
   # contents rather than on a table count.
-  if [ -n "$CHRONICLE_SENTINEL" ]; then
-    ROWS=$(psql_super -d "${POSTGRES_DB}_scratch" -c 'SELECT count(*) FROM chronicle_rehearsal;' 2>/dev/null || echo 0)
+  if [ -n "$JOURNAL_SENTINEL" ]; then
+    ROWS=$(psql_super -d "${POSTGRES_DB}_scratch" -c 'SELECT count(*) FROM journal_rehearsal;' 2>/dev/null || echo 0)
     if [ "${ROWS:-0}" = "3" ]; then
-      ok "restored progress db has all 3 chronicle_rehearsal rows"
+      ok "restored progress db has all 3 journal_rehearsal rows"
     else
-      bad "restored progress db has ${ROWS:-0} chronicle rows, expected 3"
+      bad "restored progress db has ${ROWS:-0} journal rows, expected 3"
     fi
 
-    GOT=$(psql_super -d "${POSTGRES_DB}_scratch" -c "SELECT entry FROM chronicle_rehearsal WHERE entry='$CHRONICLE_SENTINEL';" 2>/dev/null || echo '')
-    if [ "$GOT" = "$CHRONICLE_SENTINEL" ]; then
-      ok "the exact Chronicle entry came back: '$GOT'"
+    GOT=$(psql_super -d "${POSTGRES_DB}_scratch" -c "SELECT entry FROM journal_rehearsal WHERE entry='$JOURNAL_SENTINEL';" 2>/dev/null || echo '')
+    if [ "$GOT" = "$JOURNAL_SENTINEL" ]; then
+      ok "the exact Journal entry came back: '$GOT'"
     else
-      bad "Chronicle entry did not survive the round trip (got: '${GOT:-<nothing>}')"
+      bad "Journal entry did not survive the round trip (got: '${GOT:-<nothing>}')"
     fi
   fi
 
@@ -328,7 +328,7 @@ step "7. clean up after ourselves"
 # A check that leaves a stand-in schema and a live admin account behind is a
 # check with side effects. Both go.
 dc exec -T postgres psql -qX -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
-   -c "DROP TABLE IF EXISTS chronicle_rehearsal;" >/dev/null 2>&1 || true
+   -c "DROP TABLE IF EXISTS journal_rehearsal;" >/dev/null 2>&1 || true
 
 if [ -n "${TOKEN:-}" ]; then
   curl -fsS -X DELETE -H "Authorization: token $TOKEN" \

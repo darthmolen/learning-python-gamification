@@ -75,7 +75,7 @@ docker compose down -v        # remove containers AND DESTROY ALL DATA
 ```
 
 `down -v` deletes `pyquest_postgres_data` and `pyquest_gitea_data`. That is every quest
-attempt, every Chronicle entry, and every commit the son has pushed. There is no undo except a
+attempt, every Journal entry, and every commit the son has pushed. There is no undo except a
 backup.
 
 ---
@@ -92,7 +92,7 @@ Each run writes `pyquest-backup-<timestamp>.tar.gz` containing:
 | Member | What it is |
 |---|---|
 | `globals.sql` | role definitions — a dump restored without its roles restores as the wrong owner |
-| `<progress>.dump` | `pg_dump -Fc` of the progress database (the Chronicle lives here) |
+| `<progress>.dump` | `pg_dump -Fc` of the progress database (the Journal lives here) |
 | `<gitea>.dump` | `pg_dump -Fc` of Gitea's metadata |
 | `gitea-repositories.tar` | a `git clone --mirror` of every repository |
 | `MANIFEST` | timestamp, repository count, and the exact image digests |
@@ -139,7 +139,7 @@ not a backup either.
 ## Restoring — and rehearsing it
 
 **A backup that has never been restored is a hope, not a backup.** §6.9 requires the restore to
-be rehearsed once before week 3, because the Chronicle and the son's commit history are the two
+be rehearsed once before week 3, because the Journal and the son's commit history are the two
 artifacts this project cannot regenerate.
 
 ### The rehearsal (safe, non-destructive — run this monthly)
@@ -192,7 +192,7 @@ the ones YAML cannot promise, so `smoke.sh` checks:
 4. a real repository with a real commit can be created, and the bare repo exists on disk
 5. `backup.sh` produces a readable dated tarball containing all five members
 6. `restore.sh` restores it into scratch databases and **the exact commit and the exact
-   Chronicle row come back**
+   Journal row come back**
 7. it cleans up the account and stand-in table it created
 
 This is not decoration. Every one of those failed at least once while it was being written. Step
