@@ -307,3 +307,72 @@ Area 0 authoring **started the Journal in week 1 rather than week 3**, deviating
 the grounds that §5.6 also requires re-reading it before Boss 1, and entries beginning in week 3
 leave almost nothing to re-read. The commit-and-push half still arrives at Area 2a on schedule,
 and the six Area 0 entries become his repository's first real commit. This needs a ruling.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Completed:** 2026-08-28
+**Completed By:** Claude (Opus 5), with Steven Molen
+
+### Outcomes
+
+**Phase 0 shipped.** Compose stack (postgres + gitea on one server, pinned by tag and
+digest, healthchecks throughout) with a backup job whose restore was rehearsed and
+verified — a git commit and a Journal entry both came back out of a tarball by exact
+content, which is what §6.9 asks for before week 3. The engine's pinned arithmetic, the
+content contract, an eight-rule validator, and the `new:quest` scaffolder.
+
+**Area 0 shipped.** Six session plans, 17 verified exercises, the Journal template, and
+a DM guide — deliverable with a text editor, a terminal and Python, per §8's warning
+that the app must not become a way to postpone teaching a child Python.
+
+**The design session happened, and changed the product.** Nine screens, and the
+discovery that the learning had no home: §2.2 concedes gamification has minimal impact
+on competency, and the spec's answer — building things teaches — assumed he already
+knew what a dict was when he opened The Recipe Book. The Tome exists because of that
+gap.
+
+### Deviations
+
+- **Scope grew from Phase 0 + Area 0** to include the full design session and two
+  lexicon resets. Both were cheap at the time they were taken and expensive later,
+  which was the argument for taking them.
+- **The engine split** into pinned arithmetic (built) and a query layer (deferred until
+  screens existed). The deferred half is now unblocked and has its own plan.
+- **`packages/engine` became `pyquest/packages/engine`** in a late restructure.
+
+### Lessons Learned
+
+- **Three composition bugs, none catchable by a unit test.** `npm run new:quest -- --id
+  x` was unusable because a root script dropped a trailing `--`; a relative `--root`
+  resolved against the package directory; Gitea crash-looped against its own image's
+  SSH daemon with the bad setting persisted into a volume. Every one was found by
+  running the command a human would type.
+- **Tests were importing built output.** Cross-package imports resolved through
+  `package.json` to `dist/`, so the engine's suite could have passed against a stale
+  build of content. Found only because a restructure deleted `dist`.
+- **Three checks were wrong rather than the code** — a naive SVG bounds check, a
+  hole-binding scan, and a glyph measurement. Two of them surfaced real bugs anyway, by
+  accident. A green line from an unvalidated check is worth nothing.
+- **Renaming a mechanic is not done when the noun changes.** Patrol became Invasion
+  while the verbs stayed custodial — "due back", "arrives", "queued" — and it read, in
+  the parent's words, like herding pigs rather than defending anything.
+- **The son read the rail correctly, cold.** That is the only test of the lexicon that
+  counts, and it passed.
+
+### Backlog Items Created
+
+- `planning/backlog/feature_scoring-model-single-source_2026-08-27.md`
+- `planning/backlog/feature_backup-destination-second-disk_2026-08-27.md`
+- `planning/backlog/feature_gitea-lan-access-for-the-son_2026-08-27.md`
+- `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md`
+- `planning/backlog/feature_roles-modes-and-the-dm-seat_2026-08-28.md`
+
+### Follow-on Plans
+
+- `planning/feature_engine-query-layer_2026-08-28.md`
+- `planning/feature_progress-schema_2026-08-28.md`
+- `planning/feature_api-and-runner_2026-08-28.md`
+- `planning/feature_spa_2026-08-28.md`
