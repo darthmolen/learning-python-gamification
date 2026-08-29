@@ -36,3 +36,26 @@ shim does not own — Area 5 onward, and the capstone.
 
 - Area 3 content authoring, which will reveal whether the ~5,000-block cap is generous or tight
 - One session with the son's laptop, to place it on the curve
+
+## Note -- 2026-08-29, from the world-shim plan
+
+`curriculum/lib/world.py` shipped, and `start()` combines. That closes the failure mode for
+every Area 3 quest, exactly as this item predicted, so this stays in the backlog.
+
+**The one measurement this item names as missing is still missing.** The son's laptop has not
+been placed on the scaling curve. Phase 3 of `feature_world-shim_2026-08-28.md` is that
+measurement and it is blocked on the laptop being in reach. Until it is run, the ~5,000-block
+soft cap is an RTX 5090 figure with a single-threaded-Python scaling estimate on top of it,
+and it should be cited that way rather than as a budget.
+
+What the shim now guarantees, and what it does not:
+
+- **Guaranteed:** any world built only through `place()` and `start()` is one fused mesh, so
+  a learner cannot author himself into a slideshow through the shim's surface.
+- **Not guaranteed:** anything that creates entities the shim does not own. That is Area 5
+  onward and the capstone, which is where this item becomes load-bearing.
+
+`curriculum/lib/smoke.py` prints an fps figure, and it is **not** the durable measuring tool
+this item wants. It runs vsync-bound on purpose -- it answers *is this alive*, not *how much
+headroom*. A machine with a hundred times the headroom prints the same 60. The measuring tool
+still has to be built from `spikes/ursina-tier3/_bench.py`, which is throwaway.
