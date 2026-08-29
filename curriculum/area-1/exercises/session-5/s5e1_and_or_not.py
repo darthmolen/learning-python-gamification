@@ -25,7 +25,7 @@ Run:  py -3.14 s5e1_and_or_not.py
 # concepts: boolean-operators, comparison-operators, bool, if, else, variables, int, print
 # dc: 12
 # expect: ok
-# strokes: 4
+# min-strokes: 4
 
 import turtle
 

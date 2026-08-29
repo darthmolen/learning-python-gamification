@@ -17,7 +17,7 @@ Run:  py -3.14 s8e2_the_growing_spiral.py
 # concepts: accumulator-pattern, for, range, variables, int, float, print
 # dc: 16
 # expect: ok
-# strokes: 60
+# min-strokes: 60
 
 import turtle
 

@@ -16,7 +16,7 @@ Run:  py -3.14 b6_the_shape_that_does_not_close.py
 # concepts: for, range, reading-errors, int, float, variables, print
 # dc: 14
 # expect: ok
-# strokes: 5
+# min-strokes: 5
 
 import turtle
 

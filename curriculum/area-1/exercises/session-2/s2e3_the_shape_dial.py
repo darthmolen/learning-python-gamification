@@ -15,7 +15,7 @@ Run:  py -3.14 s2e3_the_shape_dial.py
 # concepts: for, range, variables, int, float, input, f-strings, print
 # dc: 12
 # expect: ok
-# strokes: 7
+# min-strokes: 7
 # stdin: 7 | 90
 
 import turtle

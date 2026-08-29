@@ -15,7 +15,7 @@ Run:  py -3.14 s4e3_the_choice_board.py
 # concepts: if, else, comparison-operators, for, range, input, f-strings, bool, variables, int, str, print
 # dc: 12
 # expect: ok
-# strokes: 5
+# min-strokes: 5
 # stdin: 5 | big
 
 import turtle

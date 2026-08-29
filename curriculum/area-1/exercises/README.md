@@ -28,7 +28,7 @@ useful key combination in this area and one of the most useful of the year.
 
 **Two files never finish, and that is correct.** `session-3/s3e4_the_hang.py` and
 `session-6/b2_the_loop_that_never_ends.py` are supposed to run forever. Their headers say
-`# expect: timeout`. Do not fix them before the session.
+`# expect: hangs`. Do not fix them before the session.
 
 ## What is in each file
 

@@ -16,7 +16,7 @@ Run:  py -3.14 s1e2_what_range_gives.py
 # concepts: range, for, print, int, variables
 # dc: 8
 # expect: ok
-# strokes: 18
+# min-strokes: 18
 
 import turtle
 

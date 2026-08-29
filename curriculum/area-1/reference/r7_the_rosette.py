@@ -19,7 +19,7 @@ Run:  py -3.14 r7_the_rosette.py
 # concepts: nesting, accumulator-pattern, for, range, if, elif, else, comparison-operators, variables, int, float, print
 # dc: 16
 # expect: ok
-# strokes: 72
+# min-strokes: 72
 
 import turtle
 

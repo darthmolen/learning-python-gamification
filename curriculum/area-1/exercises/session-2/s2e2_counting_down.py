@@ -12,7 +12,7 @@ Run:  py -3.14 s2e2_counting_down.py
 # concepts: range, for, variables, int, float, print
 # dc: 10
 # expect: ok
-# strokes: 25
+# min-strokes: 25
 
 import turtle
 

@@ -16,7 +16,7 @@ Run:  py -3.14 s3e3_while_versus_for.py
 # concepts: while, for, range, comparison-operators, variables, int, print
 # dc: 12
 # expect: ok
-# strokes: 12
+# min-strokes: 12
 
 import turtle
 

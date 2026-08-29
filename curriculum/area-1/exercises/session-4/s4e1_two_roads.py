@@ -22,7 +22,7 @@ Run:  py -3.14 s4e1_two_roads.py
 # concepts: if, else, comparison-operators, bool, variables, int, print
 # dc: 10
 # expect: ok
-# strokes: 4
+# min-strokes: 4
 
 import turtle
 

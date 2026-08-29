@@ -16,7 +16,7 @@ Run:  py -3.14 s8e3_the_ink_budget.py
 # concepts: accumulator-pattern, while, comparison-operators, variables, int, float, print
 # dc: 16
 # expect: ok
-# strokes: 29
+# min-strokes: 29
 
 import turtle
 

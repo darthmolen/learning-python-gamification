@@ -18,7 +18,7 @@ Run:  py -3.14 r3_the_shrinking_line.py
 # concepts: while, accumulator-pattern, comparison-operators, variables, float, int, print
 # dc: 14
 # expect: ok
-# strokes: 8
+# min-strokes: 8
 
 import turtle
 

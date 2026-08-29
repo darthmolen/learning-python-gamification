@@ -12,7 +12,8 @@ Run:  py -3.14 b2_the_loop_that_never_ends.py
 """
 # concepts: while, comparison-operators, reading-errors, variables, int, print
 # dc: 10
-# expect: timeout
+# expect: hangs
+# timeout-seconds: 6      the Tk canvas fills up if a runaway turtle runs much longer
 
 import turtle
 

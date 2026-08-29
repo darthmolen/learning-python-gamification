@@ -22,7 +22,7 @@ Run:  py -3.14 r8_the_ink_budget.py
 # concepts: accumulator-pattern, while, boolean-operators, comparison-operators, f-strings, variables, int, float, print
 # dc: 16
 # expect: ok
-# strokes: 24
+# min-strokes: 24
 
 import turtle
 

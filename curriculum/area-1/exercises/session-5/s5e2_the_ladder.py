@@ -21,7 +21,7 @@ Run:  py -3.14 s5e2_the_ladder.py
 # concepts: elif, if, else, comparison-operators, for, range, bool, variables, int, print
 # dc: 14
 # expect: ok
-# strokes: 16
+# min-strokes: 16
 
 import turtle
 

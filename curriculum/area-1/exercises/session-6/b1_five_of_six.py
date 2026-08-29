@@ -12,7 +12,7 @@ Run:  py -3.14 b1_five_of_six.py
 # concepts: for, range, reading-errors, int, variables, print
 # dc: 10
 # expect: ok
-# strokes: 5
+# min-strokes: 5
 
 import turtle
 

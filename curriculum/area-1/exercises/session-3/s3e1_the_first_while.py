@@ -33,7 +33,7 @@ Run:  py -3.14 s3e1_the_first_while.py
 # concepts: while, comparison-operators, bool, variables, int, print
 # dc: 10
 # expect: ok
-# strokes: 9
+# min-strokes: 9
 
 import turtle
 

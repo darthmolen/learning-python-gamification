@@ -16,7 +16,7 @@ Run:  py -3.14 s7e2_the_grid.py
 # concepts: nesting, for, range, variables, int, print
 # dc: 14
 # expect: ok
-# strokes: 64
+# min-strokes: 64
 
 import turtle
 

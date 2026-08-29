@@ -15,7 +15,7 @@ Run:  py -3.14 s7e3_the_rosette.py
 # concepts: nesting, for, range, if, else, comparison-operators, variables, int, float, print
 # dc: 16
 # expect: ok
-# strokes: 48
+# min-strokes: 48
 
 import turtle
 

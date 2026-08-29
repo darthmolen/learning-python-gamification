@@ -24,7 +24,8 @@ Run:  py -3.14 s3e4_the_hang.py    ...and then press Ctrl-C.
 """
 # concepts: while, comparison-operators, variables, int, print, reading-errors
 # dc: 10
-# expect: timeout
+# expect: hangs
+# timeout-seconds: 6      the Tk canvas fills up if a runaway turtle runs much longer
 
 import turtle
 

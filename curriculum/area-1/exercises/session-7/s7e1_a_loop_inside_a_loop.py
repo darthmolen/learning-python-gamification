@@ -22,7 +22,7 @@ Run:  py -3.14 s7e1_a_loop_inside_a_loop.py
 # concepts: nesting, for, range, variables, int, print
 # dc: 12
 # expect: ok
-# strokes: 12
+# min-strokes: 12
 
 import turtle
 

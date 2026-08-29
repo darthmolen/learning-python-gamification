@@ -5,36 +5,43 @@ behind it is worth nothing. Run this after editing anything in exercises/.
 
     py -3.14 verify.py
 
-Every exercise file carries three header tags, and may carry two more:
+Every exercise file carries three header tags, and may carry three more:
 
     # concepts: for, range          ids from packages/content/src/concepts.ts
     # dc: 10                        spec 5.1 Difficulty Class
-    # expect: ok                    or `runs`, `timeout`, or the name of an error
+    # expect: ok                    or `runs`, `hangs`, or the name of an error
     # stdin: 7 | 90                 optional, answers fed to input()
-    # strokes: 5                    optional, the minimum number of pen-down moves
+    # min-strokes: 5                optional, default 1: the fewest pen-down moves
+    # timeout-seconds: 6            optional, default 10: the wall clock for this file
 
 A file tagged `expect: ok` must exit cleanly AND actually draw something.
 A file tagged `expect: runs` must exit cleanly and is allowed to draw nothing --
 only a blank starter is entitled to that.
-A file tagged `expect: timeout` must NOT finish. It is killed and that is the
-pass condition.
+A file tagged `expect: hangs` must NOT finish. It is killed and that is the pass
+condition; a file tagged `hangs` that exits has failed.
 A file tagged with an error name must fail with exactly that error.
 
 Both halves matter: spec principle 5 is never hide failure, and an exercise that
 was supposed to break and did not is as wrong as one that crashed.
 
-Two things here that Area 0's harness did not need, and both were added because
-Area 1's failures are quieter than Area 0's:
+Three tags here that Area 0's harness did not need, and all three exist because
+Area 1's failures are quieter than Area 0's. All three are optional; a file may
+carry none of them and behave exactly as it would have under Area 0's harness.
 
-**A wall clock, and a tag for the files that are supposed to hit it.** Session 3
-and session 6 each ship a loop that does not stop. Without `expect: timeout` the
-harness would hang on them; with it, "never finished" is the assertion.
+**`expect: hangs`, a new member of the existing expectation vocabulary.** Session
+3 and session 6 each ship a loop that does not stop, and that loop is the lesson.
+Putting it in `# expect:` rather than inventing a bare timeout number keeps one
+vocabulary for "what should happen when this runs".
 
-**A stroke floor, `# strokes: N`.** Non-zero is not enough in an area whose
-signature bug is an off-by-one. `b1_five_of_six.py` draws five sides of a hexagon
-and a check for "did it draw anything" passes it happily. The floor pins the count
-of the files whose whole point is that the count is wrong, so that fixing one of
-them in place is caught here rather than in a session.
+**`# timeout-seconds: N`, default 10.** Only a file that needs something other
+than the default carries it, so thirty files do not each repeat boilerplate.
+
+**`# min-strokes: N`, default 1** -- which is exactly Area 0's behaviour, so
+nothing changes for a file that does not carry it. Non-zero is not enough in an
+area whose signature bug is an off-by-one: `b1_five_of_six.py` draws five sides of
+a hexagon, and a check for "did it draw anything" passes it happily. Any file
+whose shape has a known stroke count carries the real number, so that a file
+quietly drawing less than it should is caught here rather than in a session.
 
 Turtle windows are suppressed by replacing turtle.done() with a no-op, so this
 runs unattended. It does not check that the picture is BEAUTIFUL, only that the
@@ -69,17 +76,20 @@ AREA_1_CONCEPTS = frozenset({
 })
 ALLOWED_CONCEPTS = AREA_0_CONCEPTS | AREA_1_CONCEPTS
 
-# Seconds. Generous for a file that should finish; short for one that never will.
+# Seconds, when a file does not carry `# timeout-seconds:`. The slowest legitimate
+# file in this area finishes in about two, so ten is generous.
 #
-# TIMEOUT_NORMAL is 45 rather than something larger because of a thing measured
-# here rather than assumed: a turtle file that loops forever fills the Tk canvas
-# until the window dies, the process raises `turtle.Terminator`, and the run that
-# follows it can fail for want of memory. So an untagged runaway usually reports
-# as a crash rather than as a timeout -- still a FAIL, still with the file's name
-# on it -- and the number below decides how much damage it does on the way there.
-# The slowest legitimate file in this area finishes in about two seconds.
-TIMEOUT_NORMAL = 45
-TIMEOUT_HANG = 6
+# It is also deliberately not much larger, because of a thing measured here rather
+# than assumed: a turtle file that loops forever fills the Tk canvas until the
+# window dies, the process raises `turtle.Terminator`, and the run that follows it
+# can fail for want of memory. So an untagged runaway usually reports as a crash
+# rather than as a timeout -- still a FAIL, still with the file's name on it -- and
+# this number decides how much damage it does on the way there.
+DEFAULT_TIMEOUT_SECONDS = 10
+
+# The floor when a file does not carry `# min-strokes:`. One is Area 0's behaviour:
+# a file tagged `ok` had to put the pen down at least once.
+DEFAULT_MIN_STROKES = 1
 
 # Runs inside the child process, in place of the exercise's own turtle.done().
 BOOTSTRAP = """
@@ -147,10 +157,14 @@ def check_tags(text: str) -> tuple[str, str | None] | str:
     return expect, tag(text, "stdin")
 
 
-def floor_for(text: str) -> int:
-    """The `# strokes:` floor, or 1 -- the implicit floor `expect: ok` already carries."""
-    declared = tag(text, "strokes")
-    return int(declared) if declared else 1
+def number_tag(text: str, name: str, fallback: int) -> int:
+    """A `# name: N` header tag read as a whole number, or `fallback` if absent.
+
+    Anything after the number is a note to whoever reads the file and is ignored,
+    because a tag that says why it is 6 is worth more than a tag that says 6.
+    """
+    declared = tag(text, name)
+    return int(declared.split()[0]) if declared else fallback
 
 
 def failure_line(path: pathlib.Path, expect: str, stderr: str) -> str:
@@ -179,7 +193,7 @@ def check(path: pathlib.Path) -> tuple[bool, str]:
     expect, fed = tags
 
     stdin = "".join(a.strip() + "\n" for a in fed.split("|")) if fed else ""
-    limit = TIMEOUT_HANG if expect == "timeout" else TIMEOUT_NORMAL
+    limit = number_tag(text, "timeout-seconds", DEFAULT_TIMEOUT_SECONDS)
 
     try:
         done = subprocess.run(
@@ -191,14 +205,14 @@ def check(path: pathlib.Path) -> tuple[bool, str]:
             check=False,
         )
     except subprocess.TimeoutExpired as expired:
-        if expect == "timeout":
+        if expect == "hangs":
             return True, f"still running after {limit}s, as tagged -- killed"
         raise RuntimeError(
             f"{path.name} did not finish within {limit}s and is not tagged"
-            " `# expect: timeout`"
+            " `# expect: hangs`"
         ) from expired
 
-    if expect == "timeout":
+    if expect == "hangs":
         return False, f"expected it never to finish, but it exited in under {limit}s"
 
     out, err = done.stdout, done.stderr
@@ -207,9 +221,9 @@ def check(path: pathlib.Path) -> tuple[bool, str]:
         if done.returncode != 0:
             return False, "expected a clean run, got:" + chr(10) + err.strip()[-400:]
         drawn = strokes_in(out)
-        if expect == "runs" and tag(text, "strokes") is None:
+        if expect == "runs" and tag(text, "min-strokes") is None:
             return True, f"clean, {drawn} strokes drawn"
-        least = floor_for(text)
+        least = number_tag(text, "min-strokes", DEFAULT_MIN_STROKES)
         if drawn < least:
             return False, f"ran clean but drew {drawn} strokes, needs at least {least}"
         return True, f"clean, {drawn} strokes drawn (floor {least})"

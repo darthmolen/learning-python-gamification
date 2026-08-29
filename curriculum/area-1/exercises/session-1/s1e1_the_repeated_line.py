@@ -25,7 +25,7 @@ Run:  py -3.14 s1e1_the_repeated_line.py
 # concepts: for, range, print, int
 # dc: 8
 # expect: ok
-# strokes: 4
+# min-strokes: 4
 
 import turtle
 

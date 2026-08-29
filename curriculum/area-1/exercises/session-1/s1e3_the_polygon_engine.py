@@ -17,7 +17,7 @@ Run:  py -3.14 s1e3_the_polygon_engine.py
 # concepts: for, range, variables, int, float, print
 # dc: 10
 # expect: ok
-# strokes: 6
+# min-strokes: 6
 
 import turtle
 

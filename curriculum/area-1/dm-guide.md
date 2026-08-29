@@ -283,80 +283,121 @@ never to the beginning.** That last clause is the entire design: resetting a wel
 concept to day one punishes one bad evening by flooding the next three sessions with
 material he already had.
 
-You will not track nineteen concepts on paper. You do not have to. Track the rung for
-the six or seven that are actually moving, and let the rest ride at 35 days. The table
-below already spreads the ladder across the ten sessions; running it as written is
-close enough to correct, and correct enough to work.
+You will not track nineteen concepts on paper and you do not have to. The drills below
+already spread the ladder across the ten sessions: the Area 1 concepts arrive on the
+short rungs and repeat often, and Area 0's nine sit at 16 and 35 days, coming round less
+and worth more when they do. Running the list as written is close enough to correct, and
+correct enough to work.
 
-### Area 0's nine, on the ladder
-
-They are on the 16- and 35-day rungs by now, so they appear less often and are worth
-more when they do. **Do not let `reading-errors` slide** — session 6 depends on it and
-Area 1 gives him fewer chances to practise it by accident.
-
-| Rung | Concepts | When they come round |
-|---|---|---|
-| 35 days | `print`, `str`, `bool` | Sessions 4 and 9 |
-| 16 days | `variables`, `int`, `float` | Sessions 2, 5 and 8 |
-| 7 days | `input`, `f-strings` | Sessions 5 and 10 |
-| 7 days | `reading-errors` | Sessions 3, 6 and 8 |
+**Do not let `reading-errors` slide.** Session 6 depends on it, and Area 1 gives him far
+fewer chances to practise it by accident than Area 0 did.
 
 ### The drills
 
-Three per session. Retrieval, not recognition — "what does `range(4)` give you?" is
+Three per session. **Retrieval, not recognition** — "what does `range(4)` give you?" is
 retrieval; "does `range(4)` give you four numbers?" is a coin flip he can win by
 guessing.
 
 **Session 1** (Area 0 only — nothing of Area 1 exists yet)
+
 1. What kind of thing does `input` always hand back?
 2. Which line of a traceback do you read first?
 3. What did `0.1 + 0.2` print, and why was that not a bug?
 
 **Session 2**
+
 1. `range(4)` — say every number it gives you, in order.
 2. What does the colon at the end of a `for` line do?
-3. What is a variable for? (`variables`, 16-day rung)
+3. Why give something a name instead of typing the number?
 
 **Session 3**
+
 1. `range(2, 6)` — every number, in order.
 2. You want ten sides. What is the turn? How did you work it out?
-3. Name the error you get from `range(2.5)`. (`reading-errors`, 7-day rung)
+3. What error do you get from `range(2.5)`, and what does the message say?
 
 **Session 4**
-1. What has to happen inside a `while` loop for it to ever stop?
-2. What does Ctrl-C do, and which window do you press it in?
-3. `print("5" + "5")` — what comes out? (`str`, 35-day rung)
+
+1. What has to happen inside a `while` loop for it ever to stop?
+2. `10 >= 10` and `10 > 10` — say both answers.
+3. `print("5" + "5")` — what comes out?
 
 **Session 5**
+
 1. What is the difference between `=` and `==`?
-2. When does the `else` part run?
-3. `int("12.5")` — what happens? (`int` and `reading-errors`)
+2. When does the `else` part run, and when does it not?
+3. What kind of thing does a comparison hand back? Name both possible values.
 
 **Session 6**
+
 1. `and`, `or`, `not` — give me a rule that needs all three.
-2. In an `elif` chain, how many branches run?
-3. What is an f-string for? (`f-strings`, 7-day rung)
+2. In an `elif` ladder, how many branches run?
+3. What is an f-string for?
 
 **Session 7**
-1. Name a bug that does not produce an error message.
+
+1. Name a bug that produces no error message at all.
 2. What is the first question to ask a loop that did the wrong number of things?
 3. What was wrong with `b6`?
 
 **Session 8**
+
 1. Outer loop three times, inner loop four times — how many times does the inner body run?
-2. Where does the counter of a `for` loop come from?
-3. What does `turtle.speed(0)` do? (Equipment, and he will need it tonight.)
+2. Where does the counter in a `for` line come from, and when does it get created?
+3. Say an `if` out loud that makes every side after the sixth black.
 
 **Session 9**
+
 1. Where does the total go — before the loop, or inside it? Why?
 2. What happens if you set it to zero inside the loop instead?
-3. What does `range(10, 0, -1)` give you?
+3. `range(10, 0, -1)` — what does it give you?
 
 **Session 10**
+
 1. Give me three things that can go wrong in a loop without any error appearing.
 2. What is the turn for a shape with `n` sides?
 3. What kind of thing does `input` hand back, and what do you do about it?
-   (`input` — asked in session 1 and asked again here, on purpose. Say so.)
+
+### Coverage
+
+Area 0 drilled nine concepts across six sessions and could stay pure prose. This area
+carries **nineteen** — its own ten plus Area 0's nine — across ten sessions, so it is
+worth proving rather than assuming that none of them quietly fell off the list.
+
+Every one of the nineteen is drilled at least once above:
+
+| Concept | Drilled in |
+|---|---|
+| `print` | 4 |
+| `variables` | 2 |
+| `int` | 3 |
+| `float` | 1 |
+| `str` | 4, 10 |
+| `bool` | 5 |
+| `input` | 1, 10 |
+| `f-strings` | 6 |
+| `reading-errors` | 1, 3, 7 |
+| `if` | 5, 8 |
+| `elif` | 6 |
+| `else` | 5 |
+| `comparison-operators` | 4, 5 |
+| `boolean-operators` | 6 |
+| `while` | 4 |
+| `for` | 2, 8 |
+| `range` | 2, 3, 9 |
+| `nesting` | 8 |
+| `accumulator-pattern` | 9, 9 |
+
+**The three drilled most are `range`, `reading-errors` and `input`, and that is
+deliberate.** `range` because every off-by-one in the area comes back to which end is
+included. `reading-errors` because session 6 leans on it and this area otherwise starves
+it — Area 0's failures announced themselves and Area 1's mostly do not. `input` because
+it is the one Area 0 concept Boss 1 hard-requires, and it goes untouched from session 2
+to session 10 if nobody schedules it.
+
+`accumulator-pattern` appears twice in one session rather than across two, because it
+arrives in session 8 and the boss is session 10; there is not room for it to climb the
+ladder, so it gets drilled hard on the way past.
 
 **Say out loud, at least twice this area, that the repetition is deliberate.** He should
 know retrieval is a mechanism and not a quiz, and that the questions coming back is the

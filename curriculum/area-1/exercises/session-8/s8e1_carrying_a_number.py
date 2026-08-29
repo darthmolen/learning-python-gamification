@@ -27,7 +27,7 @@ Run:  py -3.14 s8e1_carrying_a_number.py
 # concepts: accumulator-pattern, for, range, variables, int, float, print
 # dc: 12
 # expect: ok
-# strokes: 9
+# min-strokes: 9
 
 import turtle
 

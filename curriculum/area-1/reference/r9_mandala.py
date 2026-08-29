@@ -18,7 +18,7 @@ Run:  py -3.14 r9_mandala.py
 # concepts: nesting, accumulator-pattern, for, while, range, if, elif, else, comparison-operators, boolean-operators, variables, int, float, print
 # dc: 18
 # expect: ok
-# strokes: 100
+# min-strokes: 100
 
 import turtle
 

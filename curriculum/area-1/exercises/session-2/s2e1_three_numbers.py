@@ -18,7 +18,7 @@ Run:  py -3.14 s2e1_three_numbers.py
 # concepts: range, for, print, int, variables
 # dc: 10
 # expect: ok
-# strokes: 18
+# min-strokes: 18
 
 import turtle
 

@@ -22,7 +22,7 @@ Run:  py -3.14 r5_the_gatekeeper.py
 # concepts: boolean-operators, elif, if, else, comparison-operators, for, range, input, f-strings, bool, variables, int, print
 # dc: 14
 # expect: ok
-# strokes: 4
+# min-strokes: 4
 # stdin: 200
 
 import turtle
