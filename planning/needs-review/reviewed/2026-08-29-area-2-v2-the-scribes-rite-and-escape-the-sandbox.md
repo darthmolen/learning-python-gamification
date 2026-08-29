@@ -412,3 +412,39 @@ The later VS Code un-stripping rungs. Area 2b restores nothing; it ships the str
 and the ladder is authored per-area from Area 3 onward.
 
 Any hook, linter or CI on **his** repository. §7 reason 3 is explicit and this is week 6.
+
+---
+
+## Plan Review (v2)
+
+**Reviewed:** 2026-08-29 11:09
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — Prerequisite now references `planning/completed/feature_shared-index-and-concepts_2026-08-29.md` with commit refs; no longer a gate.
+2. **Resolved** — VS Code stub ownership explicit: stays in backlog until Phase 3 ships, then this track moves it to `completed/`.
+3. **Resolved** — Boss 2 has a concrete 5-step cold-clone procedure with pass/fail recording and which-step-failed capture.
+4. **Resolved** — Quest matrix added with ids, sessions, concepts, verifiers, and DCs.
+5. **Resolved** — `verify.py` scope defined as runnable `.py` only; markdown/git coverage moved to README completion checklist.
+6. **Resolved** — Phase 3 marked as gating Phase 4 explicitly; no longer falsely fully-async.
+7. **Resolved** — DC band stated as 5–22 with rationale.
+
+### New Issues
+
+#### Important (Should Address)
+
+- **Quest matrix — `git-branch` missing from concept coverage**
+  - Session 3 introduces `git-branch` but the quest matrix omits it from `a2-the-log-as-a-story`'s concept list. It surfaces only as "all fourteen" on Boss 2.
+  - Why it matters: a concept with no direct quest coverage is invisible to the validator and to the author's own coverage table.
+  - Suggested fix: Add `git-branch` to `a2-the-log-as-a-story`'s concepts column, or add a note explaining it is intentionally boss-only.
+
+- **Item count inconsistency**
+  - Success criteria say "five `a2-` quests and Boss 2"; Files Expected to Change says "six items." Both are technically true (five quests + one boss = six items) but the different phrasings invite a misread.
+  - Suggested fix: Normalize to "five quests plus Boss 2 (six items total)" in both places.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** All seven prior blockers are addressed; only two small consistency issues remain, neither of which would cause significant implementation drift.
