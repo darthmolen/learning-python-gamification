@@ -48,11 +48,9 @@ so it returns cleared-of-required alongside the unlock — `{ cleared, required,
 reviews a Datamine schedules at +3 and +10 days (§5.5). Ordered most-overdue first,
 capped at the 3–5 §5.4 specifies. Takes `now` as an argument.
 
-**`level(xp)`** — **the one open decision.** §6.7 returns a level and the spec never gives
-a curve. It should fire more often than an area clears (roughly 8 areas, ~350 XP each) so
-it is its own reward and not a duplicate of area completion. Propose `threshold(L) =
-25·L·(L−1)` — level 2 at 50, 5 at 500, 10 at 2250 — as a single exported constant, easy to
-retune, and put the numbers in front of the parent before committing.
+**`level(xp)`** — **done.** `15·L·(L−1)`, in `src/level.ts`, ruled and built on
+2026-08-28. `levelAt` returns the §5.1a denominator alongside the number. The query layer
+consumes it; it does not need rebuilding.
 
 **`packages/contract`** holds the zod schemas and inferred types for everything the API
 returns. The engine's query results are most of it. This is the piece that makes "the SPA
@@ -80,7 +78,8 @@ never exceeds its total. A due queue never exceeds its cap. No function reads `D
 ## Dependencies / Prerequisites
 
 - The artboards, which exist
-- A ruling on the level curve, which does not
+- ~~A ruling on the level curve~~ — **settled 2026-08-28**: `15·L·(L−1)`, built and
+  mutation-tested in `pyquest/packages/engine/src/level.ts`. Nothing blocks this plan
 
 ## Files Expected to Change
 

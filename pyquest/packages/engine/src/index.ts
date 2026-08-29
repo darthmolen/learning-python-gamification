@@ -34,3 +34,5 @@ export {
   intervalDays,
   nextRung,
 } from './invasions.ts';
+
+export { LEVEL_COEFFICIENT, levelAt, xpForLevel } from './level.ts';

@@ -2,7 +2,7 @@
 
 - **Date:** 2026-08-26
 - **Status:** Approved design. No implementation plan yet.
-- **Players:** One parent (professional developer), one son, age 11–14, Scratch background.
+- **Players:** One parent (professional developer), one son — 12 at the start, 13 by the capstone — Scratch background.
 - **Cadence:** 2–3 sessions per week, 45–60 minutes.
 - **Horizon:** ~48 weeks, ~120 sessions.
 
@@ -303,6 +303,21 @@ about a third and invasions about a quarter, which is the honest shape of the th
 No XP for minutes logged, videos watched, or lessons read. Working code is the only currency.
 
 ### 5.1a Denominators
+
+**The level curve is `15 · L · (L−1)`.** §6.7 returns a level and this section forbids a
+bare one, so `levelAt` answers with the denominator too: which level, how far into it, and
+how much is left. Level 2 costs 30, level 10 costs 1,350, level 20 costs 5,700. Costed
+against a real campaign — about 1,095 XP an area over eight areas — that lands near level
+24, roughly three levels an area or one every five sessions. Often enough to be its own
+reward, rarely enough not to simply restate finishing an area.
+
+A flat cost per level was the alternative and is easier for an 11-14-year-old to compute in
+his head. It was turned down because a level that costs the same at 20 as at 2 says the
+twentieth was no harder, and everything else in his life is on a curve of some sort.
+
+One coefficient in `pyquest/packages/engine/src/level.ts`. Retuning the whole campaign is
+one number.
+
 
 Every progress display shows **cleared of total**, never a bare XP figure. XP is a
 numerator with no denominator: it says how far he has come and nothing about how far
@@ -654,7 +669,7 @@ ancestor clickable and the current page plain.**
 
 The trail is not decoration. It is the only way back, so no screen can be one you
 are able to enter and unable to leave except through browser chrome — which in a
-single-page app is unreliable, and for an eleven-year-old is not an answer at all.
+single-page app is unreliable, and for an 11-14-year-old is not an answer at all.
 Ancestors are underlined to say they can be clicked. An up-chevron sits at the
 head of the bar doing the same job as the second-to-last crumb, deliberately:
 going up one level is the most-used move on these screens and deserves a target
@@ -796,6 +811,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Boss pays effective DC × 20, invasions stay at 5 | At ×10 the boss was the worst-paid work per minute in the system; repetition was not cut to fix it, because the habit is what actually wins |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |
 | Risk label derived from DC, not stored | A boolean beside the number that implies it can only ever disagree with it |
+| Level curve 15·L·(L−1), ~24 levels over the campaign | A curve says later levels were harder; a flat cost says they were not, and everything else in his life is on a curve |
 | Denominators everywhere, tildes when estimated | XP answers "how far have I come"; only a denominator answers "how much is left" |
 | Medals per quest, earned on replay | Makes replay rewarding, and adds voluntary retrieval practice beside forced invasions |
 | Only Cleared gates progression | Keeps medals elective, preserving autonomy |

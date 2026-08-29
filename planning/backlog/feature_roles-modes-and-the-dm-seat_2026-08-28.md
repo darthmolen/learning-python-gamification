@@ -52,7 +52,7 @@ There is a defensible line. §3.6 already forbids the DM from giving answers at 
 Socratic questions only — so an AI constrained to questions is not doing the thing
 §5.12 withholds. But that constraint is a prompt, which is soft, and it is the entire
 safety surface. It is also the difference between a tool that teaches and one that
-hands over answers under pressure from a frustrated eleven-year-old at 8pm.
+hands over answers under pressure from a frustrated 11-14-year-old at 8pm.
 
 This is a decision, not an oversight, and it belongs to the parent. Nothing else in
 this item should be built before it is made.

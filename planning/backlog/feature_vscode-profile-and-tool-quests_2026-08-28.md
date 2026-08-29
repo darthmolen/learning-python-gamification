@@ -6,7 +6,7 @@
 
 ## Context
 
-VS Code's defaults are hostile to an eleven-year-old: activity bar, minimap,
+VS Code's defaults are hostile to an 11-14-year-old: activity bar, minimap,
 breadcrumbs, problems panel, git decorations, extension prompts, notifications. The
 question raised was whether to build a simple browser or Electron editor instead —
 file tree left, editor above, terminal below.
