@@ -23,7 +23,7 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`.
 
 Established by Area 0 and worth keeping.
 
-- **One directory per area**, holding `README.md`, `parent-guide.md`, `verify.py`,
+- **One directory per area**, holding `README.md`, `dm-guide.md`, `verify.py`,
   `sessions/`, `exercises/`, `journal/`, `reference/`.
 - **Every exercise `.py` carries three header tags** — `# concepts:`, `# dc:`,
   `# expect:` — and an optional `# stdin:`. Concept ids come from

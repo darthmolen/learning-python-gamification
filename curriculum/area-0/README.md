@@ -15,7 +15,7 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 
 ## Read in this order
 
-1. **`parent-guide.md`** — how to run a session, and the Socratic phrasings for every
+1. **`dm-guide.md`** — how to run a session, and the Socratic phrasings for every
    stall predicted here. Read this before session 1. It is the load-bearing document.
 2. **`sessions/session-1-first-light.md`** — then one per session, on the night.
 3. **`reference/session-3-answers.md`** — before session 3. Not during.
@@ -98,7 +98,7 @@ padded out with make-work. Area 1 opens with `if` and gives it a job on day one.
 
 **The concepts each file resurfaces are tagged, not just the ones it introduces.** Spec
 §3 principle 7 and §5.4 schedule retrieval off these tags, so a file that quietly needs
-`variables` should say so even when variables are not its subject. `parent-guide.md` §5
+`variables` should say so even when variables are not its subject. `dm-guide.md` §5
 carries hand-run invasion questions until the engine exists.
 
 ---
@@ -176,7 +176,7 @@ commit in his repository, which is a considerably better first commit than an em
 README, and gives the Area 2a session something of his own to put under version control.
 
 Nothing about §5.6's substance rule changes: ten XP per entry, paid for substance rather
-than existence, and empty prompts pay nothing. `parent-guide.md` §6 has the rubric.
+than existence, and empty prompts pay nothing. `dm-guide.md` §6 has the rubric.
 
 ---
 
@@ -216,7 +216,7 @@ assumed.
 ```
 area-0/
   README.md              this file
-  parent-guide.md        how to run a session; the Socratic ladder; every predicted stall
+  dm-guide.md        how to run a session; the Socratic ladder; every predicted stall
   verify.py              runs every exercise and checks it against its own tags
   sessions/              one plan per session, in delivery order
   exercises/             the .py files he actually runs

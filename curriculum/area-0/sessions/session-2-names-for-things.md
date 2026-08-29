@@ -146,7 +146,7 @@ Journal exists to fight.
 
 ## Where he will stall
 
-See `parent-guide.md` §4. The predicted four:
+See `dm-guide.md` §4. The predicted four:
 
 1. `side = side + 20` read as an equation rather than an instruction.
 2. Renaming a variable in some places but not all. The error tells him. Make him read it.

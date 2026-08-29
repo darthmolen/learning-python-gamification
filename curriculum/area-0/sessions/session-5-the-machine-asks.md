@@ -153,7 +153,7 @@ it.
 
 ## Where he will stall
 
-See `parent-guide.md` §4. Three near-certainties:
+See `dm-guide.md` §4. Three near-certainties:
 
 1. **Typing quotes at the input prompt.** He types `"150"` because he is thinking in
    code. `int` then fails in a way that looks unfair. Get him to print the raw answer

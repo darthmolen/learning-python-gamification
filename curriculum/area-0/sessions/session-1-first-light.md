@@ -131,7 +131,7 @@ Then write your reply underneath, in the file, before he goes to bed.
 
 ## Where he will stall
 
-See `parent-guide.md` §4 for the question phrasings. The four to expect:
+See `dm-guide.md` §4 for the question phrasings. The four to expect:
 
 1. `forward(100)` without `turtle.`, giving NameError. This is good and it is on time.
 2. Typing `py -3.14` at the `>>>` prompt, or `turtle.forward(100)` at the shell prompt.

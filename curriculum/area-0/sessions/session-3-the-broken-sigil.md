@@ -186,7 +186,7 @@ code.
 
 ## Where he will stall
 
-See `parent-guide.md` §4. The main one, and it will happen on file one:
+See `dm-guide.md` §4. The main one, and it will happen on file one:
 
 **He will start fixing before he finishes reading.** Every time, the same sentence:
 **"Not yet. Read me the last line first. What is it called?"**

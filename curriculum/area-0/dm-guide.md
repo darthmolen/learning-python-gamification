@@ -1,4 +1,11 @@
-# Area 0 — Parent Guide
+# Area 0 — DM Guide
+
+**Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11)
+that is his father, who is also a player — but the two roles want different things
+from you, and this guide is written for the DM one. Where it says *parent* rather
+than *DM*, it means the relationship rather than the seat, and the difference is
+deliberate: §2.4 counts a parent in the room as the design's single largest
+advantage, and no teacher standing in later gets that for free.
 
 You are not a teacher delivering a lesson. You are the other player, one area ahead,
 who is not allowed to say the answer. That constraint is the entire design. Spec §3

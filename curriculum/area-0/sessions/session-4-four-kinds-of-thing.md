@@ -133,7 +133,7 @@ you most confident about and most wrong about?**
 
 ## Where he will stall
 
-See `parent-guide.md` §4. The likeliest failure tonight is **boredom, not confusion.**
+See `dm-guide.md` §4. The likeliest failure tonight is **boredom, not confusion.**
 Types are abstract and there is less to look at.
 
 Mitigation, in order:

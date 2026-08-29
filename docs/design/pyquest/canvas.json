@@ -104,46 +104,39 @@
       "text": "SCARS (§5.3, §3.5)\nFailed attempts listed with what actually went wrong, newest first, never collapsed behind a toggle. Four attempts on a boss is not a bad record - it is the record."
     },
     {
-      "id": "note-learning",
+      "id": "note-tome",
       "x": 0,
-      "y": 1030,
+      "y": 1020,
       "w": 1400,
-      "text": "THE TOME - where the learning actually lives\nThe gap this closes: §2.2 concedes that gamification has “minimal impact on competency”, and the spec's answer is that building things teaches. But that assumed he already knew what a dict was when he opened The Recipe Book. The only instruction in the system was a brief per quest - which is the fragmentation - plus session plans living nowhere near the app.\n\nDense on purpose, and open on purpose. Nothing here unlocks: a Tome that only opened what he had already met would break the challenge run, which §5.2 says may be taken cold on pre-knowledge. And finding what you need in a dense page is the actual skill - it is how every reference he will ever meet works.\n\nAuthoring rule: it teaches the language, never the quest. dict gets inventory[“coal”], never can_craft. Otherwise the reference becomes a solutions manual and Datamine stops meaning anything."
+      "text": "THE TOME — where the learning lives, and it expands in place\nThe gap this closes: §2.2 concedes gamification has “minimal impact on competency”, and the spec's answer is that building things teaches — which assumed he already knew what a dict was when he opened The Recipe Book. The only instruction was a brief per quest, which is the fragmentation, plus session plans living nowhere near the app.\n\nDense on purpose, open on purpose. Nothing here unlocks: a Tome that only opened what he had met would break the challenge run, which §5.2 says may be taken cold on pre-knowledge. And scanning a dense page for what you need is the actual skill.\n\nIT IS NOT A POP-OVER. Opening it pushes the work down the page rather than covering it, so there is no layer to be inside and no escape convention to learn — “Open Tome” simply becomes “Close Tome”. The seam at the bottom shows the quest still sitting there rather than promising it. That also answers the case an overlay could not: clicking Tome in the rail with nothing open. There is always something underneath, even if it is the map, because expanding is a layout change and not a modal.\n\nAuthoring rule: it teaches the language, never the quest. dict gets inventory[“coal”], never can_craft — otherwise the reference is a solutions manual and Datamine stops meaning anything."
     },
     {
       "id": "note-invasions",
       "x": 1520,
-      "y": 1030,
+      "y": 1020,
       "w": 1400,
       "text": "THE INVASION LADDER - ruled 2026-08-28\n1, 3, 7, 16, 35 days. Repel one and it climbs a rung, so it stays away longer. Miss one and it steps back exactly one rung, never to the beginning.\n\nThat last clause is the decision. Resetting a well-known concept to day one punishes a single bad evening and then floods the next sessions with material he already had - which is the flaw this mechanic was built to prevent, reintroduced by its own scoring. Implemented and mutation-tested in packages/engine/src/invasions.ts."
     },
     {
       "id": "note-zero-xp",
       "x": 3040,
-      "y": 1030,
+      "y": 1020,
       "w": 1400,
       "text": "A MEDAL THAT PAYS NOTHING SAYS “BRAG” - ruled 2026-08-28\nEffective DC is clamped to the 5-30 scale, so at the floor a negative modifier is absorbed and the difference a medal pays really is 0. Rendering +0 XP reads as a broken app.\n\nThe chip says brag instead: honest about the payout, accurate about what the medal is worth, and true to what medals were always for - only Cleared was ever load-bearing. “Optional” was considered and dropped, because every medal but Cleared is already optional, so the word distinguishes nothing.\n\nThe engine still returns only the number. That a 0 becomes a word is a presentation decision, the same boundary §5.1 draws for the DC warning. The Recipe Book is DC 12, so no medal here pays 0 - faking one to show the chip would misrepresent the mechanic, so the rule lives in the logic."
     },
     {
-      "id": "note-lexicon",
-      "x": 0,
-      "y": 2330,
-      "w": 1400,
-      "text": "LEXICON - one vocabulary, everywhere\nPatrol → Invasion. Muster → Defend. Chronicle → Journal. Board → Party. Tier → Area.\n\nRenamed through spec, content schema, engine, curriculum and UI, not only here: at Boss 7 he opens the engine repository and reads area: 3 in the YAML, and it should be the word he has said out loud all year. Area beat Tier because the map is a place. Party beat Levels because level (from XP) and area (from position) are different numbers, and both on screen invites one question with a confusing answer."
-    },
-    {
-      "id": "note-overlay",
+      "id": "note-journal",
       "x": 4560,
-      "y": 1030,
+      "y": 1020,
       "w": 1400,
-      "text": "THE TOME OPENS OVER YOUR WORK — it is never navigated to\nIf looking something up costs a learner the code in his editor, he stops looking things up, and the Tome was the point. So it does not navigate: the quest stays mounted underneath and closing returns to it exactly.\n\nThis costs nothing. The Tome is 264 + 660 + 212 px wide and the content area beside the rail is 1368 — it already fits without going anywhere. It also disposes of the back-button question, because no history entry is created. The bar names what closing returns to, so the way out is on screen rather than in browser chrome.\n\nTWO ACTIONS, TWO WORDS THAT ESCALATE. “Find the Boss” on the area card navigates — read the specification, see the scars, choose a framing, walk away. “Take the Boss” on the boss screen creates boss3/ in his repo and starts the clock, so the committing action gets the stronger verb. Both read true at any state; “Take it cold” and “Rush the boss” did not, and “Open the arena” borrowed a Colosseum this world never built.\n\nThe action also moved onto the boss card. It had been in a sidebar under a heading that said Challenge run — the thing described in one column and acted on in another, which is the same unpredictability. One way in, always the same place."
+      "text": "THE JOURNAL — begins week 1, not week 3\n§5.6 requires him to re-read his own entries from the start of an area before every boss, and calls that the strongest evidence a learner will ever get that he is not stupid. Entries starting in week 3 leave almost nothing to re-read before Boss 1, so the section was undercutting its own best mechanic.\n\nThe git half still arrives at Area 2a on schedule. Until then entries are plain markdown, and the Area 0 and 1 entries become the first real commit in his repository — a better first commit than an empty one.\n\nTen XP an entry, paid for substance rather than existence: the third prompt here is empty and says so. The DM replies to every one, which matters more than the scoring."
     },
     {
-      "id": "note-crumbs",
-      "x": 1520,
-      "y": 2330,
+      "id": "note-conventions",
+      "x": 0,
+      "y": 2320,
       "w": 1400,
-      "text": "BREADCRUMBS ARE THE NAVIGATION — a rule, not a flourish\nAny screen reached through another screen shows the full trail, every ancestor clickable, the current page plain:\n\n    Map › Area 3 · Collections › Quests › The Recipe Book\n\nThe trail is the only way back, so no screen can be one he enters and cannot leave except through browser chrome — unreliable in a single-page app, and not an answer at all for an eleven-year-old. Ancestors are underlined to say they can be clicked. The up-chevron duplicates the second-to-last crumb on purpose: going up one level is the most-used move here and deserves a target he can hit without reading.\n\nRail destinations carry none — they have no ancestor. The Tome carries none either, because it closes rather than navigates, and its bar names what closing returns to."
+      "text": "CONVENTIONS THESE SCREENS COMMIT TO\n\nONE LEXICON, EVERYWHERE. Patrol → Invasion. Muster → Defend. Chronicle → Journal. Board → Party. Tier → Area. Renamed through spec, content schema, engine, curriculum and UI — at Boss 7 he opens the engine repository and reads area: 3 in the YAML, and it should be the word he has said out loud all year.\n\nBREADCRUMBS ARE THE NAVIGATION. Any screen reached through another shows the full trail, every ancestor clickable, the current page plain: Map › Area 3 · Collections › Quests › The Recipe Book. It is the only way back, so no screen can be one he enters and cannot leave except through browser chrome. A crumb names the activity, not the object — “Quests” answers why he would click it.\n\nLABELS NEVER CHANGE WITH STATE. “Find the Boss” and “Take the Boss” read true whether he has cleared none of the quests or four. “Take it cold” was already false on a screen showing three cleared."
     }
   ],
   "launch": {
