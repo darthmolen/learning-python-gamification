@@ -1,6 +1,6 @@
 # The Engine Query Layer, and the Shared Contract
 
-**Status:** Planned
+**Status:** Completed
 **Track:** engine
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
@@ -25,14 +25,14 @@ API**, which serves exactly them.
 
 ## Success Criteria
 
-- [ ] `availableQuests`, `areaProgress`, `bossState`, `dueInvasions`, `standings`, `level`
-- [ ] Still **no I/O, no database, no network, and no clock** — "now" is a parameter (§6.7)
-- [ ] `packages/contract` published, with the SPA's stubs and the API's handlers both
+- [x] `availableQuests`, `areaProgress`, `bossState`, `dueInvasions`, `standings`, `level`
+- [x] Still **no I/O, no database, no network, and no clock** — "now" is a parameter (§6.7)
+- [x] `packages/contract` published, with the SPA's stubs and the API's handlers both
       typed against it
-- [ ] `npm run typecheck` from `pyquest/` builds the new package — root `tsconfig.json`
+- [x] `npm run typecheck` from `pyquest/` builds the new package — root `tsconfig.json`
       references it, or `tsc -b` silently skips it
-- [ ] Every function has a RED capture, a GREEN capture, and a killed mutant
-- [ ] A test asserts no return type carries a presentation field — the §5.1 layer
+- [x] Every function has a RED capture, a GREEN capture, and a killed mutant
+- [x] A test asserts no return type carries a presentation field — the §5.1 layer
       boundary, pinned. The artboards name the real offenders: `accent`, `bg`, `fg`,
       `dcFill`, `markFill`, and `risky`, which is the DC ≥ 20 warning the UI owns
 
@@ -262,3 +262,66 @@ The `standings` scope question it raised was ruled: leaderboard only, with `sour
 `bounties` and `medalTotals` split out as above.
 
 Full review: `planning/needs-review/completed/2026-08-29-the-engine-query-layer-and-the-shared-contract.md`
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** engine
+**Completed:** 2026-08-29
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+- `packages/contract` — schemas in both directions. Payloads for the six queries plus
+  `sources`; progress rows for the three tables the queries read.
+- `packages/engine/src/queries.ts` — `availableQuests`, `areaProgress`, `bossState`,
+  `dueInvasions`, `standings`. `level` was already built on 2026-08-28 and is consumed here.
+- 199 tests across the workspace, `tsc -b` clean from `pyquest/`.
+- **Thirty-three seeded mutants, all killed.** Four survived their first pass and each was the
+  test being wrong rather than the code; the tests were fixed and re-run before this closed.
+
+### Deviations
+
+- **Phase 1 was one-directional as written.** It specified what the API returns and said nothing
+  about what the database hands the engine, while `feature_progress-schema` already depended on
+  this package for "the shapes the repository returns". The input half was added mid-plan.
+- **`standings` gained an `area` parameter.** The signature table said `(items, progress per
+  player)`, but `areaXp` is "xp this area" on the Party artboard and cannot be computed without
+  one. The completion record itself still spans every area, so a player ahead still shows the
+  areas behind.
+- **The engine imports the contract, which the plan originally forbade.** §6.7 forbids I/O, not
+  package references; a type-only import is erased under `verbatimModuleSyntax`, so zod never
+  reaches the engine's runtime path. Value imports are still refused in `src/`, which is why
+  `INVASION_QUEUE_CAP` is restated there rather than imported.
+- **Two files were not in `Files Expected to Change`:** `pyquest/vitest.config.ts`, whose alias
+  map makes a package visible to the suite, and `pyquest/packages/engine/package.json`, which
+  needed the dependency for the type import to resolve.
+- **Two edges the plan did not name, ruled during execution.** An overtaken estimate holds the
+  total at no less than what is cleared, so a partial area never reports "6 of 5"; and a forced
+  review for a concept with no ladder row is skipped rather than thrown, since a ladder row is
+  written when a concept is first taught and a corrupt row should not stop a session.
+- Phase 3's property tests live in `tests/queries.test.ts` beside the examples rather than in a
+  file of their own. They are four `it` blocks in a `properties` describe.
+
+### Lessons Learned
+
+- **A negative test passes vacuously against a module that does not exist.** The first RED
+  reported 8 of 15 "passing", because `expect(() => X.parse(...)).toThrow()` is satisfied by `X`
+  being `undefined`. A resolution-error RED proves the suite runs; it proves nothing about the
+  assertions. Only the mutants did that.
+- **Boundary tests written in terms of the constant they bound prove nothing.** `TOP_RUNG_BOUND`
+  could drift from 4 to 9 with every rung test still green, because the cases were written as
+  `TOP_RUNG_BOUND + 1`. Pin the literal, or assert against the other definition.
+- **The blind spot was where the fixtures were uniform.** §5.10's "only Cleared unlocks anything"
+  survived two mutants because every fixture carrying a medal also carried Cleared. A quest
+  holding Ironman alone — elective depth, no progression — was a case the examples never built.
+- Restating a constant across a dependency boundary is survivable if something holds both at
+  once. `TOP_RUNG_BOUND` against `INVASION_LADDER` is asserted in the engine's suite, the only
+  place both are in scope.
+
+### Backlog Items Created
+
+None. `xpSources` ships its shape in the contract but has no engine function yet; whether it
+lands in the engine or the API is noted in the Approach and belongs to whoever gets there first.
