@@ -1,0 +1,10 @@
+# Spec §5.1a - this is the denominator every progress display reads. `partial` means the
+# total below is an estimate, and the UI must render it with a tilde: "3 of ~5".
+#
+# It stays `partial` even though five quests and a boss are authored, because §5.2 sets
+# five as the shape of an area and not as its ceiling; the estimate becomes a fact when
+# somebody decides Area 1 is finished, and until then a tilde is the honest rendering.
+area: 1
+title: Control
+authoring: partial
+estimatedQuests: 5

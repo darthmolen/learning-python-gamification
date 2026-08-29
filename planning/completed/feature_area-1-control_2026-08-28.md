@@ -1,6 +1,6 @@
 # Area 1 — Control
 
-**Status:** Planned
+**Status:** Completed
 **Track:** area-1
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
@@ -308,3 +308,87 @@ gone wrong.
 
 Also out of scope: making these quests playable in a browser. That is the turtle shim, and
 it is Lane A's.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Completed:** 2026-08-29
+**Completed By:** Claude (Opus 5), on the `area-1` track
+
+### Outcomes
+
+**Area 1 is deliverable.** Ten session plans, thirty exercises, five Datamine payloads, a
+DM guide, a Journal, and a harness that ran. Weeks 3–6 can be taught with a text editor, a
+terminal and Python, whether or not the application exists.
+
+**`py -3.14 verify.py` reports 35 of 35**, on Python 3.14.6, Windows 11 — thirty exercises
+and five reference solutions. The number is recorded in `curriculum/area-1/README.md`.
+
+**`npm run validate:content` exits 0**, 8 items across 2 areas. Five quests, Boss 1, and
+the area manifest; six YAML, six briefs, five starters, five test files, exactly as the
+Files Expected to Change section specifies.
+
+**All thirty hidden tests were proven both ways.** They pass a correct submission written
+in Area 1 vocabulary only, and each quest's signature bug fails it — a turn typed as 60
+passes the hexagon and fails the pentagon, `>= 20` costs the countdown four tests, and a
+refusal that draws anyway, a branch hoisted out of its loop, and `ink = length` are each
+caught. Every assertion is on a computed value: `turtle` is replaced by a recording
+stand-in, so the tests read the side count, the turn angle, the sequence of lengths and
+the accumulator's printed total, and never a pixel.
+
+**The harness's two new checks were seeded with mutants and watched to fail** before being
+trusted, per `test-filter-development`. A grid whose rows went from 4 to 2 was caught at 32
+strokes against a floor of 64; a broken sigil repaired in place was caught as "expected
+IndentationError, ran clean"; a concept tag borrowed from Area 3 was caught by name.
+
+### Deviations, and things the plan did not anticipate
+
+**The worktree started on a pre-review commit.** Work was already under way against the
+draft plan when the revision landed; a rebase onto `main` merged cleanly and four of the
+six revisions touched work already written. All four were fixed in place rather than
+rebuilt: the timeout tag became `# expect: hangs` with `# timeout-seconds:` and
+`# min-strokes:`, twenty-seven files were retagged, the DM guide's per-concept rung table
+was replaced with Area 0's session-grouped shape, and the loose `entries-07-to-16.md`
+became `entry-07-prompt.md` in Area 0's layout.
+
+**Four invasion drills had to be rewritten to make the coverage line true.** Writing out
+the nineteen-concept table found that `if`, `bool`, `print` and a genuine
+comparison-operator question had no drill at all — the table earned its place by catching
+something.
+
+**A runaway turtle program dies before any wall clock fires.** Measured while seeding a
+mutant, not assumed: an unbounded turtle loop fills the Tk canvas until the window is
+destroyed, the process raises `turtle.Terminator`, and the *next* run in the suite can
+fail for want of memory. So the harness's untagged-runaway branch reports a crash rather
+than a timeout for turtle files. It is still a failure with the file's name on it, the
+behaviour is documented in `verify.py`, and it is why the default wall clock is ten
+seconds. The `RuntimeError` branch was exercised separately against a pure-Python
+`while True: pass` to confirm it works at all.
+
+**Area 1's starters are plain scripts, with no `def` and no `__main__` guard.**
+`scaffold.ts` emits both, and `a0-name-tag.py` shipped with both, but `def` is Area 4 and
+`main-guard` is Area 2b. A starter written in vocabulary the learner has not met teaches
+him the real version is out of reach. The starters say so in their docstrings. Whether
+`scaffold.ts` should default differently below Area 4 is a Lane A question and not this
+plan's.
+
+**`elif` and `boolean-operators` came out thinnest, at three exercises each.** Recorded
+honestly in the README with the reason rather than padded out: `if`/`else` covers most of
+what an Area 1 *drawing* needs to decide, and the two thin concepts get busy in Area 3,
+where a rule about a list is where "either of these but not that one" starts happening for
+real.
+
+### Reported to the `main` track
+
+`curriculum/README.md`'s status table is owned by `main`. The row for this area should
+read:
+
+| area-1 | 3–6 | Control — `if`/`while`/`for`, nesting, the accumulator pattern | **authored** |
+
+### Not done here, on purpose
+
+The **turtle-to-canvas Pyodide shim** (§8, Lane A's SPA plan) still gates these quests
+being playable in a browser. It does not gate the hidden tests, which replace `turtle`
+outright and run anywhere Python does.

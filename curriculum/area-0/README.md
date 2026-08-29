@@ -158,19 +158,20 @@ Two notes for whoever builds this:
 
 ---
 
-## The Journal, and a deliberate deviation from the spec
+## The Journal, and why it starts in week 1
 
-Spec §4 says the Journal **begins week 3**. This area starts it in **week 1**, and the
-reason is worth recording rather than hiding.
+Spec §4 and §5.6 both put the first Journal entry in **week 1**, which is where this area
+starts it. The reasoning is recorded here rather than assumed, because the reasoning is
+what says who the Journal is for.
 
 §5.6 defines the Journal as "committed and pushed", and git is Area 2a, week 6. Read
-strictly, the Journal cannot start before the thing that carries it. But §5.6 also
+strictly, the Journal could not start before the thing that carries it. But §5.6 also
 says he rereads his Journal *from the start of that area* before every boss fight, and
-Boss 1 lands at the end of Area 1 — so if entries begin at week 3 the first boss fight
-has almost nothing to reread, which is the one moment §5.6 says the mechanic earns its
-keep.
+Boss 1 lands at the end of Area 1 — so entries beginning any later would leave the first
+boss fight with almost nothing to reread, which is the one moment §5.6 says the mechanic
+earns its keep.
 
-**Resolution: entries start now as plain markdown in a plain folder. The commit-and-push
+**So: entries start now as plain markdown in a plain folder, and the commit-and-push
 half arrives at Area 2a on schedule.** The six Area 0 entries then become the first real
 commit in his repository, which is a considerably better first commit than an empty
 README, and gives the Area 2a session something of his own to put under version control.
