@@ -39,7 +39,13 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
 - [ ] Area 0's and Area 1's Journal entries become the first real commit in his repository
 - [x] `breakpoints` at area 3 exists in `concepts.ts` — **landed by `main` on 2026-08-29**
       (`c90202e`), argued here. This track is no longer gated on it
-- [ ] The stripped VS Code profile ships as a `.code-profile` export, installed in session 2b-1
+- [ ] The stripped VS Code profile ships as a `.code-profile` export **and has been imported
+      on the son's laptop and confirmed working** — the activity bar, minimap, breadcrumbs,
+      status bar, tabs, outline, problems, source control, testing and extensions views are
+      actually gone, `ms-python.python` is present, and a `.py` file runs from the integrated
+      terminal. Verified by importing it, never by reading the JSON
+- [ ] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**,
+      not just Area 2b's rung, so Areas 3, 4, 6 and 7 can find theirs without archaeology
 - [ ] `cd pyquest && npm run validate:content` exits 0 with five `a2-` quests and Boss 2
 - [ ] `py -3.14 verify.py` reports **N of N over the runnable `.py` exercises only**, and the
       README separately carries a completion checklist for the markdown and git walkthroughs
@@ -120,10 +126,10 @@ a bare repository on a USB stick or a LAN share; a second directory on his own l
 three teach `git push` identically. The third is not a compromise on the teaching, only on
 the drama — and it is worth writing the session so the DM can pick one on the night.
 
-### Promote the VS Code backlog item into this plan
+### The VS Code profile, absorbed from the promoted stub
 
-`planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` is Area 2b material —
-its own trigger says "Area 2b, week 7, when VS Code enters the curriculum and the profile has
+`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md` is Area 2b material —
+its own trigger said "Area 2b, week 7, when VS Code enters the curriculum and the profile has
 to exist." Its decision is already made and argued: strip VS Code via an exportable profile
 and un-strip it one rung at a time, rather than build a custom editor.
 
@@ -131,13 +137,28 @@ This plan delivers **the profile and the Area 2b rung only.** Later rungs (Area 
 breakpoints, Area 4 outline, Area 6 extensions, Area 7 problems and source control) are
 authored by their own area plans.
 
-**The stub stays in `planning/backlog/`, with a status note recording that its Area 2b rung
-shipped.** It does not move to `in-progress/` alongside this plan and it does not go to
-`completed/`. Four rungs are still live after this track finishes — Area 3 breakpoints, Area
-4 outline, Area 6 extensions, Area 7 problems and source control — and a stub with four
-unshipped rungs is not a completed item. This track owns the file and is the only one that
-edits it; the later areas ship their rungs and report, the same way they report to `main`
-for the status table.
+**The stub has left `planning/backlog/`, because its trigger fired.** It read *"Area 2b, week
+7, when VS Code enters the curriculum and the profile has to exist"* — and that is this plan.
+A backlog item whose trigger has fired is promoted, not annotated. It now sits at
+`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md`, completed **as a
+planning item**: the decision is made and assigned, and the artifact is this plan's to build.
+
+It is **absorbed here rather than promoted to its own track**, and the reason is mechanical:
+this plan already claims `curriculum/area-2/vscode-profile/` in Files Expected to Change, so
+a separate plan would collide on the exact file it exists to produce. It becomes Phase 3.
+
+**The profile is a prerequisite for teaching this area, not a nice-to-have.** Session 6 is
+`vscode`, and the stub's whole argument is that VS Code's defaults are hostile to a
+11-14-year-old — activity bar, minimap, problems panel, extension prompts. Teaching session
+6 against stock defaults is not a reduced version of this area; it is the thing the decision
+rejected. **Area 2 is not ready to be taught until the profile has been imported on his
+laptop and confirmed working**, which is why that is a success criterion above and not a
+line in a phase.
+
+Its four later rungs — Area 3 breakpoints, Area 4 outline, Area 6 extensions, Area 7 problems
+and source control — are already carried by those areas' own plans and stubs. To stop the
+ladder living only in scattered references, Phase 3 writes it out in full in
+`curriculum/area-2/vscode-profile/README.md`, next to the profile it un-strips.
 
 **The `concepts.ts` edit — argued here, landed by `main`.** The stub's open decision is
 settled here: register **`breakpoints` at area 3** for stepping and the Variables panel,
@@ -289,6 +310,28 @@ status bar, editor tabs, outline, problems, source control, testing, extensions.
 extension — `ms-python.python`, which brings `debugpy`. Running a file needs no extension;
 stepping through one does, and that rung is Area 3's.
 
+**Import it on his laptop and confirm it, before session 6 is written.** An exported profile
+is a JSON blob and reading one proves nothing — VS Code silently ignores settings it does not
+recognise, and a profile that exports cleanly can import into a UI that still shows every
+panel the strip was meant to remove. So: import, look, and check the list. Every hidden view
+actually hidden, `ms-python.python` present, and a `.py` file running from the integrated
+terminal. **This is the step that makes Area 2 teachable**, and it is an hour of work
+according to the stub, so there is no reason for it to be the thing that slips.
+
+Then `curriculum/area-2/vscode-profile/README.md`, carrying **the full ladder**, not just
+this area's rung:
+
+| Restored | At | Because |
+|---|---|---|
+| Breakpoints, Run and Debug | Area 3 | nested loops and dict iteration are where stepping becomes revelatory |
+| Outline, breadcrumbs | Area 4 | files gain functions worth navigating between |
+| Extensions view | Area 6 | `dependencies` enters the curriculum |
+| Problems panel | Area 7 | ruff and pyright, and the Idiomatic medal |
+| Source control view | Area 7 | after the git commands are muscle memory, so the GUI is a convenience and never a crutch |
+
+The ladder is currently spread across five plans and stubs. Writing it once, beside the
+profile it modifies, is what stops a later area restoring the wrong rung or missing one.
+
 **This phase gates Phase 4.** It can be authored in parallel with the 2a sessions, but
 session 6 *is* the VS Code session and sessions 5–8 cannot be finalised against a profile
 that does not exist yet.
@@ -330,16 +373,25 @@ session is written to say *his entries*, never a count, so it does not go stale 
   `git-signal` quest and the "board updates by itself" moment. Named, not absorbed.
 - **Lane A Phase 1.5** (Gitea, `git-signal`, Journal) is what makes the `git-signal` quests
   actually fire. The `content/` YAML can be authored ahead of it and simply sits inert.
-- The son's laptop needs VS Code installed before session 2b-1.
+- **The son's laptop, with VS Code installed, is needed during Phase 3 — not at session
+  2b-1.** The profile has to be imported and confirmed on the machine it is for, and that
+  cannot be done from the parent's desk. This is the same shape as the world shim's
+  requirement to measure framerate on the son's laptop rather than the RTX 5090: an artifact that
+  has only been authored has not been verified.
 
 ## Files Expected to Change
 
 - `curriculum/area-2/**` — new, both halves
-- `curriculum/area-2/vscode-profile/` — the exportable profile and its install note
+- `curriculum/area-2/vscode-profile/pyquest-area2.code-profile` — the artifact, exported from
+  VS Code and confirmed by importing it on the son's laptop
+- `curriculum/area-2/vscode-profile/README.md` — the install and import steps, and the full
+  un-stripping ladder for Areas 3, 4, 6 and 7
 - `content/areas/area-2.yml` — new
 - `content/quests/a2-*.yml` + briefs, tests — new, six items
-- `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` — status note.
-  **This track owns the stub**; Area 3 ships its own rung but does not edit this file
+The VS Code stub is **not** in this list. It was promoted out of `backlog/` to
+`planning/completed/feature_vscode-profile-and-tool-quests_2026-08-28.md` on 2026-08-29, when
+its trigger fired, and its Status block records that its Area 2b rung is this plan's Phase 3.
+This track inherits the work, not the file.
 
 **Owned by `main`, not this track:** `curriculum/README.md`, and
 `pyquest/packages/content/src/concepts.ts` — the `breakpoints` line this plan argues for is

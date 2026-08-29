@@ -1,6 +1,6 @@
 # The Stripped VS Code Profile, and Tool Quests
 
-**Status:** Backlog
+**Status:** Completed as a planning item — the work is Area 2 Phase 3
 **Date Discovered:** 2026-08-28
 **Discovered During:** the UI design session for `feature_phase0-tier0-foundation_2026-08-27.md`
 
@@ -75,3 +75,74 @@ bug the Quest screen prototype already uses.
 **Area 2b, week 7**, when VS Code enters the curriculum and the profile has to exist.
 Authoring the profile is an hour; the ladder is authored per-area alongside the quests
 that unlock each rung.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Completed:** 2026-08-29
+**Completed By:** Claude (Opus 5)
+
+**Completed as a planning item, not as an artifact.** The `.code-profile` does not exist
+yet. What is finished is the thing a backlog stub is for: the decision is made, argued, and
+assigned to a track with a verification step attached.
+
+### Outcomes
+
+The Trigger for Promotion below reads *"Area 2b, week 7, when VS Code enters the curriculum
+and the profile has to exist."* That fired on 2026-08-29 when Area 2 was planned, so this
+leaves `backlog/` rather than sitting there annotated.
+
+**Absorbed into `planning/feature_area-2-scribes-rite-and-sandbox_2026-08-28.md` rather than
+promoted to its own track**, for a mechanical reason: Area 2 already claims
+`curriculum/area-2/vscode-profile/` in its Files Expected to Change, so a separate plan would
+have collided on the exact file it existed to produce. It is that plan's **Phase 3**.
+
+What Area 2 now carries that this stub could not:
+
+- The artifact is named — `pyquest-area2.code-profile`, exported with *Profiles: Export
+  Profile*, imported with *Profiles: Import Profile*.
+- **It must be imported on the son's laptop and confirmed working** before session 6 is
+  written — every hidden view actually hidden, `ms-python.python` present, a `.py` file
+  running from the integrated terminal. Verified by importing it, never by reading the JSON,
+  because VS Code silently ignores settings it does not recognise and a profile can export
+  cleanly and import into a UI that still shows everything.
+- Phase 3 gates Phase 4, since session 6 *is* the VS Code session.
+- **Area 2 is not ready to be taught until this passes**, stated as a success criterion
+  rather than a phase step. Teaching session 6 against stock defaults is not a reduced
+  version of the area; it is the thing this stub's decision rejected.
+
+The open decision here — `breakpoints` at Area 3 for stepping, `debugger` at Area 7 for the
+deep pass — was settled and **landed** on 2026-08-29 by
+`planning/completed/feature_shared-index-and-concepts_2026-08-29.md` (`d3eb9f7`, `c90202e`).
+The validator's `concept-above-area` rule no longer blocks an Area 3 debugging quest.
+
+### Deviations
+
+An earlier draft of Area 2 said this stub would *stay* in `backlog/` with a status note,
+reasoning that four unshipped rungs meant it was not complete. That conflated the stub with
+the ladder. The stub is a planning item and its planning is done; the ladder is teaching
+content and belongs with the profile.
+
+So the ladder is not left in this document. Phase 3 writes it out in full in
+`curriculum/area-2/vscode-profile/README.md`, beside the profile it un-strips, where a later
+area looks. It is currently spread across five plans and stubs, which is how a rung gets
+missed or restored in the wrong area.
+
+### Lessons Learned
+
+**A backlog item whose trigger has fired is promoted, not annotated.** The trigger is the
+mechanism; leaving the item in place because some part of it reaches further out is how a
+board stops describing reality.
+
+**"Ships as an export" is an authoring claim, not a verification.** The first pass at Area 2
+said the profile ships as a `.code-profile` and stopped there — the same defect the world
+shim plan avoids by demanding measured framerate on the son's laptop rather than a shim that exists.
+An artifact that has only been authored has not been verified, and this one is an hour of
+work, so there is no reason for it to be the step that slips.
+
+### Backlog Items Created
+
+None. The four later rungs are carried by the Area 3, 4, 6 and 7 plans and stubs, and are
+now also written out in one place by Area 2's Phase 3.

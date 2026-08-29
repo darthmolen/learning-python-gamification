@@ -210,3 +210,70 @@ already did it.
 
 Making these playable in a browser. Ursina needs a real OpenGL context and Pyodide has none.
 Area 3 is `local-repo` and that is the design, not a limitation.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-29 10:26
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- **Objective / The vehicle carries the ordering:** Strong motivation-adjusted sequencing grounded in the spec's "next concept becomes necessary" rule.
+- **The shim, and the hard authoring cap:** Correctly treats the `world` API and laptop cap as load-bearing prerequisites, not nice-to-haves.
+- **Verifiers — `local-repo` from here on:** Aligns with spec and the curriculum's permanent exit from the sandbox.
+- **Files Expected to Change / ownership note:** Correctly keeps `curriculum/README.md` on `main` and the VS Code stub on `area-2`.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Approach / VS Code rung — stale prerequisite language**
+  - What's wrong: Plan says `breakpoints` "must already exist" and warns "if it is missing, this plan is blocked." Review confirmed `breakpoints` is already present in `concepts.ts`.
+  - Why it matters: The contingency block is stale and may confuse implementers.
+  - Suggested fix: Rewrite this gate to note the prerequisite is satisfied, and remove the "if missing, stop" contingency.
+
+- **Dependencies / Phase 1 — block cap blocker has no stop/go rule**
+  - "Confirm the measured block cap before any exercise is written" is a hard gate, but the plan does not say what to do if `feature_world-shim_2026-08-28.md` is still only Planned.
+  - Why it matters: Implementers cannot tell whether to pause entirely or draft non-placement material.
+  - Suggested fix: Add explicit rule: no world-touching exercises or quests before the measurement lands; DM guide skeleton, README outline, and non-placement session outlines may proceed.
+
+#### Important (Should Address)
+
+- **Success Criteria / Phase 4 — no quest/concept/DC matrix**
+  - Seven items (five quests + boss + breakpoints quest) with no concept allocation, DC band, or verifier type per item.
+  - Suggested fix: Add a quest matrix naming each item's primary concepts, resurfaced concepts, verifier type, and target DC.
+
+- **Phase 2 [ASYNC internally] — partial independence only**
+  - Sessions 1–7 and 8–13 share concept resurfacing, verify conventions, and quest beats spanning both halves.
+  - Suggested fix: Define the shared contract first — session count, quest beats, concept resurfacing map, DC band, and `world` usage rules — before splitting work.
+
+- **`verify.py` headless execution contract unspecified**
+  - Describes what to assert but not how exercises avoid/intercept `start()`/`app.run()`.
+  - Suggested fix: Specify the harness contract — e.g., monkeypatching `world.start`, importing exercises under test, or authoring exercises to expose a callable `verify.py` invokes.
+
+- **Success Criteria / no raw Ursina — enforcement implicit**
+  - "A single `Entity(` … is a failure" is stated but not enforced.
+  - Suggested fix: Require `verify.py` or a grep-based author check to fail on `Entity(` / `from ursina` in the exercises directory.
+
+#### Minor (Consider)
+
+- **Session count:** "Twelve to fifteen sessions" is a wide range. Narrow to a target with an allowed fallback (e.g., 13 default, 12–14 only by explicit merge/split).
+- **Invasion drill prioritisation:** 39 concepts flagged as heavy but "prioritise rather than pretend" is not actionable. Specify a prioritisation rule.
+- **`curriculum/lib/` ownership:** Implied to be created by the shim plan. State explicitly that Area 3 assumes `curriculum/lib/world.py` exists before any exercise is written.
+- **Shim API scope:** Naming likely out-of-scope features (rotations, deletes, colors, camera movement) would prevent Area 3 authors from designing into unsupported needs.
+
+### Recommendations
+
+1. Update the stale `breakpoints` prerequisite language.
+2. Add an explicit stop/go rule for the unmeasured block cap.
+3. Add a quest/concept/DC coverage table.
+4. Specify the `verify.py` headless execution contract.
+5. Add an automated check for raw Ursina usage.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The curriculum shape is strong and largely spec-aligned, but the prerequisite state is partly stale and the main operational contracts — cap gating, quest coverage, and headless verification — need sharper wording before execution.
