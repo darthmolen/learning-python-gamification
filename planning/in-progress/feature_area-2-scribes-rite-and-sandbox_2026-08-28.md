@@ -1,6 +1,6 @@
 # Area 2 — The Scribe's Rite, and Escape the Sandbox
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** area-2
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
