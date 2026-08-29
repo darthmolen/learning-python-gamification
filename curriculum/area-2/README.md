@@ -32,8 +32,8 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 | `dm-guide.md` | **complete**, covering all eight sessions |
 | Sessions 1–4 (2a) and their exercises | **complete** |
 | `verify.py` | **complete**, 4 of 4 |
-| `vscode-profile/README.md` — install, checklist, full ladder | **complete** |
-| `vscode-profile/pyquest-area2.code-profile` | **authored, NOT VERIFIED** |
+| `tools/vscode/README.md` — install, checklist, full ladder | **complete** |
+| `tools/vscode/pyquest-area2.code-profile` | **authored, NOT VERIFIED** |
 | Sessions 5–8 (2b) and their exercises | **not written** |
 | `reference/` payloads for 2b | **not written** |
 | `content/` — five quests and Boss 2 | **complete**, `validate:content` exits 0 |
@@ -43,7 +43,7 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 1. **The VS Code profile has not been imported on the son's laptop.** Session 6 is the VS
    Code session, and the entire argument for a stripped profile is that stock defaults are
    what is being rejected. An exported profile is a JSON blob and reading one proves
-   nothing. Work the checklist in `vscode-profile/README.md` §4 on that machine.
+   nothing. Work the checklist in `tools/vscode/README.md` §4 on that machine.
 2. **Sessions 5–8 cannot be finalised against a profile that does not exist**, so they
    wait on (1).
 
@@ -54,7 +54,7 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 1. **`dm-guide.md`** — the load-bearing document, as in Area 0. Read it before session 1.
    §3 (settle the remote) has to be done before session 4, and §7 (the cold clone) before
    Boss 2.
-2. **`vscode-profile/README.md`** — before session 6, and its checklist worked on his
+2. **`tools/vscode/README.md`** — before session 6, and its checklist worked on his
    laptop well before that.
 3. **`sessions/session-1-what-a-repository-is.md`** — then one per session, on the night.
 4. **`exercises/README.md`** — how the walkthroughs and the four Python files fit together.
@@ -170,7 +170,7 @@ Area 2's fourteen concepts, and where each one is actually taught.
 | `git-push` | 2a | 4 | `w4_push_and_prove_it.md` | yes |
 | `files-on-disk` | 2b | 5 | — | **not yet** |
 | `running-scripts` | 2b | 5, 7 | — | **not yet** |
-| `vscode` | 2b | 6 | `vscode-profile/` (unverified) | **not yet** |
+| `vscode` | 2b | 6 | `tools/vscode/` (unverified) | **not yet** |
 | `venv` | 2b | 7 | — | **not yet** |
 | `pip` | 2b | 7 | — | **not yet** |
 | `tracebacks` | 2b | 8 | — | **not yet** |
@@ -314,9 +314,9 @@ area-2/
     session-3/  w3_the_log_as_a_story.md, streak.py
     session-4/  w4_push_and_prove_it.md, receipt.py
   reference/             Datamine payloads. Near-empty for 2a, and it says why
-  vscode-profile/
-    pyquest-area2.code-profile   the strip. NOT YET VERIFIED
-    README.md                    install, the son's laptop checklist, the full ladder
 ```
 
 No `journal/`. See **The Journal, and where it goes** above.
+
+No `vscode-profile/` either — the profile and its ladder live at `tools/vscode/`,
+with every other thing a machine needs installed on it. Session 6 points there.

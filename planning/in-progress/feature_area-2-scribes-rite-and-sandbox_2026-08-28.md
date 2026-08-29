@@ -44,7 +44,7 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
       status bar, tabs, outline, problems, source control, testing and extensions views are
       actually gone, `ms-python.python` is present, and a `.py` file runs from the integrated
       terminal. Verified by importing it, never by reading the JSON
-- [x] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**
+- [x] `tools/vscode/README.md` carries the **whole un-stripping ladder**
       — all five rungs, not just Area 2b's — **and the rule for how a rung ships**: a quest
       with a `peer-signoff` verifier, no new machinery, teach-back on top. Areas 3, 4, 6 and
       7 must be able to author their rung from this file alone, without opening an archived
@@ -146,7 +146,7 @@ has been thought about, only when the thing exists. `curriculum/area-2/` does no
 and neither does the `.code-profile`.
 
 It is **absorbed here rather than promoted to its own track**, and the reason is mechanical:
-this plan already claims `curriculum/area-2/vscode-profile/` in Files Expected to Change, so
+this plan already claims `tools/vscode/` in Files Expected to Change, so
 a separate plan would collide on the exact file it exists to produce. It becomes Phase 3, and
 when Phase 3 ships the stub moves straight to `completed/` without ever being promoted.
 
@@ -161,7 +161,7 @@ line in a phase.
 Its four later rungs — Area 3 breakpoints, Area 4 outline, Area 6 extensions, Area 7 problems
 and source control — are already carried by those areas' own plans and stubs. To stop the
 ladder living only in scattered references, Phase 3 writes it out in full in
-`curriculum/area-2/vscode-profile/README.md`, next to the profile it un-strips.
+`tools/vscode/README.md`, next to the profile it un-strips.
 
 **The `concepts.ts` edit — argued here, landed by `main`.** The stub's open decision is
 settled here: register **`breakpoints` at area 3** for stepping and the Variables panel,
@@ -323,7 +323,7 @@ The Journal migration lands here.
 
 A **`.code-profile`** file, produced by VS Code's own *Profiles: Export Profile* command and
 installed with *Profiles: Import Profile*. One artifact, checked into
-`curriculum/area-2/vscode-profile/`, so his laptop is set up by importing a file rather than
+`tools/vscode/`, so his laptop is set up by importing a file rather than
 by twenty minutes of settings-toggling on a school night.
 
 Visible: explorer, editor, integrated terminal. Hidden: activity bar, minimap, breadcrumbs,
@@ -339,7 +339,7 @@ actually hidden, `ms-python.python` present, and a `.py` file running from the i
 terminal. **This is the step that makes Area 2 teachable**, and it is an hour of work
 according to the stub, so there is no reason for it to be the thing that slips.
 
-Then `curriculum/area-2/vscode-profile/README.md`, carrying **the full ladder**, not just
+Then `tools/vscode/README.md`, carrying **the full ladder**, not just
 this area's rung:
 
 | Restored | At | Because |
@@ -365,7 +365,7 @@ Without that line, the Area 4, 6 and 7 authors have to open an archived backlog 
 learn their rung requires no verifier work — and by then it will be in `completed/`. Area 3
 only avoided this by restating the mechanism inline in its own plan. Putting it in the
 curriculum artifact makes the ladder self-contained: a later area reads
-`curriculum/area-2/vscode-profile/README.md` and needs nothing else.
+`tools/vscode/README.md` and needs nothing else.
 
 **This phase gates Phase 4.** It can be authored in parallel with the 2a sessions, but
 session 6 *is* the VS Code session and sessions 5–8 cannot be finalised against a profile
@@ -417,10 +417,19 @@ session is written to say *his entries*, never a count, so it does not go stale 
 ## Files Expected to Change
 
 - `curriculum/area-2/**` — new, both halves
-- `curriculum/area-2/vscode-profile/pyquest-area2.code-profile` — the artifact, exported from
+- `tools/vscode/pyquest-area2.code-profile` — the artifact, exported from
   VS Code and confirmed by importing it on the son's laptop
-- `curriculum/area-2/vscode-profile/README.md` — the install and import steps, and the full
+- `tools/vscode/README.md` — the install and import steps, and the full
   un-stripping ladder for Areas 3, 4, 6 and 7
+
+  **`tools/` is `main`'s directory, and this is a shared-file exception granted for the
+  duration of this track only.** It was created on 2026-08-29, after this plan went to
+  `in-progress/`, to hold what each machine needs installed — the answer used to be smeared
+  across twelve files. `tools/vscode/` moved out of `curriculum/area-2/vscode-profile/`
+  because it is machine provisioning rather than teaching material, and because Areas 3, 4,
+  6 and 7 each restore a rung from it. This track finishes what it started; **after that,
+  `tools/vscode/` reverts to `main`** on the same rule as `curriculum/README.md`'s status
+  table: areas report their rung, `main` writes it. No later area track edits it directly.
 - `content/areas/area-2.yml` — new
 - `content/quests/a2-*.yml` — new, **six**: five quests plus Boss 2
 - `content/briefs/a2-*.md` — new, **six**: every item has a brief
@@ -495,7 +504,7 @@ verified would have defeated the entire point of the criterion.
   concepts are taught rather than rounding up, and ships the walkthrough completion checklist
   **unticked**: they were authored against the commands they teach, and authoring is not
   following.
-- `curriculum/area-2/vscode-profile/README.md` — install, the son's laptop checklist, the whole
+- `tools/vscode/README.md` — install, the son's laptop checklist, the whole
   five-rung ladder, and the rung rule verbatim.
 - `content/` — six YAML, six briefs, **two** tests, **no** starters. `validate:content`
   exits 0, 8 items across 2 areas.
@@ -519,7 +528,7 @@ committed `.venv`; both caught.
 ### Blocked, and exactly what remains
 
 **One sitting at the son's laptop, with VS Code installed.** Work
-`curriculum/area-2/vscode-profile/README.md` §4:
+`tools/vscode/README.md` §4:
 
 1. Import `pyquest-area2.code-profile` (*Profiles: Import Profile*).
 2. Hide by hand the five views that are **not settings** — Outline, Problems, Source Control,

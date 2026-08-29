@@ -83,11 +83,11 @@ Phase 3.** That plan names the artifact (`pyquest-area2.code-profile`, exported 
 *Profiles: Export Profile*), requires it to be **imported on the son's laptop and confirmed
 working** rather than merely authored, gates its Phase 4 on it, and makes it a success
 criterion — Area 2 is not ready to be taught until the profile passes. Phase 3 also writes
-the full un-stripping ladder into `curriculum/area-2/vscode-profile/README.md`.
+the full un-stripping ladder into `tools/vscode/README.md`.
 
 Nothing here needs its own planning session any more. **Do not re-plan this item**, and do
 not open a separate track for it: Area 2 already claims
-`curriculum/area-2/vscode-profile/`, so a second plan would collide on the exact file it
+`tools/vscode/`, so a second plan would collide on the exact file it
 existed to produce.
 
 ## Trigger for Promotion
@@ -100,11 +100,11 @@ ladder, and not before.
 **Status as of 2026-08-29, evening.** Area 2's Phase 3 has shipped its authoring half and
 is stopped at its verification half:
 
-- `curriculum/area-2/vscode-profile/README.md` — **done.** Install steps, the son's laptop
+- `tools/vscode/README.md` — **done.** Install steps, the son's laptop
   verification checklist, the whole five-rung ladder, and the rule for how a rung ships.
   Areas 3, 4, 6 and 7 can author their rung from that file alone and no longer need to
   open this stub.
-- `curriculum/area-2/vscode-profile/pyquest-area2.code-profile` — **exists, and is not
+- `tools/vscode/pyquest-area2.code-profile` — **exists, and is not
   verified.** It is hand-authored in VS Code's export shape, not produced by *Profiles:
   Export Profile*, because the son's laptop was not available. It carries a NOT YET
   VERIFIED banner.
