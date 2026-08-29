@@ -1,0 +1,12 @@
+id: a0-the-perimeter
+title: "The Perimeter"
+kind: quest
+area: 0
+concepts: [variables, int, print]
+dc: 8                # XP and the risk label both derive from this (§5.1)
+brief: briefs/a0-the-perimeter.md
+
+verifier:
+  type: hidden-tests
+  starter: starters/a0-the-perimeter.py
+  tests: tests/a0-the-perimeter_test.py

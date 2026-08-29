@@ -1,10 +1,26 @@
 # Area 0 Quest Backfill
 
-**Status:** Backlog — **partly unblocked; see the split below**
+**Status:** In Progress — the three unblocked quests only; see Trigger for the rest
 **Track:** area-0
 **Date Discovered:** 2026-08-28
 **Discovered During:** the Lane B planning session that produced
 `planning/feature_area-1-control_2026-08-28.md` and its three siblings
+
+## Objective
+
+Author the three Area 0 quests that need nothing from Lane A — `s2e1`, `s4e1`, `s5e1` — so
+the campaign map stops reading `1 of ~5` for an area that has been taught since week 1.
+
+## Success Criteria
+
+- [ ] Three `a0-` quests: YAML, brief, starter and hidden tests each
+- [ ] `cd pyquest && npm run validate:content` exits 0
+- [ ] Every hidden test asserts on a **computed value or stdout, never on a picture**
+- [ ] Tests run with `turtle` and `tkinter` unavailable — the runner is `python:3.14-alpine`
+      and has neither. Proven by running them with both blocked at import
+- [ ] Each test proven **both ways**: it passes a correct solution and fails the specific
+      wrong answer the exercise is designed to catch
+- [ ] `content/areas/area-0.yml` left `partial` — see the note on the manifest below
 
 ## Context
 
@@ -99,3 +115,64 @@ wrong*, and the curriculum README already rules it `peer-signoff` for that reaso
 
 *The path and phase in this trigger were both stale until 2026-08-29: the SPA plan has been
 renamed to `-v2` and moved to `in-progress/`, and the turtle shim is its Phase 4, not Phase 3.*
+
+---
+
+## Status — 2026-08-29, the three unblocked quests are done
+
+**Startable-today scope complete. The gated scope is untouched and still gated.**
+
+### Delivered
+
+| id | DC | Concepts | Catches |
+|---|---|---|---|
+| `a0-the-perimeter` | 8 | `variables`, `int`, `print` | a typed perimeter — 360 is right at height 60 and wrong at 50 |
+| `a0-the-type-lab` | 12 | `int`, `float`, `str`, `bool`, `print`, `variables` | `/` where `//` was wanted, an unconverted `type()`, a placeholder left in |
+| `a0-ask-and-draw` | 12 | `input`, `str`, `int`, `f-strings`, `variables`, `print` | the session-5 bug — `forward()` handed a `str` straight off `input()` |
+
+Six files each: YAML, brief, starter, hidden tests. `content/` is now **17 items across 3
+areas**, up from 14.
+
+### Verified, not asserted
+
+```console
+cd pyquest && npm run validate:content    OK, 17 items across 3 areas, exit 0
+ruff check content/tests/a0-*.py content/starters/a0-*.py   All checks passed!
+pyright  (--pythonpath, per tools/python/)                  0 errors
+```
+
+Every test proven **both ways**, against real solutions and against the specific wrong
+answer its exercise is designed to catch — 5, 7 and 5 passing on correct submissions, and
+each failing the intended mistake.
+
+**And proven headless.** The runner is `python:3.14-alpine` (§6.6) with neither tkinter nor
+a display. All three suites were run with `turtle` *and* `tkinter` blocked at import by a
+`sys.meta_path` hook, and all three pass — so `import turtle` in a submission resolves to
+the stub, never to the real module.
+
+### Two findings
+
+**The `TurtleSpy` pattern is Area 1's, and it is load-bearing rather than convenient.**
+Without it these quests could not be verified at all: Area 0's exercises all draw, and the
+runner cannot import turtle. It is now used by eight quests across two areas and deserves
+naming as the house pattern for any drawing quest.
+
+**A test that coerces the value cannot catch a type error.** The first draft of
+`a0-ask-and-draw` asserted `firsts("forward") == [150.0, ...]`, and the session-5 bug —
+`forward(answer)` with `answer` a `str` — passed it, because `float("150") == 150.0`. Caught
+only by running the wrong solution and finding two failures where three were expected. The
+test now asserts on the argument's **type**, and the helper carries a comment saying why
+coercing elsewhere is safe.
+
+### Deviations
+
+`content/starters/a0-the-type-lab.py` carries two `# noqa: UP003`. Ruff wants
+`type("120")` rewritten as `str`, which would hand the learner the answer — asking `type()`
+what a literal is *is* the exercise. Suppressed narrowly, with the reason in the file.
+
+### Still gated, unchanged
+
+- **`b1`–`b6`**, on whether `hidden-tests` can assert on a traceback. Unchecked.
+- **Browser play for all of these**, on SPA Phase 4's turtle shim.
+- `content/areas/area-0.yml` stays `authoring: partial` — five is the shape of an area, not
+  its ceiling, and `complete` is a decision somebody makes.
