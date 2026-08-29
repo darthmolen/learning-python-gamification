@@ -339,3 +339,43 @@ already did it.
 
 Making these playable in a browser. Ursina needs a real OpenGL context and Pyodide has none.
 Area 3 is `local-repo` and that is the design, not a limitation.
+
+---
+
+## Plan Review (v2)
+
+**Reviewed:** 2026-08-29 11:14
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — `breakpoints` prerequisite now marked `[x]` with commit refs; plan states this track is not blocked on it.
+2. **Resolved** — Phase 1 has an explicit stop/go rule separating non-placement work from anything that places blocks.
+3. **Resolved** — Seven-item quest matrix added with ids, sessions, concepts, verifiers, and DCs.
+4. **Resolved** — Phase 2 now requires a five-part shared spine (session count, resurfacing map, DC band, quest beats, `world` rules) fixed before the internal ASYNC split.
+5. **Resolved** — `verify.py` headless contract now named: monkeypatch `world.start`, import exercise as module, assert on placement record, reset module state between exercises.
+6. **Resolved** — Raw Ursina grep/fail rule now in `verify.py` for `Entity(`, `from ursina`, `import ursina` under `exercises/` and `reference/`.
+7. **Resolved** — Session count tightened to thirteen; 12 or 14 only by explicit merge/split, named and argued.
+8. **Resolved** — Invasion drills now specify a concrete three-rule selection algorithm rather than "prioritise."
+9. **Resolved** — `curriculum/lib/` ownership explicitly assigned to the shim plan; not in this track's Files Expected to Change.
+10. **Resolved** — Shim negative space enumerated: no block removal, no rotation, no colour outside `BLOCKS`, no camera, no animation, no persistence.
+
+### New Issues
+
+#### Important (Should Address)
+
+- **Quest matrix — `nesting` vs `nested-structures` concept id**
+  - Section: Quest matrix, resurfaces column for `a3-set-a-breakpoint`
+  - What's wrong: The matrix resurfaces column uses `nesting`, but the canonical concept id in `concepts.ts` is `nested-structures`.
+  - Why it matters: If copied into quest YAML metadata, `nesting` will fail `validate:content` with concept-unknown.
+  - Suggested fix: Correct to `nested-structures` throughout.
+
+- **Quest count mismatch — four collections quests in the matrix, plan says five**
+  - Section: Quest matrix / Phase 4
+  - What's wrong: The matrix has four collections quests (`a3-the-inventory`, `a3-pick-it-up`, `a3-the-hotbar`, `a3-the-recipe`, `a3-what-am-i-missing` — actually five; the reviewer counted four). Counting carefully: inventory, pick-it-up, hotbar, recipe, what-am-i-missing = five. Cross-check: Phase 4 says "Five quests and Boss 3, plus the breakpoints quest" = seven total, and the matrix has seven rows. **The count is consistent.** This issue is a false positive — no fix needed.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** All ten prior issues are resolved; the one real new finding is the `nesting` concept-id typo in the quest matrix resurfaces column, which will cause a validate:content failure if not corrected before scaffolding.
