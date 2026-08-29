@@ -44,13 +44,13 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
       status bar, tabs, outline, problems, source control, testing and extensions views are
       actually gone, `ms-python.python` is present, and a `.py` file runs from the integrated
       terminal. Verified by importing it, never by reading the JSON
-- [ ] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**
+- [x] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**
       — all five rungs, not just Area 2b's — **and the rule for how a rung ships**: a quest
       with a `peer-signoff` verifier, no new machinery, teach-back on top. Areas 3, 4, 6 and
       7 must be able to author their rung from this file alone, without opening an archived
       backlog stub
-- [ ] `cd pyquest && npm run validate:content` exits 0 with **five quests plus Boss 2 (six items total)**
-- [ ] `py -3.14 verify.py` reports **N of N over the runnable `.py` exercises only**, and the
+- [x] `cd pyquest && npm run validate:content` exits 0 with **five quests plus Boss 2 (six items total)**
+- [x] `py -3.14 verify.py` reports **N of N over the runnable `.py` exercises only**, and the
       README separately carries a completion checklist for the markdown and git walkthroughs
 - [ ] Area 2 reported to the `main` track for the `curriculum/README.md` status table
 
@@ -460,3 +460,114 @@ The later VS Code un-stripping rungs. Area 2b restores nothing; it ships the str
 and the ladder is authored per-area from Area 3 onward.
 
 Any hook, linter or CI on **his** repository. §7 reason 3 is explicit and this is week 6.
+
+## Status
+
+**In Progress — stopped at the son's laptop gate. 2026-08-29.**
+
+**Why this is not Completed.** Phase 3 requires importing the VS Code profile on the son's
+laptop and confirming it works. That laptop was not available. The plan makes that a success
+criterion rather than a nicety — *Area 2 is not ready to be taught until the profile passes* —
+and Phase 3 gates Phase 4, so sessions 5–8 are not written either. Claiming the profile
+verified would have defeated the entire point of the criterion.
+
+### Done
+
+| Phase | State |
+|---|---|
+| **1 — DM guide and the remote decision** | complete |
+| **2 — 2a sessions 1–4, exercises, `verify.py`** | complete |
+| **3 — profile: authoring half** | complete; **verification half blocked** |
+| **4 — 2b sessions 5–8** | **not started** — gated on Phase 3 |
+| **5 — content items** | complete |
+| **6 — verify and README** | complete for what exists; README carries the authoring status |
+
+- `curriculum/area-2/dm-guide.md` — all eight sessions' stalls, the three-option remote
+  decision with the commands for each, and Boss 2's cold-clone checklist written as the
+  sign-off it is. Option C (a bare repo on his own laptop) is named as legal for session 4
+  and illegal for Boss 2, because the boss needs a second machine.
+- `curriculum/area-2/sessions/` — sessions 1–4.
+- `curriculum/area-2/exercises/` — four git walkthroughs, four runnable `.py` files, and the
+  `.gitignore` shipped as `gitignore.txt` to be renamed (a real dotfile there would change
+  what *this* repository ignores).
+- `curriculum/area-2/verify.py` — **4 of 4, exit 0.** `ruff check curriculum/area-2/` passes.
+- `curriculum/area-2/README.md` — opens with an authoring status that says seven of fourteen
+  concepts are taught rather than rounding up, and ships the walkthrough completion checklist
+  **unticked**: they were authored against the commands they teach, and authoring is not
+  following.
+- `curriculum/area-2/vscode-profile/README.md` — install, the son's laptop checklist, the whole
+  five-rung ladder, and the rung rule verbatim.
+- `content/` — six YAML, six briefs, **two** tests, **no** starters. `validate:content`
+  exits 0, 8 items across 2 areas.
+
+### Verification actually performed
+
+```
+py -3.14 verify.py                        4 of 4 runnable exercises behaved as tagged.  exit 0
+ruff check curriculum/area-2/             All checks passed!                            exit 0
+cd pyquest && npm run validate:content    OK  8 items across 2 areas                    exit 0
+pytest content/tests/a2-*_test.py         RED 8 failed / GREEN 12 passed / mutants 2 failed
+```
+
+Nothing was claimed that was not run. The harness was driven through **six seeded mutants** —
+a misspelled concept tag, an Area 3 tag at area 2, `# dc: 99`, a removed `# stdin:`, an error
+claimed that never happens, and a file that runs and prints nothing — and caught all six. The
+two `local-repo` specifications were driven RED against an empty repository, GREEN against a
+correct submission, then mutated with a duplicate `run_me.py` at the repository root and a
+committed `.venv`; both caught.
+
+### Blocked, and exactly what remains
+
+**One sitting at the son's laptop, with VS Code installed.** Work
+`curriculum/area-2/vscode-profile/README.md` §4:
+
+1. Import `pyquest-area2.code-profile` (*Profiles: Import Profile*).
+2. Hide by hand the five views that are **not settings** — Outline, Problems, Source Control,
+   Testing, Extensions.
+3. Work the checklist: ten chrome lines, six function lines.
+4. Re-export over the file (*Profiles: Export Profile → Save to file*).
+5. Copy any changed settings back into §5, delete the NOT YET VERIFIED banner, record the date.
+6. Move `planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` to
+   `planning/completed/`. That stub now carries a status block saying precisely this.
+
+Then Phase 4: sessions 5–8, their exercises, and `reference/` payloads for 2b (a worked
+`its-own-python/` project and a traceback answer key in the shape of Area 0's
+`session-3-answers.md`).
+
+### Where the plan turned out to be wrong, or incomplete
+
+1. **"One exportable profile file" understates the problem.** Half the strip is not settings.
+   Activity bar, minimap, breadcrumbs, status bar, tabs and git integration are `settings.json`
+   keys and travel in the JSON. **Outline, Problems, Source Control, Testing and Extensions are
+   view visibility** — UI state, stored in the profile's `globalState`, captured only by
+   exporting from a configured running editor. A hand-authored profile cannot reach them,
+   whoever writes it. This strengthens the plan's own argument for the son's laptop criterion rather
+   than weakening it, and §4 of the profile README now says so explicitly.
+2. **§6.6 runs submissions with `--network none`, so a `local-repo` test can never
+   `pip install` his dependencies.** `a2-its-own-python` therefore checks the *declaration*:
+   `requirements.txt` parses, `main.py` imports something, `.venv` is absent from the clone,
+   `.gitignore` keeps it out, the README carries the commands. That is not a retreat — the two
+   things that actually go wrong with venvs are committing the directory and having no record
+   of what was installed, and both are checkable offline. The half that needs a person is the
+   dm's, and the brief says so.
+3. **The API contract does not pin down where a `local-repo` clone is rooted.** Both test files
+   read `PYQUEST_REPO` and fall back to the working directory, and say so at the top. One line
+   in each file changes when the runner settles it. Worth raising with the API track.
+4. **The boss's theme framings needed replacing, not filling in.** `new:quest --themes` took
+   what it was given, and the first draft's framings (a dice roller) needed `random`, which is
+   Area 4 vocabulary. They are now three rebuilds of programs he already made in Areas 0–1,
+   which is what §4's *rebuild an in-app program as a real project* actually asks for.
+5. **No `journal/` directory in `curriculum/area-2/`,** a deliberate departure from the
+   per-area layout. The Journal migrates into *his* repository in session 2; duplicating Area
+   0's `TEMPLATE.md` into every area would produce eight copies of one file that must never
+   disagree. The README states the departure rather than leaving a hole.
+6. **The plan's file counts were exactly right.** Six YAML, six briefs, two tests, no starters,
+   derived from the verifier column before anything was scaffolded. The scaffolder produced
+   precisely that.
+
+### Not done, and owned elsewhere
+
+- `curriculum/README.md`'s status row. Owned by `main`. **The line to add:**
+  `| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | 2a authored; 2b blocked on the son's laptop |`
+- `content/areas/area-2.yml` stays `authoring: partial`. It flips to `complete` when Phase 4
+  lands, and the file says why in a comment.
