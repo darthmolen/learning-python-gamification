@@ -141,6 +141,27 @@ Boss 5. Half of `world.py` is readable to him the day he first uses it, and all 
 by the time he retires it. Deleting `ground.combine()` from it and watching 1,424 fps become
 14.9 is the Area 7 performance-intuition lesson, made runnable rather than merely suffered.
 
+**Ursina is pinned at `8.3.0`, identically on both machines, and the pin is recorded here
+rather than only in a lockfile.** The campaign runs roughly 48 weeks against one engine, and
+push is the verification mechanism — he pushes, the other machine clones and runs the code
+cold — so two machines drifting to different versions breaks that verification quietly.
+8.3.0 already churned once: `ursina/samples/` is no longer in the pip package, `Ursina` is
+wrapped in a `@singleton` decorator so it is a factory rather than the class, and there is no
+`ursina.__version__` to read. The pin therefore lives in `curriculum/lib/requirements.txt`
+and is asserted from pip metadata by `curriculum/lib/smoke.py`.
+
+**The upgrade rule is never mid-area.** An upgrade may land only between areas, only when
+something is actually broken, and only after `smoke.py` passes on *both* machines against the
+new version. Mid-area, an engine change means the exercises he already has stop matching the
+engine he is running, and the diagnosis costs more than the upgrade is worth. The
+`minecraft_clone` sample is not a dependency and is not vendored — its one-`Entity`-per-block
+pattern is not what gets built.
+
+The shim ships at `curriculum/lib/world.py`, one canonical copy, copied into his repository
+so that `import world` sits beside his own files — which is also what makes deleting it in
+Area 4 and Area 5 his action rather than the parent's. `curriculum/lib/README.md` holds the
+surface, the pin, the measured numbers and the removal schedule.
+
 **BOSS 3 — The Crafting Table:** a working crafting simulator with a real recipe book.
 
 ### Area 4 — Functions and Decomposition (weeks 15–20)
@@ -807,6 +828,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Ursina from Area 3, no `mcpi` | One repository, one story; work compounds into the capstone instead of being discarded at week 37 |
 | A `world.py` shim at Area 3, retired by Boss 5 | Raw Ursina is 100% unearned vocabulary and hides its own failures; the shim costs no new syntax and comes down on a schedule |
 | `start()` combines the world into one mesh | One `Entity` per block dies below 2,500 blocks even on a 5090; an Area 3 learner reaches 8,000 with three nested loops |
+| Ursina pinned at 8.3.0, upgraded never mid-area | Push is the verification mechanism, so two machines on different versions break it quietly; 8.3.0 churned three ways in one afternoon |
 | Difficulty Class drives XP | One authored number prices everything; no per-quest XP tuning |
 | Boss pays effective DC × 20, invasions stay at 5 | At ×10 the boss was the worst-paid work per minute in the system; repetition was not cut to fix it, because the habit is what actually wins |
 | Medals are difficulty modifiers | Collapses scoring and medals into one system instead of two |

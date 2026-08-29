@@ -1,6 +1,6 @@
 # The `world.py` Shim — Promote the Spike to Shipping Code
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** world-shim
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
@@ -31,19 +31,23 @@ and `len()` from week one. Measured: 0% ceremony beyond a one-line import floor.
 
 ## Success Criteria
 
-- [ ] `curriculum/lib/world.py` exists, exports exactly `BLOCKS`, `place(x, y, z, kind)` and
+- [x] `curriculum/lib/world.py` exists, exports exactly `BLOCKS`, `place(x, y, z, kind)` and
       `start()`, and the `# THROWAWAY` header is gone
-- [ ] **It fails loudly on every input a learner will actually get wrong** — see the four
+- [x] **It fails loudly on every input a learner will actually get wrong** — see the four
       cases below, each with a test that asserts on the message, not just on the raise
-- [ ] `start()` fuses placed blocks into one mesh, and a test asserts the fusion happened
+- [x] `start()` fuses placed blocks into one mesh, and a test asserts the fusion happened
 - [ ] **≥ 60 fps at 5,000 blocks on the son's laptop**, measured and recorded with the
       date and the ursina version. The spike's numbers are from an RTX 5090 and do not transfer
+      — **BLOCKED, Phase 3. The laptop was not available. No number has been invented.**
 - [ ] The ursina version is **pinned identically on both machines** and the pin is recorded
-- [ ] `ruff` and `pyright` clean, no `Any`, exception chaining — per `python-quality-developer`
-- [ ] pytest suite runs headless in CI-shaped conditions (no window) and passes
-- [ ] **No `Tier` anywhere in the file.** The spike comments say Tier 3, Tier 4, Tier 5. The
-      lexicon is Area, and at Boss 7 he opens this repository and reads it
-- [ ] The removal schedule is documented in `curriculum/lib/README.md`, and the Area 7
+      — pinned, recorded and asserted; the parent's machine matches. **The son's machine has
+      not been installed against `requirements.txt` and `smoke.py` has not run there.**
+- [x] `ruff` and `pyright` clean, no `Any`, exception chaining — per `python-quality-developer`
+- [x] pytest suite runs headless in CI-shaped conditions (no window) and passes
+- [x] **No `Tier` anywhere in the file.** The spike comments say Tier 3, Tier 4, Tier 5. The
+      lexicon is Area, and at Boss 7 he opens this repository and reads it — and a test reads
+      the source and fails if the word comes back
+- [x] The removal schedule is documented in `curriculum/lib/README.md`, and the Area 7
       performance lesson is a runnable exercise rather than a paragraph
 
 ## Approach
@@ -174,6 +178,13 @@ handed to the Area 7 plan to place in a session.
 - `curriculum/lib/world.py` — new, promoted from the spike
 - `curriculum/lib/README.md` — new
 - `curriculum/lib/tests/test_world.py` — new
+- `curriculum/lib/tests/conftest.py` — new; puts `curriculum/lib/` on the import path so the
+  suite imports `world` the way the learner does
+- `curriculum/lib/requirements.txt` — new; Phase 1's pin. Not anticipated by name in this
+  list, but Phase 1 cannot deliver "a pinned version in a requirements file" without one
+- `curriculum/lib/smoke.py` — new; Phase 1's post-upgrade smoke test, likewise
+- `curriculum/lib/area-7-exercise/` — new; Phase 4's runnable lesson. It sits here rather
+  than in `curriculum/area-7/`, which does not exist and belongs to another track
 - `spikes/ursina-tier3/**` — unchanged. Spikes are the record of what was measured; they
   are not edited after the fact
 - `docs/specs/2026-08-26-gamified-python-curriculum-design.md` — the ursina pin and the
@@ -191,3 +202,82 @@ Anything under `pyquest/`. The shim never reaches the browser — Ursina needs a
 context and Pyodide does not have one, which is precisely why Area 3 onward is `local-repo`.
 
 Editing the spike. It is the record of a measurement and it stays as it is.
+
+## Status — 2026-08-29, stopped at the hardware gate
+
+**Phases 1, 2 and 4 are done. Phase 3 is not started and cannot be.** The son's the son's laptop
+was not available, and Phase 3 is a measurement on that machine. This plan stays in
+`planning/in-progress/`.
+
+### What was delivered
+
+| Phase | State | Where |
+|---|---|---|
+| 1 — pin ursina | done on the parent's machine | `curriculum/lib/requirements.txt`, `curriculum/lib/smoke.py`, spec §4 Area 3 and the decisions table |
+| 2 — promote and harden | done | `curriculum/lib/world.py`, `curriculum/lib/tests/` |
+| 3 — measure on the son's laptop | **not started, blocked** | — |
+| 4 — docs and the Area 7 exercise | done | `curriculum/lib/README.md`, `curriculum/lib/area-7-exercise/` |
+
+Verification actually run, 2026-08-29, on the parent's machine:
+
+```console
+py -3.14 -m pytest curriculum/lib/tests -q       19 passed in 0.72s
+py -3.14 -m ruff check curriculum/lib            All checks passed!
+py -3.14 -m ruff format --check curriculum/lib   8 files already formatted
+py -3.14 -m pyright curriculum/lib               0 errors, 0 warnings, 0 informations
+py -3.14 curriculum/lib/smoke.py                 all checks passed against ursina 8.3.0
+```
+
+Ten mutants seeded one at a time and each killed, including the five this plan named —
+unknown kind accepted, non-numeric coordinate accepted, `ground.combine()` skipped, `place()`
+succeeding after `start()`, and the wrong `BLOCKS` colour — plus one that restores the
+spike's module-scope `Ursina()` and one that widens `__all__`. Captured in the commit bodies.
+
+### What remains
+
+1. **Phase 3, on the son's laptop.** Run `spikes/ursina-tier3/_stress_shim.py` and
+   `_stress_naive.py`, and `_bench.py naive 2500` / `_bench.py combined 15000`, at 1,000 /
+   2,500 / 5,000 / 8,000 blocks. Record fps, date, ursina version and machine.
+   `curriculum/lib/area-7-exercise/measure.py` is now a second, durable way to take the same
+   reading — it runs any world program with vsync off and reports build time and fps — and it
+   is shipped rather than throwaway, so prefer it where the two overlap.
+   - **If 5,000 fused blocks does not hold 60 fps, the authoring cap moves**, and the Area 3
+     plan is told the new number *before* its exercises are written.
+   - Confirm which display adapter Panda3D bound to. The son's laptop likely has an Intel iGPU
+     beside a discrete Quadro; `smoke.py` prints the GL vendor and renderer.
+   - Feed the result into `planning/backlog/feature_graphical-quest-performance-budget_2026-08-27.md`
+     and into the table in `curriculum/lib/area-7-exercise/README.md`, which is written to
+     take a second half rather than a correction.
+2. **Finish the pin on his machine.** `py -3.14 -m pip install -r curriculum/lib/requirements.txt`,
+   then `py -3.14 curriculum/lib/smoke.py`. The criterion says *identically on both machines*
+   and only one machine has been checked.
+3. **Copy `world.py` into his repository** when Area 3 starts. `curriculum/lib/README.md` has
+   the step and the reason it is a copy.
+
+Only then does this move to `completed/`.
+
+### Where the plan turned out to be wrong
+
+- **"`place()` returns an `Entity`" and "`Ursina()` must not be built at import" cannot both
+  hold.** With no app in existence when `place()` is called, there is nothing to return. The
+  import-safety requirement wins, because the Area 3 `verify.py` contract depends on it, so
+  `place()` now records into `placed` and `start()` builds everything. This is the largest
+  behavioural change from the spike and the plan did not name it as one.
+- **The third failure case — `color='green'` — was listed as *"not reachable through the
+  shim's surface; decide whether to guard it or leave it"*. It is reachable.** `BLOCKS` is a
+  plain dict he can assign into, and `BLOCKS['grass'] = 'green'` is exactly the obvious guess.
+  It is guarded, and the guard fires at `place()` time so the message names the kind.
+- **The readability audit regressed and the plan's constraint did not anticipate why.** Three
+  statements now carry type annotations, which the spike had none of, because `CLAUDE.md`
+  requires pyright clean with no `Any` and §5.10's Idiomatic medal is literally that standard.
+  The honest count is *all but one statement and three annotations* rather than the spike's
+  *all but one line*. Recorded in `curriculum/lib/README.md` rather than smoothed over.
+- **`curriculum/lib/` breaks a standing convention in `curriculum/README.md`** — that
+  everything under `curriculum/` runs with a text editor, a terminal and Python, with a
+  `verify.py` per area rather than a test framework. This is not an area and it is the one
+  piece of curriculum code imported by every Area 3 exercise on two machines, so it carries a
+  pytest suite. `smoke.py` keeps the constraint honest: same ground, end to end, nothing but
+  Python and ursina. **`curriculum/README.md` was not edited — another track owns it** — so
+  the main track should fold in a line about `lib/` when it next touches that file.
+- **ruff 0.16 formats Python code blocks inside Markdown.** It silently reflowed a code fence
+  in `curriculum/lib/README.md`. Worth knowing before it reformats someone's prose.
