@@ -103,3 +103,65 @@ one is in `completed/`.
 
 Any area content. This plan writes no session, no exercise and no quest — it clears the seam
 and stops.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-29 09:38
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- **Objective / Why this exists:** Clearly identifies the shared-file collision and ties it to the repo's kanban rule about disjoint `Files Expected to Change`.
+- **Success Criteria:** Mostly concrete and verifiable; especially good on `validate:content`, stale path correction, and explicit disjointness verification.
+- **Approach:** Correctly follows project doctrine that the spec is the document of record and `concepts.ts` must follow §4, not lead it.
+- **Track discipline:** Strong protection against parallel-plan collisions; consistent with project planning rules.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Dependencies / Prerequisites**
+  - Says "None," but the plan itself requires a **human approval gate** for the spec edit ("needs a human yes").
+  - Why it matters: implementation can stall mid-plan or proceed without the stated approval.
+  - Suggested fix: list explicit prerequisite: approval to change spec §4.
+
+- **Phase 4 / Success Criteria**
+  - The plan says verify disjointness across **three area plans and the world shim plan**, but also says this plan must run alone and the shim is not concurrent.
+  - Why it matters: mixes "same-time collision" with broader overlap review; could cause confusion about what must actually be disjoint now.
+  - Suggested fix: distinguish **concurrent in-progress disjointness** from **informational future overlaps**.
+
+#### Important (Should Address)
+
+- **Success Criteria / Phase 2**
+  - Uses `npm run validate:content` but omits the repo convention that npm commands run from `pyquest/`.
+  - Why it matters: operational ambiguity.
+  - Suggested fix: state `cd pyquest && npm run validate:content` (or `Set-Location pyquest` on Windows).
+
+- **Approach**
+  - Notes the `dict-methods` mismatch in `concepts.ts` but leaves no guard against this becoming a distraction during implementation.
+  - Why it matters: implementer may widen scope.
+  - Suggested fix: add explicit "do not reconcile other spec/registry mismatches in this plan."
+
+- **Phase 3**
+  - "Add a line naming `main` as owner" is directionally right, but it does not specify where in `curriculum/README.md`.
+  - Why it matters: invites ad hoc wording/placement.
+  - Suggested fix: name the target section near the status table/conventions.
+
+#### Minor (Consider)
+
+- **Lane**
+  - Marks itself "A and B," but changes are spec/content/curriculum only.
+  - Why it matters: slight conceptual blur against the two-lane model.
+  - Suggested fix: describe it as a cross-lane seam handled on `main`, rather than dual-lane implementation.
+
+### Recommendations
+
+Add an explicit approval prerequisite for the spec edit, clarify concurrent-vs-total file disjointness, and make execution commands/location explicit. Keep the scope tightly limited to the two shared files plus the spec line.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The plan is architecturally sound and aligned with repo conventions, but it understates a real approval dependency and is slightly ambiguous about what disjointness must be proven at this stage.
