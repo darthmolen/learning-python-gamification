@@ -136,7 +136,7 @@ if none of them appeal.
 
 ## Beat 5 — Journal (5 minutes)
 
-Entry 2. Same three prompts.
+Entry 2. Same four prompts. Open by reading him what he predicted last time.
 
 If he wrote "nothing broke", ask what happened when the square did not close during the
 hook. Something did break, twenty minutes ago, and forgetting that is the habit the

@@ -44,6 +44,18 @@ day.
 
 ---
 
-## Parent reply
+## What will break next time
+
+*And can you get ahead of it before then?*
+
+Guess. You are allowed to be wrong — that is the point, and next session will tell you.
+One honest sentence about the thing you can already feel coming, and one about whether
+you could deal with it now instead of then.
+
+<!-- Next session opens with this line. If you were right, say so out loud. -->
+
+---
+
+## DM reply
 
 <!-- Dad writes here. Reply to what was written, not to how it was written. -->

@@ -29,7 +29,7 @@ attention after week one.
 | **The hook** | 5–10 | You show one thing. Short. He has the keyboard by minute ten. |
 | **The work** | 25–30 | He types. You sit beside him and do not touch the keyboard. |
 | **The choice** | included above | He picks which extension to chase. Every session has a choice board. |
-| **Journal** | 5 | Three prompts, in his own words. |
+| **Journal** | 5 | Four prompts, in his own words. The fourth is a forecast, and you read it back to him next session. |
 
 **The keyboard rule.** You do not touch it. Not to "just show you quickly", not to fix
 a typo, not while he is in the bathroom. If you take the keyboard you have taken the

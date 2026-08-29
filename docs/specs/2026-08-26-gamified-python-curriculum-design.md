@@ -93,7 +93,7 @@ Sequenced by motivation-adjusted dependency order. Each area's project makes the
 **BOSS 1 — The Sigil:** an art generator that takes input and produces something worth hanging on a wall.
 
 ### The Journal (begins week 1, runs forever)
-A markdown journal, one entry per session. Three prompts: what I built, what broke, what I would do differently. It starts as a plain file in week 1 and *becomes* committed and pushed at Area 2a, once he has git. See §5.6.
+A markdown journal, one entry per session. Four prompts: what I built, what broke, what I would do differently, and what will break next time. It starts as a plain file in week 1 and *becomes* committed and pushed at Area 2a, once he has git. See §5.6.
 
 ### Area 2a — The Scribe's Rite (weeks 6–7)
 what a repository is · `init` `add` `commit` · the log as a story · branches, lightly · `push` to origin
@@ -376,7 +376,19 @@ The git half still arrives at Area 2a on schedule (§4). The Area 0 and Area 1 e
 markdown until then, and they become the first real commit in his repository — which is a better
 first commit than an empty one.
 
-- **Ten XP per entry, paid for substance rather than existence.** Three prompts: what I built, what broke, what I would do differently. Empty prompts pay nothing.
+- **Ten XP per entry, paid for substance rather than existence.** Four prompts: what I
+  built, what broke, what I would do differently, and **what will break next time — and
+  can I get ahead of it?** Empty prompts pay nothing.
+- **The fourth prompt is read back at the start of the next session.** Defend opens with
+  what he predicted last time, beside what actually happened. That is the whole point of
+  it: a forecast nobody checks is a wish, and a forecast checked against his own scar
+  record is evidence.
+
+  This is the habit the campaign is really trying to build, and it is the one thing the
+  curriculum otherwise defers to the Scrollcraft arc's *Prove It Small* at week 37. The
+  work that never becomes a boss is invisible by construction — you cannot point at the
+  crisis that did not happen — so the only way to teach it is to let him predict, and then
+  let him be right.
 - **The parent replies**, as comments in Gitea. Relatedness, plus code-review culture learned before he writes code worth reviewing.
 - **Before every boss fight he re-reads his own Journal from the start of that area.** Reading something he wrote six weeks ago and finding it easy is the strongest evidence a learner will ever get that he is not stupid. Badges cannot fake that.
 - **At the end of each area he writes release notes** in a real `CHANGELOG.md` against a real version tag. That yields one versioned release per area, each with written release notes, before he ever reaches the capstone.
@@ -773,6 +785,7 @@ See `planning/in-progress/feature_ursina-tier3-spike_2026-08-26.md`, Phase 0.
 | Git split across Journal, Scribe's Rite, Escape | Verification depends on git, so git must precede it |
 | Journal scored rather than ritual | Reflection is a skill the industry lost |
 | Journal begins week 1, git arrives at Area 2a | Pre-boss re-reading needs something to re-read; the habit is cheap to start and expensive to retrofit |
+| A fourth Journal prompt forecasts, and Defend reads it back | Foresight is invisible when it works, so it can only be taught by predicting and then checking; otherwise it waits until week 37 as an elective |
 | No currency or shop | Directly answers the gem-pressure criticism |
 | No daily streaks | Guilt against a 2–3x weekly cadence |
 | Ursina hardware gate before any build work | The continuity argument for Ursina collapses into the bait and switch it avoids if his laptop cannot run it |

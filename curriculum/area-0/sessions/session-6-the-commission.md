@@ -117,7 +117,7 @@ That note is worth more than the drawing.
 
 Two things tonight.
 
-**Entry 6**, as usual, three prompts. If it failed on your machine, that is the best
+**Entry 6**, as usual, four prompts. If it failed on your machine, that is the best
 *what broke* he has written all fortnight, and you should say so.
 
 **The Area 0 closing entry.** A fourth prompt, once per area, and only at the end:
