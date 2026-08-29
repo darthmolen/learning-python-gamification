@@ -9,7 +9,7 @@ a temporary state of affairs: spec §8 warns that if the curriculum waits on the
 *the app becomes a satisfying way to postpone teaching a child Python*.
 
 Content for the game engine — quest YAML, briefs, hidden tests — lives in
-`packages/content/` and is authored separately. Each area's README records which of its
+`content/` and is authored separately. Each area's README records which of its
 exercises should later become quests, and of what kind.
 
 | Area | Weeks | Subject | Status |
@@ -19,6 +19,14 @@ exercises should later become quests, and of what kind.
 
 Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`.
 
+**The status table above is written by the `main` track, not by the area tracks.** Every
+area plan wants to mark its own row when it finishes, and the moment two of them run in
+parallel that is a collision on one file — `plan-workflow` admits a plan to `in-progress/`
+only when its `Files Expected to Change` is disjoint from every other in-progress plan's.
+So an area reports its status to `main` and `main` writes the row. If you are executing an
+area plan and reaching for this file, that is the sign you have picked up something the
+plan does not own.
+
 ## Conventions
 
 Established by Area 0 and worth keeping.
@@ -27,7 +35,7 @@ Established by Area 0 and worth keeping.
   `sessions/`, `exercises/`, `journal/`, `reference/`.
 - **Every exercise `.py` carries three header tags** — `# concepts:`, `# dc:`,
   `# expect:` — and an optional `# stdin:`. Concept ids come from
-  `packages/content/src/concepts.ts` verbatim, and tag what a file *resurfaces* as well
+  `pyquest/packages/content/src/concepts.ts` verbatim, and tag what a file *resurfaces* as well
   as what it introduces, because spec §5.4 schedules retrieval off them.
 - **Every area has a `verify.py`** that runs every exercise and checks it against its own
   tags. A curriculum whose exercises are not known to run is not delivered.
