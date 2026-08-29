@@ -1,0 +1,20 @@
+# Area 2a, and spec §4's win condition for the half: "he pushes, and the board updates by
+# itself. The game noticed." `signal: push` is that sentence written as a verifier.
+#
+# This one is inert until Lane A Phase 1.5 delivers Gitea and the git-signal reader, and
+# that is fine: the curriculum teaches `push` against whatever remote the dm picked on the
+# night (see curriculum/area-2/dm-guide.md §3) and ships whether or not the applause does.
+# `planning/backlog/feature_gitea-lan-access-for-the-son_2026-08-27.md` is the blocker for
+# the applause half, and it belongs to whoever owns infra/.
+id: a2-it-is-somewhere-else
+title: "It Is Somewhere Else"
+kind: quest
+area: 2
+concepts: [git-push, repository]
+requires: [a2-the-first-commit]
+dc: 8                # XP and the risk label both derive from this (§5.1)
+brief: briefs/a2-it-is-somewhere-else.md
+
+verifier:
+  type: git-signal
+  signal: push

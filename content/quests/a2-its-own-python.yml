@@ -1,0 +1,19 @@
+# Area 2b. `venv` and `pip`, and the two-interpreter trap this machine actually has: on the
+# parent's box `python` is 3.12 in PowerShell and 3.14 in Git Bash, so "which Python is
+# running" is not a hypothetical here, it is Tuesday.
+#
+# `running-scripts` is resurfaced rather than introduced (§3 principle 7, §5.4): running a
+# file was a2-where-the-file-lives, and running it under an environment that is not the
+# machine's is a different act wearing the same command.
+id: a2-its-own-python
+title: "Its Own Python"
+kind: quest
+area: 2
+concepts: [venv, pip, running-scripts]
+requires: [a2-where-the-file-lives]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: briefs/a2-its-own-python.md
+
+verifier:
+  type: local-repo
+  tests: tests/a2-its-own-python_test.py
