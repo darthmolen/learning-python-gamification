@@ -8,7 +8,7 @@ Nothing new to install. Same Python, same turtle, same editor.
 
 ## Running one
 
-```
+```text
 py -3.14 s1e1_the_repeated_line.py
 ```
 
@@ -68,7 +68,7 @@ any of them beforehand.
 
 From the area directory:
 
-```
+```text
 py -3.14 verify.py
 ```
 

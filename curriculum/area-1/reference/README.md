@@ -72,6 +72,6 @@ Do not spend a Datamine on it. Spend the question.
 
 They are covered by the area's harness along with everything else:
 
-```
+```text
 py -3.14 verify.py
 ```
