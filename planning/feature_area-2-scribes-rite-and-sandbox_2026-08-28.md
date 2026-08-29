@@ -44,8 +44,11 @@ Area 3 — and it is the smallest of the three, which is the only reason the sch
       status bar, tabs, outline, problems, source control, testing and extensions views are
       actually gone, `ms-python.python` is present, and a `.py` file runs from the integrated
       terminal. Verified by importing it, never by reading the JSON
-- [ ] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**,
-      not just Area 2b's rung, so Areas 3, 4, 6 and 7 can find theirs without archaeology
+- [ ] `curriculum/area-2/vscode-profile/README.md` carries the **whole un-stripping ladder**
+      — all five rungs, not just Area 2b's — **and the rule for how a rung ships**: a quest
+      with a `peer-signoff` verifier, no new machinery, teach-back on top. Areas 3, 4, 6 and
+      7 must be able to author their rung from this file alone, without opening an archived
+      backlog stub
 - [ ] `cd pyquest && npm run validate:content` exits 0 with **five quests plus Boss 2 (six items total)**
 - [ ] `py -3.14 verify.py` reports **N of N over the runnable `.py` exercises only**, and the
       README separately carries a completion checklist for the markdown and git walkthroughs
@@ -349,6 +352,20 @@ this area's rung:
 
 The ladder is currently spread across five plans and stubs. Writing it once, beside the
 profile it modifies, is what stops a later area restoring the wrong rung or missing one.
+
+**The README also carries the rule for how a rung ships, because that is the part a later
+area needs and the part it cannot infer from the table.** Verbatim, near enough:
+
+> Each rung is a **quest, not a settings edit done for him.** It needs no new machinery: a
+> `peer-signoff` verifier covers it — the dm watches him use the restored view for its
+> actual purpose and presses the button. Teach-back applies on top, the same as any quest.
+> A rung is not "turn the setting back on"; it is "show me you need it."
+
+Without that line, the Area 4, 6 and 7 authors have to open an archived backlog stub to
+learn their rung requires no verifier work — and by then it will be in `completed/`. Area 3
+only avoided this by restating the mechanism inline in its own plan. Putting it in the
+curriculum artifact makes the ladder self-contained: a later area reads
+`curriculum/area-2/vscode-profile/README.md` and needs nothing else.
 
 **This phase gates Phase 4.** It can be authored in parallel with the 2a sessions, but
 session 6 *is* the VS Code session and sessions 5–8 cannot be finalised against a profile
