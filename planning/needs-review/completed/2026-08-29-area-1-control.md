@@ -129,24 +129,8 @@ npm run validate:content
 `scaffold.ts` refuses before writing anything if a concept is unknown or is first taught above
 area 1, and it stubs each hidden-test file with a deliberate
 `AssertionError("write the hidden tests for <id>")` so a quest cannot pay XP before its tests
-exist. §5.2 sets the target: **five quests plus a boss, any three quests unlocking the boss.**
-
-**Boss 1 carries `requires: []`, and that is not an oversight.** The 3-of-5 rule is not
-expressible in content and is not meant to be — it already lives in the engine, as
-`bossUnlocked(clearedQuestCount) → clearedQuestCount >= QUESTS_TO_UNLOCK_BOSS`, and
-`scoring.ts` says why in as many words: *"the count is the whole rule. Which three is the
-player's business, and that is the autonomy the rule exists to protect, so nothing here asks
-which quests they were."* The engine never reads `requires` at all. Listing quest ids on the
-boss would impose exactly the ordering §5.2 protects against, and nothing would enforce it
-anyway.
-
-Use `requires` only for a genuine prerequisite between two quests — quest B is unreadable
-without quest A — never as a progression gate.
-
-**Do not copy Area 0's boss here.** `content/quests/a0-first-light.yml` is `kind: boss` with
-`requires: [a0-name-tag]`. It is harmless there, because Area 0 has two items and the 3-of-5
-rule cannot apply, but it is the wrong pattern to imitate in an area that has five quests.
-Whether Area 0's boss should be corrected is a separate question and not this plan's.
+exist. §5.2 sets the target: **five quests plus a boss, any three quests unlocking the boss** —
+so `requires` on the boss must not chain the five into a line.
 
 **Verifiers.** §6.3 gives Areas 0–1 `hidden-tests`. Everything in this area draws, so tests
 assert on **computed values** — the turn angle, the side count, the accumulator's total, the
@@ -175,29 +159,13 @@ track's file; no other track touches it.
 The second correction this plan used to carry — `curriculum/README.md` pointing at
 `packages/content/` twice, when the path has been `pyquest/packages/content/` since commit
 `c384e16` — belongs to `main`, because all three area tracks would otherwise edit that file.
-`main` has since landed it: `planning/completed/feature_shared-index-and-concepts_2026-08-29.md`.
-That plan also registered the `breakpoints` concept and named `main` as the owner of the
-status table in `curriculum/README.md`, so **this track starts with its shared files already
-clear** and Phase 0 is now one correction rather than two.
+It is recorded in `planning/feature_shared-index-and-concepts_2026-08-29.md`.
 
 ### Phase 1 — the DM guide and the session skeletons
 
 `dm-guide.md` first, because Area 0 proved it is the load-bearing document and writing it
 first is what forces the stalls to be named. Then ten session files with their beats blocked
 out. No exercise code yet.
-
-**The invasion drills mirror `curriculum/area-0/dm-guide.md` §5 and do not invent a new
-shape.** That format is: grouped by session, three questions each, asked out loud at the
-start, no computer, nothing looked up, two minutes. They must be **retrieval, not
-recognition** — "What does `int` do?" is retrieval; "Does `int` convert text to a number?"
-is a yes-or-no he can guess. A per-concept table would be a second format for a DM who has
-already run six sessions on the first one.
-
-One addition Area 0 did not need. It drilled 9 concepts across 6 sessions and could stay
-pure prose; Area 1 carries **19** — its own ten plus Area 0's nine — across ten sessions,
-on the 1/3/7/16/35 ladder. So the section ends with a coverage line proving every one of
-the nineteen is drilled at least once, and naming which are deliberately drilled most
-(the Area 0 concepts at the top of the ladder are the ones at risk of quiet decay).
 
 ### Phase 2 — the exercises [ASYNC with Phase 3]
 
@@ -217,23 +185,12 @@ concept ids, and — the lesson it learned the hard way — **to count pen-down 
 canvas items**, because an untouched turtle canvas already holds four Tk items and counting
 those would pass a file that drew nothing.
 
-Two additions Area 1 needs that Area 0 did not, specified as tags so they are implementable
-rather than aspirational:
+Two additions Area 1 needs that Area 0 did not:
 
-- **`# expect: hangs`** — a new member of the existing expectation vocabulary, alongside
-  Area 0's `ok`, `runs` and the error names. Session 3 ships a loop that does not stop, and
-  that loop is the lesson, so the harness must kill it and report it as **expected** rather
-  than hang the run or call it a failure. Putting it in `# expect:` rather than inventing a
-  bare timeout number keeps one vocabulary for "what should happen when this runs".
-- **`# timeout-seconds: N`** — optional, default 10. Only files that need something other
-  than the default carry it, so thirty files do not each repeat boilerplate. A file tagged
-  `hangs` that *exits* before its timeout fails the check, because it was supposed to hang.
-- **`# min-strokes: N`** — optional, default 1, which preserves Area 0's behaviour exactly.
-  An off-by-one that draws five sides of a hexagon still puts the pen down, so any file
-  whose shape has a known stroke count carries the real number.
-
-All three are read the same way Area 0 reads its tags, and a file may still carry none of
-them. The reporting line stays Area 0's: `N of N`, plus the failing file and why.
+- **A wall-clock timeout per file.** Session 3 ships a loop that does not stop. The harness
+  must kill it and report it as expected rather than hang the run.
+- **A stroke-count floor per file**, not just non-zero. An off-by-one that draws five sides
+  of a hexagon still puts the pen down.
 
 Run it, capture the output, and put the count in the README. A curriculum whose exercises are
 not known to run is not delivered.
@@ -246,27 +203,9 @@ Five quests and Boss 1, scaffolded then filled. Write the hidden tests — the s
 
 ### Phase 5 — the Journal, and the README
 
-Journal entries 07–16 continue as plain markdown, same 10-XP-for-substance rubric. They are
-still not git-tracked; that arrives at Area 2a on schedule, and Area 0's six entries plus
-these ten become his first real commit.
-
-`curriculum/area-1/journal/` mirrors Area 0's layout exactly, which is:
-
-```text
-journal/
-  TEMPLATE.md          copied once per session — Area 1 gets its own copy, so the
-                       area stays self-contained and readable without area-0/ open
-  entry-NN-prompt.md   what to say, and how to score it. Area 0 shipped one, for
-                       entry 01; Area 1 ships them where a session needs more than
-                       the template, not one per session as a matter of course
-  entries/             his, empty, with the README that says so
-```
-
-**The Journal has four prompts, not three** — what I built, what broke, what I would do
-differently, and what will break next time. The fourth is recent (`709b9e1`), so Area 1's
-TEMPLATE carries it from the start rather than inheriting Area 0's copy. §5.6's forecast beat
-— he reads his own last forecast back before writing the new one — first has something to
-read here, since Area 0 supplied the first six forecasts.
+Journal entries 07–16 continue as plain markdown in `curriculum/area-1/journal/`, same
+TEMPLATE, same 10-XP-for-substance rubric. They are still not git-tracked; that arrives at
+Area 2a on schedule and Area 0's six entries plus these ten become his first real commit.
 
 Then the README: session table, ordering argument, DC choices, concept coverage table
 generated from the tags, the verify count, and the "which of these should become quests"
@@ -286,15 +225,8 @@ section — which for this area is largely already answered by Phase 4, so recor
 
 - `curriculum/area-1/**` — new, the whole area
 - `content/areas/area-1.yml` — new
-- `content/quests/a1-*.yml` — new, **six**: five quests and Boss 1
-- `content/briefs/a1-*.md` — new, **six**: every item has a brief
-- `content/starters/a1-*.py` — new, **five**, quests only
-- `content/tests/a1-*_test.py` — new, **five**, quests only
-
-  The counts differ on purpose. `scaffold.ts` emits a starter and a test only for a
-  `hidden-tests` verifier, and Boss 1 is `peer-signoff` — §5.3 gives a boss a blank file and
-  a specification, so there is nothing to scaffold and no test to hide. A boss that shipped a
-  starter would be scaffolding the one item the spec says must have none.
+- `content/quests/a1-*.yml`, `content/briefs/a1-*.md`, `content/starters/a1-*.py`,
+  `content/tests/a1-*_test.py` — new, six items
 - `curriculum/area-0/README.md` — the Journal deviation section
 
 **Owned by `main`, not this track:** `curriculum/README.md`. Three area tracks want its
@@ -308,3 +240,61 @@ gone wrong.
 
 Also out of scope: making these quests playable in a browser. That is the turtle shim, and
 it is Lane A's.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-29 10:26
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- **Approach / session ordering:** Clear pedagogical argument throughout — `for` before `while`, errors as session 6, compression path preserving sessions 3/6/9.
+- **Success Criteria:** Mostly application-independent and verifiable from files plus `py -3.14 verify.py` and `npm run validate:content`.
+- **Content half:** Grounded in real tooling — `new:quest` and `validate:content` scripts confirmed in `pyquest/package.json`; `scaffold.ts` enforces concept ids and stubs hidden tests deliberately.
+- **Dependencies / Prerequisites:** All 10 Area 1 concept ids confirmed present in `concepts.ts`. Area 0 layout and `journal/TEMPLATE.md` verified to exist.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Content half / boss unlock rule**
+  - Section: Content half / Phase 4
+  - What's wrong: Says "any three quests unlocking the boss" but never specifies the actual `requires` schema/encoding.
+  - Why it matters: Author could accidentally encode a linear chain or all-five requirement. Existing YAML uses a simple list (`requires: [quest-id]`), so "any 3 of 5" is not representable by implication alone.
+  - Suggested fix: Name the exact encoding for Boss 1's `requires` field, or state that if the current schema only supports all-of lists, this plan must either (a) use no `requires` and record the intended rule in prose for a Lane A follow-up, or (b) hand off threshold-unlock support to a Lane A plan.
+
+#### Important (Should Address)
+
+- **Phase 3 — `verify.py` additions under-specified**
+  - Timeout and stroke-count floor are not concrete enough to implement consistently.
+  - Suggested fix: Specify tag formats such as `# timeout-seconds: 5` and `# min-strokes: 6`, plus expected handling and reporting behavior.
+
+- **Files Expected to Change — boss file set ambiguous**
+  - Says "six items" in a way that implies uniform starter/test generation.
+  - Why it matters: Boss 1 is `peer-signoff` — scaffold generates no starter or hidden test for it, only a brief and YAML.
+  - Suggested fix: Split quest files from boss files explicitly (five quest starters/tests, six briefs/YAMLs).
+
+- **Phase 2 / Journal layout vs. Area 0 template**
+  - Says entries continue in `curriculum/area-1/journal/` but Area 0 has `journal/TEMPLATE.md`, prompt files, and `journal/entries/`.
+  - Suggested fix: State the exact Area 1 journal structure, mirroring Area 0's layout.
+
+- **Phase 1 / DM guide invasion drills not operationalized**
+  - 19-concept drill on 1/3/7/16/35 ladder stated but format unspecified.
+  - Suggested fix: Require a table per concept with prompt, quick-check answer, and ladder positions covered.
+
+#### Minor (Consider)
+
+- **Phase 0 prerequisite reference:** `planning/feature_shared-index-and-concepts_2026-08-29.md` — verify path matches the actual file once `main` creates it.
+- **Disjointness:** `planning/in-progress/` currently empty; no conflicts at time of review.
+
+### Recommendations
+
+Specify the boss `requires` encoding first — it affects Phase 4 and may require a Lane A follow-up. Then tighten Phase 3 with concrete header tags and thresholds, and align the journal structure with Area 0's actual layout.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The curriculum plan is strong and well-grounded, but the boss unlock encoding and `verify.py` contract are under-specified enough to cause incorrect implementation.
