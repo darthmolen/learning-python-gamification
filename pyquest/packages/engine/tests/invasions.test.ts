@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { INVASION_LADDER, TOP_RUNG, intervalDays, nextRung } from './invasions.ts';
+import { INVASION_LADDER, TOP_RUNG, intervalDays, nextRung } from '../src/invasions.ts';
 
 describe('the ladder itself', () => {
   it('runs 1, 3, 7, 16, 35 days', () => {

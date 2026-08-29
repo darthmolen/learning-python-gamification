@@ -29,7 +29,7 @@ function resolveRoot(root: string): string {
   return isAbsolute(root) ? root : resolve(process.env['INIT_CWD'] ?? process.cwd(), root);
 }
 
-const DEFAULT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const DEFAULT_ROOT = fileURLToPath(new URL('../../../../../content', import.meta.url));
 
 const USAGE = `Usage: npm run new:quest -- --id <id> --title <title> --area <0-7> --concepts <a,b,c>
 

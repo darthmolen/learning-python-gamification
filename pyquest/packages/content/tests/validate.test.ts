@@ -12,11 +12,11 @@
 
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { findPrerequisiteCycle, formatIssues, validateContent } from './validate.ts';
-import type { ContentIssue } from './validate.ts';
+import { findPrerequisiteCycle, formatIssues, validateContent } from '../src/validate.ts';
+import type { ContentIssue } from '../src/validate.ts';
 
 /** The authored content root, three levels up from `packages/content/src/`. */
-const CONTENT_ROOT = fileURLToPath(new URL('../../../content', import.meta.url));
+const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
 
 const broken = (name: string): string =>
   fileURLToPath(new URL(`../fixtures/broken/${name}`, import.meta.url));

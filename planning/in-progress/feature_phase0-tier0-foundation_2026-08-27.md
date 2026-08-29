@@ -72,7 +72,7 @@ it by rejecting the pair rather than by silently dropping one.
 
 **DC-4 — The concept tag registry is authored from §4.** §6.10 requires the validator to prove
 every concept tag is known, but the known set does not exist yet. It gets written as
-`packages/content/src/concepts.ts`, one entry per vocabulary item in the §4 area listings.
+`pyquest/packages/content/src/concepts.ts`, one entry per vocabulary item in the §4 area listings.
 
 **DC-5 — The challenge-run bonus is a +5 difficulty modifier, not a new concept.** §5.2 says
 beating a boss early "pays a bonus" without naming an amount. Expressing it as a modifier
@@ -95,7 +95,7 @@ reviews after a Datamine are a second, additive source, not a ladder position.
 
 ## The engine split, and why
 
-`packages/engine` is described in §6.7 as the one component that must never be wrong, which is
+`pyquest/packages/engine` is described in §6.7 as the one component that must never be wrong, which is
 also what makes it the one component that is trivially testable. It divides cleanly:
 
 | Built in Wave 1 — pinned by spec | Deferred to Wave 3 — shaped by the UI |
@@ -123,16 +123,16 @@ types carry no `risk` or `warning` field, which pins the boundary cheaply and pe
 A genuine barrier: Wave 1's agents would otherwise race on the same type files.
 
 - `package.json` npm workspaces, TypeScript, vitest
-- `packages/content/src/schema.ts` — zod schema for the quest YAML of §6.2
-- `packages/content/src/concepts.ts` — the concept registry of DC-4
+- `pyquest/packages/content/src/schema.ts` — zod schema for the quest YAML of §6.2
+- `pyquest/packages/content/src/concepts.ts` — the concept registry of DC-4
 
 ### Wave 1 — four parallel agents, disjoint directories
 
 | Agent | Owns | Depends on |
 |---|---|---|
-| **A — engine core** | `packages/engine/` | Wave 0 types |
+| **A — engine core** | `pyquest/packages/engine/` | Wave 0 types |
 | **B — infrastructure** | `infra/` | nothing |
-| **C — content tooling** | `packages/content/` beyond the schema | Wave 0 types |
+| **C — content tooling** | `pyquest/packages/content/` beyond the schema | Wave 0 types |
 | **D — Area 0 curriculum** | `curriculum/area-0/` | nothing |
 
 **A** builds the five pinned functions above under full test-filter discipline.
@@ -200,7 +200,7 @@ A checked box whose evidence cannot be produced is unchecked.
 
 **Wave 1 gate — all four must hold before the design session:**
 
-1. `npm test` green across `packages/engine` and `packages/content`, output pristine
+1. `npm test` green across `pyquest/packages/engine` and `pyquest/packages/content`, output pristine
 2. Every engine mutant listed above demonstrated red, then `git diff` clean on the mutated file
 3. `docker compose up -d` brings postgres and gitea to healthy; `docker compose ps` shows it
 4. Backup job produces a dated tarball, and a restore into a scratch database is rehearsed and
@@ -218,9 +218,9 @@ commutativity property holding across a randomised earn order.
 ## Files expected to change
 
 - `package.json`, `tsconfig.base.json` — new, npm workspaces root
-- `packages/content/src/{schema,concepts}.ts` — new, the Wave 0 contract
-- `packages/content/src/validate.ts`, `scripts/new-quest.ts` — new, §6.10
-- `packages/engine/src/scoring.ts` + tests — new, the pinned arithmetic
+- `pyquest/packages/content/src/{schema,concepts}.ts` — new, the Wave 0 contract
+- `pyquest/packages/content/src/validate.ts`, `scripts/new-quest.ts` — new, §6.10
+- `pyquest/packages/engine/src/scoring.ts` + tests — new, the pinned arithmetic
 - `infra/docker-compose.yml`, `infra/.env.example`, `infra/backup.sh` — new, §6.1 and §6.9
 - `curriculum/area-0/**` — new, §4 Area 0
 - `planning/in-progress/feature_phase0-tier0-foundation_2026-08-27.md` — this plan, per the
@@ -263,7 +263,7 @@ how close he is, and §5.1a insists on a denominator everywhere.
 
 All four workstreams landed. The Wave 1 gate in *Verification* above is met:
 
-1. 84 tests green across `packages/engine` and `packages/content`, output pristine
+1. 84 tests green across `pyquest/packages/engine` and `pyquest/packages/content`, output pristine
 2. Mutants demonstrated red and restored in all three code workstreams. **Two initially
    survived and the tests were rejected and strengthened**, which is the process working rather
    than a defect: the DC-2 commutativity property computed its expectation from the engine

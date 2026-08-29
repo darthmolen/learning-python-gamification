@@ -25,7 +25,7 @@ function resolveRoot(root: string): string {
   return isAbsolute(root) ? root : resolve(process.env['INIT_CWD'] ?? process.cwd(), root);
 }
 
-const DEFAULT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const DEFAULT_ROOT = fileURLToPath(new URL('../../../../../content', import.meta.url));
 
 const USAGE = `Usage: npm run validate:content [-- --root <dir>]
 

@@ -337,7 +337,7 @@ punishes a single bad evening, and then floods the next several sessions with
 material he already had — which is the flaw this mechanic was built to prevent,
 reintroduced by its own scoring. One miss costs one repel to undo, and no more.
 
-The rungs live in `packages/engine/src/invasions.ts`. How many invasions a session
+The rungs live in `pyquest/packages/engine/src/invasions.ts`. How many invasions a session
 shows and in what order is a Defend-screen decision, not an engine one.
 
 ### 5.5 Datamine
@@ -581,7 +581,7 @@ Arbitrary Python needs a boundary, not because the learner is malicious but beca
 
 The API-to-runner interface is a job queue in both cases, so hardening it touches nothing else.
 
-### 6.7 `packages/engine`
+### 6.7 `pyquest/packages/engine`
 
 Pure functions over state and content. Given completions, XP, scars, datamines, and concept review timestamps, it returns available quests, area progress, boss unlock status, due invasions, level, and standings.
 

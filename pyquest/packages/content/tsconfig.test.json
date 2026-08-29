@@ -1,6 +1,6 @@
 {
   // The tests, typechecked but not built: `composite` projects must emit, and emitting a test
-  // is what puts a duplicate suite in `dist`. Run via `npm run typecheck --workspace @pyquest/engine`.
+  // is what puts a duplicate suite in `dist`. Run via `npm run typecheck --workspace @pyquest/content`.
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": false,
@@ -8,5 +8,5 @@
     "declarationMap": false,
     "noEmit": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

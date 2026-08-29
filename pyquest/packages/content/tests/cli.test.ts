@@ -16,11 +16,11 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
-const VALIDATE_CLI = fileURLToPath(new URL('./validate.ts', import.meta.url));
-const NEW_QUEST_CLI = fileURLToPath(new URL('./new-quest.ts', import.meta.url));
+const VALIDATE_CLI = fileURLToPath(new URL('../src/cli/validate.ts', import.meta.url));
+const NEW_QUEST_CLI = fileURLToPath(new URL('../src/cli/new-quest.ts', import.meta.url));
 
 const broken = (name: string): string =>
-  fileURLToPath(new URL(`../../fixtures/broken/${name}`, import.meta.url));
+  fileURLToPath(new URL(`../fixtures/broken/${name}`, import.meta.url));
 
 /** Run a CLI exactly as package.json runs it, and hand back what the shell would see. */
 function run(cli: string, args: readonly string[]): { code: number; output: string } {
@@ -183,12 +183,12 @@ describe('new:quest', () => {
  * So this one runs the command the parent actually types, through both scripts, unmocked.
  */
 describe('the command as the parent types it', () => {
-  const REPO_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
+  const PYQUEST_ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 
   /** One command string, run through a shell, exactly as it would be typed. */
   const npm = (command: string) =>
     spawnSync(`npm run --silent ${command}`, {
-      cwd: REPO_ROOT,
+      cwd: PYQUEST_ROOT,
       encoding: 'utf8',
       shell: true,
     });

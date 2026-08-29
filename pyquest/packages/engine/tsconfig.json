@@ -7,5 +7,5 @@
   // Tests are typechecked by `tsconfig.test.json`, never emitted. A compiled test in `dist` is
   // shipped dead weight, and vitest collects it as a second, broken copy of the same suite.
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.test.ts"]
+  "references": [{ "path": "../content" }]
 }

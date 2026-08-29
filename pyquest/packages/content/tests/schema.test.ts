@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { medalsFor, parseContentItem, parseAreaManifest } from './index.ts';
+import { medalsFor, parseContentItem, parseAreaManifest } from '../src/index.ts';
 
 /** The exact example from spec §6.2. If this stops parsing, the contract has drifted. */
 const SPEC_EXAMPLE = {

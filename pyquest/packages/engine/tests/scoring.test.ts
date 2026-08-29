@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import * as engine from './scoring.ts';
+import * as engine from '../src/scoring.ts';
 import {
   IllegalModifierSetError,
   QUESTS_PER_AREA,
@@ -12,7 +12,7 @@ import {
   questXpEarned,
   xpFor,
   type DifficultyModifier,
-} from './scoring.ts';
+} from '../src/scoring.ts';
 
 describe('effectiveDC — spec §5.1', () => {
   it('returns the base DC when no modifier applies', () => {
@@ -244,7 +244,7 @@ describe('bossUnlocked — spec §5.2', () => {
  * convenience at a time. These two tests are the erosion detector.
  */
 describe('the boundaries this module is not allowed to cross', () => {
-  const source = readFileSync(new URL('./scoring.ts', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../src/scoring.ts', import.meta.url), 'utf8');
 
   it('returns bare numbers, never a number wearing a presentation label (§5.1)', () => {
     // "The engine owns effectiveDC and nothing else. The threshold at which a number becomes a

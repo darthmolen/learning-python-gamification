@@ -14,7 +14,7 @@ decisions the engine made on the spec's behalf, and that is the wrong place for 
 
 Spec §5.1 lists the difficulty modifiers with their DC deltas. Spec §5.10 lists the medals with
 the same deltas. They are the same table. Only §5.10 marks `time-attack` as roadmap. Edit either
-one alone and they disagree silently, and `packages/engine/src/scoring.ts` now carries the
+one alone and they disagree silently, and `pyquest/packages/engine/src/scoring.ts` now carries the
 numbers a third time.
 
 This is the same failure the spec itself diagnoses in its decision log — *"a boolean beside the
