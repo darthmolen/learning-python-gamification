@@ -8,6 +8,13 @@ runnable with a text editor, a terminal, and Python. That is a standing constrai
 a temporary state of affairs: spec §8 warns that if the curriculum waits on the app,
 *the app becomes a satisfying way to postpone teaching a child Python*.
 
+**`lib/` is the one thing here that is not an area, and it is the one exception to that
+constraint.** It holds `world.py` — the three-name Ursina shim Areas 3 to 5 import and then
+progressively delete — and it carries a pytest suite, `ruff` and `pyright`, because it is
+code the learner *depends on* rather than code he writes. The constraint still binds
+everything he touches: `lib/smoke.py` needs nothing but Python and ursina, so the check that
+matters on his machine runs there as it stands. The test suite is the parent's.
+
 Content for the game engine — quest YAML, briefs, hidden tests — lives in
 `content/` and is authored separately. Each area's README records which of its
 exercises should later become quests, and of what kind.
@@ -15,7 +22,15 @@ exercises should later become quests, and of what kind.
 | Area | Weeks | Subject | Status |
 |---|---|---|---|
 | [area-0](area-0/) | 1–2 | First Light — `print`, variables, the four types, `input`, f-strings, reading errors | **authored** |
-| area-1 | 3–6 | Control — `if`/`while`/`for`, nesting, the accumulator pattern | not started |
+| [area-1](area-1/) | 3–6 | Control — `if`/`while`/`for`, nesting, the accumulator pattern | **authored** |
+| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **2a authored**; 2b blocked on the son's laptop |
+| area-3 | 9–14 | Collections — `list`, `dict`, `set`, iteration, nested structures | planned, blocked on the shim's measurement |
+
+Area 2's remaining half needs one sitting at the son's laptop: the VS Code profile has to be
+imported and confirmed there before sessions 5–8 can be finalised. Five of its strips are
+view-visibility state rather than settings keys, so they can only be captured by exporting
+from a configured running editor — the laptop step produces them, it does not merely check
+them. Area 3 waits on `curriculum/lib/`'s framerate measurement on the same machine.
 
 Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`.
 
