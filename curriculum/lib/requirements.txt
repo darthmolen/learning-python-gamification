@@ -1,0 +1,13 @@
+# The engine the campaign runs on, pinned. Identical on both machines.
+#
+#     py -3.14 -m pip install -r curriculum/lib/requirements.txt
+#
+# The pin is not a lockfile detail. Push is the verification mechanism -- he
+# pushes, the other machine clones and runs the code cold -- and two machines
+# on different ursina versions break that quietly. curriculum/lib/smoke.py
+# asserts this file and the installed version agree.
+#
+# UPGRADE RULE: never mid-area. An upgrade may land only between areas, only if
+# something is actually broken, and only after smoke.py passes on BOTH machines
+# with the new version. Full rule and reasons: README.md, beside this file.
+ursina==8.3.0
