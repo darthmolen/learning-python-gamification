@@ -1,0 +1,45 @@
+{
+  // markdownlint configuration for PyQuest.
+  //
+  // Two rules are off. Both were measured against the repository as it stands
+  // rather than guessed at, and both are off for the same reason: the default
+  // would churn a deliberate house style instead of improving it.
+  //
+  // Everything else stays at its default. In particular MD022/blanks-around-
+  // headings stays ON — commit 5dde62e fixed the repository against it, so it
+  // is a rule this project has already decided it wants.
+
+  // MD060/table-column-style — off.
+  //
+  // Every table here writes padded cells over a tight delimiter row:
+  //
+  //     | Area | Weeks | Subject |
+  //     |---|---|---|
+  //     | area-0 | 1-2 | First Light |
+  //
+  // MD060 reads that as a mixed style, because each of its named styles
+  // (aligned, compact, tight) wants the delimiter row to match the content
+  // rows. The pattern is not an accident or a one-off: it is used by every
+  // table in the spec, the plans, the curriculum and infra/, without
+  // exception. Satisfying the rule means reformatting all of them for a
+  // purely cosmetic gain, so the rule goes and the house style stays.
+  "MD060": false,
+
+  // MD013/line-length — off.
+  //
+  // The repository has two prose styles and both are deliberate:
+  //
+  //   - plans and curriculum hard-wrap near 90 characters
+  //   - docs/specs/2026-08-26-gamified-python-curriculum-design.md does not
+  //     wrap at all; 72 of its prose lines run past 100 characters
+  //
+  // The spec is the document of record and it is approved, so any limit
+  // strict enough to discipline the plans flags the spec on every other
+  // paragraph, and any limit loose enough to spare the spec disciplines
+  // nothing.
+  //
+  // If line length is wanted back, scope it per-directory with
+  // markdownlint-cli2 globs rather than trying to find one number that
+  // serves both styles.
+  "MD013": false
+}
