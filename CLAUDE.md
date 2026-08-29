@@ -81,7 +81,9 @@ both the player and DM seats (§5.11). Roles are not people.
   is graded against is the standard the repo holds itself to.
 - TypeScript work: `typescript-pro`. The SPA: `react-specialist`.
 - **Planning is kanban** (`plan-workflow`): plans live in `planning/`, move to
-  `in-progress/`, end in `completed/` with a Status block. One active plan at a time.
+  `in-progress/`, end in `completed/` with a Status block. Every plan declares a
+  `**Track:**` — `main` unless a sub-agent owns it — and `in-progress/` holds one plan
+  per track, with disjoint `Files Expected to Change`.
 - **Run every npm command from `pyquest/`.** Use `py -3.14`, never `python` — it is 3.12
   in PowerShell and 3.14 in Git Bash on this machine.
 - Prefer the Bash tool over PowerShell here; PowerShell is slow in this environment.
