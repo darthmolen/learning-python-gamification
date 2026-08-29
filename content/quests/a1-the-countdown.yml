@@ -1,0 +1,12 @@
+id: a1-the-countdown
+title: "The Countdown"
+kind: quest
+area: 1
+concepts: [while, comparison-operators, variables, int, print]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: briefs/a1-the-countdown.md
+
+verifier:
+  type: hidden-tests
+  starter: starters/a1-the-countdown.py
+  tests: tests/a1-the-countdown_test.py
