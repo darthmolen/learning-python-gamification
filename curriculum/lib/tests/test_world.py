@@ -32,6 +32,7 @@ import subprocess
 import sys
 import types
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
 
@@ -53,7 +54,7 @@ class FakeEntity:
     """Stands in for `ursina.Entity`. Records how it was constructed and
     whether anyone fused it."""
 
-    made: list["FakeEntity"] = []
+    made: ClassVar[list["FakeEntity"]] = []
 
     def __init__(self, **kwargs: object) -> None:
         self.kwargs: dict[str, object] = kwargs
@@ -67,7 +68,7 @@ class FakeEntity:
 class FakeUrsina:
     """Stands in for `ursina.Ursina`. `run()` returns instead of blocking."""
 
-    made: list["FakeUrsina"] = []
+    made: ClassVar[list["FakeUrsina"]] = []
 
     def __init__(self) -> None:
         self.run_calls = 0
@@ -78,7 +79,7 @@ class FakeUrsina:
 
 
 class FakeEditorCamera:
-    made: list["FakeEditorCamera"] = []
+    made: ClassVar[list["FakeEditorCamera"]] = []
 
     def __init__(self) -> None:
         self.position: tuple[float, float, float] = (0.0, 0.0, 0.0)
@@ -126,11 +127,13 @@ def test_importing_world_constructs_no_app() -> None:
     assert "BASE None" in result.stdout, result.stdout
 
 
-def test_start_can_be_replaced_by_a_no_op(world: types.ModuleType) -> None:
+def test_start_can_be_replaced_by_a_no_op(
+    world: types.ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """The harness's actual contract: swap `start` for a recorder, run the
     learner's program, read `placed`."""
     calls: list[int] = []
-    world.start = lambda: calls.append(1)
+    monkeypatch.setattr(world, "start", lambda: calls.append(1))
 
     world.place(1, 2, 3, "stone")
     world.start()
@@ -170,7 +173,8 @@ def test_the_source_never_says_tier(world: types.ModuleType) -> None:
 def test_the_source_has_no_star_import(world: types.ModuleType) -> None:
     """He reads this file at Area 4 and starts replacing it. `import *` hides
     where every name came from."""
-    assert not re.search(r"^\s*from\s+\S+\s+import\s+\*", SOURCE.read_text(), re.M)
+    star = r"^\s*from\s+\S+\s+import\s+\*"
+    assert not re.search(star, SOURCE.read_text(), re.MULTILINE)
 
 
 # --- place() records ----------------------------------------------------------
