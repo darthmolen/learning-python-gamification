@@ -1,6 +1,7 @@
 # Nothing Prices a Boss Medal
 
-**Status:** Promoted — `planning/feature_boss-pays-boss-rates_2026-08-30.md`
+**Status:** Closed — delivered 2026-08-30 as
+`planning/completed/feature_boss-pays-boss-rates_2026-08-30.md`
 **Date Discovered:** 2026-08-29
 **Discovered During:** `planning/in-progress/feature_api-and-runner_2026-08-28.md`, Wave 3
 

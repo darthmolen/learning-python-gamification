@@ -1,6 +1,6 @@
 # The API and the Runner
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** api
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
@@ -514,11 +514,24 @@ and no track lists that file for an alias any more.
 
 ## Status
 
-**Phases 1 to 4 are done. Phase 5 is not, and it is the only thing left.** All four verifiers of
-§6.3 are built, tested against a real Gitea and a real Postgres, and `local-repo` is proven from a
-push to a medal through the real sandbox. The plan stays in `in-progress/` and the `api` track stays
-held, because Phase 5's eleven call sites have to land in the same push as the engine change that
-requires them.
+**Final Status:** Completed
+**Track:** api
+**Completed:** 2026-08-30
+**Completed By:** Claude (Opus 5)
+
+**All five phases are done.** All four verifiers of §6.3 are built, tested against a real Gitea and
+a real Postgres, and `local-repo` is proven from a push to a medal through the real sandbox. Phase
+5 landed on 2026-08-30 in one commit with the engine half of
+`planning/completed/feature_boss-pays-boss-rates_2026-08-30.md` — seventeen call sites in this tree
+rather than the eleven the phase predicted, because the phase's census was taken before this
+track's own Phase 3 added two test files to it.
+
+**Three things named below are not built, and none of them is this plan's to build.** The Journal
+routes wait on a column that does not exist (`db`); the `local-repo` `path` branch waits on the
+first quest that sets one (`content`); the Windows compose failure is one decision across three
+tracks' files (`infra`). Each is a backlog item with a trigger. Holding the `api` track open for
+work owned by other tracks would be the track discipline failing rather than working, so the plan
+completes and the track is free.
 
 ### Outcomes
 
