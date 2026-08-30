@@ -2,6 +2,7 @@
 
 **Status:** In Progress
 **Track:** world-shim
+**Blocked on:** the son's laptop. Phases 1, 2 and 4 are done; Phase 3 is a framerate measurement on that machine and cannot be faked on the parent's
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** B — **blocks Area 3**

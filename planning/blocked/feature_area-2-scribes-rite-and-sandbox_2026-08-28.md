@@ -2,6 +2,7 @@
 
 **Status:** In Progress
 **Track:** area-2
+**Blocked on:** the son's laptop. The VS Code profile must be imported and confirmed on the machine it is for, and Phase 4 is gated on that
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** B — **the plan that argues the `concepts.ts` edit; `main` lands it**

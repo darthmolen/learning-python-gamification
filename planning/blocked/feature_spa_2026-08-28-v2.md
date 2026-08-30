@@ -3,6 +3,7 @@
 **Status:** In Progress
 **Version:** v2 — revised 2026-08-29 after two reviews; admitted to the `spa` track 2026-08-29
 **Track:** spa
+**Blocked on:** his laptop for the 1366x768 check, the API for Journal and Console content, and a browser that boots Pyodide for the turtle proof
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **not blocked by the API**
@@ -121,7 +122,12 @@ in either role.
 
 ## Where it stands — 2026-08-30
 
-Phases 1 through 4 are done. **Phase 5 is blocked on the `api` track**, which is in flight.
+**All five phases are done.** Phase 5 landed 2026-08-30: the gateway is endpoint-shaped and
+async, every screen waits, and the fetch path is tested against payloads the contract forbids.
+
+**This plan is blocked, and moved to `planning/blocked/` on 2026-08-30.** What remains is not
+work anybody can pick up — it is three criteria waiting on things this repository does not
+contain.
 
 Five criteria are met and asserted. The other five are honestly not, and each is a different
 kind of not:
