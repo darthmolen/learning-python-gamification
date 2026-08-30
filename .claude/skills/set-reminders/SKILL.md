@@ -108,9 +108,35 @@ filenames.
 
 ## Closing one
 
-Set `Status: done` and add a line saying what happened. **Never delete the file** — a reminder
-that was raised and answered is the record that it was answered, and the answer is usually the
-interesting part. A reminder that turned out not to matter is `dropped`, with the reason.
+Set `Status: done` and add a **`Closed:`** line directly beneath it, in the same bold-label
+style as the rest of the block:
+
+```markdown
+**Status:** done
+**Closed:** 2026-09-06 — Pushed from his laptop over the LAN; the key was never installed.
+```
+
+The date is the day it was answered, not the day it was raised. The sentence after the dash is
+the whole point of keeping the file: **what actually happened.** "Done" on its own records that
+somebody ticked a box, which is the one fact nobody will ever need.
+
+Change nothing else. Do not reflow the prose, do not reorder the block, do not delete the
+sections that are now historical — the reminder is a record of a question and its answer, and
+the question has to survive for the answer to mean anything.
+
+**Never delete the file.** A reminder that was raised and answered is the record that it was
+answered. A reminder that turned out not to matter is `dropped`, with the reason on the same
+`Closed:` line.
+
+`Closed:` is a fixed label because it is read by machines as well as people — the VS Code
+extension in `tools/vscode/reminders/` writes it when you tick a reminder off, and parses it
+back. If it ever changes here, it changes there; that is what `reminders.closedLabel` is for.
+
+### One more thing the files already do that this document did not say
+
+`**Plan:**` is written **inside backticks** — `` **Plan:** `planning/**/feature_x_2026-08-27.md` ``.
+Every existing reminder does this and the template above did not say so. Keep doing it: the glob
+contains `*` characters that some markdown renderers will otherwise eat as emphasis.
 
 ## Checking the board
 
