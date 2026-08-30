@@ -58,6 +58,6 @@ describe('the two halves of the shim agree', () => {
     // The property the Python docstring promises: nothing here raises, and `done()` is recorded
     // like anything else so the op stream is a faithful log of what he called.
     expect(turtleSource).toContain('_record("done")');
-    expect(interpret([{ op: 'done', args: [] }])).toEqual([]);
+    expect(interpret([{ op: 'done', args: [] }]).strokes).toEqual([]);
   });
 });

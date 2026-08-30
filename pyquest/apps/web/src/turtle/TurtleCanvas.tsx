@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { color } from '../design/tokens';
-import { interpret, type Stroke, type TurtleOp } from './protocol.ts';
+import { SHAPES, interpret, type Marker, type Stroke, type TurtleOp } from './protocol.ts';
 
 /**
  * Draws what the turtle recorded.
@@ -45,9 +45,39 @@ function fit(strokes: readonly Stroke[], width: number, height: number) {
   };
 }
 
+/**
+ * The turtle itself, at the end of its walk.
+ *
+ * Worth drawing rather than skipping: the name is the ghost of a robot, and Papert's argument
+ * for it was that a learner can identify with the thing — work out why the square came out
+ * wrong by standing up and walking it. That only works if there is a thing on screen, pointing
+ * somewhere, that he can imagine being.
+ */
+function drawMarker(ctx: CanvasRenderingContext2D, marker: Marker, scale: number, dx: number, dy: number) {
+  const outline = SHAPES[marker.shape];
+  if (outline.length === 0) return;
+
+  ctx.save();
+  ctx.translate(marker.at.x * scale + dx, -marker.at.y * scale + dy);
+  // Shapes are drawn pointing north; heading 0 is east, and the canvas y axis runs the other
+  // way from the turtle's, which is why this is a subtraction rather than an addition.
+  ctx.rotate(((90 - marker.heading) * Math.PI) / 180);
+
+  ctx.beginPath();
+  outline.forEach(([x, y], i) => {
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+
+  ctx.fillStyle = marker.color;
+  ctx.fill();
+  ctx.restore();
+}
+
 export function TurtleCanvas({ ops, width = 520, height = 360 }: TurtleCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const strokes = interpret(ops);
+  const { strokes, marker } = interpret(ops);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -71,7 +101,9 @@ export function TurtleCanvas({ ops, width = 520, height = 360 }: TurtleCanvasPro
       ctx.lineTo(stroke.to.x * scale + dx, -stroke.to.y * scale + dy);
       ctx.stroke();
     }
-  }, [strokes, width, height]);
+
+    drawMarker(ctx, marker, scale, dx, dy);
+  }, [strokes, marker, width, height]);
 
   return (
     <div>

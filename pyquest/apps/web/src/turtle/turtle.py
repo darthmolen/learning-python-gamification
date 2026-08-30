@@ -98,6 +98,26 @@ def exitonclick() -> None:
     _record("exitonclick")
 
 
+def shape(name: str) -> None:
+    """Choose what the turtle looks like.
+
+    Python ships ``classic`` (the arrow you start with) and ``turtle`` (an actual turtle). This
+    shim adds ``dragon``. A name it does not know leaves the current shape alone rather than
+    raising — real turtle raises, and a program dying on a cosmetic line is a bad trade.
+    """
+    _record("shape", name)
+
+
+def register_shape(name: str, polygon: object = None) -> None:
+    """Real turtle API, recorded and currently ignored.
+
+    ``register_shape("mine", ((0, 16), (-8, -8), (8, -8)))`` is how a custom shape is made in
+    ordinary Python, on any machine. The shim does not build one yet, so this is a no-op that
+    keeps the call legal — see the quest in ``planning/backlog/``.
+    """
+    _record("register_shape", name)
+
+
 def hideturtle() -> None:
     _record("hideturtle")
 
