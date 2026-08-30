@@ -334,7 +334,16 @@ function that returns money it did not first ask for.
 - `pyquest/vitest.config.ts` — a `projects` entry for each app's suite. **A coordination point
   with the `spa` track**, which names the same file for `apps/web`. Listed here because the
   disjointness check reads this list and an acknowledged shared file that is not in it is a gap
-- `pyquest/packages/contract/src/endpoints.ts` — **this track owns it**, per
+- ~~`pyquest/packages/contract/src/endpoints.ts`~~ — **released 2026-08-30.** This track wrote
+  it and no longer needs it: all thirteen routes, both blocked verifiers' `SubmitRequest`
+  variants, the error shape and the composite views are written. What remains here —
+  `git-signal` and `local-repo` — is implementation in `apps/api/src/`, gated on Gitea, and
+  touches no contract file. Held any longer it would block
+  `planning/feature_content-browser-safe-entry_2026-08-30.md`, which needs one import specifier
+  changed in it and which is currently breaking the SPA's dev server.
+- ~~`pyquest/packages/contract/src/index.ts`~~ — released for the same reason; its one
+  re-export line is in.
+- `pyquest/packages/contract/src/endpoints.ts` — *(historical)* this track wrote it, per
   `planning/completed/feature_contract-modules_2026-08-29.md`: the route table, request bodies
   and the error shape. `primitives.ts` and `payloads.ts` are `main`'s and `progress.ts` is the
   `db` track's; none is edited here
