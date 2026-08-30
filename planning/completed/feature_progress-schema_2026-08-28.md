@@ -1,6 +1,6 @@
 # The Progress Schema
 
-**Status:** Planned
+**Status:** Complete
 **Track:** db
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
@@ -386,3 +386,131 @@ claimed-implies-not-open check, was already in the list.
 
 No v3. The reviewer's own verdict was that nothing here blocks starting, and Phase 1 is plain
 SQL that depends on none of it.
+
+---
+
+## Status
+
+**Final Status:** Complete
+**Track:** db
+**Completed:** 2026-08-29
+
+### Outcomes
+
+All three phases landed, against the real Postgres in `infra/`.
+
+**Phase 1 — the runner and the schema.** `packages/db/src/migrate.ts` is the hand-written runner
+the plan ruled: `migrations/NNNN-kebab-name.sql` in lexical order, a Postgres advisory lock, one
+transaction per file, `schema_migrations(version, applied_at)` as the ledger. Five migrations
+create the thirteen tables — the ten the plan lists, plus `campaign`, plus the ledger. Every
+constraint in the schema appendix is implemented as written, and every DATE-vs-TIMESTAMPTZ ruling
+is followed per column.
+
+`infra/compose/migrate.yml` was already correct and needed only its invocation documented. The job
+was run for real against the live progress database: it applied all five migrations, and a second
+run printed `migrate: already up to date`.
+
+**Phase 2 — the repository.** Twelve thin readers returning the shapes `@pyquest/contract`
+declares. Two conversions happen in SQL rather than in the driver, and both are deliberate:
+`DATE` is cast to `text` so `pg` cannot turn a calendar date into a `Date` at local midnight (one
+day early, west of UTC, on a machine nobody tested from), and `TIMESTAMPTZ` is rendered by
+`to_char` because `timestamptz::text` is not ISO 8601. Every row is parsed through its schema at
+the boundary, which is the *only* thing validating `quest_medals.medal` — that column carries no
+SQL CHECK on purpose, because medal names are content and a list of them in Postgres is content in
+Postgres.
+
+`packages/contract/src/progress.ts` gained the seven row shapes this track owed, plus `Campaign`
+and `RunnerJob`. Per the mid-flight ruling from the api plan's v4 review, `RunnerJobSchema.status`
+carries the six **storage** states; `JobState` and the `claimed` → `running` translation are the
+api track's and are not here.
+
+**Phase 3 — integration tests.** 60 tests in `packages/db`, all against a real Postgres in a
+scratch database named `pyquest_test_<pid>_<suite>`, created and dropped per suite. The full suite
+is 361 tests across 18 files, and `npm run typecheck` is clean.
+
+`infra/smoke.sh` now runs the migration job, asserts it is a no-op the second time, asserts every
+migration on disk is recorded and every progress table exists, asserts no content table has
+appeared, and seeds **real** rows in the real schema rather than the `journal_rehearsal` stand-in
+it used before. The round-trip half now also proves the restored database still refuses a duplicate
+medal, because a restore that returns the rows without the keys is not the same database. 35
+passed, 0 failed.
+
+### The mutants, including the ones that survived
+
+Three survived their first pass. Each was the suite being wrong, and each was fixed by
+strengthening the test rather than weakening the mutant.
+
+1. **Deleting `BEGIN`/`COMMIT`/`ROLLBACK` from the runner left the whole suite green.** `pg` sends
+   a multi-statement file over the simple query protocol, which Postgres already wraps in an
+   implicit transaction, so the "fails halfway" test passed either way. What the implicit
+   transaction does not cover is the seam between the migration and the ledger row that records
+   it — two separate `query` calls, so the schema can change without the ledger saying so. Fixed
+   by comparing the `xmin` of a row the migration wrote with the `xmin` of its `schema_migrations`
+   row: same transaction, or the test fails.
+2. **The `bounties` state check was being proved by a different constraint.** The bad row
+   (`state = 'pending'`, no claimant) also violated `bounties_claim_matches_state`, so dropping the
+   state check still refused it. The fixture now carries a claimant, so the row breaks exactly one
+   rule.
+3. **The "repository rejects an unknown medal" test was being saved by the bundle parse.** Deleting
+   the per-row parse still failed the row, because `playerProgress` also parses the assembled
+   `PlayerProgress`. The test now asks `questMedals` directly, which has no such fallback.
+
+Caught on the first pass: the runner's ledger check and advisory lock (three ways); a
+migration-level mutant removing the rung CHECK from `0003-reviews.sql`; the `DATE` cast; the
+`to_char` instant; attempt ordering; and every one of the sixteen schema constraints.
+
+The sixteen constraints are not tested once. `tests/schema.test.ts` runs each as a pair — the row
+is refused with the constraint in place, and the *same row lands* inside a rolled-back transaction
+that DROPs it. Postgres does transactional DDL, which is what makes seeding a schema mutant cheap
+enough to keep in the suite permanently rather than run once by hand. If half two ever starts
+failing, something other than the named constraint was doing the work, which is exactly how
+finding 2 above was found.
+
+### Deviations
+
+- **No `globalSetup`/`globalTeardown`.** The plan specified them, and `pyquest/vitest.config.ts` is
+  no longer this track's file — it declares the `packages` project inline, so there is nowhere to
+  hang a global hook without editing a file another track owns. `useScratchDatabase` registers
+  `beforeAll`/`afterAll` instead, which gives the same lifecycle (create, migrate, hand over, drop
+  on failure too) at the cost of one database per suite rather than one per run. No scratch
+  database is left behind after a run, verified.
+- **`pyquest/package-lock.json` is committed, and it is not on this track's list.** Adding `pg` and
+  `@types/pg` to a package this track owns necessarily writes the root lockfile, and committing
+  `packages/db/package.json` without it leaves the repository unable to `npm ci`. The diff is 173
+  lines of pure addition — `pg`, its dependencies, `@types/pg`, and the `@pyquest/db` workspace
+  entry — with no deletions and nothing touching another track's dependencies.
+- **`campaign` and `runner_jobs` got contract row shapes**, which the plan's list of seven did not
+  name. `campaign` because the plan's own success criterion gives the start date a home and
+  something has to return it; `runner_jobs` because the api plan's v4 review ruled mid-flight that
+  this file types the storage row.
+- **`quest_medals.medal` carries no SQL CHECK.** Not a ruling the plan made either way. Medal names
+  are content vocabulary (`MEDALS` in `packages/content`), and enumerating them in Postgres is the
+  same §6.7 violation as a quests table. The repository's parse is the validator, and there is a
+  test that proves it is load-bearing.
+- **`attempts` has no `ON DELETE CASCADE`**, unlike the other player-scoped tables. Scars are never
+  deleted (§5.3), so deleting a player who has any is refused rather than quietly taking his
+  history with him.
+
+### Flagged upward, not solved here
+
+**`journal_entries` has nowhere to put the Journal.** The plan's appendix gives it exactly
+`(player_id, session_date, commit_sha, xp_awarded)`, and that is what was built. But the api plan's
+`JournalEntry` is `{ sessionDate, prompt, body, commitSha, xpAwarded, reply? }` — the prompt the DM
+set, the learner's answer, and the DM's reply. Those three have no column here and no home in git
+either, since a learner's journal text is progress and not content. §6.9 names the Journal as one
+of the two artifacts this project cannot regenerate, so the gap matters. Whoever reconciles the two
+plans should decide where `prompt`, `body` and `reply` live; a forward-only migration adding them
+is cheap and this track deliberately did not invent one against a ruled appendix.
+
+### Lessons Learned
+
+- **A mutant that survives is usually two tests overlapping, not a missing test.** All three
+  survivors were a check whose subject was being covered by something adjacent — an implicit
+  transaction, a second constraint, an outer parse. None of them would have been found by reading
+  the code.
+- **Pairing every constraint test with its own dropped-constraint twin is worth the sixteen extra
+  tests.** It turns "prove the mutant once" into a property the suite keeps checking, and it caught
+  a fixture that was breaking two rules at once.
+- **The dangerous conversions in a database layer are not the shapes, they are the dates.** A
+  `DATE` that the driver turns into a local-midnight `Date` is wrong by one day only in timezones
+  the author does not live in, which is the worst possible way for a bug to be distributed.

@@ -3,6 +3,7 @@
   "references": [
     { "path": "./packages/content" },
     { "path": "./packages/contract" },
+    { "path": "./packages/db" },
     { "path": "./packages/engine" }
   ]
 }

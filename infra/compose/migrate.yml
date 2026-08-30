@@ -5,6 +5,17 @@
 #
 # A job, not a service: it runs to completion and exits. `restart: "no"` says so out loud,
 # because a migration job that restarts on failure re-applies migrations in a loop.
+#
+#   docker compose --profile migrate run --rm migrate
+#
+# Safe to run twice, and that is asserted rather than assumed: `packages/db` keeps a
+# `schema_migrations` ledger, takes an advisory lock, and applies each file in its own
+# transaction. The second run prints "already up to date", which `infra/smoke.sh` checks.
+#
+# `npm run migrate` builds before it runs, because the workspace is bind-mounted as source and
+# nothing else in the stack compiles it. That is why the image is plain node rather than a
+# built artifact: there is no api image yet, and inventing one here would be this fragment
+# deciding something the api track owns.
 
 services:
 

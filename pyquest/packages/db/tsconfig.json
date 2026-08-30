@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  // Tests are typechecked by `tsconfig.test.json`, never emitted — same reason as the engine's.
+  "include": ["src/**/*.ts"],
+  "references": [{ "path": "../contract" }]
+}

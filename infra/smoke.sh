@@ -12,6 +12,7 @@
 #   2. gitea's schema really lives in the shared Postgres  (6.1)
 #   3. gitea serves over its mapped host port
 #   4. a real repository with a real commit can be created
+#   4b. the migration job applies the progress schema, and is a no-op twice (6.1)
 #   5. backup.sh produces a readable dated tarball          (6.9)
 #   6. restore.sh restores it and the commit comes back     (6.9)
 #
@@ -217,22 +218,81 @@ else
 fi
 
 # =============================================================================
-step "4b. seed the progress database with Journal-shaped rows"
+step "4b. the migration job applies the progress schema (spec 6.1)"
 # =============================================================================
-# The progress database has no schema until Wave 3, so without this the restore
-# rehearsal would only ever prove that an EMPTY database round-trips. 6.9 names
-# the Journal as one of the two artifacts this project cannot regenerate, and
-# the Journal lives in Postgres. So put real rows through the round trip.
+# Migrations run as a job, not as a service: it runs to completion and exits.
+# The two things worth asserting are the two that YAML cannot promise -- that it
+# actually applies the schema against the real container, and that running it a
+# second time does nothing. Forward-only migrations are safe to re-run only if
+# the ledger says so, and a ledger nobody has watched work is a hope.
+MIGRATE_1=$(dc --profile migrate run --rm migrate 2>&1) || true
+if echo "$MIGRATE_1" | grep -qE 'migrate: (applied|already up to date)'; then
+  ok "the migrate job ran to completion"
+else
+  bad "the migrate job did not report applying anything"
+  echo "$MIGRATE_1" | tail -10 | sed 's/^/        /'
+fi
+
+MIGRATE_2=$(dc --profile migrate run --rm migrate 2>&1) || true
+if echo "$MIGRATE_2" | grep -q 'migrate: already up to date'; then
+  ok "running it again is a no-op - the schema_migrations ledger is doing its job"
+else
+  bad "the second run was not a no-op; migrations are not idempotent"
+  echo "$MIGRATE_2" | tail -10 | sed 's/^/        /'
+fi
+
+# Every migration on disk is recorded. A count that lags is a migration that was
+# skipped, which is the failure that shows up as a missing column much later.
+ON_DISK=$(find ../pyquest/packages/db/migrations -name '*.sql' | wc -l | tr -d ' ')
+RECORDED=$(psql_super -d "$POSTGRES_DB" -c 'SELECT count(*) FROM schema_migrations;' 2>/dev/null || echo 0)
+if [ "${RECORDED:-0}" = "$ON_DISK" ]; then
+  ok "all $ON_DISK migrations are recorded in schema_migrations"
+else
+  bad "$ON_DISK migrations on disk, ${RECORDED:-0} recorded"
+fi
+
+# The tables themselves, named rather than counted: a count passes while the one
+# table you needed is missing.
+MISSING=""
+for t in players player_roles campaign quest_medals attempts datamines \
+         concept_reviews forced_reviews journal_entries sessions bounties runner_jobs; do
+  HAVE=$(psql_super -d "$POSTGRES_DB" -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='$t';")
+  [ "${HAVE:-0}" = "1" ] || MISSING="$MISSING $t"
+done
+if [ -z "$MISSING" ]; then
+  ok "every progress table exists, and there is no quests table among them (6.7)"
+else
+  bad "missing tables:$MISSING"
+fi
+
+# Content stays in git. If a table ever appears here holding curriculum, 6.7 has
+# been crossed and this is the check that says so.
+CONTENT_TABLES=$(psql_super -d "$POSTGRES_DB" -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('quests','areas','concepts');")
+if [ "${CONTENT_TABLES:-0}" = "0" ]; then
+  ok "no content tables in Postgres - content lives in git (6.7)"
+else
+  bad "found $CONTENT_TABLES content table(s) in the progress database"
+fi
+
+# =============================================================================
+step "4c. seed the progress database with real Journal rows"
+# =============================================================================
+# 6.9 names the Journal as one of the two artifacts this project cannot
+# regenerate, and the Journal lives in Postgres. So put real rows -- in the real
+# schema, not a stand-in -- through the round trip.
 #
-# This table is a stand-in, not the real schema. It is dropped at the end.
-JOURNAL_SENTINEL="the-day-the-turtle-drew-a-square-$(date +%s)"
-if dc exec -T postgres psql -v ON_ERROR_STOP=1 -qX -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
-     -c "DROP TABLE IF EXISTS journal_rehearsal;" \
-     -c "CREATE TABLE journal_rehearsal (id serial primary key, entry text not null, written_at timestamptz default now());" \
-     -c "INSERT INTO journal_rehearsal (entry) VALUES ('$JOURNAL_SENTINEL'), ('second entry'), ('third entry');" \
+# The sentinel is the commit sha, because that is the column a Journal entry has
+# that can carry one. It is deleted at the end.
+JOURNAL_SENTINEL=$(printf '%s' "$(date +%s)" | sha1sum 2>/dev/null | cut -c1-40)
+SMOKE_HANDLE="smoke-$(date +%s)"
+if [ -n "$JOURNAL_SENTINEL" ] && dc exec -T postgres psql -v ON_ERROR_STOP=1 -qX -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+     -c "INSERT INTO players (handle, display_name) VALUES ('$SMOKE_HANDLE', 'Smoke Test');" \
+     -c "INSERT INTO player_roles (player_id, role) SELECT id, 'player' FROM players WHERE handle='$SMOKE_HANDLE';" \
+     -c "INSERT INTO journal_entries (player_id, session_date, commit_sha, xp_awarded) SELECT id, current_date, '$JOURNAL_SENTINEL', 10 FROM players WHERE handle='$SMOKE_HANDLE';" \
+     -c "INSERT INTO quest_medals (player_id, quest_id, medal, earned_at, xp_awarded) SELECT id, 'a0-hello-world', 'cleared', current_date, 12 FROM players WHERE handle='$SMOKE_HANDLE';" \
+     -c "INSERT INTO attempts (player_id, quest_id, passed) SELECT id, 'a0-hello-world', false FROM players WHERE handle='$SMOKE_HANDLE';" \
      >/dev/null 2>&1; then
-  SEEDED=$(psql_super -d "$POSTGRES_DB" -c 'SELECT count(*) FROM journal_rehearsal;')
-  ok "seeded $SEEDED rows into $POSTGRES_DB.journal_rehearsal"
+  ok "seeded a player, a Journal entry, a medal and a scar into the real schema"
 else
   bad "could not seed the progress database"
   JOURNAL_SENTINEL=""
@@ -304,18 +364,31 @@ if [ -n "${ARCHIVE:-}" ]; then
   # The progress-database half of the round trip, asserted on the actual row
   # contents rather than on a table count.
   if [ -n "$JOURNAL_SENTINEL" ]; then
-    ROWS=$(psql_super -d "${POSTGRES_DB}_scratch" -c 'SELECT count(*) FROM journal_rehearsal;' 2>/dev/null || echo 0)
-    if [ "${ROWS:-0}" = "3" ]; then
-      ok "restored progress db has all 3 journal_rehearsal rows"
+    # The schema came back too, ledger and all: a dump that restores the rows but
+    # not the migration history is one nobody can migrate forward afterwards.
+    SCRATCH_MIGRATIONS=$(psql_super -d "${POSTGRES_DB}_scratch" -c 'SELECT count(*) FROM schema_migrations;' 2>/dev/null || echo 0)
+    if [ "${SCRATCH_MIGRATIONS:-0}" = "$ON_DISK" ]; then
+      ok "restored progress db carries all $ON_DISK migration records"
     else
-      bad "restored progress db has ${ROWS:-0} journal rows, expected 3"
+      bad "restored progress db has ${SCRATCH_MIGRATIONS:-0} migration records, expected $ON_DISK"
     fi
 
-    GOT=$(psql_super -d "${POSTGRES_DB}_scratch" -c "SELECT entry FROM journal_rehearsal WHERE entry='$JOURNAL_SENTINEL';" 2>/dev/null || echo '')
+    GOT=$(psql_super -d "${POSTGRES_DB}_scratch" -c "SELECT commit_sha FROM journal_entries WHERE commit_sha='$JOURNAL_SENTINEL';" 2>/dev/null || echo '')
     if [ "$GOT" = "$JOURNAL_SENTINEL" ]; then
       ok "the exact Journal entry came back: '$GOT'"
     else
       bad "Journal entry did not survive the round trip (got: '${GOT:-<nothing>}')"
+    fi
+
+    # The constraints have to survive the dump as well. A restored database that
+    # accepts a duplicate medal is not the same database, however equal the rows
+    # look, and this is the cheapest possible proof that the keys came back.
+    DUP=$(dc exec -T postgres psql -qX -U "$POSTGRES_USER" -d "${POSTGRES_DB}_scratch" \
+            -c "INSERT INTO quest_medals (player_id, quest_id, medal, earned_at, xp_awarded) SELECT id, 'a0-hello-world', 'cleared', current_date, 12 FROM players WHERE handle='$SMOKE_HANDLE';" 2>&1 || true)
+    if echo "$DUP" | grep -q 'duplicate key'; then
+      ok "the restored schema still refuses a second medal for the same quest (6.2)"
+    else
+      bad "the restored database accepted a duplicate medal - the keys did not survive"
     fi
   fi
 
@@ -325,10 +398,25 @@ fi
 # =============================================================================
 step "7. clean up after ourselves"
 # =============================================================================
-# A check that leaves a stand-in schema and a live admin account behind is a
-# check with side effects. Both go.
-dc exec -T postgres psql -qX -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
-   -c "DROP TABLE IF EXISTS journal_rehearsal;" >/dev/null 2>&1 || true
+# A check that leaves seeded rows and a live admin account behind is a check with
+# side effects. Both go.
+#
+# The schema itself STAYS. It is the real progress schema now rather than a
+# stand-in, and dropping it would undo the migration job this script just ran.
+# Only the rows this run wrote are removed, and they are removed in dependency
+# order because the scars deliberately have no ON DELETE CASCADE.
+if [ -n "${SMOKE_HANDLE:-}" ]; then
+  dc exec -T postgres psql -qX -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+     -c "DELETE FROM attempts WHERE player_id IN (SELECT id FROM players WHERE handle='$SMOKE_HANDLE');" \
+     -c "DELETE FROM players WHERE handle='$SMOKE_HANDLE';" >/dev/null 2>&1 || true
+
+  LEFT=$(psql_super -d "$POSTGRES_DB" -c "SELECT count(*) FROM players WHERE handle='$SMOKE_HANDLE';" 2>/dev/null || echo '?')
+  if [ "$LEFT" = "0" ]; then
+    ok "removed the seeded progress rows, leaving the schema in place"
+  else
+    bad "seeded player '$SMOKE_HANDLE' is still present - delete it by hand"
+  fi
+fi
 
 if [ -n "${TOKEN:-}" ]; then
   curl -fsS -X DELETE -H "Authorization: token $TOKEN" \
