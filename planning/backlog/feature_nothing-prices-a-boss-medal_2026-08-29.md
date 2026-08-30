@@ -1,6 +1,6 @@
 # Nothing Prices a Boss Medal
 
-**Status:** Backlog
+**Status:** Promoted — `planning/feature_boss-pays-boss-rates_2026-08-30.md`
 **Date Discovered:** 2026-08-29
 **Discovered During:** `planning/in-progress/feature_api-and-runner_2026-08-28.md`, Wave 3
 
@@ -52,3 +52,12 @@ and prove the suite reddens.
 Before any boss is playable — the API already calls this path for `peer-signoff`, which is how
 a challenge run (§5.2, §5.11) is signed off, and the parent's whole gap-detector runs through
 boss sign-offs. It is wrong money the first time a boss is beaten, not eventually.
+
+---
+
+**Promoted 2026-08-30** to `planning/feature_boss-pays-boss-rates_2026-08-30.md`, on the `engine`
+track. The plan makes the ruling this stub left open: the kind is a **required** first argument
+with no default, because a default reproduces the bug for anyone who forgets to pass it.
+
+One thing the plan found that this stub did not: `xpFor('boss', …)` has exactly one caller in the
+repository and it is a test. The boss rate is asserted correct and then reached by nothing.
