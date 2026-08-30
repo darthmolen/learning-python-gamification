@@ -1,118 +1,97 @@
 import {
-  AreaIdentitiesSchema,
-  AreaProgressSchema,
-  AvailableQuestsSchema,
-  BossStateSchema,
+  AreaViewSchema,
+  CampaignViewSchema,
   DueInvasionsSchema,
-  LevelSchema,
-  StandingsSchema,
-  XpSourcesSchema,
-  type AreaIdentity,
-  type AreaProgress,
-  type BossState,
+  PartyViewSchema,
+  QuestViewSchema,
+  TomeSchema,
+  type AreaView,
+  type CampaignView,
   type DueInvasion,
-  type Level,
-  type QuestCard,
-  type Standing,
-  type XpSource,
+  type PartyView,
+  type QuestView,
+  type Tome,
 } from '@pyquest/contract';
-import { CONCEPTS } from '@pyquest/content/browser';
 import * as fixtures from '../fixtures/index.ts';
 
 /**
  * The one module that knows where data comes from.
  *
- * Phase 2 answers from `../fixtures`; Phase 5 answers from the API. Nothing else in the app
- * changes when that happens, which is only true because nothing else in the app is allowed to
- * reach past this file — `boundary.test.ts` is what makes "allowed" mean something.
+ * **It is endpoint-shaped, not surface-shaped, because the API is.** One screen, one request:
+ * `endpoints.ts` puts the whole map in `/campaign` on the grounds that "a map that costs eight
+ * shows seven eighths of itself on a slow LAN, and the eighth that is missing is the area he
+ * was about to open." A gateway that fanned out into eight calls would be undoing that.
  *
- * **Every function parses.** Returning the fixture unchanged would typecheck and render, and
- * would also let a payload that violates the §5.4 cap, or names an area twice, or drops a
- * required field reach a screen. The schemas hold rules the compiler cannot see, and `.parse()`
- * is the only thing that runs them. That is the difference between a stub and a lie about
- * what the API will send.
+ * **Everything is async, and that is what Phase 5 actually cost.** The plan claimed one module
+ * would change. That was wrong, and not because the contract failed — a synchronous function
+ * cannot become an asynchronous one without every caller noticing. It is the internet; async is
+ * the default and the fixtures were the anomaly.
  *
- * The parse functions are exported alongside the getters so the drift can be tested directly,
- * rather than only through whatever the fixture happens to contain today.
+ * **Everything still parses.** The schemas hold rules the type system cannot see — the §5.4
+ * queue cap, one entry per area, `into + toNext === need` — and `.parse()` is the only thing
+ * that runs them. A payload that breaks one must not reach a screen just because the server
+ * sent it.
  */
-
-/* -------------------------------------------------------------------------------------------
- * Parsers — exported so a test can hand them something wrong on purpose
- * ----------------------------------------------------------------------------------------- */
-
-export const parseAreaIdentities = (raw: unknown): AreaIdentity[] =>
-  AreaIdentitiesSchema.parse(raw);
-
-export const parseAvailableQuests = (raw: unknown): QuestCard[] =>
-  AvailableQuestsSchema.parse(raw);
-
-export const parseDueInvasions = (raw: unknown): DueInvasion[] => DueInvasionsSchema.parse(raw);
-
-export const parseStandings = (raw: unknown): Standing[] => StandingsSchema.parse(raw);
-
-export const parseXpSources = (raw: unknown): XpSource[] => XpSourcesSchema.parse(raw);
-
-export const parseAreaProgress = (raw: unknown): AreaProgress => AreaProgressSchema.parse(raw);
-
-export const parseBossState = (raw: unknown): BossState => BossStateSchema.parse(raw);
-
-export const parseLevel = (raw: unknown): Level => LevelSchema.parse(raw);
-
-/* -------------------------------------------------------------------------------------------
- * The surfaces the screens read
- * ----------------------------------------------------------------------------------------- */
-
-/** Every area, named. The Map draws all eight; the Area screen and its crumbs take one. */
-export const getAreaIdentities = (): AreaIdentity[] =>
-  parseAreaIdentities(fixtures.areaIdentities);
-
-/** One area's identity, or `undefined` for an area id that is not in the campaign. */
-export const getAreaIdentity = (area: number): AreaIdentity | undefined =>
-  getAreaIdentities().find((a) => a.area === area);
-
-export const getAreaProgress = (area: number): AreaProgress =>
-  parseAreaProgress(fixtures.areaProgress[area]);
-
-export const getBossState = (area: number): BossState =>
-  parseBossState(fixtures.bossState[area]);
-
-/** An area with no authored quests yet answers with an empty board rather than throwing. */
-export const getAvailableQuests = (area: number): QuestCard[] =>
-  parseAvailableQuests(fixtures.availableQuests[area] ?? []);
-
-export const getDueInvasions = (): DueInvasion[] => parseDueInvasions(fixtures.dueInvasions);
-
-export const getStandings = (): Standing[] => parseStandings(fixtures.standings);
-
-export const getLevel = (): Level => parseLevel(fixtures.level);
 
 /**
- * **The one surface that never becomes a fetch.** No engine function and no endpoint stands
- * behind `xpSources` yet, so Phase 5 swaps the eight above and leaves this one exactly as it
- * is. It parses like the rest, because the shape is real even though the source is not.
+ * Where the API lives, or nothing.
+ *
+ * With no `VITE_API_URL` the gateway answers from fixtures, which is how the app runs with no
+ * stack behind it and how `vitest run --project web` stays hermetic. It is not a mock layer
+ * pretending to be a server: the fixtures go through the same parsers, so a fixture that drifts
+ * from the contract fails a test rather than rendering.
  */
-export const getXpSources = (): XpSource[] => parseXpSources(fixtures.xpSources);
+const API = import.meta.env['VITE_API_URL'] as string | undefined;
 
-/* -------------------------------------------------------------------------------------------
- * The syllabus — the Tome's left rail
- * ----------------------------------------------------------------------------------------- */
+async function get<T>(path: string, schema: { parse: (raw: unknown) => T }, stub: unknown): Promise<T> {
+  if (API === undefined || API === '') return schema.parse(stub);
 
-export interface SyllabusEntry {
-  area: AreaIdentity;
-  /** How many concepts this area first teaches, per §4's registry. */
-  concepts: number;
+  const response = await fetch(`${API}${path}`, { headers: { accept: 'application/json' } });
+
+  if (!response.ok) {
+    /*
+     * The status, not the body. `ApiErrorSchema` exists and the API sends it, but a failed
+     * request is the one place a client cannot assume the shape it hoped for — a proxy, a
+     * crashed process or a wrong URL all answer here, and none of them read `endpoints.ts`.
+     */
+    throw new Error(`${path} answered ${response.status}`);
+  }
+
+  return schema.parse(await response.json());
 }
 
-/**
- * Every area with its concept count. The registry is static content compiled into the bundle
- * rather than a payload, but it is reached through the gateway like everything else — a screen
- * that imports `CONCEPTS` directly is a screen that has to change when it stops being static.
- */
-export const getSyllabus = (): SyllabusEntry[] =>
-  getAreaIdentities().map((area) => ({
-    area,
-    concepts: CONCEPTS.filter((c) => c.area === area.area).length,
-  }));
+/** The whole map: every area with its progress, its boss, and its name where content has one. */
+export const getCampaign = (playerId: string): Promise<CampaignView> =>
+  get(`/api/players/${playerId}/campaign`, CampaignViewSchema, fixtures.campaign);
 
-/** The whole registry, for the Tome's "N concepts" header. */
-export const getConceptTotal = (): number => CONCEPTS.length;
+/** One area, with its quests. */
+export const getArea = (playerId: string, area: number): Promise<AreaView> =>
+  get(`/api/players/${playerId}/areas/${area}`, AreaViewSchema, fixtures.areaView(area));
+
+/** One quest: the brief, the medal slots and what each would pay, and the starter. */
+export const getQuest = (playerId: string, questId: string): Promise<QuestView> =>
+  get(`/api/players/${playerId}/quests/${questId}`, QuestViewSchema, fixtures.questView(questId));
+
+/** The session's invasions (§5.4): at most five, one entry per concept. */
+export const getDefend = (playerId: string): Promise<DueInvasion[]> =>
+  get(`/api/players/${playerId}/defend`, DueInvasionsSchema, fixtures.dueInvasions);
+
+/** The completion board, XP provenance, and open bounties. */
+export const getParty = (playerId: string): Promise<PartyView> =>
+  get(`/api/players/${playerId}/party`, PartyViewSchema, fixtures.party);
+
+/**
+ * The syllabus. Not player-scoped and carrying no unlocked state — the syllabus is the same for
+ * everyone, and what is open is derived from the campaign the SPA already holds.
+ */
+export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, fixtures.tome);
+
+/**
+ * Kitchen Table mode is one household (§5.11), and the seats are roles rather than people. Until
+ * the Console can name a player, every request is made as this one.
+ *
+ * There is nothing behind it yet: the database has thirteen tables and no rows, and nothing in
+ * the repository creates a household. See
+ * `planning/backlog/feature_seed-a-household_2026-08-30.md`.
+ */
+export const PLAYER_ID = 'peer';

@@ -1,5 +1,9 @@
+import { useCallback } from 'react';
+import type { DueInvasion } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getDueInvasions } from '../gateway/index.ts';
+import { PLAYER_ID, getDefend } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
+import { Awaiting } from '../shell/Loading';
 import { Eyebrow, Mono, Panel } from '../shell/ui';
 
 const SOURCE_LABEL: Readonly<Record<string, string>> = {
@@ -17,7 +21,17 @@ const SOURCE_LABEL: Readonly<Record<string, string>> = {
  * showing an empty list, because a blank panel reads as broken.
  */
 export function DefendScreen() {
-  const due = getDueInvasions();
+  const load = useCallback(() => getDefend(PLAYER_ID), []);
+  const queue = useResource(load, []);
+
+  return (
+    <Awaiting resource={queue} label="the invasion queue">
+      {(due) => <Queue due={due} />}
+    </Awaiting>
+  );
+}
+
+function Queue({ due }: { due: DueInvasion[] }) {
 
   return (
     <div style={{ padding: '26px 32px 40px' }}>

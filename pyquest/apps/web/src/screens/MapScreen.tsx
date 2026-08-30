@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
-import type { AreaIdentity } from '@pyquest/contract';
+import type { AreaCard, CampaignView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getAreaIdentities, getAreaProgress, getBossState, getDueInvasions, getLevel } from '../gateway/index.ts';
+import { PLAYER_ID, getCampaign, getDefend } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
 import { formatTotal } from '../present/index.ts';
+import { Awaiting } from '../shell/Loading';
 import { Eyebrow, Mono } from '../shell/ui';
 
 /**
@@ -101,10 +103,22 @@ const LEGEND: readonly { label: string; hue: string }[] = [
 ];
 
 export function MapScreen() {
-  const areas = getAreaIdentities();
-  const level = getLevel();
-  const invasions = getDueInvasions();
-  const progress = areas.map((a) => getAreaProgress(a.area));
+  const load = useCallback(() => getCampaign(PLAYER_ID), []);
+  const campaign = useResource(load, []);
+
+  return (
+    <Awaiting resource={campaign} label="the campaign">
+      {(view) => <Campaign view={view} />}
+    </Awaiting>
+  );
+}
+
+function Campaign({ view }: { view: CampaignView }) {
+  const cards = view.areas;
+  const progress = cards.map((c) => c.progress);
+  const dueLoad = useCallback(() => getDefend(PLAYER_ID), []);
+  const due = useResource(dueLoad, []);
+  const invasions = due.status === 'ready' ? due.value : [];
 
   /**
    * Where he is standing, derived rather than stored: the first area not yet finished. `next` is
@@ -125,11 +139,21 @@ export function MapScreen() {
   };
 
   const [selected, setSelected] = useState(hereIndex === -1 ? 0 : hereIndex);
-  const area = areas[selected] as AreaIdentity;
-  const p = progress[selected];
-  const boss = getBossState(area.area);
-  const dueHere = invasions.filter((i) => i.area === area.area).length;
+  const card = cards[selected] as AreaCard;
+  const p = card.progress;
+  const boss = card.boss;
+  const dueHere = invasions.filter((i) => i.area === card.area).length;
+
+  /*
+   * `identity` is optional, and that is a fact about the content rather than a softness here:
+   * `area-0.yml` and `area-2.yml` carry a title and no `weeks` or `blurb`, so no identity can be
+   * built for them and the API sends none. Two unlabelled areas is the honest map — inventing a
+   * blurb to fill the gap is the mistake the hardcoded name table was removed for.
+   */
+  const title = card.identity?.title;
+  const named = title !== undefined;
   const clearedCount = progress.filter((q) => q.cleared >= q.total).length;
+  const totalAreas = cards.length;
 
   return (
     <div style={{ display: 'flex', flexGrow: 1, minHeight: 0 }}>
@@ -147,16 +171,13 @@ export function MapScreen() {
             The Campaign
           </h1>
           {/*
-            * The artboard also reads "· week 10" here. That needs a campaign start date, which is
-            * household state in Postgres and does not exist yet, so it is absent rather than
-            * guessed. Same reason `LevelSchema` gives no cumulative xp for the "1,260" opposite.
+            * The artboard also reads "· week 10" and "1,260 xp · level 9" here. Neither has a
+            * source: the week needs a campaign start date that is household state in Postgres,
+            * and `/campaign` carries no level. Absent beats invented.
             */}
-          <Eyebrow>{`8 areas · ${clearedCount} of 8 cleared`}</Eyebrow>
+          <Eyebrow>{`${totalAreas} areas · ${clearedCount} of ${totalAreas} cleared`}</Eyebrow>
           <div style={{ flexGrow: 1 }} />
-          <Mono style={{ fontSize: '12px', color: color.secondary }}>
-            <strong style={{ color: color.fg }}>{`level ${level.level}`}</strong>
-            {` · ${level.toNext} xp to next`}
-          </Mono>
+          <Mono style={{ fontSize: '12px', color: color.secondary }}>{view.playerId}</Mono>
         </div>
 
         <svg viewBox="0 0 1000 700" style={{ flexGrow: 1, width: '100%', minHeight: 0 }} role="presentation">
@@ -177,12 +198,12 @@ export function MapScreen() {
             );
           })}
 
-          {areas.map((a, i) => {
+          {cards.map((a, i) => {
             const spot = SPOTS[i] as { x: number; y: number };
             const state = stateOf(i);
             const lit = state === 'done' || state === 'here' || state === 'started';
             const hue = BIOME[i] as string;
-            const q = progress[i];
+            const q = a.progress;
 
             return (
               <g
@@ -190,7 +211,7 @@ export function MapScreen() {
                 transform={`translate(${spot.x},${spot.y})`}
                 role="button"
                 tabIndex={0}
-                aria-label={`Area ${a.area}, ${a.title}`}
+                aria-label={a.identity === undefined ? `Area ${a.area}` : `Area ${a.area}, ${a.identity.title}`}
                 aria-pressed={i === selected}
                 onClick={() => setSelected(i)}
                 onKeyDown={(e) => {
@@ -218,7 +239,7 @@ export function MapScreen() {
                   {`AREA ${a.area}`}
                 </text>
                 <text x="0" y="96" textAnchor="middle" fontFamily={font.display} fontSize="13" fill={lit ? color.fg : color.muted}>
-                  {a.title}
+                  {a.identity?.title ?? ''}
                 </text>
                 <text x="0" y="113" textAnchor="middle" fontFamily={font.mono} fontSize="10" fill={state === 'here' ? '#8fd196' : '#4a5361'}>
                   {q === undefined ? '' : `${q.cleared} of ${formatTotal(q.total, q.estimated)}`}
@@ -243,7 +264,7 @@ export function MapScreen() {
       </div>
 
       <aside
-        aria-label={`Area ${area.area}, ${area.title}`}
+        aria-label={named ? `Area ${card.area}, ${title}` : `Area ${card.area}`}
         style={{
           width: '420px',
           flexShrink: 0,
@@ -261,15 +282,21 @@ export function MapScreen() {
               <polygon points="-10,0 0,5.5 0,15 -10,9.5" fill={shade(BIOME[selected] as string, 0.68)} />
               <polygon points="10,0 0,5.5 0,15 10,9.5" fill={shade(BIOME[selected] as string, 0.46)} />
             </svg>
-            <Eyebrow style={{ color: BIOME[selected] as string }}>{`Area ${area.area}`}</Eyebrow>
+            <Eyebrow style={{ color: BIOME[selected] as string }}>{`Area ${card.area}`}</Eyebrow>
           </div>
 
           <h2 style={{ margin: '0 0 4px', fontFamily: font.display, fontSize: '28px', letterSpacing: '-.015em' }}>
-            {area.title}
+            {title ?? `Area ${card.area}`}
           </h2>
-          <p style={{ margin: 0, color: color.secondary, fontSize: '13px' }}>
-            {`Weeks ${area.weeks.from}–${area.weeks.to} · ${area.blurb}`}
-          </p>
+          {card.identity !== undefined ? (
+            <p style={{ margin: 0, color: color.secondary, fontSize: '13px' }}>
+              {`Weeks ${card.identity.weeks.from}–${card.identity.weeks.to} · ${card.identity.blurb}`}
+            </p>
+          ) : (
+            <Mono style={{ display: 'block' }}>
+              This area has no name on the wire yet — its manifest carries no weeks or blurb.
+            </Mono>
+          )}
 
           {p !== undefined && (
             <>
@@ -308,7 +335,9 @@ export function MapScreen() {
         </div>
 
         <div style={{ flexGrow: 1, overflow: 'auto', padding: '22px 28px' }}>
-          <p style={{ margin: '0 0 20px', color: color.fgBright, fontSize: '13.5px' }}>{area.blurb}</p>
+          {card.identity !== undefined && (
+            <p style={{ margin: '0 0 20px', color: color.fgBright, fontSize: '13.5px' }}>{card.identity.blurb}</p>
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', marginBottom: '24px' }}>
             {/*
@@ -322,7 +351,7 @@ export function MapScreen() {
           </div>
 
           <Link
-            to={`/area/${area.area}`}
+            to={`/area/${card.area}`}
             style={{
               display: 'block',
               padding: '12px 16px',

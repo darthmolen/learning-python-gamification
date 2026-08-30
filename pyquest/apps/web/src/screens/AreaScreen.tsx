@@ -1,6 +1,10 @@
+import { useCallback } from 'react';
 import { Link, useParams } from 'react-router';
+import type { AreaView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getAreaIdentity, getAreaProgress, getAvailableQuests, getBossState } from '../gateway/index.ts';
+import { PLAYER_ID, getArea } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
+import { Awaiting } from '../shell/Loading';
 import { formatTotal } from '../present/index.ts';
 import { Breadcrumbs } from '../shell/Breadcrumbs';
 import { Cube, Display, Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
@@ -22,30 +26,32 @@ const STATUS_MARK: Readonly<Record<string, string>> = {
 export function AreaScreen() {
   const { areaId = '' } = useParams();
   const area = Number(areaId);
-  const identity = getAreaIdentity(area);
+  const load = useCallback(() => getArea(PLAYER_ID, area), [area]);
+  const view = useResource(load, [area]);
 
-  if (identity === undefined) {
-    return (
-      <>
-        <Breadcrumbs trail={[{ label: 'Map', to: '/map' }]} here={`Area ${areaId}`} />
-        <div style={{ padding: '30px 40px' }}>
-          <Display>Not a place in this campaign</Display>
-          <p style={{ color: color.secondary }}>The campaign runs from Area 0 to Area 7.</p>
-        </div>
-      </>
-    );
-  }
+  return (
+    <Awaiting resource={view} label={`Area ${areaId}`}>
+      {(value) => <Area view={value} />}
+    </Awaiting>
+  );
+}
 
-  const progress = getAreaProgress(area);
-  const boss = getBossState(area);
-  const quests = getAvailableQuests(area);
+function Area({ view }: { view: AreaView }) {
+  const area = view.area;
+  const identity = view.identity;
+  const progress = view.progress;
+  const boss = view.boss;
+  const quests = view.quests;
+  /* An area whose manifest carries no weeks or blurb has no identity to send. Its number is
+   * still its name, and that is better than a title invented to fill the space. */
+  const title = identity?.title ?? `Area ${area}`;
 
   return (
     <>
       <Breadcrumbs
         trail={[{ label: 'Map', to: '/map' }]}
-        here={`Area ${area} · ${identity.title}`}
-        aside={`weeks ${identity.weeks.from}–${identity.weeks.to}`}
+        here={identity === undefined ? `Area ${area}` : `Area ${area} · ${identity.title}`}
+        aside={identity === undefined ? undefined : `weeks ${identity.weeks.from}–${identity.weeks.to}`}
       />
 
       <div style={{ padding: '30px 40px 50px', overflow: 'auto' }}>
@@ -54,11 +60,13 @@ export function AreaScreen() {
           <div style={{ minWidth: 0 }}>
             <Eyebrow style={{ color: color.accent }}>{`Area ${area}`}</Eyebrow>
             <h1 style={{ margin: '4px 0', fontFamily: font.display, fontSize: '32px', letterSpacing: '-.015em' }}>
-              {identity.title}
+              {title}
             </h1>
-            <p style={{ margin: 0, color: color.secondary, fontSize: '13px' }}>
-              {`Weeks ${identity.weeks.from}–${identity.weeks.to} · ${identity.blurb}`}
-            </p>
+            {identity !== undefined && (
+              <p style={{ margin: 0, color: color.secondary, fontSize: '13px' }}>
+                {`Weeks ${identity.weeks.from}–${identity.weeks.to} · ${identity.blurb}`}
+              </p>
+            )}
           </div>
           <div style={{ flexGrow: 1 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
@@ -74,7 +82,11 @@ export function AreaScreen() {
 
         <Eyebrow style={{ margin: '34px 0 12px' }}>The brief</Eyebrow>
         <Panel>
-          <p style={{ margin: 0, color: color.fgBright }}>{identity.blurb}</p>
+          {identity === undefined ? (
+            <Mono>This area's manifest carries no blurb yet, so there is nothing to show here.</Mono>
+          ) : (
+            <p style={{ margin: 0, color: color.fgBright }}>{identity.blurb}</p>
+          )}
         </Panel>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '34px 0 12px' }}>

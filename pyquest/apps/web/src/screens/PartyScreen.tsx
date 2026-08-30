@@ -1,5 +1,9 @@
+import { useCallback } from 'react';
+import type { PartyView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getStandings, getXpSources } from '../gateway/index.ts';
+import { PLAYER_ID, getParty } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
+import { Awaiting } from '../shell/Loading';
 import { Eyebrow, MedalSlots, Mono, Panel } from '../shell/ui';
 
 /**
@@ -8,8 +12,19 @@ import { Eyebrow, MedalSlots, Mono, Panel } from '../shell/ui';
  * field at all, which is the contract enforcing the same ruling one layer down.
  */
 export function PartyScreen() {
-  const standings = getStandings();
-  const sources = getXpSources();
+  const load = useCallback(() => getParty(PLAYER_ID), []);
+  const party = useResource(load, []);
+
+  return (
+    <Awaiting resource={party} label="the party">
+      {(view) => <Board view={view} />}
+    </Awaiting>
+  );
+}
+
+function Board({ view }: { view: PartyView }) {
+  const standings = view.standings;
+  const sources = view.xpSources;
 
   return (
     <div style={{ padding: '26px 32px 40px' }}>
@@ -53,7 +68,13 @@ export function PartyScreen() {
             </li>
           ))}
         </ul>
-        <Mono style={{ display: 'block', marginTop: '14px' }}>Stubbed — no endpoint implements this yet.</Mono>
+        {sources.length === 0 && (
+          <Mono style={{ display: 'block' }}>
+            The endpoint answers with nothing, and that is the truth rather than a gap: no engine
+            function computes this yet, and an API that summed medals would be doing the engine's
+            job.
+          </Mono>
+        )}
       </Panel>
     </div>
   );
