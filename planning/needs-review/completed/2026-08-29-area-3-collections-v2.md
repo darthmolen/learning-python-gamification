@@ -304,7 +304,7 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 ## Dependencies / Prerequisites
 
-- **`feature_world-shim_2026-08-28.md` must be complete**, including its the son's laptop measurement,
+- **`feature_world-shim_2026-08-28.md` must be complete**, including its laptop measurement,
   before any block is placed. **It creates `curriculum/lib/world.py`; this track assumes that
   file exists and never writes it** — `curriculum/lib/` is not in Files Expected to Change
   below, and if an exercise needs the shim changed, that is an edit to the shim plan. As of

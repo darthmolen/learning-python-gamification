@@ -180,7 +180,7 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 ## Dependencies / Prerequisites
 
-- **`feature_world-shim_2026-08-28.md` must be complete**, including its the son's laptop measurement.
+- **`feature_world-shim_2026-08-28.md` must be complete**, including its laptop measurement.
   The cap it produces is an input to every exercise here.
 - **`main` must have landed the `breakpoints` concept id**, or the VS Code rung quest fails
   `validate:content` on `concept-above-area`. This is a prerequisite of the `main` track, not
