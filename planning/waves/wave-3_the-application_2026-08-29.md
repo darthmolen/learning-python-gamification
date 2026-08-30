@@ -1,6 +1,6 @@
 # Wave 3 — The Application
 
-**Status:** Open — three gates closed 2026-08-29, three plans running
+**Status:** Open — three gates closed and three plans landed 2026-08-29; two remain
 **Level:** Wave — coordinates plans, does not replace them
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -93,11 +93,51 @@ one writes SQL and a repository layer, the other writes wire shapes and YAML. Gi
 
 ## Exit criteria
 
-- [ ] Every in-flight plan declares a file set
-- [ ] No file appears in two in-flight plans' `Files Expected to Change`
-- [ ] `pyquest/vitest.config.ts` is not in any plan's file set, because no plan needs it
-- [ ] Five queued plans are running or complete
-- [ ] The API's endpoint half exists, so the SPA is no longer stubbing against prose
+- [x] Every in-flight plan declares a file set — area-0 was the only gap
+- [x] No file appears in two in-flight plans' `Files Expected to Change` — checked by listing
+      every path and looking for a duplicate, not by reading
+- [x] No plan lists `pyquest/vitest.config.ts` **for an alias**. Two still list it: `spa`, which
+      owns it, and `api`, which needs one `projects` entry for `apps/api`'s node environment.
+      That is one claimant at a time and not the queue this wave existed to break — the
+      criterion was written too absolutely
+- [ ] Five queued plans running or complete — **three of five.** The progress schema, the
+      content surface and the curriculum's voice all landed 2026-08-29
+- [ ] The API's endpoint half exists — **not started.** The plan is approved (v4, "yes, with
+      one clarification") and unblocked; it is the next thing to run
+
+## What landed, 2026-08-29
+
+| Track | Plan | Result |
+|---|---|---|
+| `db` | Progress Schema | `f6ad25a` — 13 tables, migrations run against live Postgres, 60 integration tests, smoke 35/0 |
+| `content-wire` | Content Surface | `81dc3ab` — six manifests carry weeks and blurb; an area's name reaches the wire from YAML |
+| `main` | Curriculum's Voice | `31a115d` — 875 pronouns across 40 files; 11 deliberate survivors, all Dad |
+
+Suite went 243 → **361 tests across 18 files**, `validate:content` clean at 8 areas.
+
+## What the wave learned
+
+- **A gate that proposes changing a file should read that file first.** Gate 2 proposed a split
+  the `spa` track had already argued against, in the file, with the better argument.
+- **Two plans by one author a day apart still disagree.** `journal_entries` was built exactly as
+  its appendix ruled, and the API plan promises three columns that appendix never had. Written
+  down as `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md`.
+- **A mutant found a test passing for the wrong reason.** Deleting the migration runner's
+  transaction control left the suite green — `pg` wraps a multi-statement file implicitly, so
+  the test proved something Postgres does for free. The seam it missed was between the migration
+  and its ledger row, two separate calls.
+- **Blocked on hardware is not blocked on everything.** area-2 waits on a laptop; the content
+  surface stopped waiting on area-2 by landing six manifests and deferring two into the tracks
+  that hold them.
+
+## What Wave 4 inherits
+
+- The API, approved and unblocked, with the Journal columns to add first
+- `area-3`, still waiting on world-shim and area-2 — the only honestly-blocked plan on the board
+- Tightening `weeks`/`blurb` to required once area-0 and area-2 land theirs; until then a
+  weekless manifest is invisible to the validator, which a mutant proved
+- The overlap defence in `payloads.test.ts` rests on a hand-written literal carrying Area 2's
+  6–8 range. When area-2 lands its weeks, that literal should give way to real content
 
 ## What this wave does not do
 
