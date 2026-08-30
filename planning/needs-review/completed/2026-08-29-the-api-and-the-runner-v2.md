@@ -290,3 +290,50 @@ root `docker-compose.yml` is not to be edited here.
 
 Anything a screen renders. The API returns the contract's shapes and stops; the DC warning
 threshold, the `~`, and a zero payout reading as "brag" are all the UI's.
+
+---
+
+## Plan Review (v2)
+
+**Reviewed:** 2026-08-29 18:26
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — `runner_jobs` now has a full column table, status set, lease fields, claim semantics, and an index.
+2. **Resolved** — Concrete route table listed with methods, paths, requests, and responses for all 13 endpoints.
+3. **Partially resolved** — Error shape and code union exist, but only as inline prose/TS, not a named contract schema with field types and nullability fully pinned.
+4. **Partially resolved** — All four verifiers described concretely; `git-signal` journal detection rule and `peer-signoff` state transitions still leave some implementation choices open.
+5. **Resolved** — Phase 4 states "engine decides, API records" with specific engine calls and storage responsibilities for each write.
+6. **Resolved** — Runner isolation now covers network, CPU, memory, `RLIMIT_NPROC`, file size, tmpfs workspace, output cap, non-root, read-only rootfs, and cleanup.
+7. **Resolved** — `xpSources` explicitly assigned to engine; temporary API behavior (return empty, contract already ships shape) stated.
+8. **Partially resolved** — Boot-load says whole-corpus/fail-fast and names schemas, but not the exact in-memory shape the API serves from.
+9. **Resolved** — `vitest.config.ts` shared ownership with SPA track explicitly acknowledged.
+10. **Resolved** — Cross-plan coordination is now formal: this plan defines `runner_jobs`; db plan consumes it.
+
+### New Issues
+
+#### Important (Should Address)
+
+- **`vitest.config.ts` missing from Files Expected to Change**
+  - Section: Files Expected to Change / Track discipline
+  - What's wrong: The track discipline section acknowledges the file needs an entry, but it is not listed in Files Expected to Change.
+  - Why it matters: Disjointness checks scan that list; an acknowledged shared file that is not listed is a gap.
+  - Suggested fix: Add `pyquest/vitest.config.ts` to Files Expected to Change with a note that this is a coordination point with the `spa` track.
+
+- **`runner_jobs` storage states vs API-facing states not mapped**
+  - Section: Routes table / `runner_jobs` column table
+  - What's wrong: `GET /api/jobs/:jobId` returns `queued, running, passed, failed, timed-out` as `JobState`, but `runner_jobs.status` uses `claimed` and `killed` which have no stated mapping.
+  - Why it matters: The API must translate storage states to contract states; unspecified means implemented ad hoc.
+  - Suggested fix: Add an explicit mapping: `claimed → running`, `killed → timed-out` or `failed`, with the rule stated.
+
+- **`GET /defend` query parameter contract not specified**
+  - Section: Routes table
+  - What's wrong: `?now=<date>` is noted but no schema/validation contract for the query parameter is defined alongside the request body schemas.
+  - Suggested fix: Add a `NowQuerySchema` or state explicitly that an absent `?now` defaults to server date.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The plan is substantially improved — the route table, `runner_jobs`, awarding flow, and runner isolation are all now workable — but the missing `vitest.config.ts` file-set entry and the unspecified job-status mapping are design decisions that would be made inconsistently during implementation without a ruling here.

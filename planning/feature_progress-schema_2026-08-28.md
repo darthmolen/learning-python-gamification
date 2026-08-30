@@ -157,8 +157,14 @@ as ISO calendar dates, so those columns are `DATE`. Everything that is a sequenc
 
 **`players`** — `id uuid pk default gen_random_uuid()`, `handle citext not null unique`,
 `display_name text not null check (length(trim(display_name)) > 0)`, `created_at timestamptz
-not null default now()`. `handle` is the stable identity the contract's `playerId` refers to;
-`display_name` is roster data the API joins and the engine never sees (§6.2, §6.7).
+not null default now()`.
+
+**The contract's `playerId` is `players.id`, the UUID.** An earlier draft said `handle`, which
+contradicted every other table keying on `player_id uuid` — and the two are genuinely different
+things, so the repository would have mapped whichever one the author had in mind that morning.
+`handle` is for routing and for humans; it can be changed without rewriting history, which is
+exactly why it cannot be the identity. `display_name` is roster data the API joins and the
+engine never sees (§6.2, §6.7).
 
 **`player_roles`** — `(player_id, role)` primary key, `role text not null check (role in
 ('player','dm'))`, FK to `players` on delete cascade. Kitchen Table is one adult with both
@@ -197,7 +203,12 @@ rather than claimed.
 
 **`sessions`** — `id bigserial pk`, `scheduled_for date not null unique`, `attended boolean not
 null default false`, `forgiven_by uuid null references players(id)`, `note text`. §5.9's streak
-is derived from these rows and never stored. `forgiven_by` is the only counter a human may
+is derived from these rows and never stored.
+
+The uniqueness on `scheduled_for` is deliberate and worth arguing, because the spec does not
+require it: the streak counts session *days*, so two rows for one date would let a single
+Saturday count twice — a streak that can be inflated by writing a row is not a streak. If the
+campaign ever runs two sittings in a day, they are one session with a longer note. `forgiven_by` is the only counter a human may
 adjust, and it names who did it, because a forgiveness nobody signed is one nobody can discuss.
 
 **`bounties`** — `id bigserial pk`, `posted_by`, `claimed_by uuid null`, both FK to `players`,
@@ -256,7 +267,10 @@ store 9. Drop the `xp_awarded` check and store −5. Drop `player_roles`' primar
 player `dm` twice. Drop the `bounties` state check and store `'pending'`; drop its
 claimed-implies-not-open check and leave a claimed bounty open. Drop the `datamines` note check
 and store `''`. Drop the `forced_reviews` primary key and schedule the same review twice. Drop
-a foreign key and orphan an `attempts` row against a player who does not exist.
+a foreign key and orphan an `attempts` row against a player who does not exist. Drop the `datamines`
+`attempts_before > 0` check and record a Datamine granted after zero failures. Drop the
+`journal_entries` sha pattern and store `not-a-sha`. Drop `sessions.forgiven_by`'s foreign key
+and forgive a streak in the name of a player who does not exist.
 
 Every one of those is a row the application would happily have written on some Tuesday.
 
@@ -309,3 +323,24 @@ is not to be edited here.
 ## Out of Scope
 
 Content of any kind. If a migration inserts a quest, this plan has gone wrong.
+
+---
+
+## Review History
+
+**v1 reviewed 2026-08-29 — implementable with fixes.** Five criticals, all of the same kind: the
+plan named its decisions instead of making them. The migration runner, the `concept_id` naming,
+the composite-FK question and the full shapes for `players`, `sessions`, `bounties` and
+`forced_reviews` are now rulings, and the schema appendix exists.
+
+**v2 reviewed 2026-08-29 — implementable, minor fixes, not blocking Phase 1.** Three findings.
+The identity mapping was the one that mattered: `playerId` is `players.id`, not `handle`, and
+the draft had said both. The uniqueness on `sessions.scheduled_for` is now argued rather than
+asserted.
+
+Three of the four missing mutants were real and are added — `attempts_before > 0`, the journal
+sha pattern, and `sessions.forgiven_by`'s foreign key. The fourth, the `bounties`
+claimed-implies-not-open check, was already in the list.
+
+No v3. The reviewer's own verdict was that nothing here blocks starting, and Phase 1 is plain
+SQL that depends on none of it.

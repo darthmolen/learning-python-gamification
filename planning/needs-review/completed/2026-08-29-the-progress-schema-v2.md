@@ -309,3 +309,50 @@ is not to be edited here.
 ## Out of Scope
 
 Content of any kind. If a migration inserts a quest, this plan has gone wrong.
+
+---
+
+## Plan Review (v2)
+
+**Reviewed:** 2026-08-29 18:26
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — Custom plain-SQL runner chosen (`packages/db/src/migrate.ts`), rationale stated.
+2. **Partially resolved** — `runner_jobs` is no longer undefined; this plan correctly defers its schema to the API plan appendix. Implementable only if that appendix is concrete and approved (it is).
+3. **Resolved** — `sessions` and `bounties` now have PKs, FKs, checks, and date/timestamp choices.
+4. **Resolved** — Explicitly rejects composite FK from `forced_reviews` to `concept_reviews`, with rationale.
+5. **Resolved** — Settles on `concept_id` in SQL / `conceptId` in TypeScript.
+6. **Resolved** — `forced_reviews` now has PK `(player_id, concept_id, due_on)`, source enum check, and created timestamp.
+7. **Resolved** — `players` fully specified; `player_roles` split out and specified.
+8. **Resolved** — Scratch DB lifecycle spelled out: `pyquest_test_<pid>` created in `globalSetup`, dropped in `globalTeardown` even on failure.
+9. **Partially resolved** — Mutant list is substantially expanded. Still omits: newly declared `bounties` claimed-implies-not-open check, `datamines` `attempts_before > 0` check, `journal_entries` sha regex, and `sessions` `forgiven_by` FK.
+10. **Partially resolved** — FK decision and `dueInvasions` note clarify the story; concrete integration test assertions for the forced-review/ladder interplay are not enumerated.
+11. **Resolved** — Per-column DATE vs TIMESTAMPTZ table present and complete.
+12. **Resolved** — `vitest.config.ts` coordination with SPA track explicitly acknowledged.
+
+### New Issues
+
+#### Important (Should Address)
+
+- **`players.handle` vs UUID identity — contract mapping rule missing**
+  - Section: Tables / `players`
+  - What's wrong: Most tables use `player_id uuid` FK to `players(id)`, but the plan says `handle` is "the stable identity the contract's `playerId` refers to." These are two different things and it is not stated which one is `playerId` in contract types.
+  - Why it matters: Repository functions will make inconsistent choices about which field to map to `playerId` in returned shapes.
+  - Suggested fix: State explicitly: contract `playerId` maps to `players.id` (UUID), and `handle` is display/routing data only.
+
+- **Mutant list still missing several newly-declared constraints**
+  - Section: Phase 3
+  - Missing mutants for: `bounties` claimed-implies-not-open check; `datamines` `attempts_before > 0`; `journal_entries` sha regex; `sessions` `forgiven_by` FK.
+  - Suggested fix: Add these four to the existing mutant list.
+
+#### Minor (Consider)
+
+- **`sessions.scheduled_for date not null unique`** — at most one session per day is implied but not argued. If intentional, say so; the spec cadence does not inherently require it.
+
+### Assessment
+
+**Implementable as written?** Mostly — with minor fixes
+
+**Reasoning:** The major schema gaps are all closed and the decisions are made; the remaining items are a missing identity-mapping ruling and an incomplete mutant list, neither of which blocks starting Phase 1 migrations.

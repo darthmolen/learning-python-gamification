@@ -39,11 +39,15 @@ need to write to one file, the file is doing two jobs.**
 
 - [ ] One module per owner, each named in a header comment that says which track owns it
 - [ ] `src/index.ts` re-exports everything and contains no schema of its own
-- [ ] **The 54 existing tests pass untouched.** They import from `@pyquest/contract` and must
-      not know the split happened — that is the check that this was mechanical
+- [ ] **Every existing test passes with no edit to any test file.** They import from
+      `@pyquest/contract` and must not know the split happened — that is the check that this was
+      mechanical. The count is whatever `vitest run packages/contract` reports before the split;
+      capture it then rather than hardcoding it here, so adding a test tomorrow does not falsify
+      a criterion
 - [ ] `npm run typecheck` clean, `tsc -b` still builds the package
-- [ ] The public surface is byte-identical: every name exported before is exported after,
-      verified by comparing the built `.d.ts` rather than by reading
+- [ ] The public surface is byte-identical, proved by **checksumming the whole built
+      `dist/index.d.ts`** before and after. Comparing exported names would pass while a type's
+      shape changed underneath one
 
 ## Approach
 
@@ -55,12 +59,22 @@ look tidier and solve nothing, because both tracks would still be in both files.
 | `src/payloads.ts` | what the API returns: quest cards, progress, boss state, the queue, the board, XP sources, level | `main` |
 | `src/progress.ts` | the row shapes the repository returns — three today, ten when `db` is done | `db` |
 | `src/endpoints.ts` | routes, request bodies, the error shape | `api` |
-| `src/primitives.ts` | the shared pieces all three need: content ids, concept ids, counts, `PRESENTATION_FIELDS`, `TOP_RUNG_BOUND` | `main` |
+| `src/primitives.ts` | the shared pieces all three need: content ids, concept ids, counts, `PRESENTATION_FIELDS`, `TOP_RUNG_BOUND`, `INVASION_QUEUE_CAP` | `main` |
 | `src/index.ts` | re-exports, and nothing else | `main` |
 
 `primitives.ts` is the part that stops this from becoming three files that each redefine an
 id. It is `main`'s and it should almost never change; a track that needs a new primitive is a
 track that has found something the other two will also need.
+
+**It may hold unexported internals.** `ContentIdSchema`, `ConceptIdSchema` and `CountSchema` are
+shared today and exported by nobody, and they have to keep working across a module boundary
+without becoming public API — so `primitives.ts` exports them to its siblings while `index.ts`
+does not re-export them. That is the one place in this package where a module's exports and the
+package's exports deliberately differ.
+
+**Imports run one way.** `payloads.ts` and `progress.ts` both import from `primitives.ts`, and
+neither imports the other. A cross-import between them is the split failing: the two exist
+because two tracks own them, and a dependency between them re-couples the tracks.
 
 **No behaviour changes here.** Every schema moves verbatim. The one thing that may not survive
 mechanically is import order — `ConceptIdSchema` is built from `ContentIdSchema` and
@@ -74,17 +88,21 @@ than moving, that is the signal to stop and say so rather than to improve it in 
 Move, do not rewrite. `primitives.ts` first, then `payloads.ts` and `progress.ts` from what
 exists. `endpoints.ts` is created **empty but real**, with its header naming the `api` track
 and a comment saying what belongs in it — an empty owned file is what lets `api` start without
-touching anything of `main`'s.
+touching anything of `main`'s. It must typecheck and lint clean carrying only that comment: no
+placeholder export, no unused import, nothing that has to be deleted before real work starts.
 
 ### Phase 2 — the index
 
-`index.ts` becomes re-exports. Run the suite: 54 tests, no edits to any test file. A test that
-needs changing means the public surface moved, which this plan is not allowed to do.
+`index.ts` becomes re-exports. Run the suite: the same count as the run captured before Phase 1,
+and no edit to any test file. A test that needs changing means the public surface moved, which
+this plan is not allowed to do.
 
 ### Phase 3 — prove the surface did not move
 
-Compare the exported names in `dist/index.d.ts` before and after. Reading the file and
-believing it looks the same is what this check exists to replace.
+Checksum `dist/index.d.ts` before the split and after it, and compare the two. Reading the
+file and believing it looks the same is what this check exists to replace — and comparing only
+the list of exported names would let `AreaProgress` keep its name while losing a field, which is
+exactly the failure a contract package exists to prevent.
 
 ## Dependencies / Prerequisites
 
@@ -115,3 +133,19 @@ claim to hold the whole package for the duration is narrowed to one file.
 Writing any of the shapes the two tracks owe. This plan creates an empty `endpoints.ts` and
 moves three existing row schemas into `progress.ts`; filling either is the owning track's
 work, in its own plan, after this lands.
+
+---
+
+## Review History
+
+**v1 reviewed 2026-08-29 — implementable with fixes.** Five findings taken: `INVASION_QUEUE_CAP`
+placed in `primitives.ts`, the `.d.ts` check strengthened from names to a checksum, unexported
+internals given a home and a rule, import direction between the two owned modules stated, and
+the empty `endpoints.ts` required to compile clean.
+
+One finding rejected on the facts. The review called the "54 existing tests" claim wrong and put
+the number at 45, counting `it`/`test` calls in the two test files. That count misses
+`payloads.test.ts:88`, an `it.each(PRESENTATION_FIELDS)` that expands to nine cases at run time;
+`vitest run packages/contract` reports 54. The reviewer's underlying point was better than the
+correction, though, so the criterion no longer names a number at all — a hardcoded count is
+falsified by the next test anyone writes.
