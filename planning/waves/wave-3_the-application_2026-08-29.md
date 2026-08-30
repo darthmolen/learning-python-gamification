@@ -1,6 +1,6 @@
 # Wave 3 — The Application
 
-**Status:** Open — three gates closed and three plans landed 2026-08-29; two remain
+**Status:** Open — five plans landed, two running, one blocked on a laptop
 **Level:** Wave — coordinates plans, does not replace them
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -134,6 +134,51 @@ Suite went 243 → **361 tests across 18 files**, `validate:content` clean at 8 
 - **Blocked on hardware is not blocked on everything.** area-2 waits on a laptop; the content
   surface stopped waiting on area-2 by landing six manifests and deferring two into the tracks
   that hold them.
+
+## Where it stands, 2026-08-30
+
+**Nothing on this board is blocked by software any more.** Every remaining hold is a person, a
+machine, or a decision — which is why they moved to `planning/reminders/` rather than staying as
+prose inside plans nobody rereads.
+
+| Track | Plan | State |
+|---|---|---|
+| `db` | Progress Schema | complete |
+| `content-wire` | Content Surface | complete |
+| `main` | Curriculum's Voice | complete |
+| `content-wire` | Content browser-safe entry | complete — found on 2026-08-30, fixed the same day |
+| `spa` | The SPA v2 | **running**, phases 3 and 4 |
+| `api` | API and Runner | **running**, phases 1/2/4 landed; 3 held |
+| `area-0` | Quest backfill | running, three quests done |
+| `world-shim` | The World Shim | running, one measurement outstanding |
+| `area-2` | Scribe's Rite | **held on hardware** |
+| `area-3` | Collections | queued behind area-2a |
+
+### What is actually blocking, and who can clear it
+
+- **The son's laptop.** Four tasks need it and not one of them can be done from here: the VS
+  Code profile (holds `area-2`, which holds `area-3`), a real push to Gitea (holds the API's
+  last two verifiers *and* is Area 2a's win condition), the Ursina framerate (holds a
+  `world-shim` criterion), and the nine-screen check. **One afternoon, four reminders**, and
+  clearing it releases two tracks and closes a third plan's remaining phase.
+- **`vite build` is in no gate.** The SPA's gate is `vitest --project web`, which stayed green
+  while the production build was broken — that is how a `node:fs` import survived a commit and
+  surfaced as a runtime error in the dev server. Whether the build joins a suite, a hook or a
+  wave's exit criteria is still unanswered.
+
+### What is free right now
+
+`main`, `db` and `content-wire` hold no in-flight plan. The work sitting in backlog that any of
+them could pick up today, without waiting for anyone:
+
+- **The boss XP bug** — a boss medal pays a tenth of what §5.1 prices. Wrong money the first
+  time a boss is beaten, and boss sign-off is how the parent's gap-detector works.
+- **The Journal columns** — `prompt`, `body` and `reply` have no home, and §6.9 calls the
+  Journal unregenerable.
+- **Three compose services cannot start on Windows** — one decision applied three times.
+- **`weeks`/`blurb` tightened to required**, once area-0 and area-2 land theirs.
+- **A guard in `apps/web`** against importing the bare `@pyquest/content`, which is what broke
+  the build; the browser entry only helps consumers that ask for it.
 
 ## What Wave 4 inherits
 
