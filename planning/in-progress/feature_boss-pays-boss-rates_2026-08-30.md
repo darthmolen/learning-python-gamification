@@ -1,6 +1,6 @@
 # The Boss Pays Boss Rates
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** engine
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
@@ -87,17 +87,33 @@ Three rulings, made rather than named:
 and leave the bug exactly where it is for bosses — a fix that fixes nothing anybody forgets to
 opt into. Required means the compiler stops at each call site and makes somebody choose.
 
-**There are nineteen of them, not four.** An earlier draft of this plan said four, because the
-census behind it was a `grep` piped through `head` and the count was read off the truncation:
+**There are twenty-eight of them, not nineteen, and not four.** This count has now been wrong
+twice. The first draft said four, off a `grep` piped through `head` — the count was read off the
+truncation. The second said nineteen, off a census taken on 2026-08-30 that was correct when
+taken and stale by the time this plan was admitted: the `api` track's Phase 3 landed
+`server.gitsignal.test.ts` and `server.localrepo.test.ts` that same day, four more call sites in
+two files this plan had never heard of.
 
 | Where | Calls | Whose |
 |---|---|---|
-| `apps/api/src` — `dispatcher.ts`, `server.ts`, **`views.ts`** | 3 | `api` |
-| `apps/api/scripts/e2e.ts` | 1 | `api` |
-| `apps/api/tests` — `dispatcher.test.ts`, `server.test.ts` | 7 | `api` |
-| `packages/engine/tests/scoring.test.ts` | 8 | `engine` |
+| `apps/api/src/dispatcher.ts` | 1 | `api` |
+| `apps/api/src/server.ts` | 2 | `api` |
+| `apps/api/src/views.ts` | 1 | `api` |
+| `apps/api/scripts/e2e.ts` | 2 | `api` |
+| `apps/api/tests/dispatcher.test.ts` | 3 | `api` |
+| `apps/api/tests/server.test.ts` | 4 | `api` |
+| `apps/api/tests/server.gitsignal.test.ts` | 2 | `api` |
+| `apps/api/tests/server.localrepo.test.ts` | 2 | `api` |
+| `packages/engine/tests/scoring.test.ts` | 11 | `engine` |
 
-Only the three in `apps/api/src` hold a `ContentItem` and can pass `item.kind` directly. `e2e.ts`
+**The lesson is not "count more carefully".** It is that a census of call sites goes stale the
+moment another track commits, so a plan that carries one as a checklist is carrying a fact with
+an expiry date. What does not go stale is the compiler: a required parameter reddens every call
+site that exists *at the moment the change lands*, whatever the plan said. The census is a
+sizing estimate. `tsc -b` is the actual list, and this plan trusts it over its own table — which
+is the argument for "no default" restated from the other end.
+
+Only the four in `apps/api/src` hold a `ContentItem` and can pass `item.kind` directly. `e2e.ts`
 fetches with `content.item(QUEST)?.dc ?? 0` and must fetch the kind alongside it; the test sites
 hold a fixture and already know which kind they mean.
 
