@@ -13,6 +13,7 @@ Design: [`docs/specs/2026-08-26-gamified-python-curriculum-design.md`](docs/spec
 | `content/` | Authored quest data: YAML, briefs, starters, hidden tests. Loaded by the app, written by the DM |
 | `curriculum/` | Teaching material for humans: session plans, exercises, the parent guide. Needs no software to use |
 | `docs/specs/` | The design spec. The document of record |
+| `docs/decisions/` | Short records of choices that outlive the plan that made them |
 | `docs/design/` | UI artboards for the Claude Design canvas |
 | `infra/` | Docker Compose, backup and restore, the smoke check |
 | `planning/` | The kanban: queued, `in-progress/`, `completed/`, `backlog/` |
