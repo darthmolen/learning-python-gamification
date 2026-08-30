@@ -64,7 +64,7 @@ rewriting the first time the parent opens the app.
 | `GET` | `/api/players/:playerId/journal` | — | `JournalEntry[]` — see below |
 | `POST` | `/api/players/:playerId/journal` | `JournalEntryRequest` | the entry, with XP awarded |
 | `GET` | `/api/tome` | — | the syllabus: concepts by area. Content only |
-| `GET` | `/api/signoffs` | `?state=pending` | pending peer-signoffs, for the Console |
+| `GET` | `/api/signoffs` | `?state=pending` | pending peer-signoffs, household-wide — see below |
 | `POST` | `/api/signoffs/:attemptId` | `SignoffRequest` — `by` a role | the medal awarded |
 
 `GET /api/tome` is not player-scoped because the syllabus is content, and content is the same
@@ -79,6 +79,12 @@ Accepting a client-supplied date would let a player skip a session's invasions b
 yesterday, and §5.4's whole mechanism is a schedule that is not negotiable by the person it is
 scheduling. The API reads its own clock and passes the date down. A test seam for time is a
 fixture at the engine boundary, not a query parameter on a public route.
+
+**`GET /api/signoffs` is household-wide and not filtered by caller.** The Console is the DM
+seat and sees every pending sign-off; §5.11's teach-back runs both directions, so a queue
+filtered to "signoffs you can grant" would hide the parent's own pending teach-back from the
+screen whose job is to show it. Not player-scoped for the same reason `/api/tome` is not: it is
+not one player's view.
 
 **`JournalEntry`**, because "entries" is a placeholder and not a contract. §5.6 wants
 `{ sessionDate, prompt, body, commitSha, xpAwarded, reply? }` — the prompt the DM set, the
@@ -210,6 +216,13 @@ the tests. The runner reads the tests from the content root it already mounts.
 
 Index on `(status, created_at)`. A queue scanned sequentially is fine at two players and is
 the kind of thing nobody revisits.
+
+**Which module types the row, and in which vocabulary.** `progress.ts` — the `db` track's file
+— types a `runner_jobs` row with the **storage** states, because a row shape that does not
+mirror the row is a second definition of the table. `JobState` lives in `endpoints.ts` and is
+this track's, because it is a client-facing translation rather than a fact about the database.
+Stated because both tracks touch this table from opposite sides and would otherwise each pick
+the vocabulary that suited them.
 
 **Storage states and the states the client sees are not the same set, and the mapping is here
 rather than left to whoever writes the handler.** `claimed` is a storage detail — a worker has
@@ -399,3 +412,15 @@ timed-out and killed outcomes each write an `attempts` row and stop, and `runner
 constrained to code plus identifiers. That last one was the sharpest finding in three rounds —
 "the verifier spec" would have put hidden tests in Postgres, breaking §6.7 and making every
 queued job a stale copy of a file that lives in git.
+
+**v4 reviewed 2026-08-29 — implementable, one clarification.** All six v3 findings confirmed
+resolved. Two taken: `progress.ts` types `runner_jobs` in storage states while `endpoints.ts`
+owns the client-facing `JobState`, which stops the two tracks picking different vocabularies for
+one table from opposite sides; and `/api/signoffs` is stated household-wide, because a queue
+filtered to what the caller can grant would hide the parent's own teach-back from the screen
+that exists to show it.
+
+Three minors left as they are. Naming composite payload types for `/campaign` and
+`/areas/:area` is real but is work Phase 1 does when it writes them rather than a decision this
+plan owes. The `vitest.config.ts` note is already moot — Wave 3 made the alias map derive itself
+and no track lists that file for an alias any more.

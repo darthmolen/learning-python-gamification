@@ -1,6 +1,6 @@
 # Wave 3 — The Application
 
-**Status:** Open
+**Status:** Open — three gates closed 2026-08-29, three plans running
 **Level:** Wave — coordinates plans, does not replace them
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -42,24 +42,38 @@ has now hit four times — **one file doing two jobs** — after `concepts.ts`,
 
 Two short gates on `main`, then five plans start within a day of each other.
 
-### Gate 1 — Area 0 declares its file set  *(`main`, minutes)*
+### Gate 1 — Area 0 declares its file set  *(`main`, done 2026-08-29)*
 
 `planning/in-progress/feature_area-0-quest-backfill_2026-08-28.md` has no
 `Files Expected to Change` section. The rule that admits plans in parallel is a comparison of
 those lists, and one of them is absent — so every judgement about what may run beside it is a
 guess wearing the clothes of a rule. Cheapest item in the wave; unblocks a whole plan.
 
-### Gate 2 — split `vitest.config.ts` per workspace  *(`main`, about an hour)*
+### Gate 2 — make the alias map derive itself  *(`main`, done 2026-08-29)*
 
-Vitest's `projects` accepts globs. Point it at `packages/*` and `apps/*`, give each workspace
-its own config, and the root file stops being something every track needs a line in. Exactly
-the move `infra/compose/` and `packages/contract/src/` already got.
+**This gate was proposed wrongly and the fix is not what it says below.** The wave asked for
+`vitest.config.ts` to be split per workspace, the way `infra/compose/` was. The `spa` track had
+already argued against exactly that, in the file:
 
-Verified the way those were: the suite reports the same count before and after, and no test
-file is edited. A count that moves means the split changed behaviour, which it is not allowed
-to do.
+> **Defined once, on purpose.** An `apps/web`-local vitest config would be a second place for
+> these to be written down, and the second place is the one that goes stale — a web project
+> missing the contract alias would parse its fixtures against compiled output and stay green
+> against a contract that moved.
 
-### Gate 3 — re-track the Content Surface  *(`main`, minutes)*
+That is the better argument. Per-workspace configs make every workspace restate the alias map,
+and one that forgets an entry resolves silently through `dist/`.
+
+**What landed instead:** the map stays in one file and derives itself, reading each package's
+own `package.json`. That keeps the single definition the paragraph argues for *and* removes the
+queue behind the file — `db` needed one alias line and `api` needed one, and now a package that
+exists is aliased with no list to forget. `db` dropped the file from its set entirely.
+
+Verified as this wave requires: 14 files and 243 tests before, 14 and 243 after.
+
+**The lesson for the next wave:** a gate that proposes changing a file should read that file
+first. The counter-argument was written down, in the place the change was going to be made.
+
+### Gate 3 — re-track the Content Surface  *(`main`, done 2026-08-29)*
 
 It declares `Track: db` and so queues behind the Progress Schema. They are not the same work —
 one writes SQL and a repository layer, the other writes wire shapes and YAML. Give it
@@ -71,7 +85,10 @@ one writes SQL and a repository layer, the other writes wire shapes and YAML. Gi
 - **`main`** — Curriculum's Voice, once Gate 1 proves it disjoint from area-0.
 - **`api`** — when v4 returns. Its Phase 1 writes `endpoints.ts`, which the SPA is stubbing
   against right now; this is the oldest debt on the board.
-- **`content-wire`** — Content Surface, once area-2 releases `content/areas/area-2.yml`.
+- **`content-wire`** — Content Surface, **started**. It no longer waits for area-2: that track
+  is blocked on the son's laptop, so rather than hold a plan behind hardware, the content
+  surface lands the six manifests nobody holds and leaves `area-0.yml` and `area-2.yml` to the
+  tracks that hold them, as deferred work carried in those plans.
 - **`area-3`** — after world-shim and area-2. Correctly queued; nothing to fix.
 
 ## Exit criteria
