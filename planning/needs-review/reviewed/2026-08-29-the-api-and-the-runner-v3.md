@@ -340,3 +340,58 @@ The job-status mapping was taken but not as suggested. The review proposed colla
 into `failed` or `timed-out`; `JobState` instead carries all six states, because running out of
 memory and being wrong are different things to tell a learner, and only `claimed → running` is a
 genuine storage detail the client has no use for.
+
+---
+
+## Plan Review (v3)
+
+**Reviewed:** 2026-08-29 19:47
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — `vitest.config.ts` now listed in Files Expected to Change and explained in Track discipline.
+2. **Resolved** — Storage states mapping table added; `killed → killed` explicitly carried through, with rationale.
+3. **Resolved** — `/defend` takes no `?now=` parameter; the plan argues the API reads its own clock, consistent with §6.7.
+
+### New Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **`GET /api/jobs/:jobId` route table is inconsistent with the six-state model**
+  - Section: The routes table vs. Storage states
+  - What's wrong: The route table lists `JobState: queued, running, passed, failed, timed-out` (five states), but the mapping table below it adds `killed` as the sixth state the client sees. The contract will be typed from the route table; if it defines five states, `killed` has nowhere to land.
+  - Suggested fix: Update the route table row to show `queued, running, passed, failed, timed-out, killed`.
+
+- **`git-signal` has no API surface**
+  - Section: Verifiers, in the order they become necessary
+  - What's wrong: The plan says `git-signal` is "polled when a screen asks," but no route in the route table corresponds to this. Journal entries are posted and retrieved via `/journal`, but no route triggers or returns a `git-signal` verification result. A verifier with no route is not implementable.
+  - Suggested fix: Add a route — e.g., `GET /api/players/:playerId/quests/:questId/signal` — or explain which existing route carries the result.
+
+#### Important (Should Address)
+
+- **`GET /api/tome` mixes content and progress**
+  - Section: The routes table
+  - What's wrong: The plan notes Tome is not player-scoped "because the syllabus is content, and content is the same for everyone." But the response includes "unlocked state," which is player progress, not content. §6.7 separates the two explicitly.
+  - Suggested fix: Either make the endpoint player-scoped, or remove unlocked state from its response and let the SPA derive it from player-scoped data.
+
+- **Journal response shape is underspecified**
+  - Section: The routes table
+  - What's wrong: `GET /api/players/:playerId/journal` returns "entries," but §5.6 requires prompts, parent replies, and XP bearing substance rules. "Entries" is a placeholder, not a contract.
+  - Suggested fix: Add a concrete response shape, or at minimum name the contract type that covers it.
+
+- **Failed/killed attempts and scars not wired into Phase 4**
+  - Section: Phase 4 — awarding
+  - What's wrong: Phase 4 describes writes for passed submissions, but failed/timed-out/killed outcomes also need `attempts` rows, and the Boss screen requires scar counts. How those outcomes are persisted is not stated.
+  - Suggested fix: Extend the Phase 4 sequence with: "For a failed/timed-out/killed result, the API writes an `attempts` row with `passed = false`; no medal or XP write follows."
+
+- **`runner_jobs.payload` risks copying content into Postgres**
+  - Section: `runner_jobs`, in full
+  - What's wrong: "submitted code and the verifier spec" — if "verifier spec" means the quest's hidden tests, content has entered Postgres, which §6.7 forbids.
+  - Suggested fix: State that `payload` stores submitted code plus immutable identifiers (quest id, verifier type, path refs), never the test content itself.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The v2 issues are fully resolved and the plan is substantially complete; the two critical gaps (`killed` missing from the route table, `git-signal` having no route) are quick to fix, and the important items are design decisions that should be recorded rather than discovered during implementation.

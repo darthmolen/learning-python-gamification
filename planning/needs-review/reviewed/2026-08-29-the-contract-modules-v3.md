@@ -149,3 +149,45 @@ the number at 45, counting `it`/`test` calls in the two test files. That count m
 `vitest run packages/contract` reports 54. The reviewer's underlying point was better than the
 correction, though, so the criterion no longer names a number at all — a hardcoded count is
 falsified by the next test anyone writes.
+
+---
+
+## Plan Review (v3)
+
+**Reviewed:** 2026-08-29 19:47
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — Test count removed; Success Criteria and Phase 2 now say to capture the count before the split rather than hardcoding it.
+2. **Resolved** — `INVASION_QUEUE_CAP` placed in `primitives.ts` in the module table.
+3. **Resolved** — Phase 3 now requires checksumming the full `dist/index.d.ts`, not just comparing exported names.
+4. **Resolved** — `primitives.ts` explicitly permitted to hold unexported internals shared across modules.
+5. **Resolved** — Import direction stated: payloads and progress import from primitives; neither imports the other.
+6. **Resolved** — Empty `endpoints.ts` required to typecheck and lint clean, no placeholder exports or unused imports.
+
+### New Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Success criteria do not name the lint command**
+  - Section: Success Criteria
+  - What's wrong: Phase 1 requires `endpoints.ts` to "typecheck and lint clean," but the checklist in Success Criteria only names `npm run typecheck` and `tsc -b`. A checklist that can be ticked while skipping lint is a checklist with a hole.
+  - Suggested fix: Add `npm run lint` (or the equivalent ruff/eslint command from `pyquest/`) to the Success Criteria checklist.
+
+#### Important (Should Address)
+
+- **Byte-identical `dist/index.d.ts` checksum claim needs scoping**
+  - Section: Success Criteria / Phase 3
+  - What's wrong: After the split, five `dist/*.d.ts` files will exist where one did. The plan says "checksum `dist/index.d.ts`" — that file should be unchanged if index.ts becomes pure re-exports — but the plan does not state that per-module declaration files are expected to appear and do not count as a surface change.
+  - Suggested fix: Add one sentence: "New per-module `dist/*.d.ts` files are expected and do not affect the check; only `dist/index.d.ts` is compared."
+
+#### Minor (Consider)
+
+- **Review History says "Five findings taken" but all six v1 issues are now addressed** — the paragraph is slightly misleading as written.
+
+### Assessment
+
+**Implementable as written?** With fixes (minor)
+
+**Reasoning:** All six prior issues are resolved and the design is correct. The one critical gap — lint not in the Success Criteria checklist — is a one-line fix; without it, a developer could ship unlinted code and genuinely believe the checklist was satisfied.

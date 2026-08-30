@@ -1,6 +1,6 @@
 # The Contract Modules the Lane A Tracks Cannot Share
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** main
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -48,6 +48,9 @@ need to write to one file, the file is doing two jobs.**
 - [ ] The public surface is byte-identical, proved by **checksumming the whole built
       `dist/index.d.ts`** before and after. Comparing exported names would pass while a type's
       shape changed underneath one
+- [ ] `dist/` gains four new `.d.ts` files, one per module, and that is expected — only
+      `dist/index.d.ts` is compared, because it is the only one anything outside this package
+      resolves through
 
 ## Approach
 
@@ -88,8 +91,13 @@ than moving, that is the signal to stop and say so rather than to improve it in 
 Move, do not rewrite. `primitives.ts` first, then `payloads.ts` and `progress.ts` from what
 exists. `endpoints.ts` is created **empty but real**, with its header naming the `api` track
 and a comment saying what belongs in it — an empty owned file is what lets `api` start without
-touching anything of `main`'s. It must typecheck and lint clean carrying only that comment: no
+touching anything of `main`'s. It must typecheck clean carrying only that comment: no
 placeholder export, no unused import, nothing that has to be deleted before real work starts.
+
+An earlier draft said "typecheck and lint clean." **There is no TypeScript linter in this
+repository** — no ESLint, Biome or oxlint, no config, no dependency, no script — so that was a
+bar nobody could check. Recorded as `planning/backlog/feature_typescript-has-no-linter_2026-08-29.md`
+rather than solved here; a mechanical file split is not where a linter should arrive.
 
 ### Phase 2 — the index
 
@@ -99,7 +107,10 @@ this plan is not allowed to do.
 
 ### Phase 3 — prove the surface did not move
 
-Checksum `dist/index.d.ts` before the split and after it, and compare the two. Reading the
+Checksum `dist/index.d.ts` before the split and after it, and compare the two. The split also
+produces `primitives.d.ts`, `payloads.d.ts`, `progress.d.ts` and `endpoints.d.ts` alongside it;
+those are new files rather than a changed surface, since `package.json` points consumers at
+`dist/index.d.ts` and nothing resolves the others by path. Reading the
 file and believing it looks the same is what this check exists to replace — and comparing only
 the list of exported names would let `AreaProgress` keep its name while losing a field, which is
 exactly the failure a contract package exists to prevent.
@@ -138,7 +149,9 @@ work, in its own plan, after this lands.
 
 ## Review History
 
-**v1 reviewed 2026-08-29 — implementable with fixes.** Five findings taken: `INVASION_QUEUE_CAP`
+**v1 reviewed 2026-08-29 — implementable with fixes.** Six findings: five taken outright, one
+rejected on the facts with its underlying point adopted, which is why the count below reads five.
+Taken: `INVASION_QUEUE_CAP`
 placed in `primitives.ts`, the `.d.ts` check strengthened from names to a checksum, unexported
 internals given a home and a rule, import direction between the two owned modules stated, and
 the empty `endpoints.ts` required to compile clean.
@@ -149,3 +162,16 @@ the number at 45, counting `it`/`test` calls in the two test files. That count m
 `vitest run packages/contract` reports 54. The reviewer's underlying point was better than the
 correction, though, so the criterion no longer names a number at all — a hardcoded count is
 falsified by the next test anyone writes.
+
+**v3 reviewed 2026-08-29 — implementable, minor fixes.** All six v1 findings confirmed resolved.
+Three more, two taken: the checksum is now scoped to `dist/index.d.ts` with the four new
+per-module declaration files named as expected output, and the Review History wording above is
+corrected.
+
+The third was declined as written. It asked that Success Criteria name `npm run lint`, on the
+strength of this plan's own "typecheck and lint clean" phrasing. There is no lint script, and no
+linter configured anywhere in `pyquest/` — so the criterion would have been unmeetable rather
+than merely unticked. The phrase is gone and the real gap is recorded in
+`planning/backlog/feature_typescript-has-no-linter_2026-08-29.md`, which is a larger question
+than this plan: the repository requires ruff and pyright clean of every `.py`, §5.10 grades the
+learner on exactly that, and its own TypeScript has no equivalent bar.
