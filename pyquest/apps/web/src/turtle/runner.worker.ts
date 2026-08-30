@@ -41,8 +41,7 @@ interface PyodideApi {
   globals: { get: (name: string) => unknown };
 }
 
-declare function importScripts(...urls: string[]): void;
-declare const loadPyodide: (options: { indexURL: string }) => Promise<PyodideApi>;
+type LoadPyodide = (options: { indexURL: string }) => Promise<PyodideApi>;
 
 let pyodide: PyodideApi | null = null;
 let stdout = '';
@@ -50,8 +49,20 @@ let stdout = '';
 async function boot(): Promise<PyodideApi> {
   if (pyodide !== null) return pyodide;
 
-  importScripts(`${PYODIDE_URL}pyodide.js`);
-  const api = await loadPyodide({ indexURL: PYODIDE_URL });
+  /*
+   * The ESM build, imported rather than `importScripts`-ed. This worker is `{ type: 'module' }`
+   * — which it must be, to import `turtle.py?raw` through Vite — and a module worker has no
+   * `importScripts`. The first version used it anyway and died on boot with
+   * "Module scripts don't support importScripts()", leaving the screen on `Run · working`
+   * forever with a Stop button that had nothing to stop.
+   *
+   * `@vite-ignore` because the URL is a CDN address resolved at run time, not something the
+   * bundler should try to follow.
+   */
+  const module = (await import(/* @vite-ignore */ `${PYODIDE_URL}pyodide.mjs`)) as {
+    loadPyodide: LoadPyodide;
+  };
+  const api = await module.loadPyodide({ indexURL: PYODIDE_URL });
 
   /*
    * Written to the filesystem rather than exec'd into globals, so `import turtle` resolves the
@@ -97,10 +108,27 @@ async function run(code: string): Promise<RunResult> {
   return { kind: 'result', ops, stdout, error };
 }
 
+export interface RunFailure {
+  kind: 'failure';
+  error: string;
+}
+
 self.onmessage = (event: MessageEvent<RunRequest>) => {
   if (event.data.kind !== 'run') return;
 
-  void run(event.data.code).then((result) => {
-    self.postMessage(result);
-  });
+  void run(event.data.code).then(
+    (result) => self.postMessage(result),
+    /*
+     * Boot failures land here — a CDN that will not answer, a Pyodide that will not start. They
+     * must be posted rather than thrown: an unhandled rejection in a worker is invisible to the
+     * page, which is how a broken runner became a screen that said `working` and meant nothing.
+     */
+    (cause: unknown) => {
+      const failure: RunFailure = {
+        kind: 'failure',
+        error: cause instanceof Error ? cause.message : String(cause),
+      };
+      self.postMessage(failure);
+    },
+  );
 };

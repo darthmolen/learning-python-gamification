@@ -130,3 +130,29 @@ describe('Submit refuses to pretend', () => {
     expect(isUnchanged(`${starter}    return True\n`, starter)).toBe(false);
   });
 });
+
+/**
+ * A worker that dies is not the same thing as a program that raised, and until this existed the
+ * screen showed `Run · working` forever with a Stop button that had nothing to stop.
+ *
+ * The distinction matters to an 11-14-year-old more than to anyone else: one of these is his
+ * fault and one is not, and a tool that blames him for its own failure teaches him to distrust
+ * his own reading of an error.
+ */
+describe('when the runner itself breaks', () => {
+  it('surfaces the failure instead of hanging on working', () => {
+    const state = after({ kind: 'start' }, { kind: 'broke', error: "Module scripts don't support importScripts()" });
+
+    expect(state.phase).toBe('broken');
+    expect(state.error).toContain('importScripts');
+  });
+
+  it('says the runner broke, not that his program failed', () => {
+    expect(statusLine(after({ kind: 'start' }, { kind: 'broke', error: 'boom' }))).toBe('Run · runner broke');
+  });
+
+  it('leaves a stop alone — he already ended it', () => {
+    const state = after({ kind: 'start' }, { kind: 'stopped' }, { kind: 'broke', error: 'late' });
+    expect(state.phase).toBe('stopped');
+  });
+});

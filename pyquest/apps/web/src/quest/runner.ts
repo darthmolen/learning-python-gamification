@@ -12,7 +12,7 @@ import type { TurtleOp } from '../turtle/protocol.ts';
  * where it can be tested without a browser, Pyodide, or a ten-megabyte download.
  */
 
-export type RunPhase = 'idle' | 'running' | 'ran' | 'raised' | 'stopped';
+export type RunPhase = 'idle' | 'running' | 'ran' | 'raised' | 'stopped' | 'broken';
 
 export interface RunState {
   phase: RunPhase;
@@ -25,7 +25,13 @@ export interface RunState {
 export type RunEvent =
   | { kind: 'start' }
   | { kind: 'finished'; ops: TurtleOp[]; stdout: string; error: string | null }
-  | { kind: 'stopped' };
+  | { kind: 'stopped' }
+  /**
+   * The runner itself died — the worker failed to boot, or threw outside his program. Distinct
+   * from `raised` on purpose: one of those is his fault and one is not, and a tool that blames
+   * him for its own failure teaches him to distrust his own reading of an error.
+   */
+  | { kind: 'broke'; error: string };
 
 export const INITIAL: RunState = { phase: 'idle', ops: [], stdout: '', error: null };
 
@@ -38,6 +44,11 @@ export function reduce(state: RunState, event: RunEvent): RunState {
 
     case 'stopped':
       return { ...state, phase: 'stopped' };
+
+    case 'broke':
+      // He already ended it; a late failure from the corpse is not news.
+      if (state.phase === 'stopped') return state;
+      return { ...state, phase: 'broken', error: event.error };
 
     case 'finished':
       /*
@@ -77,6 +88,8 @@ export function statusLine(state: RunState): string {
       return 'Run · raised';
     case 'stopped':
       return 'Run · stopped';
+    case 'broken':
+      return 'Run · runner broke';
   }
 }
 

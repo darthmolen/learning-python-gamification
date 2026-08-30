@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
-import type { RunResult } from '../turtle/runner.worker.ts';
+import type { RunFailure, RunResult } from '../turtle/runner.worker.ts';
 import { INITIAL, reduce, type RunState } from './runner.ts';
 
 /**
@@ -16,7 +16,13 @@ import { INITIAL, reduce, type RunState } from './runner.ts';
 export interface WorkerLike {
   postMessage: (message: { kind: 'run'; code: string }) => void;
   terminate: () => void;
-  onmessage: ((event: { data: RunResult }) => void) | null;
+  onmessage: ((event: { data: RunResult | RunFailure }) => void) | null;
+  /**
+   * A worker that fails to *load* never reaches its own error handling — a syntax error, a
+   * blocked import, a module worker the browser refuses. Without this the page waits forever
+   * for a message that is never coming.
+   */
+  onerror: ((event: { message?: string }) => void) | null;
 }
 
 export type WorkerFactory = () => WorkerLike;
@@ -36,10 +42,21 @@ export function useRunner(makeWorker: WorkerFactory = defaultFactory): Runner {
 
   const spawn = useCallback((): WorkerLike => {
     const created = makeWorker();
+
     created.onmessage = (event) => {
+      if (event.data.kind === 'failure') {
+        dispatch({ kind: 'broke', error: event.data.error });
+        return;
+      }
+
       const { ops, stdout, error } = event.data;
       dispatch({ kind: 'finished', ops, stdout, error });
     };
+
+    created.onerror = (event) => {
+      dispatch({ kind: 'broke', error: event.message ?? 'the runner failed to start' });
+    };
+
     worker.current = created;
     return created;
   }, [makeWorker]);

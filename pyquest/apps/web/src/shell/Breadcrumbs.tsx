@@ -71,8 +71,13 @@ export function Breadcrumbs({ trail, here, aside }: BreadcrumbsProps) {
         </Link>
       )}
 
+      {/*
+        * Keyed by position, not by target. Two crumbs may honestly point at the same place —
+        * `Map › Area 3 · Collections › Quests` has Quests as a section of the area page, so both
+        * resolve to `/area/3`. Keying by `to` made React see one child twice and warn.
+        */}
       {trail.map((crumb, i) => (
-        <span key={crumb.to} style={{ display: 'contents' }}>
+        <span key={`${i}-${crumb.to}`} style={{ display: 'contents' }}>
           {i > 0 && <span style={{ color: color.crumbRule, fontSize: '12px' }}>›</span>}
           <Link
             to={crumb.to}

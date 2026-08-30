@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { color, metric } from '../design/tokens';
 import { rgb } from '../test-support/rgb';
 import { Breadcrumbs } from './Breadcrumbs';
@@ -67,5 +67,37 @@ describe('breadcrumbs', () => {
 
     expect(bar?.style.height).toBe(`${metric.crumbBarHeight}px`);
     expect(bar?.style.background).toBe(rgb(color.crumbBar));
+  });
+
+  /**
+   * Two crumbs may honestly point at the same place. `Map › Area 3 · Collections › Quests` has
+   * Quests as a *section* of the area page, so both land on `/area/3` — and the Quest screen
+   * renders exactly that trail.
+   *
+   * Keying by target made React see one child twice and warn in the console. The warning is the
+   * whole symptom: nothing renders wrongly, so it goes unnoticed until somebody opens devtools
+   * for an unrelated reason. Which is how it was found.
+   */
+  it('renders two crumbs pointing at the same place without complaint', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(
+      <MemoryRouter>
+        <Breadcrumbs
+          trail={[
+            { label: 'Map', to: '/map' },
+            { label: 'Area 3 · Collections', to: '/area/3' },
+            { label: 'Quests', to: '/area/3' },
+          ]}
+          here="The Recipe Book"
+        />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('link', { name: 'Quests' })).toBeInTheDocument();
+    const keyWarnings = spy.mock.calls.filter((args) => String(args[0]).includes('same key'));
+    expect(keyWarnings).toEqual([]);
+
+    spy.mockRestore();
   });
 });

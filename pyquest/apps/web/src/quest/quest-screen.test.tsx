@@ -13,6 +13,7 @@ import type { WorkerLike } from './useRunner.ts';
 function fakeWorker() {
   const worker: WorkerLike & { terminated: boolean } = {
     onmessage: null,
+    onerror: null,
     terminated: false,
     postMessage: () => {},
     terminate() {
@@ -23,6 +24,12 @@ function fakeWorker() {
   return {
     worker,
     factory: () => worker,
+    /** The worker posting a failure it caught — a CDN that would not answer, say. */
+    fail: (error: string) => {
+      worker.onmessage?.({ data: { kind: 'failure', error } } as Parameters<NonNullable<WorkerLike['onmessage']>>[0]);
+    },
+    /** The worker never loading at all, which never reaches its own error handling. */
+    crash: (message: string) => worker.onerror?.({ message }),
     reply: (data: { ops?: unknown[]; stdout?: string; error?: string | null }) => {
       const payload = { kind: 'result', ops: [], stdout: '', error: null, ...data };
       worker.onmessage?.({ data: payload } as Parameters<NonNullable<WorkerLike['onmessage']>>[0]);
@@ -209,5 +216,55 @@ describe('the Tome, on the screen where he is working', () => {
     // The editor is still mounted underneath. Nothing is covered and nothing is lost.
     expect(screen.getByRole('group', { name: 'Python editor' })).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+/**
+ * The bug this suite was written after. `runner.worker.ts` used `importScripts` inside a module
+ * worker, died on boot, and the screen sat on `Run · working` with a Stop button that had
+ * nothing to stop. Nothing in the UI said anything was wrong; the only evidence was in a console
+ * nobody had open.
+ *
+ * A silent hang is the worst failure this app can have. He cannot tell it from a slow one, so he
+ * waits — and what he learns is that the tool is unreliable rather than that it broke.
+ */
+describe('when the runner itself breaks', () => {
+  it('says so instead of sitting on working forever', async () => {
+    const { factory, fail } = fakeWorker();
+    renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+    expect(screen.getByRole('status')).toHaveTextContent('Run · working');
+
+    fail("Module scripts don't support importScripts()");
+
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('Run · runner broke');
+    });
+    expect(screen.getByRole('alert')).toHaveTextContent('importScripts');
+  });
+
+  it('catches a worker that never loaded at all', async () => {
+    const { factory, crash } = fakeWorker();
+    renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+    crash('failed to fetch the worker');
+
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('Run · runner broke');
+    });
+  });
+
+  it('takes the Stop button away, because there is nothing left to stop', async () => {
+    const { factory, fail } = fakeWorker();
+    renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+    fail('boom');
+
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Stop' })).toBeNull());
+    // And Run is offered again, rather than staying disabled behind a run that ended.
+    expect(screen.getByRole('button', { name: 'Run' })).toBeEnabled();
   });
 });
