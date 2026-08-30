@@ -118,6 +118,35 @@ because it edits other plans' file sets. Gates belong to `main`.
 Keep them small enough to finish in a sitting. A gate that takes a week is a plan, and the wave
 should say so.
 
+## Running plans as sub-agents
+
+A wave is the natural point to hand each track to its own agent. Two rules, and the second was
+learned the hard way in Wave 3.
+
+**Give each agent its exact file set, and the rulings its plan already made.** An agent that has
+to re-decide what the plan settled will decide differently. Paste the constraints — the file
+list, the vocabulary rulings, what it must not touch — rather than trusting it to infer them
+from a long document.
+
+**Isolate them, or accept that the shared gate is unusable.** Agents doing `test-filter-development`
+in one working tree take turns making the suite red *on purpose*: RED is the first step, and a
+shared tree makes one track's RED every track's failing gate. In Wave 3 the `spa` track
+correctly reported 33 failures and 21 type errors that were simply the `api` track mid-cycle,
+in an untracked test file it could not act on.
+
+Two ways out:
+
+- **`isolation: "worktree"`** on the agent, so each track works in its own git worktree and the
+  shared tree only ever sees finished, committed work. Prefer this whenever two or more agents
+  run at once.
+- **A per-track gate** when they do share a tree: `vitest --project <name>` scopes a run to one
+  project, so a track can verify itself without waiting on anyone. Tell every agent which gate
+  is theirs, and tell them the shared one is not.
+
+Either way, say so in the wave. A track that does not know another track's RED is in the tree
+will read it as its own breakage, and the honest thing it then does — stop and report — costs
+more than the isolation would have.
+
 ## Closing a wave
 
 Tick the exit criteria, set **Status: Closed**, and add what the next wave inherits. Waves are

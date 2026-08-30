@@ -126,6 +126,11 @@ Suite went 243 → **361 tests across 18 files**, `validate:content` clean at 8 
   transaction control left the suite green — `pg` wraps a multi-statement file implicitly, so
   the test proved something Postgres does for free. The seam it missed was between the migration
   and its ledger row, two separate calls.
+- **Four agents doing RED-first work in one tree makes the shared gate meaningless.** The `spa`
+  track reported 33 failures and 21 type errors it could not act on; they were the `api` track's
+  RED, in an untracked file. The isolation existed and was not used. Next wave: give concurrent
+  agents their own worktrees, or tell each one that `vitest --project <name>` is its gate and
+  the root suite is not.
 - **Blocked on hardware is not blocked on everything.** area-2 waits on a laptop; the content
   surface stopped waiting on area-2 by landing six manifests and deferring two into the tracks
   that hold them.
