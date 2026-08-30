@@ -54,7 +54,8 @@ one thing that is awkward to change once a household exists. It goes first.
 - [ ] `PLAYER_ID` is gone from `apps/web`, replaced by the session's own player
 - [ ] Passwords are hashed with argon2id. **No test, log or traceback ever contains one** —
       including the API's error paths, which already return tracebacks to the browser
-- [ ] The `peer` / `player` collision below is settled and one word is used everywhere
+- [ ] `player_roles` is written with the stored roles it already names, and peer sign-off is
+      checked as a relation — authenticated and not the submitter — rather than as a role
 - [ ] `npm test`, `typecheck` and `vite build` clean
 
 ## What already exists, and what is missing
@@ -75,16 +76,47 @@ nothing he writes leaves the house" — and the curriculum's own age references 
 range for the same reason. The game needs a name to greet somebody by and a handle to identify
 them. It needs nothing more, and every field it does not have is a field that cannot leak.
 
-## The lexicon collision, which must be settled here
+## Two vocabularies, not one — and there is no collision
 
-`player_roles` carries `CHECK (role = ANY (ARRAY['player', 'dm']))`. CLAUDE.md prescribes
-**`peer` / `dm`**. `apps/web` uses `'peer'`.
+`player_roles` carries `CHECK (role = ANY (ARRAY['player', 'dm']))`, and the first draft of this
+plan called that a collision with the lexicon's `peer` / `dm`. **It is not.** They are two
+different vocabularies describing two different things, and the database is right.
 
-Nothing has broken because nothing has ever written a role. The first request that filters by one
-will disagree with itself, and **this is the plan that writes the first role**, so it cannot pass
-the question along. The cheap answer is the constraint; the correct answer is the lexicon. Phase
-1 picks one and changes the other, and if the answer is `peer`, that is a migration and a line in
-the spec rather than a find-and-replace.
+**A stored role is what you are.** §5.11: "The **player** does quests, earns XP and takes bosses.
+The **DM** authors content, signs off, adjudicates, forgives a streak, and asks the Socratic
+questions." Those are the two, they live in `player_roles`, and the check constraint already
+names them correctly. **No migration.**
+
+**`peer` is what you are being, to somebody, right now.** §6.3 defines `peer-signoff` as
+"somebody other than the submitter presses the button", and the `by` field on a verifier says
+which capacity is required. It is a *relation*, not a stored role — nobody is a peer on their
+own, and there is no row to hold it.
+
+The two are ordered, and only in one direction:
+
+| `by` requires | Satisfied by |
+|---|---|
+| `peer` | any authenticated player who is **not the submitter** — including a DM, who is also a player in Kitchen Table mode |
+| `dm` | only somebody holding the `dm` role |
+
+So the DM is the super-admin: it can do everything a peer can and things no peer can, while a
+peer cannot stand in for a DM. That asymmetry is the whole point of the second word existing.
+
+**What that means for the guard**, and it is not what a role check would give you:
+
+- **Role-based** — `dm`-only routes look up the role. Ordinary lookups need only a valid session.
+- **Relation-based** — peer sign-off is *authenticated **and** not the submitter*, computed
+  against the thing being signed rather than against the account. A `peer` role would be
+  meaningless here: whether you qualify depends on whose work it is.
+
+**And `PLAYER_ID = 'peer'` in `apps/web` is simply a bug**, of exactly this confusion. It uses a
+sign-off capacity as an identity, which is why it reads oddly and why nothing could ever have
+matched it — no row will ever have that handle. It becomes the session's own player, which is
+what Phase 1 does anyway.
+
+The lexicon's `peer` / `dm` line still stands and still means what it says: the ban is on
+`parent` and `son`, because "a two-person family in the content contract becomes a migration the
+moment a sibling, a class, or a teacher appears" (§9). Nothing here touches that.
 
 ## Phases
 
@@ -164,7 +196,7 @@ with `==` rather than a verifier, and let the bootstrap secret be spent twice.
 may own — so it runs alone, and the reason is not bookkeeping: adding a guard to every route
 while another track adds routes is how a route ships unguarded.
 
-Two things to settle before it starts:
+One thing to settle before it starts:
 
 - **`spa` is in-progress** (`feature_spa_2026-08-28-v2.md`) and owns
   `apps/web/src/gateway/index.ts`, which Phase 1 edits. That plan's remaining criteria are
