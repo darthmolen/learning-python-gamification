@@ -635,16 +635,28 @@ medal literally "ruff and pyright clean", so this is the bar the learner is grad
 
 ### Deviations
 
-- **Another track edited this track's files, and it broke the ruff gate.** `6c453ed [REFACTOR] The
-  laptop loses its model number and the learner gains a range` — a prose scrub — rewrote
+- **An authorised emergency edit crossed this track, and tripped a gate its author could not
+  see.** `6c453ed [REFACTOR] The laptop loses its model number and the learner gains a range` was
+  part of a deliberate, parent-directed removal of identifying details about a minor from a public
+  repository — a code red, with the blast radius understood and accepted at the time. **It was the
+  right call and it is not a track-discipline miss.** Privacy outranks track discipline, and when
+  the two conflict the tracks are what yields; nothing here should be read as an argument for
+  hesitating over that.
+
+  The recorded fact is only the side effect. The scrub rewrote
   `apps/runner/src/pyquest_runner/sandbox.py` and `apps/runner/tests/test_sandbox.py` to say
-  `11–14` with an en dash. Ruff's `RUF001`/`RUF002` flag ambiguous Unicode in Python source, so
-  `ruff check` went from clean to three errors on files this track owns and whose author had no
-  reason to look. Fixed by rewording to `11 to 14` rather than by adding `RUF001` to the ignore
-  list: CLAUDE.md's rule for the content validator is the same rule here — **fix the source, never
-  loosen the check.** Worth recording as a track-discipline miss rather than only as a fix, because
-  a repository-wide `sed` is exactly the edit that crosses every track's files at once, and the
-  gates it trips are not the ones the author is watching.
+  `11–14` with an en dash, and ruff's `RUF001`/`RUF002` flag ambiguous Unicode in Python source, so
+  `ruff check` went from clean to three errors. Fixed by rewording to `11 to 14` rather than by
+  adding `RUF001` to the ignore list: CLAUDE.md's rule for the content validator is the same rule
+  here — **fix the source, never loosen the check.**
+
+  **The lesson is about the sweep, not the edit.** A repository-wide change crosses every track's
+  files at once by design, and the gates it trips belong to tracks whose authors are not watching.
+  There is no disjointness check that could have caught this, because the plan that ran it never
+  listed those files and should not have had to. What closes the gap is a full-gate sweep
+  afterwards — `ruff check` and `ruff format --check` on `apps/runner`, `npm run typecheck`,
+  `validate:content`, the whole suite — run once by whoever executed the change, precisely because
+  each track only watches its own.
 - **`scripts/e2e.ts` gained a second leg and now imports `tests/support/gitea.ts`.** A script
   importing from a suite's support directory is backwards on the face of it, and it is what
   `createGiteaRepo` was factored out for: it is separate from `useGiteaRepo` precisely because the
