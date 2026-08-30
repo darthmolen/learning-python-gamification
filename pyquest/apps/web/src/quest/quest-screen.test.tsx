@@ -37,19 +37,27 @@ function fakeWorker() {
   };
 }
 
-const renderQuest = (factory: () => WorkerLike) =>
-  render(
+/**
+ * Render, then wait for the quest to arrive. The screen fetches its brief, medal slots and
+ * starter now, so everything below is asserted against a loaded screen rather than a loading one
+ * that happens not to have the thing being looked for.
+ */
+const renderQuest = async (factory: () => WorkerLike) => {
+  const result = render(
     <MemoryRouter initialEntries={['/area/3/quest/a3-recipe-book']}>
       <Routes>
         <Route path="/area/:areaId/quest/:questId" element={<QuestScreen makeWorker={factory} />} />
       </Routes>
     </MemoryRouter>,
   );
+  await screen.findByRole('button', { name: 'Run' });
+  return result;
+};
 
 describe('Run', () => {
-  it('starts with an empty canvas and an empty console', () => {
+  it('starts with an empty canvas and an empty console', async () => {
     const { factory } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     expect(screen.getByRole('img', { name: /nothing drawn yet/i })).toBeInTheDocument();
     expect(screen.getByText(/Nothing yet. Press Run/)).toBeInTheDocument();
@@ -59,7 +67,7 @@ describe('Run', () => {
 
   it('draws what the program drew', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     reply({
@@ -80,7 +88,7 @@ describe('Run', () => {
   /** The property the shim exists for: a failed program keeps the drawing it managed. */
   it('shows the traceback beside the part that drew', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     reply({
@@ -98,7 +106,7 @@ describe('Run', () => {
 
   it('prints what the program printed', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     reply({ stdout: 'four sides\n' });
@@ -114,7 +122,7 @@ describe('Run', () => {
 describe('Stop', () => {
   it('is offered only while something is running', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     expect(screen.queryByRole('button', { name: 'Stop' })).toBeNull();
 
@@ -127,7 +135,7 @@ describe('Stop', () => {
 
   it('kills the worker rather than asking it to stop', async () => {
     const { worker, factory } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     await userEvent.click(screen.getByRole('button', { name: 'Stop' }));
@@ -139,7 +147,7 @@ describe('Stop', () => {
 
   it('ignores a result that lands after he stopped', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     await userEvent.click(screen.getByRole('button', { name: 'Stop' }));
@@ -163,7 +171,7 @@ describe('the labels', () => {
    */
   it('keeps Run reading exactly Run, in every phase', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     const run = screen.getByRole('button', { name: 'Run' });
     expect(run.textContent).toBe('Run');
@@ -178,15 +186,15 @@ describe('the labels', () => {
 
   it('keeps Stop reading exactly Stop', async () => {
     const { factory } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     expect(screen.getByRole('button', { name: 'Stop' }).textContent).toBe('Stop');
   });
 
-  it('keeps Submit reading Submit, and says elsewhere why it cannot be pressed', () => {
+  it('keeps Submit reading Submit, and says elsewhere why it cannot be pressed', async () => {
     const { factory } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     const submit = screen.getByRole('button', { name: 'Submit' });
     expect(submit).toBeDisabled();
@@ -195,9 +203,9 @@ describe('the labels', () => {
     expect(screen.getByText(/Submit needs the API/)).toBeInTheDocument();
   });
 
-  it('says Submit reads the editor rather than the click, while the code is untouched', () => {
+  it('says Submit reads the editor rather than the click, while the code is untouched', async () => {
     const { factory } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     expect(screen.getByText(/reads the editor, not the click/)).toBeInTheDocument();
   });
@@ -206,7 +214,7 @@ describe('the labels', () => {
 describe('the Tome, on the screen where he is working', () => {
   it('expands over the work without closing it', async () => {
     const { factory } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     const tome = screen.getByRole('button', { name: 'Tome' });
     expect(tome).toHaveAttribute('aria-expanded', 'false');
@@ -231,7 +239,7 @@ describe('the Tome, on the screen where he is working', () => {
 describe('when the runner itself breaks', () => {
   it('says so instead of sitting on working forever', async () => {
     const { factory, fail } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     expect(screen.getByRole('status')).toHaveTextContent('Run · working');
@@ -246,7 +254,7 @@ describe('when the runner itself breaks', () => {
 
   it('catches a worker that never loaded at all', async () => {
     const { factory, crash } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     crash('failed to fetch the worker');
@@ -258,7 +266,7 @@ describe('when the runner itself breaks', () => {
 
   it('takes the Stop button away, because there is nothing left to stop', async () => {
     const { factory, fail } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     fail('boom');
@@ -280,7 +288,7 @@ describe('when the runner itself breaks', () => {
 describe('the traceback', () => {
   it('names his file, and shows it verbatim', async () => {
     const { factory, reply } = fakeWorker();
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
     reply({
@@ -301,7 +309,7 @@ describe('the traceback', () => {
     const sent: { code: string; filename: string }[] = [];
     const { worker, factory } = fakeWorker();
     worker.postMessage = (message) => sent.push({ code: message.code, filename: message.filename });
-    renderQuest(factory);
+    await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
 

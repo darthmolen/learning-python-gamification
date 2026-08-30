@@ -41,12 +41,22 @@ import * as fixtures from '../fixtures/index.ts';
  * pretending to be a server: the fixtures go through the same parsers, so a fixture that drifts
  * from the contract fails a test rather than rendering.
  */
-const API = import.meta.env['VITE_API_URL'] as string | undefined;
+const apiBase = (): string | undefined => {
+  const configured = import.meta.env['VITE_API_URL'] as string | undefined;
+  return configured === undefined || configured === '' ? undefined : configured;
+};
 
-async function get<T>(path: string, schema: { parse: (raw: unknown) => T }, stub: unknown): Promise<T> {
-  if (API === undefined || API === '') return schema.parse(stub);
+/**
+ * `stub` is a thunk, not a value. A fixture that throws — asking for an area outside the
+ * campaign, say — must fail the *promise*, not the call that built it: a synchronous throw here
+ * escapes before there is anything to catch it, and takes the render down instead of becoming a
+ * failed resource the screen can report.
+ */
+async function get<T>(path: string, schema: { parse: (raw: unknown) => T }, stub: () => unknown): Promise<T> {
+  const base = apiBase();
+  if (base === undefined) return schema.parse(stub());
 
-  const response = await fetch(`${API}${path}`, { headers: { accept: 'application/json' } });
+  const response = await fetch(`${base}${path}`, { headers: { accept: 'application/json' } });
 
   if (!response.ok) {
     /*
@@ -62,29 +72,29 @@ async function get<T>(path: string, schema: { parse: (raw: unknown) => T }, stub
 
 /** The whole map: every area with its progress, its boss, and its name where content has one. */
 export const getCampaign = (playerId: string): Promise<CampaignView> =>
-  get(`/api/players/${playerId}/campaign`, CampaignViewSchema, fixtures.campaign);
+  get(`/api/players/${playerId}/campaign`, CampaignViewSchema, () => fixtures.campaign);
 
 /** One area, with its quests. */
 export const getArea = (playerId: string, area: number): Promise<AreaView> =>
-  get(`/api/players/${playerId}/areas/${area}`, AreaViewSchema, fixtures.areaView(area));
+  get(`/api/players/${playerId}/areas/${area}`, AreaViewSchema, () => fixtures.areaView(area));
 
 /** One quest: the brief, the medal slots and what each would pay, and the starter. */
 export const getQuest = (playerId: string, questId: string): Promise<QuestView> =>
-  get(`/api/players/${playerId}/quests/${questId}`, QuestViewSchema, fixtures.questView(questId));
+  get(`/api/players/${playerId}/quests/${questId}`, QuestViewSchema, () => fixtures.questView(questId));
 
 /** The session's invasions (§5.4): at most five, one entry per concept. */
 export const getDefend = (playerId: string): Promise<DueInvasion[]> =>
-  get(`/api/players/${playerId}/defend`, DueInvasionsSchema, fixtures.dueInvasions);
+  get(`/api/players/${playerId}/defend`, DueInvasionsSchema, () => fixtures.dueInvasions);
 
 /** The completion board, XP provenance, and open bounties. */
 export const getParty = (playerId: string): Promise<PartyView> =>
-  get(`/api/players/${playerId}/party`, PartyViewSchema, fixtures.party);
+  get(`/api/players/${playerId}/party`, PartyViewSchema, () => fixtures.party);
 
 /**
  * The syllabus. Not player-scoped and carrying no unlocked state — the syllabus is the same for
  * everyone, and what is open is derived from the campaign the SPA already holds.
  */
-export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, fixtures.tome);
+export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, () => fixtures.tome);
 
 /**
  * Kitchen Table mode is one household (§5.11), and the seats are roles rather than people. Until

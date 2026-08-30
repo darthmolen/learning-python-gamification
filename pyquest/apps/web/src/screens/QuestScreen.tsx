@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
+import type { QuestView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getAreaIdentity, getAvailableQuests } from '../gateway/index.ts';
+import { PLAYER_ID, getQuest } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
+import { Awaiting } from '../shell/Loading';
 import { Editor } from '../quest/Editor';
 import { isUnchanged, statusLine } from '../quest/runner.ts';
+import { formatPayout } from '../present/index.ts';
 import { useRunner, type WorkerFactory } from '../quest/useRunner.ts';
 import { Breadcrumbs } from '../shell/Breadcrumbs';
 import { Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
@@ -22,16 +26,6 @@ import { TurtleCanvas } from '../turtle/TurtleCanvas';
  * than counting clicks, and a Submit that passes on unchanged code is a lie about the mechanic.
  */
 
-const STARTER = `import turtle
-
-# Draw a square.
-for side in range(4):
-    turtle.forward(100)
-    turtle.right(90)
-
-turtle.done()
-`;
-
 interface QuestScreenProps {
   /** Injected in tests. jsdom has no `Worker`, and Pyodide is ten megabytes of wasm. */
   makeWorker?: WorkerFactory;
@@ -39,16 +33,37 @@ interface QuestScreenProps {
 
 export function QuestScreen({ makeWorker }: QuestScreenProps = {}) {
   const { areaId = '', questId = '' } = useParams();
-  const area = Number(areaId);
-  const identity = getAreaIdentity(area);
-  const quest = getAvailableQuests(area).find((q) => q.id === questId);
+  const load = useCallback(() => getQuest(PLAYER_ID, questId), [questId]);
+  const quest = useResource(load, [questId]);
 
-  const [code, setCode] = useState(STARTER);
+  return (
+    <Awaiting resource={quest} label={questId}>
+      {(view) => <Quest view={view} areaId={areaId} makeWorker={makeWorker} />}
+    </Awaiting>
+  );
+}
+
+function Quest({
+  view,
+  areaId,
+  makeWorker,
+}: {
+  view: QuestView;
+  areaId: string;
+  makeWorker?: WorkerFactory;
+}) {
+  /*
+   * The starter comes from content now, not from a constant in this file. `/quests/:questId`
+   * carries it because Run happens in the browser (§6.1) — and a quest with no starter is
+   * legal, which is what an empty editor means rather than a bug.
+   */
+  const starter = view.starter ?? '';
+  const [code, setCode] = useState(starter);
   const { state, run, stop } = useRunner(makeWorker);
   const running = state.phase === 'running';
-  const untouched = isUnchanged(code, STARTER);
+  const untouched = isUnchanged(code, starter);
 
-  const areaLabel = identity === undefined ? `Area ${areaId}` : `Area ${area} · ${identity.title}`;
+  const areaLabel = `Area ${view.area}`;
 
   return (
     <>
@@ -58,23 +73,34 @@ export function QuestScreen({ makeWorker }: QuestScreenProps = {}) {
           { label: areaLabel, to: `/area/${areaId}` },
           { label: 'Quests', to: `/area/${areaId}` },
         ]}
-        here={quest?.title ?? questId}
+        here={view.title}
       />
 
       <div style={{ padding: '26px 32px 50px', overflow: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <h1 style={{ margin: 0, fontFamily: font.display, fontSize: '30px', letterSpacing: '-.015em' }}>
-            {quest?.title ?? questId}
+            {view.title}
           </h1>
-          {quest !== undefined && <RiskWarning dc={quest.dc} />}
-          {quest !== undefined && <Mono style={{ fontSize: '13px' }}>{`DC ${quest.dc}`}</Mono>}
+          <RiskWarning dc={view.dc} />
+          <Mono style={{ fontSize: '13px' }}>{`DC ${view.dc}`}</Mono>
           <div style={{ flexGrow: 1 }} />
-          {quest !== undefined && <MedalSlots held={quest.medals} />}
+          <MedalSlots held={view.medalsHeld} />
         </div>
 
-        {quest !== undefined && (
-          <Mono style={{ display: 'block', marginTop: '8px' }}>{quest.concepts.join(' · ')}</Mono>
-        )}
+        <Mono style={{ display: 'block', marginTop: '8px' }}>{view.concepts.join(' · ')}</Mono>
+
+        {/*
+          * What each medal would pay from here. §5.10: zero is legal and reads as a brag, which
+          * is why `formatPayout` exists rather than a bare number — a `0 xp` beside something he
+          * went back to earn on purpose says it counted for nothing.
+          */}
+        <div style={{ display: 'flex', gap: '18px', marginTop: '10px', flexWrap: 'wrap' }}>
+          {view.medalSlots.map((slot) => (
+            <Mono key={slot.medal} style={{ color: view.medalsHeld.includes(slot.medal) ? color.accent : color.muted }}>
+              {`${slot.medal} · DC ${slot.effectiveDC} · ${formatPayout(slot.xp)}`}
+            </Mono>
+          ))}
+        </div>
 
         <div style={{ display: 'flex', gap: '18px', marginTop: '24px', alignItems: 'flex-start' }}>
           <div style={{ flexGrow: 1, minWidth: 0 }}>
@@ -89,7 +115,7 @@ export function QuestScreen({ makeWorker }: QuestScreenProps = {}) {
                 */}
               <button
                 type="button"
-                onClick={() => run(code, `${questId}.py`)}
+                onClick={() => run(code, `${view.id}.py`)}
                 disabled={running}
                 style={{
                   padding: '8px 20px',

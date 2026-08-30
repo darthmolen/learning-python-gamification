@@ -25,9 +25,9 @@ describe('routing', () => {
     ['/console', 'Console'],
   ];
 
-  it.each(RAIL)('renders %s', (path, heading) => {
+  it.each(RAIL)('renders %s', async (path, heading) => {
     at(path);
-    expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
   });
 
   const SUB: readonly [string, string][] = [
@@ -36,23 +36,26 @@ describe('routing', () => {
     ['/area/3/boss', 'Boss 3'],
   ];
 
-  it.each(SUB)('renders %s', (path, heading) => {
+  it.each(SUB)('renders %s', async (path, heading) => {
     at(path);
-    expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
   });
 
   /**
    * "Every sub-area carries a breadcrumb, and it is the way back." A sub-area that renders
    * without one is a room with no door — which is the failure §6.8 spends four paragraphs on.
    */
-  it.each(SUB)('gives %s a breadcrumb', (path) => {
+  it.each(SUB)('gives %s a breadcrumb', async (path) => {
     at(path);
-    expect(screen.getByRole('navigation', { name: /breadcrumb/i })).toBeInTheDocument();
+    expect(await screen.findByRole('navigation', { name: /breadcrumb/i })).toBeInTheDocument();
   });
 
   /** "Rail destinations have no breadcrumb, because they have no ancestor." */
-  it.each(RAIL)('gives %s no breadcrumb', (path) => {
+  it.each(RAIL)('gives %s no breadcrumb', async (path) => {
     at(path);
+    // Wait for the screen to settle first: everything starts in `loading`, and a breadcrumb
+    // that only appears with the data would pass this check while the request was in flight.
+    await screen.findByRole('heading', { level: 1 });
     expect(screen.queryByRole('navigation', { name: /breadcrumb/i })).toBeNull();
   });
 
@@ -75,11 +78,11 @@ describe('routing', () => {
    * Shipping the expander on the rail destination made him press a button to see the thing he
    * had just navigated to.
    */
-  it('gives the Tome destination no reveal button — it is already open', () => {
+  it('gives the Tome destination no reveal button — it is already open', async () => {
     at('/tome');
+    await screen.findByRole('navigation', { name: 'Syllabus' });
 
     expect(screen.queryByRole('button', { name: 'Tome' })).toBeNull();
-    expect(screen.getByRole('navigation', { name: 'Syllabus' })).toBeInTheDocument();
     // Every area is listed and none of it is locked: "every page is open from day one".
     expect(screen.getAllByRole('button', { name: /concepts$/ })).toHaveLength(8);
   });
@@ -88,11 +91,13 @@ describe('routing', () => {
     at('/area/3/quest/a3-recipe-book');
 
     // Here the button is right: it opens over the work without closing it.
-    expect(screen.getByRole('button', { name: 'Tome' })).toHaveAttribute('aria-expanded', 'false');
+    expect(await screen.findByRole('button', { name: 'Tome' })).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('always offers the rail, wherever you are standing', () => {
     at('/area/3/quest/a3-recipe-book');
+    // The rail is outside `Routes` and mounts immediately — it does not wait on a request,
+    // which is the point of it being true wherever you are standing.
     expect(screen.getByRole('navigation', { name: 'Overland' })).toBeInTheDocument();
   });
 });

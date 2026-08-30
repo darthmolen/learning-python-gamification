@@ -20,11 +20,45 @@ import { Eyebrow, Mono } from '../shell/ui';
  * boss early is a legal move" (§361, §5.3). An area he has not reached is dimmer, never hidden.
  */
 export function TomeScreen() {
-  const syllabus = getSyllabus();
+  /*
+   * Two requests, in parallel, because the two halves belong to different owners. `/api/tome`
+   * carries concepts by area and deliberately no player state — "the syllabus is the same for
+   * everyone, and the SPA already holds the player's areas from /campaign." The names and week
+   * ranges come from the campaign; the concepts come from the Tome.
+   */
+  const load = useCallback(async () => {
+    const [campaign, content] = await Promise.all([getCampaign(PLAYER_ID), getTome()]);
+    return { campaign, content };
+  }, []);
+  const both = useResource(load, []);
+
+  return (
+    <Awaiting resource={both} label="the Tome">
+      {(value) => <Manual campaign={value.campaign} content={value.content} />}
+    </Awaiting>
+  );
+}
+
+function Manual({ campaign, content }: { campaign: CampaignView; content: TomeContent }) {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(0);
+
+  /** One row per area: the name content knows, and the concept count the syllabus knows. */
+  const syllabus = campaign.areas.map((card) => ({
+    area: card.area,
+    identity: card.identity,
+    concepts: content.areas.find((a) => a.area === card.area)?.concepts.length ?? 0,
+  }));
+
   const entry = syllabus[selected];
-  const totalWeeks = Math.max(...syllabus.map((s) => s.area.weeks.to));
+
+  /*
+   * Derived from what actually has weeks, not from a constant. ADR 0002 wanted `max(weeks.to)`
+   * so the horizon stays true after a re-pace — and areas whose manifests carry no weeks simply
+   * do not vote, rather than dragging the maximum to zero.
+   */
+  const ends = campaign.areas.flatMap((c) => (c.identity === undefined ? [] : [c.identity.weeks.to]));
+  const totalWeeks = ends.length === 0 ? 0 : Math.max(...ends);
 
   if (entry === undefined) return null;
 
@@ -45,7 +79,7 @@ export function TomeScreen() {
         <Eyebrow style={{ color: color.accent }}>Tome</Eyebrow>
         <span style={{ color: color.crumbRule }}>·</span>
         <Mono style={{ fontSize: '11.5px', color: color.secondary }}>
-          {`Area ${entry.area.area} · ${entry.area.title}`}
+          {entry.identity === undefined ? `Area ${entry.area}` : `Area ${entry.area} · ${entry.identity.title}`}
         </Mono>
         <div style={{ flexGrow: 1 }} />
         {/* The §6.8 promise, said out loud on the screen that keeps it. */}
@@ -89,7 +123,7 @@ export function TomeScreen() {
               The Tome
             </h1>
             <Mono style={{ fontSize: '10.5px' }}>
-              {`${totalWeeks} weeks · ${syllabus.length} areas · ${getConceptTotal()} concepts`}
+              {`${totalWeeks} weeks · ${syllabus.length} areas · ${content.areas.reduce((n, a) => n + a.concepts.length, 0)} concepts`}
             </Mono>
           </div>
 
@@ -99,7 +133,7 @@ export function TomeScreen() {
 
               return (
                 <button
-                  key={item.area.area}
+                  key={item.area}
                   type="button"
                   onClick={() => setSelected(i)}
                   aria-current={current ? 'page' : undefined}
@@ -119,12 +153,14 @@ export function TomeScreen() {
                 >
                   <span style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
                     <Mono style={{ fontSize: '10px', color: current ? color.accent : color.muted, width: '14px' }}>
-                      {item.area.area}
+                      {item.area}
                     </Mono>
                     <span style={{ fontSize: '13px', color: current ? color.fg : color.secondary, fontWeight: current ? 600 : 400, flexGrow: 1 }}>
-                      {item.area.title}
+                      {item.identity?.title ?? `Area ${item.area}`}
                     </span>
-                    <Mono style={{ fontSize: '10px' }}>{`${item.area.weeks.from}–${item.area.weeks.to}`}</Mono>
+                    <Mono style={{ fontSize: '10px' }}>
+                      {item.identity === undefined ? '' : `${item.identity.weeks.from}–${item.identity.weeks.to}`}
+                    </Mono>
                   </span>
                   <Mono style={{ display: 'block', fontSize: '10px', color: '#4a5361', marginLeft: '22px' }}>
                     {`${item.concepts} concepts`}
@@ -147,18 +183,20 @@ export function TomeScreen() {
         <div style={{ flexGrow: 1, minWidth: 0, overflow: 'auto', padding: '34px 46px 60px' }}>
           <div style={{ maxWidth: '660px' }}>
             <Eyebrow style={{ color: color.accent, marginBottom: '8px' }}>
-              {`Field manual · Area ${entry.area.area}`}
+              {`Field manual · Area ${entry.area}`}
             </Eyebrow>
             <h2 style={{ margin: '0 0 6px', fontFamily: font.display, fontSize: '38px', lineHeight: 1.05, letterSpacing: '-.015em' }}>
-              {entry.area.title}
+              {entry.identity?.title ?? `Area ${entry.area}`}
             </h2>
             <p style={{ margin: '0 0 4px', color: color.secondary }}>
-              {`Weeks ${entry.area.weeks.from}–${entry.area.weeks.to} · ${entry.concepts} concepts · everything below is on the Boss ${entry.area.area} specification.`}
+              {entry.identity === undefined
+                ? `${entry.concepts} concepts · everything below is on the Boss ${entry.area} specification.`
+                : `Weeks ${entry.identity.weeks.from}–${entry.identity.weeks.to} · ${entry.concepts} concepts · everything below is on the Boss ${entry.area} specification.`}
             </p>
             <div style={{ height: '1px', background: color.border, margin: '24px 0' }} />
 
             <p style={{ margin: '0 0 20px', color: color.fgBright, fontSize: '14.5px', lineHeight: 1.75 }}>
-              {entry.area.blurb}
+              {entry.identity?.blurb ?? 'This area carries no blurb on the wire yet.'}
             </p>
 
             {/*
