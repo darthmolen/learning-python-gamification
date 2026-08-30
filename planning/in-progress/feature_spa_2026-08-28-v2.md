@@ -282,13 +282,9 @@ the curriculum's critical path rather than the app's — it gates teaching, not 
   `pencolor`, `circle`, `speed`, and `done`/`exitonclick` as no-ops
 - A drawing protocol between the Python side and the canvas — a serialisable list of stroke
   commands, not direct canvas calls, so the strokes can be asserted without a canvas
-- **The Pyodide boundary: a worker. Decided 2026-08-30, and it is not a default that was left
-  standing — it was chosen.** `while True:` is week-three material (§6.6), and on the main
-  thread it freezes the tab with his code in it. A learner who loses an evening's work to his
-  own infinite loop learns that the tool is dangerous, which is the opposite of the lesson. The
-  worker also gives Run a kill switch, which the main thread cannot have at all: a page with a
-  spinning script cannot interrupt itself. This holds for Phase 3's Run and Submit too, so the
-  boundary is settled once, here, for both phases
+- **The Pyodide boundary: a worker.** Ruled on in
+  `docs/decisions/0003-learner-python-runs-off-the-main-thread.md`, which covers Phase 3's Run
+  and the `runner` container too — the argument outgrew this plan, and the `api` track needs it
 - The canvas renderer that consumes the protocol
 
 **Acceptance:** `forward(100); right(90)` four times produces exactly four strokes at the
