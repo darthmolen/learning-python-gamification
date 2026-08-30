@@ -1,0 +1,25 @@
+{
+  "name": "@pyquest/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The PyQuest API. Serves @pyquest/contract, runs the four verifiers of §6.3.",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "start": "tsc -b ../.. && node --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts",
+    "e2e": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/e2e.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@pyquest/content": "*",
+    "@pyquest/contract": "*",
+    "@pyquest/db": "*",
+    "@pyquest/engine": "*",
+    "fastify": "^5.2.0",
+    "pg": "^8.16.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.5"
+  }
+}

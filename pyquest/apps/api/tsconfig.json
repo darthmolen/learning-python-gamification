@@ -1,0 +1,22 @@
+{
+  // Typechecked, never emitted. The api runs from source under Node's type stripping, the same
+  // way `packages/content`'s CLI does, so there is no build step to keep in sync with a `dist`.
+  //
+  // Absent from the root `tsconfig.json`'s `references` on purpose: nothing imports an app, so
+  // nothing needs its declarations. The root `typecheck` script reaches it through
+  // `--workspaces --if-present`, which is the path that actually covers the test files.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+
+    "lib": ["ES2022"],
+    "types": ["node"],
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts", "scripts/**/*.ts"]
+}

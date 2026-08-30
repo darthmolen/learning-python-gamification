@@ -79,6 +79,28 @@ export default defineConfig({
           setupFiles: [fileURLToPath(new URL('./apps/web/src/test-setup.ts', import.meta.url))],
         },
       },
+      /**
+       * `apps/api`. Appended by the `api` track — the second entry to this list, and written
+       * as an append rather than a merge because two tracks name this file and neither owns it.
+       *
+       * Without it the API's suites are collected by nothing: the `packages` glob stops at
+       * `packages/`, and the `web` project is rooted in `apps/web`. A suite that no project
+       * collects does not fail — it is silently absent, which is the worst of the three
+       * outcomes.
+       *
+       * `node`, because there is no DOM here and never will be: the api is the half of the
+       * system that must not care what a screen looks like.
+       */
+      {
+        resolve: { alias },
+        test: {
+          name: 'api',
+          root: fileURLToPath(new URL('./apps/api', import.meta.url)),
+          include: ['{src,tests}/**/*.{test,spec}.ts'],
+          exclude,
+          environment: 'node',
+        },
+      },
     ],
   },
 });

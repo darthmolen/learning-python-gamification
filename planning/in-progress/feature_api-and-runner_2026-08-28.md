@@ -428,3 +428,147 @@ Three minors left as they are. Naming composite payload types for `/campaign` an
 `/areas/:area` is real but is work Phase 1 does when it writes them rather than a decision this
 plan owes. The `vitest.config.ts` note is already moot — Wave 3 made the alias map derive itself
 and no track lists that file for an alias any more.
+
+---
+
+## Status
+
+**Stopped at Phase 3, deliberately.** Phases 1, 2 and 4 are done and proven; two of the four
+verifiers are not built, because both need the Gitea work this plan already lists as a
+prerequisite. The plan stays in `in-progress/` and the `api` track stays held.
+
+### Outcomes
+
+**Phase 1 — the contract's endpoint half, then the skeleton. Done.**
+
+`packages/contract/src/endpoints.ts` carries the thirteen routes, the request bodies, the six-state
+`JobState`, the composite views and one error shape with nine codes; `index.ts` gained its one
+re-export line. Thirty-three tests pin the rulings rather than the schemas — that there is exactly
+one Submit route, that no path or query names a clock, that `killed` did not collapse into
+`failed`, that a `tests` path cannot ride out on a quest payload.
+
+`apps/api` boots by validating the whole content root through `checkContent` and refuses to start
+otherwise, with the offending file named. Nine tests, including one proving that a `..` in a
+content-relative read is refused rather than normalised.
+
+Eleven of the thirteen routes are served, against the real content root and a real Postgres:
+`/campaign`, `/areas/:area`, `/quests/:questId`, `/submit`, `/jobs/:jobId`, `/defend` (both),
+`/party`, `/tome`, and both `/signoffs`.
+
+**Phase 2 — the runner. Done, and attacked.**
+
+`apps/runner` is four Python modules and twenty-nine tests that run **inside the runner container**,
+because `resource` is POSIX-only and because three of the limits are the container's:
+`docker compose --profile api run --rm runner-tests`. Every attack the plan names is executed for
+real — a socket, a name lookup, a gigabyte, an unbounded list, `while True:`, a program that
+ignores every catchable signal, a fork bomb, two hundred subprocesses, a disk fill, unbounded
+printing — plus a write to `/usr/local/lib`, a read of the worker's environment, and `os.getuid()`.
+
+The image is built and pinned, runs as uid 10001 on a read-only root with `cap_drop: ALL` and
+`no-new-privileges`, and the per-job workspace is on tmpfs and removed unconditionally.
+
+**Phase 3 — `peer-signoff` only.** Submit records an attempt awaiting a person, `GET /api/signoffs`
+is the household-wide queue, and `POST /api/signoffs/:attemptId` enforces that the approver is not
+the submitter and holds the role the quest's `by` field names — a role check against `player_roles`,
+never a name check.
+
+**Phase 4 — awarding. Done for both verifiers that run.**
+
+Every runner outcome writes an `attempts` row; `failed`, `timed-out` and `killed` each write
+`passed = false` and stop. `medalDelta` prices the medal and exactly its return value is stored.
+`nextRung` walks the ladder and the api stores what it returns. No total is written anywhere.
+
+**The loop closes.** `npm run e2e --workspace @pyquest/api` submits real code through the real api
+into a real Postgres, hands it to the real runner container with no network and a read-only root,
+and gets back a `passed` job and one `cleared` medal priced at exactly `medalDelta`'s ten XP.
+
+**Verification.** `npm run typecheck` clean. `npx vitest run` — 505 tests across 27 files, up from
+361 across 18 (105 are this track's; the rest arrived from `spa`). `npm run validate:content` clean.
+`ruff check`, `ruff format --check` and `pyright --strict` all clean on `apps/runner`.
+
+### What is not built, and why
+
+- **`git-signal` and `local-repo`.** Both read the player's Gitea repository over its API, and
+  `planning/backlog/feature_gitea-lan-access-for-the-son_2026-08-27.md` is not done. `POST /submit`
+  refuses them with a stated reason rather than recording a scar for a verifier that never ran — a
+  false entry in the one record §3.5 says is never edited would be worse than a refusal.
+- **`GET` and `POST /journal`.** Blocked by
+  `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md`. The shapes are typed in
+  `endpoints.ts` so the SPA is not held up; the routes are not registered, and the 404 they produce
+  carries the same error shape as everything else.
+- **The `api` compose service does not start on a Windows host.** Diagnosed, documented in
+  `infra/compose/api.yml`, not fixed. `npm install` on Windows writes the workspace links in
+  `pyquest/node_modules/@pyquest/*` as absolute Docker-VM paths, which do not resolve inside a
+  container mounting only `/workspace`. `migrate.yml` and `web.yml` mount the same workspace and run
+  the same command, so all three share the bug and the fix is one decision across three tracks'
+  files: give the node services a Dockerfile that installs for Linux, as `apps/runner` already does.
+
+### Deviations
+
+- **`packages/db` has no writers, so the api's SQL lives in `apps/api/src/store.ts`.** Phase 4 says
+  "every write goes through the repository layer"; that layer is twelve `SELECT`s and belongs to the
+  `db` track, which this one may not edit. The seam the rule protects still exists — nothing above
+  `store.ts` knows a column name — and the move is a rename plus an import when `db` adopts it. What
+  the rule actually guards is unchanged: the engine decides and the api records.
+- **The runner reaches the queue through a spool volume, not a database connection.** `--network
+  none` at the container and "the runner polls `runner_jobs`" cannot both be true. The isolation is
+  the half this plan spends a section defending, so the handoff moved: the api claims the row with
+  `FOR UPDATE SKIP LOCKED` and writes it into a shared volume, and the runner — which cannot resolve
+  a hostname — picks it up. The queue is still the table and the api is still the only process
+  holding a database connection.
+- **`vitest.config.ts` took one appended `projects` entry**, as coordinated. The file was re-read
+  immediately before the edit and was unchanged.
+- **`packages/contract/tests/endpoints.test.ts` is new**, and the plan's file list did not name it.
+  It is the test for the one file this track owns in that package and collides with nothing.
+- **`apps/api/tests/support/database.ts` duplicates `packages/db/tests/support/scratch-db.ts`.**
+  Reaching into another track's test internals by relative path is the coupling the split exists to
+  prevent; sixty lines of overlap is the cheaper of the two.
+- **`api.yml` gained a `runner-tests` service and a named `runner_spool` volume**, and the runner
+  gained a `Dockerfile`. `--network none` makes `pip install` at runtime impossible, so pytest is
+  baked into the image.
+- **`RLIMIT_CPU` is set soft and hard one second apart** rather than equal — see Lessons.
+
+### Mutants that survived their first pass
+
+Twenty-seven seeded; three survived, all three because a *test* was wrong rather than the code.
+
+1. **`nextRung(rung, repelled)` replaced by `repelled ? rung + 1 : 0`** — survived the whole server
+   suite. The fixture seeded rung 1, where the ladder and the naive version agree on both answers.
+   Reseeded at rung 3, where a miss steps back to 2 and the naive version resets to zero, which is
+   §5.4's entire argument; a top-rung test was added for the clamp. The mutant now dies twice.
+2. **`medalDelta(dc, held, 'cleared')` replaced by `dc * 2`** — survived in both the dispatcher and
+   the sign-off suite. On a quest with no medals held those are the same number. Both suites gained
+   a case with Ironman already held, where the delta is zero and `dc * 2` is not — which is also
+   §5.10's "pays the difference, once" and its zero-payout-reads-as-a-brag case.
+3. **`RLIMIT_NPROC` removed** — caught, but not cleanly. The fork bomb takes the test container down
+   and the suite never reports at all, rather than one test going red. That is itself the
+   demonstration: without the limit, the bomb reaches the worker. Recorded rather than papered over.
+
+### Lessons Learned
+
+- **Three of the runner's tests were wrong before the code was.** `RLIMIT_CPU` with soft and hard
+  equal made every busy loop an anonymous `SIGKILL`, reported as `killed` — telling a learner his
+  program ran out of room when what it did was not finish. The fix is a one-second gap so `SIGXCPU`
+  is delivered and readable, plus measuring the child's actual CPU time so a hard-limit kill can be
+  told from the OOM killer. Found by the test that ignores every catchable signal.
+- **The §6.3 leak test grepped for a string the brief publishes on purpose.** `Welcome, Steve!` is
+  in the specification, because the specification is meant to be readable; only the assertions are
+  secret. A leak test that cannot tell those apart fails on correct content. It now greps for the
+  hidden test file's own source.
+- **A leak test that runs against a passing job proves nothing.** The failing fixture printed the
+  exact line the hidden test asserts on, so pytest reported one pass and the assertions were reading
+  output from a run that never produced a traceback.
+- **Everything was green and the api would not boot.** Node's `--experimental-strip-types` refuses a
+  TypeScript parameter property, which no typecheck and no vitest run can see because both go
+  through a real compiler. That is the whole argument for `scripts/e2e.ts`.
+- **The per-job workspace was on the spool volume.** A submission filling it would have been filling
+  a disk the api shares — the disk fill the tmpfs exists to contain — and on a Windows bind mount
+  pytest's output capture could not even run. Both found by the end-to-end run, neither by a suite.
+- **`AreaIdentity` requires `weeks` and `blurb`; `area-0.yml` and `area-2.yml` carry neither.** The
+  map would not render at all under a strict reading. `AreaCard.identity` is optional, which is what
+  `payloads.ts` already ruled: an area without them has no identity to send.
+- **`medalDelta` has no boss variant.** §5.1 prices a boss at 20×DC and `xpFor('boss', dc)` exists,
+  but `medalDelta` calls `xpFor('quest', ...)` unconditionally — so a boss sign-off pays quest rates.
+  The api calls `medalDelta` as instructed and does not correct it, because correcting it here would
+  be the api doing engine arithmetic. **This is an engine bug and it belongs to the engine's
+  successor plan.**

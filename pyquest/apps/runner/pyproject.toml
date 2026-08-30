@@ -1,0 +1,66 @@
+# The runner — spec §6.6.
+#
+# `python-quality-developer` applies to every file here, and that is not housekeeping: §5.10's
+# Idiomatic medal is literally "ruff and pyright clean", so this is the code that has to meet the
+# bar the 11-14-year-old is graded against. He opens this repository at Boss 7.
+
+[project]
+name = "pyquest-runner"
+version = "0.0.0"
+description = "Executes untrusted Python behind a real boundary (spec §6.6)."
+requires-python = ">=3.14"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "ruff>=0.8", "pyright>=1.1.390"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# Everything, then the handful this repository has an argument about.
+select = ["ALL"]
+ignore = [
+  # The docstring rules that fight the file-level docstrings this repository already writes.
+  "D203",   # conflicts with D211
+  "D213",   # conflicts with D212
+  "COM812", # trailing-comma rule the formatter owns
+  # `assert` is what a test is made of, and `subprocess` is what this package is for.
+  "S101",
+  # A per-file copyright header. The licence is `LICENSE` at the repository root and no other
+  # file in this repository carries one; adding them here alone would be a convention of one.
+  "CPY001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# A test that attacks a sandbox is a test full of the things a linter is right to flag elsewhere.
+"tests/*" = [
+  "S603",
+  "PLR2004",
+  "INP001",
+  # A test's name is its documentation, and these names are written as sentences on purpose —
+  # `test_a_fork_bomb_does_not_take_the_machine_with_it` says more than a docstring repeating it
+  # would. Where a test needs an argument rather than a name, it has one.
+  "D103",
+]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.14"
+# Linux, always, and stated rather than inherited from whoever runs the check. This package runs
+# only in the runner container: `resource`, `os.killpg`, `os.setsid` and `signal.SIGXCPU` do not
+# exist on Windows, and typeshed correctly hides them there. Without this line the DM's Windows
+# machine reports fifty errors for a platform this code never runs on, and the real errors are
+# invisible among them.
+pythonPlatform = "Linux"
+typeCheckingMode = "strict"
+reportMissingTypeStubs = false

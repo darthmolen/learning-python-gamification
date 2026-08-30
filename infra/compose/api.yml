@@ -2,13 +2,50 @@
 #
 # The api is the only thing that talks to Postgres, and it is where Submit runs the hidden
 # tests a browser must never see (§6.3). The runner executes untrusted Python under the §6.6
-# constraints; whether it is a long-lived service or a container the api spawns per job is
-# the api plan's decision, and this file is where that decision gets written down.
+# constraints.
 #
-# Profile-gated, and no build context yet — see compose/web.yml for why.
+# ## Why the runner has no network, and what follows from that
+#
+# `network_mode: "none"` is the strongest form of §6.6's "--network none": there is no interface
+# to bind and no resolver to ask, so a submission cannot reach the LAN, Gitea, Postgres or the
+# internet. It also means the runner cannot reach Postgres itself, which is the constraint that
+# decided the handoff: **the api claims a `runner_jobs` row and writes it into a shared spool
+# volume; the runner picks it up, runs it, and writes the verdict back.**
+#
+# The queue is still the `runner_jobs` table — no new infrastructure, and the api is still the
+# only process holding a database connection. The spool is how one claimed row crosses into a
+# container that deliberately cannot be reached. The alternative was giving the runner a network
+# so it could poll the queue directly, which trades the one property this whole service exists to
+# have for a shorter diagram.
+#
+# ## Profiles
+#
+# Profile-gated, so `docker compose up` keeps meaning "postgres and gitea":
+#
+#   docker compose --profile api up api runner
+#   docker compose --profile api run --rm runner-tests
+#
+# The second is the security suite. It runs in the same image, under the same limits, on the same
+# read-only root with the same tmpfs and the same absent network — because a boundary asserted
+# anywhere else is not the boundary production uses.
 
 services:
 
+  # KNOWN GAP, verified 2026-08-29: this service does not start on a Windows host.
+  #
+  # `npm install` run on Windows writes `pyquest/node_modules/@pyquest/*` as symlinks to ABSOLUTE
+  # Docker-VM paths (`/mnt/host/c/dev/.../packages/content`). Those resolve on the host and in the
+  # VM, and not inside a container that mounts only `/workspace` — so `import '@pyquest/contract'`
+  # fails with ERR_MODULE_NOT_FOUND before the api reads a line of its own code.
+  #
+  # It is not this fragment's bug. `compose/migrate.yml` and `compose/web.yml` mount the same
+  # workspace and run the same `npm run --workspace`, so all three share it, and the fix is one
+  # decision for all three: give the node services a Dockerfile that installs dependencies for
+  # Linux, the way `apps/runner` already does. That crosses two other tracks' files, so it is
+  # recorded rather than done here.
+  #
+  # What works today: `npm run e2e --workspace @pyquest/api` runs the api on the host against the
+  # real runner container, which is the loop this service exists to run.
   api:
     profiles: ["api"]
     image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
@@ -21,26 +58,85 @@ services:
     environment:
       CONTENT_ROOT: /content
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      SPOOL_ROOT: /spool
+      API_PORT: "3081"
     volumes:
       - ../../pyquest:/workspace
       # Content is read from git on boot and validated on load (§6.10), so the api needs the
       # content root as well as the workspace. Read-only: §6.10 makes authoring a CLI, and an
       # api that cannot write content cannot grow an authoring endpoint by accident.
       - ../../content:/content:ro
+      # The job handoff. The api writes here and the runner reads; neither can reach the other by
+      # any other route, which is the point.
+      - runner_spool:/spool
     ports:
       # 3081, reserved for this service before it existed.
       - "${API_PORT:-3081}:3081"
 
   runner:
     profiles: ["api"]
-    image: python:3.14-alpine@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc
+    build:
+      context: ../../pyquest/apps/runner
+    image: pyquest-runner:local
     container_name: pyquest-runner
-    # §6.6: untrusted Python. No network at all, a hard memory cap, and a timeout the api
-    # enforces per job. These are the constraints that make running a child's unreviewed
-    # code on the host machine defensible.
+    # §6.6: untrusted Python. No network at all, a hard memory cap, a process ceiling, and a
+    # read-only root filesystem with exactly one writable directory that lives in memory and
+    # vanishes with the container. These are the constraints that make running a child's
+    # unreviewed code on the parent's machine defensible.
     network_mode: "none"
     mem_limit: 512m
-    pids_limit: 128
+    # Above the sandbox's own RLIMIT_NPROC, on purpose: the submission must hit its own limit
+    # first, so that a fork bomb is refused by the kernel inside the job rather than by the
+    # container taking the worker down with it.
+    pids_limit: 256
     read_only: true
-    command: ["sleep", "infinity"]
-    # No host port. Reached through the api's job queue, never directly.
+    user: "10001:10001"
+    # No new privileges, ever. A setuid binary in the image cannot become a way out.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      # The per-job workspace. Memory-backed, so a disk fill fills a small memory-backed directory
+      # that is discarded with the job rather than filling the parent's disk.
+      - /tmp:size=64m,mode=1777
+    environment:
+      SPOOL_ROOT: /spool
+      # The per-job workspace, and it is NOT under /spool on purpose. /spool is a volume the api
+      # writes to; a submission filling its workspace there would be filling a disk the api shares,
+      # which is the disk fill the tmpfs and RLIMIT_FSIZE exist to contain.
+      WORK_ROOT: /tmp
+    volumes:
+      - runner_spool:/spool
+    # No host port. Reached through the spool, never directly.
+
+  # The security suite. Same image, same limits, same absent network — see the header.
+  runner-tests:
+    profiles: ["api"]
+    build:
+      context: ../../pyquest/apps/runner
+    image: pyquest-runner:local
+    container_name: pyquest-runner-tests
+    network_mode: "none"
+    mem_limit: 512m
+    pids_limit: 256
+    read_only: true
+    user: "10001:10001"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    working_dir: /app
+    environment:
+      # Deliberately planted, and not a real credential. `test_a_submission_cannot_read_the_workers
+      # _environment` asserts that a submission cannot see it, and that assertion is vacuous unless
+      # the worker's environment actually holds something worth hiding. In production this variable
+      # is real on the api and absent from the runner; here it exists so the test has a target.
+      DATABASE_URL: postgres://not-a-real-credential@nowhere/spool-test
+    command: ["python", "-m", "pytest", "tests", "-q", "-p", "no:cacheprovider"]
+
+volumes:
+  runner_spool:
+    name: pyquest_runner_spool
