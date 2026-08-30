@@ -1,0 +1,16 @@
+# Shell scripts are LF everywhere, on every platform.
+#
+# A CRLF shebang is not a shebang. The interpreter reads `#!/bin/bash\r`, looks
+# for a program called `bash\r`, and reports `/bin/bash^M: bad interpreter` or
+# `\r: command not found` — neither of which names the file or the real cause.
+#
+# infra/.gitattributes has carried this rule since the compose stack landed, but
+# it sits one directory deep and so only ever covered infra/. That is why
+# tools/vscode/reminders/test-extension.sh was checked out CRLF and git warned on
+# every `add`. Same rule, at the root, where a new script in a new directory
+# inherits it instead of rediscovering the problem.
+*.sh text eol=lf
+
+# Deliberately not `* text=auto`. That would renormalise the whole repository on
+# the next touch of every file, which is a large diff to hand three tracks that
+# are mid-flight, for a problem only the scripts actually have.
