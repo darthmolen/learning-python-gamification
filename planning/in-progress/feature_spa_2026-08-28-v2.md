@@ -104,20 +104,45 @@ in either role.
 ## Success Criteria
 
 - [ ] Nine screens matching the artboards — values lifted from them, not re-derived
-- [ ] Every sub-area carries a working breadcrumb; nothing is reachable without a way back
-- [ ] The Tome expands in place and pushes content down. **No modal, no overlay, no scrim**
+- [x] Every sub-area carries a working breadcrumb; nothing is reachable without a way back
+- [x] The Tome expands in place and pushes content down. **No modal, no overlay, no scrim**
 - [ ] Run executes in Pyodide and records nothing; Submit posts to the API (§6.3)
 - [ ] Turtle renders in Pyodide (§8)
-- [ ] No button label changes with state — asserted per screen, not eyeballed
+- [x] No button label changes with state — asserted per screen, not eyeballed
 - [ ] Every screen reachable and operable by keyboard, every control carrying an accessible
       name. Not a full WCAG pass — that is a different plan — but a screen no keyboard can
       reach is not finished
 - [ ] Every screen is legible on the son's laptop at 1366×768, checked on his machine rather
       than in a devtools viewport. **This is a Phase 2 exit condition** (see below)
-- [ ] Every fixture parses through its `@pyquest/contract` schema **at the collection level**;
+- [x] Every fixture parses through its `@pyquest/contract` schema **at the collection level**;
       a drifted fixture fails the suite instead of rendering
-- [ ] `npm run typecheck` from `pyquest/` covers this app and its tests, and `npm test`
+- [x] `npm run typecheck` from `pyquest/` covers this app and its tests, and `npm test`
       runs its DOM tests in an environment that has a DOM
+
+## Where it stands — 2026-08-30
+
+Phases 1 through 4 are done. **Phase 5 is blocked on the `api` track**, which is in flight.
+
+Five criteria are met and asserted. The other five are honestly not, and each is a different
+kind of not:
+
+- **Nine screens matching the artboards** — Map and Tome are lifted faithfully, geometry and
+  all. Area, Boss, Quest, Defend and Party render every shape the contract carries. **Journal
+  and Console are frames**: their content is Postgres rows the API owes and `endpoints.ts` does
+  not yet declare, so there was nothing honest to render.
+- **Run records nothing; Submit posts to the API** — Run is done. Submit cannot exist before the
+  API does. What it already does is refuse untouched code, which is the half that carries the
+  mechanic.
+- **Turtle renders in Pyodide** — the shim is built and its geometry is proved against the
+  stroke protocol, but **nothing automated has ever booted Pyodide**. The first end-to-end proof
+  is a person pressing Run, which is exactly the gap
+  `planning/backlog/feature_integration-suite_2026-08-30.md` tier 4 exists to close.
+- **Keyboard and accessible names** — every control has a name and the interactive ones are
+  reachable, asserted per screen by querying role and name. A deliberate sweep of all nine with
+  the mouse unplugged has not been done, and that is the honest state of it.
+- **The son's laptop at 1366×768** — not done, and it needs his machine. Carried as
+  `planning/reminders/follow-up_laptop-screen-check_2026-08-30.md` so it cannot quietly become
+  "probably fine".
 
 ## Approach
 
