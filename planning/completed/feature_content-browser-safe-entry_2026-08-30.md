@@ -204,3 +204,33 @@ Two things this leaves standing, both already named above and neither closed her
   that is the HTML shell; the graph only breaks when the browser evaluates it. A reachability
   check that stops at the status code will report a blank page as healthy — which is what
   happened here, in this session, to me.
+
+### A third one, 2026-08-30 — a running dev server holds resolution state
+
+Adding an import of `@pyquest/content/browser` produced, in the browser,
+`Uncaught ReferenceError: CONCEPTS is not defined` — from a module whose source imported it and
+whose tests passed.
+
+The dev server had been started **before** the `./browser` subpath existed in the exports map.
+It could not resolve the new specifier, and rather than failing it **silently dropped the import
+line** and served a module that used the binding without importing it. Same file, two
+transforms:
+
+| | line 11 | line 32 |
+|---|---|---|
+| stale server | *(no import)* | `CONCEPTS.filter(...)` |
+| fresh server | `import { CONCEPTS } from "/@fs/…/content/dist/browser.js"` | `CONCEPTS.filter(...)` |
+
+Killing the process and clearing `node_modules/.vite` fixed it with no code change. The first
+restart attempt also failed, on `strictPort`, because the old server still held 5173 — which is
+worth knowing, since a failed restart looks like a broken app.
+
+**The pattern, now three for three.** `boundary.test.ts` not loading under jsdom while the
+summary read *54 passed*; `vitest --project web` staying green through a completely broken
+`vite build`; and now a dev server serving a module it had quietly mutilated. Different
+mechanisms, one shape: **the check and the thing it checks drifted apart, and the check kept
+reporting on what it used to be looking at.**
+
+The practical rule this leaves: *"the tests pass and dev is up"* is not evidence after the
+dependency graph changes underneath a long-lived process. Restart it, or you are reading a
+cached opinion.
