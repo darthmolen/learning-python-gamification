@@ -14,7 +14,7 @@ import { INITIAL, reduce, type RunState } from './runner.ts';
  */
 
 export interface WorkerLike {
-  postMessage: (message: { kind: 'run'; code: string }) => void;
+  postMessage: (message: { kind: 'run'; code: string; filename: string }) => void;
   terminate: () => void;
   onmessage: ((event: { data: RunResult | RunFailure }) => void) | null;
   /**
@@ -32,7 +32,7 @@ const defaultFactory: WorkerFactory = () =>
 
 export interface Runner {
   state: RunState;
-  run: (code: string) => void;
+  run: (code: string, filename: string) => void;
   stop: () => void;
 }
 
@@ -62,9 +62,9 @@ export function useRunner(makeWorker: WorkerFactory = defaultFactory): Runner {
   }, [makeWorker]);
 
   const run = useCallback(
-    (code: string) => {
+    (code: string, filename: string) => {
       dispatch({ kind: 'start' });
-      (worker.current ?? spawn()).postMessage({ kind: 'run', code });
+      (worker.current ?? spawn()).postMessage({ kind: 'run', code, filename });
     },
     [spawn],
   );

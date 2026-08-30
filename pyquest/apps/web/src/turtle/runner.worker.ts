@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import harnessSource from './harness.py?raw';
 import turtleSource from './turtle.py?raw';
 import type { TurtleOp } from './protocol.ts';
 
@@ -21,6 +22,8 @@ const PYODIDE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`
 export interface RunRequest {
   kind: 'run';
   code: string;
+  /** What his program is called in a traceback. `<exec>` is not a filename he can learn from. */
+  filename: string;
 }
 
 export interface RunResult {
@@ -38,7 +41,7 @@ interface PyodideApi {
   registerJsModule: (name: string, module: object) => void;
   FS: { writeFile: (path: string, data: string) => void };
   setStdout: (options: { batched: (s: string) => void }) => void;
-  globals: { get: (name: string) => unknown };
+  globals: { get: (name: string) => unknown; set: (name: string, value: unknown) => void };
 }
 
 type LoadPyodide = (options: { indexURL: string }) => Promise<PyodideApi>;
@@ -71,23 +74,38 @@ async function boot(): Promise<PyodideApi> {
    * a real Python on his own machine, which is the whole point of Area 2.
    */
   api.FS.writeFile('turtle.py', turtleSource);
+  api.FS.writeFile('_pyquest_harness.py', harnessSource);
   api.setStdout({ batched: (s) => { stdout += `${s}\n`; } });
 
   pyodide = api;
   return api;
 }
 
-async function run(code: string): Promise<RunResult> {
+async function run(code: string, filename: string): Promise<RunResult> {
   const api = await boot();
   stdout = '';
 
   let error: string | null = null;
 
   try {
-    await api.runPythonAsync(code);
+    /*
+     * Run through the Python harness rather than `runPythonAsync` directly.
+     *
+     * Pyodide raises through three frames of its own `_pyodide/_base.py`, so a one-line syntax
+     * error arrives wearing a stack that starts in a file inside a zip the learner has never
+     * seen, with the four lines that matter at the bottom and his file called `<exec>`. The
+     * harness catches inside Python and formats with `traceback`, which produces exactly what
+     * `python his_file.py` produces, because it is the same module doing it.
+     */
+    api.globals.set('_pyquest_source', code);
+    api.globals.set('_pyquest_filename', filename);
+    const reported = await api.runPythonAsync(
+      'import _pyquest_harness; _pyquest_harness.run_program(_pyquest_source, _pyquest_filename)',
+    );
+    error = reported === null || reported === undefined ? null : String(reported);
   } catch (cause) {
-    // Reported, never thrown. A traceback is the most useful thing a learner sees all evening;
-    // it belongs on his screen, not in a console he does not know how to open.
+    // The harness itself failed, which is not his program failing. Reported all the same: a
+    // traceback belongs on his screen, never in a console he does not know how to open.
     error = cause instanceof Error ? cause.message : String(cause);
   }
 
@@ -116,7 +134,7 @@ export interface RunFailure {
 self.onmessage = (event: MessageEvent<RunRequest>) => {
   if (event.data.kind !== 'run') return;
 
-  void run(event.data.code).then(
+  void run(event.data.code, event.data.filename).then(
     (result) => self.postMessage(result),
     /*
      * Boot failures land here — a CDN that will not answer, a Pyodide that will not start. They

@@ -268,3 +268,44 @@ describe('when the runner itself breaks', () => {
     expect(screen.getByRole('button', { name: 'Run' })).toBeEnabled();
   });
 });
+
+/**
+ * A traceback is the most useful thing a learner sees all evening, and §3 promises from Area 0
+ * that errors are readable. So what reaches the console is asserted, not assumed.
+ *
+ * What the *shape* of it should be is proved in Python, by `harness.py` and by CPython's own
+ * `traceback` module. What is proved here is that the screen shows it whole, and names his file
+ * rather than `<exec>`.
+ */
+describe('the traceback', () => {
+  it('names his file, and shows it verbatim', async () => {
+    const { factory, reply } = fakeWorker();
+    renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+    reply({
+      error: '  File "a3-recipe-book.py", line 7\n    for x\n         ^\nSyntaxError: invalid syntax\n',
+    });
+
+    await waitFor(() => {
+      const alert = screen.getByRole('alert');
+      // The quoted line and the caret are the parts a beginner reads. Neither survives being
+      // trimmed, collapsed, or run through a formatter that thinks whitespace is decoration.
+      expect(alert).toHaveTextContent('a3-recipe-book.py');
+      expect(alert.textContent).toContain('    for x');
+      expect(alert.textContent).toContain('^');
+    });
+  });
+
+  it('runs his code under a filename taken from the quest', async () => {
+    const sent: { code: string; filename: string }[] = [];
+    const { worker, factory } = fakeWorker();
+    worker.postMessage = (message) => sent.push({ code: message.code, filename: message.filename });
+    renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+
+    // `<exec>` is not a filename he can learn anything from; this is what he would call it.
+    expect(sent[0]?.filename).toBe('a3-recipe-book.py');
+  });
+});

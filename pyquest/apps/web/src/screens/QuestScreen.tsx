@@ -89,7 +89,7 @@ export function QuestScreen({ makeWorker }: QuestScreenProps = {}) {
                 */}
               <button
                 type="button"
-                onClick={() => run(code)}
+                onClick={() => run(code, `${questId}.py`)}
                 disabled={running}
                 style={{
                   padding: '8px 20px',
