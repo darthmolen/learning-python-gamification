@@ -194,7 +194,7 @@ so it moved to `main`. `curriculum/area-1/journal/entries/` was named by a track
 writes it, so it came off the list. A `Files Expected to Change` section is a claim about
 writes, and reads belong in Dependencies.
 
-**Authoring order is not delivery order.** The curriculum is sequenced for an 11-14-year-old
+**Authoring order is not delivery order.** The curriculum is sequenced for an 11–14-year-old
 across forty-eight weeks; the plans are sequenced by which files they touch. Conflating them
 would have serialised three tracks that can run in parallel, which is the opposite of what
 this gate was for.

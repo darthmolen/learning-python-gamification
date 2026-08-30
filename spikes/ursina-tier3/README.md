@@ -338,7 +338,7 @@ What is still worth doing on his laptop, next time it is in reach:
 1. Run `_bench.py naive 2500` and `_bench.py combined 15000` and record both numbers. That
    locates his machine on the curve, which is what the 5,000-block soft cap depends on.
 2. Confirm which display adapter Ursina bound to. `dxdiag` showed two Display tabs, so the
-   laptop likely has an Intel iGPU alongside a discrete Quadro. If Panda3D took the iGPU there
+   the son's laptop likely has an Intel iGPU alongside a discrete Quadro. If Panda3D took the iGPU there
    is headroom still unclaimed. `_runner.py` prints the GL vendor and renderer.
 
 ---

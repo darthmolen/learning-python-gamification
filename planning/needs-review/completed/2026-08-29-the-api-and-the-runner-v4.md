@@ -199,7 +199,7 @@ Claiming is `UPDATE ... SET status='claimed' WHERE id = (SELECT id FROM runner_j
 status='queued' OR (status='claimed' AND lease_expires_at < now()) ORDER BY created_at FOR
 UPDATE SKIP LOCKED LIMIT 1) RETURNING *`. `SKIP LOCKED` is what makes a second worker safe
 later; the lease is what stops a worker that died mid-job from parking a submission forever,
-which is the failure an 11-14-year-old experiences as "the button did nothing."
+which is the failure an 11–14-year-old experiences as "the button did nothing."
 
 **`payload` carries identifiers, never content.** An earlier draft said "the submitted code and
 the verifier spec", and if "spec" meant the quest's hidden tests then content had just entered
@@ -227,14 +227,14 @@ other state passes through unchanged, `killed` included.
 
 The review suggested collapsing `killed` into `failed` or `timed-out`. Declining that: `killed`
 is the resource limits firing — memory, processes, output — and it is the one outcome where the
-right thing to tell an 11-14-year-old is not "your code is wrong." It ran out of room, which is
+right thing to tell an 11–14-year-old is not "your code is wrong." It ran out of room, which is
 a different lesson and a different next step, and a client that cannot tell the two apart cannot
 say either. `JobState` carries all six.
 
 **The runner is Python, and this repository has a standard for that.** `apps/runner/**` is
 `.py`, so the `python-quality-developer` skill applies: ruff and pyright clean, no `Any`,
 exception chaining. That is not housekeeping here — §5.10's Idiomatic medal is *literally*
-"ruff and pyright clean", so this is the code that has to meet the bar the 11-14-year-old is
+"ruff and pyright clean", so this is the code that has to meet the bar the 11–14-year-old is
 graded against. He opens this repository at Boss 7.
 
 The security properties are the tests. Write a job that opens a socket and assert it

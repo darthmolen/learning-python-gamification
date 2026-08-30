@@ -15,7 +15,7 @@ The SPA plan left the browser boundary open — worker or main thread — and as
 decided and written down. It is a bigger question than one phase of one app, because the same
 argument governs the `runner` container on the other side.
 
-The learner is 11-14. `while True:` is week-three material (§6.6) — not a mistake he might
+The learner is 11–14. `while True:` is week-three material (§6.6) — not a mistake he might
 make, one he **will** make, on purpose, before he understands what he has done.
 
 ## Decision

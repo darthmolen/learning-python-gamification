@@ -104,7 +104,7 @@ describe.skipIf(!HAVE_GITEA)('the gitea client, against the real server', () => 
    *
    * "No commit has touched your journal" is a verdict a learner acts on. "That repository is not
    * there" is the parent's typo in `PLAYER_REPOS`, and reporting it as the first would send a
-   * 11-14-year-old to write a Journal entry he has already written.
+   * 11–14-year-old to write a Journal entry he has already written.
    */
   it('tells a path with no commits from a repository that is not there', async () => {
     await expect(client().commits(repo(), { path: 'never-committed.txt' })).resolves.toEqual([]);

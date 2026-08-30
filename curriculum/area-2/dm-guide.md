@@ -369,7 +369,7 @@ is the lesson:
 
 ### The three failures worth predicting
 
-Every one of these is a real thing an 11-14-year-old does, and each is a different
+Every one of these is a real thing an 11–14-year-old does, and each is a different
 lesson:
 
 - **A file that was never `git add`ed**, so it is not in the clone. He will insist it

@@ -12,7 +12,7 @@ son codes on his own, so his code reaches the server the only way code travels b
 
 Gitea is up and healthy, with HTTP on 3080 and SSH on 3022 bound to all interfaces. But
 `GITEA_DOMAIN` is still `localhost`, so the clone URLs Gitea advertises are only correct on the
-machine hosting it. The son's laptop cannot use them, and Windows Firewall has not been opened for
+machine hosting it. The son's the son's laptop cannot use them, and Windows Firewall has not been opened for
 either port.
 
 Nothing is wrong with the stack. This is the last mile between "the service runs" and "the other

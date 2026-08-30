@@ -75,7 +75,7 @@ Established by Area 0 and worth keeping.
   count in a document read at 7pm on a Tuesday, and it still leaves people out.
   Quotations are exempt and must stay verbatim, but must also be visibly quotations.
 - **The arrangement is stated once, in the `dm-guide.md`, and not re-implied by every
-  pronoun after it.** This was built for one household — a parent and an 11-14-year-old —
+  pronoun after it.** This was built for one household — a parent and an 11–14-year-old —
   and §2.4 counts a parent in the room as the design's single largest advantage, so the
   relationship is worth naming where that argument is being made. Naming it once is what
   lets every other page speak to whoever is actually holding the book.

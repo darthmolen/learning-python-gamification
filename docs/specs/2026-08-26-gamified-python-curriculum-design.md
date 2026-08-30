@@ -10,7 +10,7 @@
 
 ## 1. Purpose and Constraints
 
-Teach a 11–14-year-old real, transferable Python while a parent learns alongside him. A game layer wraps the work; the work itself stays real from week one.
+Teach an 11–14-year-old real, transferable Python while a parent learns alongside him. A game layer wraps the work; the work itself stays real from week one.
 
 **Fixed constraints:**
 
@@ -332,7 +332,7 @@ against a real campaign — about 1,095 XP an area over eight areas — that lan
 24, roughly three levels an area or one every five sessions. Often enough to be its own
 reward, rarely enough not to simply restate finishing an area.
 
-A flat cost per level was the alternative and is easier for an 11-14-year-old to compute in
+A flat cost per level was the alternative and is easier for an 11–14-year-old to compute in
 his head. It was turned down because a level that costs the same at 20 as at 2 says the
 twentieth was no harder, and everything else in his life is on a curve of some sort.
 
@@ -690,7 +690,7 @@ ancestor clickable and the current page plain.**
 
 The trail is not decoration. It is the only way back, so no screen can be one you
 are able to enter and unable to leave except through browser chrome — which in a
-single-page app is unreliable, and for an 11-14-year-old is not an answer at all.
+single-page app is unreliable, and for an 11–14-year-old is not an answer at all.
 Ancestors are underlined to say they can be clicked. An up-chevron sits at the
 head of the bar doing the same job as the second-to-last crumb, deliberately:
 going up one level is the most-used move on these screens and deserves a target

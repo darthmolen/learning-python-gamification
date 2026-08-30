@@ -32,7 +32,7 @@ CREATE TABLE runner_jobs (
   -- Worker identity, for stuck-job forensics.
   claimed_by       text        NULL,
   -- A claimed job past this is reclaimable. The lease is what stops a worker that died mid-job
-  -- from parking a submission forever, which an 11-14-year-old experiences as "the button did
+  -- from parking a submission forever, which an 11–14-year-old experiences as "the button did
   -- nothing."
   lease_expires_at timestamptz NULL,
   attempts_made    smallint    NOT NULL DEFAULT 0 CHECK (attempts_made <= 3)

@@ -31,7 +31,7 @@ scaffolding for a long self-directed build: a scope conversation, a milestone la
 chooses from, and the review cadence — not a curriculum.
 
 **One criterion is still open and it is a real gate.** Phase 0a passed on 2026-08-27 — the
-laptop renders a cube at ~57 fps with no GDI Generic fallback, so Ursina is viable — but §8
+the son's laptop renders a cube at ~57 fps with no GDI Generic fallback, so Ursina is viable — but §8
 records that **the `minecraft_clone` benchmark remains outstanding and is the only thing that
 could still qualify it.** A cube at 57 fps and a voxel world at 57 fps are different claims.
 Run that benchmark long before week 37; it is the same class of risk the Ursina spike was

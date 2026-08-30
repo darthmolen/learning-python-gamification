@@ -21,7 +21,7 @@ const renderTrail = () =>
 /**
  * §6.8: "any screen reached through another screen shows the full trail, with every ancestor
  * clickable and the current page plain." The trail is not decoration — it is the only way back,
- * because browser chrome in a single-page app is unreliable and "for an 11-14-year-old is not
+ * because browser chrome in a single-page app is unreliable and "for an 11–14-year-old is not
  * an answer at all".
  *
  * So these tests assert the target, not just the text. A crumb that renders and goes nowhere

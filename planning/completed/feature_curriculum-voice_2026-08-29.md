@@ -143,7 +143,7 @@ so nobody helpfully sweeps them and collides.
 
 **`docs/specs/`.** The spec uses `he` throughout and is the approved document of record.
 Generalising it is a separate and harder call: §2.4's argument works *because* there is a
-real parent and a real 11-14-year-old, and a spec that reads as though it were written for
+real parent and a real 11–14-year-old, and a spec that reads as though it were written for
 a generic cohort may be a worse document rather than a more inclusive one. That decision is
 not this plan's to make.
 

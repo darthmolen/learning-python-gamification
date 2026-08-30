@@ -20,7 +20,7 @@ performance intuition · branches and pull requests · reading unfamiliar code.
 
 The Area 1–3 template, plus three obligations no other area has.
 
-**Boss 7's prerequisite is this repository being readable by an 11-14-year-old**, and that
+**Boss 7's prerequisite is this repository being readable by an 11–14-year-old**, and that
 is a constraint on work happening *now*, forty weeks early. `CLAUDE.md` already says it: *at
 Boss 7 he opens this repository and reads them* — which is why the lexicon table exists and
 why "Tier" is banned. When this plan is promoted, the check is real: someone reads the repo

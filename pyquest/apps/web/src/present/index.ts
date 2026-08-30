@@ -13,7 +13,7 @@ import { DEFAULT_MEDALS, type Medal } from '@pyquest/content/browser';
  * §5.1's risk label. A DC of 20 or more gets the warning triangle.
  *
  * The boundary is the entire rule: at 19 the quest is hard, at 20 it is a fight worth warning
- * an 11-14-year-old about before he spends an evening on it. The engine returns the DC and says
+ * an 11–14-year-old about before he spends an evening on it. The engine returns the DC and says
  * nothing about how it feels, which is why this lives here.
  */
 export const RISKY_DC = 20;

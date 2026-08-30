@@ -58,7 +58,7 @@ import {
  * code that should have been `internal`.
  *
  * `runner-timeout` and `runner-killed` are separate for the reason `JobState` keeps `killed`:
- * running out of room is not being wrong, and the right next sentence to an 11-14-year-old
+ * running out of room is not being wrong, and the right next sentence to an 11–14-year-old
  * differs. `illegal-modifiers` maps to the engine's `IllegalModifierSetError`, which already
  * exists and already carries its reason.
  */

@@ -1,6 +1,6 @@
 """Run untrusted Python behind a boundary that has been attacked (spec §6.6).
 
-The learner is 11-14 and will, in week three, write ``while True:``. He will also, without
+The learner is 11–14 and will, in week three, write ``while True:``. He will also, without
 meaning to, allocate a list until the machine swaps, open a file in a loop, and — the first time
 somebody shows him ``os.fork`` — write a fork bomb. None of that is malice and all of it has to
 land somewhere survivable, because the machine it lands on is the parent's and the parent's
@@ -138,7 +138,7 @@ _RESOURCE_MARKERS: tuple[str, ...] = (
 
 ``RLIMIT_AS`` and ``RLIMIT_NPROC`` do not terminate a Python process; they make an allocation or a
 fork fail, and CPython raises. Without this list those land as ``FAILED``, which is the api
-telling an 11-14-year-old his logic is wrong when what happened is that he asked for a gigabyte.
+telling an 11–14-year-old his logic is wrong when what happened is that he asked for a gigabyte.
 """
 
 

@@ -175,7 +175,7 @@ Claiming is `UPDATE ... SET status='claimed' WHERE id = (SELECT id FROM runner_j
 status='queued' OR (status='claimed' AND lease_expires_at < now()) ORDER BY created_at FOR
 UPDATE SKIP LOCKED LIMIT 1) RETURNING *`. `SKIP LOCKED` is what makes a second worker safe
 later; the lease is what stops a worker that died mid-job from parking a submission forever,
-which is the failure an 11-14-year-old experiences as "the button did nothing."
+which is the failure an 11–14-year-old experiences as "the button did nothing."
 
 Index on `(status, created_at)`. A queue scanned sequentially is fine at two players and is
 the kind of thing nobody revisits.
@@ -183,7 +183,7 @@ the kind of thing nobody revisits.
 **The runner is Python, and this repository has a standard for that.** `apps/runner/**` is
 `.py`, so the `python-quality-developer` skill applies: ruff and pyright clean, no `Any`,
 exception chaining. That is not housekeeping here — §5.10's Idiomatic medal is *literally*
-"ruff and pyright clean", so this is the code that has to meet the bar the 11-14-year-old is
+"ruff and pyright clean", so this is the code that has to meet the bar the 11–14-year-old is
 graded against. He opens this repository at Boss 7.
 
 The security properties are the tests. Write a job that opens a socket and assert it
@@ -348,4 +348,4 @@ threshold, the `~`, and a zero payout reading as "brag" are all the UI's.
 
 `vitest.config.ts` was acknowledged in Track discipline and missing from the file set, which is the list the disjointness check actually reads. The `?now` query parameter was removed rather than schematised — a client that supplies the date can ask for yesterday and skip its own invasions, and §5.4 is a schedule not negotiable by the person being scheduled.
 
-Merged rather than accepted: the review proposed collapsing `killed` into `failed` or `timed-out`. `JobState` carries all six instead, because running out of memory and being wrong are different things to tell an 11-14-year-old.
+Merged rather than accepted: the review proposed collapsing `killed` into `failed` or `timed-out`. `JobState` carries all six instead, because running out of memory and being wrong are different things to tell an 11–14-year-old.

@@ -20,7 +20,7 @@ interface BreadcrumbsProps {
  * The way back (§6.8).
  *
  * "No screen can be one you are able to enter and unable to leave except through browser
- * chrome — which in a single-page app is unreliable, and for an 11-14-year-old is not an
+ * chrome — which in a single-page app is unreliable, and for an 11–14-year-old is not an
  * answer at all." That sentence is why the ancestors are real links with real targets rather
  * than styled text, and why the up-chevron resolves to the same place as the last of them.
  *

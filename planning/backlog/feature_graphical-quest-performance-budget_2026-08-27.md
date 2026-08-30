@@ -11,7 +11,7 @@ be viable but marginal"* — and expected it to hinge on his hardware. It surfac
 different reason, which makes it more urgent rather than less.
 
 The stock one-`Entity`-per-block pattern drops below 60 fps between 1,000 and 2,500 blocks
-**on an RTX 5090**. Three nested `range(20)` loops is 8,000 blocks at 14.9 fps. His laptop is
+**on an RTX 5090**. Three nested `range(20)` loops is 8,000 blocks at 14.9 fps. His the son's laptop is
 not the problem; the pattern is. Any graphical quest can be authored into a slideshow without
 anyone noticing, on any machine.
 
@@ -42,7 +42,7 @@ shim does not own — Area 5 onward, and the capstone.
 `curriculum/lib/world.py` shipped, and `start()` combines. That closes the failure mode for
 every Area 3 quest, exactly as this item predicted, so this stays in the backlog.
 
-**The one measurement this item names as missing is still missing.** The son's laptop has not
+**The one measurement this item names as missing is still missing.** The the son's laptop has not
 been placed on the scaling curve. Phase 3 of `feature_world-shim_2026-08-28.md` is that
 measurement and it is blocked on the laptop being in reach. Until it is run, the ~5,000-block
 soft cap is an RTX 5090 figure with a single-threaded-Python scaling estimate on top of it,

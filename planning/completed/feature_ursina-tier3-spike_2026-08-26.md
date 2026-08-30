@@ -237,7 +237,7 @@ Reopening `mcpi` is a fourth option, but it re-imports the continuity problem §
 
 | Measured | Value |
 |---|---|
-| Model | the son's laptop — a mobile workstation, not a budget laptop |
+| Model | A 2017 mobile workstation, not a budget laptop |
 | OS | Windows 11 Pro 22H2, build 22621.4317 |
 | CPU | Intel Core i7-7820HQ @ 2.90GHz, 8 logical CPUs |
 | Memory | 16 GB |

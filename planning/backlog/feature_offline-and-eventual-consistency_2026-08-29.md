@@ -22,7 +22,7 @@ connect and PyQuest never loads. Nothing the SPA can say, because the SPA is wha
 **The stack is always available.** The parent's machine stays on, locked-screen, by
 arrangement. v1 builds no degraded path, no reachability flag, no disabled-Submit state, and
 no retry affordance. A failure mode that is designed for is a failure mode that must be
-tested, maintained, and explained to an 11-14-year-old; the household arrangement removes it
+tested, maintained, and explained to an 11–14-year-old; the household arrangement removes it
 more cheaply than code does.
 
 This is a **v1 scope decision, not an oversight**, and it should be cited that way if it comes

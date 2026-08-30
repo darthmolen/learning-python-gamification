@@ -9,7 +9,7 @@
  * **Loading is whole-corpus and fail-fast, and that is the ruling this module exists to hold.**
  * Every YAML file parses, every prerequisite resolves, the graph is acyclic and every referenced
  * brief, starter and test file is on disk — or the process refuses to start and says which file.
- * A half-loaded campaign shows an 11-14-year-old a map with a hole in it and gives him no way to
+ * A half-loaded campaign shows an 11–14-year-old a map with a hole in it and gives him no way to
  * tell the hole from something he has not unlocked yet, and he will conclude he did something
  * wrong. Stopping is louder and kinder.
  *

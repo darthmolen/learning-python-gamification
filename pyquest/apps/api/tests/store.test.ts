@@ -6,7 +6,7 @@
  * entirely Postgres's, the medal award is a primary-key conflict, and the lease is a comparison
  * against `now()`. A fake would pass all three while the real one did something else.
  *
- * Two of these are the failures an 11-14-year-old actually experiences. A worker that dies
+ * Two of these are the failures an 11–14-year-old actually experiences. A worker that dies
  * mid-job parks a submission forever, which he reads as "the button did nothing"; a medal that
  * pays twice makes §5.10's "once" a comment rather than a rule.
  */

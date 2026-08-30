@@ -7,7 +7,7 @@
  * enough to be its own reward, rarely enough not to duplicate finishing an area.
  *
  * `15·L·(L−1)` is quadratic on purpose. A flat cost per level is easier for a
- * 11-14-year-old to compute in his head, and was seriously considered; it was
+ * 11–14-year-old to compute in his head, and was seriously considered; it was
  * turned down because a curve is what everything else in his life does, and a
  * level that costs the same at 20 as at 2 says the twentieth was no harder.
  *

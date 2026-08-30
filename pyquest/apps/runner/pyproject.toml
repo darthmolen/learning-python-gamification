@@ -2,7 +2,7 @@
 #
 # `python-quality-developer` applies to every file here, and that is not housekeeping: §5.10's
 # Idiomatic medal is literally "ruff and pyright clean", so this is the code that has to meet the
-# bar the 11-14-year-old is graded against. He opens this repository at Boss 7.
+# bar the 11–14-year-old is graded against. He opens this repository at Boss 7.
 
 [project]
 name = "pyquest-runner"

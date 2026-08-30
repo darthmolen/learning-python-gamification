@@ -149,7 +149,7 @@ when Phase 3 ships the stub moves straight to `completed/` without ever being pr
 
 **The profile is a prerequisite for teaching this area, not a nice-to-have.** Session 6 is
 `vscode`, and the stub's whole argument is that VS Code's defaults are hostile to a
-11-14-year-old — activity bar, minimap, problems panel, extension prompts. Teaching session
+11–14-year-old — activity bar, minimap, problems panel, extension prompts. Teaching session
 6 against stock defaults is not a reduced version of this area; it is the thing the decision
 rejected. **Area 2 is not ready to be taught until the profile has been imported on his
 laptop and confirmed working**, which is why that is a success criterion above and not a
@@ -222,7 +222,7 @@ first attempts fail at 1, 3 or 4, and each of those is a different missing idea:
 contains, what an environment is, and who your code is actually for.
 
 The three failures worth predicting in the DM guide, since every one of them is a real thing
-an 11-14-year-old does: a file that was never `git add`ed and so is not in the clone; an
+an 11–14-year-old does: a file that was never `git add`ed and so is not in the clone; an
 absolute path to `C:\Users\<his name>\...`; and a dependency he installed months ago
 globally and has never thought about again.
 

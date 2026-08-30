@@ -29,7 +29,7 @@ The `db` track declined to invent the columns against a ruled appendix, which wa
 recorded here rather than fixed in flight for the same reason.
 
 **Why this matters more than a missing column usually does.** §6.9 names the Journal as
-unregenerable: quests can be re-authored and progress can be re-earned, but an 11-14-year-old's
+unregenerable: quests can be re-authored and progress can be re-earned, but an 11–14-year-old's
 written reflection on the evening he finally got recursion cannot. A schema that stores the
 commit sha and drops the writing keeps the receipt and loses the thing.
 

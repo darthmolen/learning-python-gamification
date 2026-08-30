@@ -90,7 +90,7 @@ vocabulary he has not earned.
 loops — which this area actively teaches him to write in the `nested-structures` sessions —
 is 8,000 blocks, and unfused that measured 14.9 fps. `start()` fuses, so the fused number is
 what matters, but the cap exists because his machine is not the machine the spike ran on.
-Take the number from the shim plan's laptop measurement and write every exercise under it.
+Take the number from the shim plan's the son's laptop measurement and write every exercise under it.
 
 An exercise that invites a triple nested loop needs its ranges chosen so the product stays
 under the cap. That is a design constraint on the *exercise*, and `verify.py` should assert
@@ -180,7 +180,7 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 ## Dependencies / Prerequisites
 
-- **`feature_world-shim_2026-08-28.md` must be complete**, including its laptop measurement.
+- **`feature_world-shim_2026-08-28.md` must be complete**, including its the son's laptop measurement.
   The cap it produces is an input to every exercise here.
 - **`main` must have landed the `breakpoints` concept id**, or the VS Code rung quest fails
   `validate:content` on `concept-above-area`. This is a prerequisite of the `main` track, not
@@ -221,7 +221,7 @@ Area 3 is `local-repo` and that is the design, not a limitation.
 ### Strengths
 
 - **Objective / The vehicle carries the ordering:** Strong motivation-adjusted sequencing grounded in the spec's "next concept becomes necessary" rule.
-- **The shim, and the hard authoring cap:** Correctly treats the `world` API and laptop cap as load-bearing prerequisites, not nice-to-haves.
+- **The shim, and the hard authoring cap:** Correctly treats the `world` API and the son's laptop cap as load-bearing prerequisites, not nice-to-haves.
 - **Verifiers — `local-repo` from here on:** Aligns with spec and the curriculum's permanent exit from the sandbox.
 - **Files Expected to Change / ownership note:** Correctly keeps `curriculum/README.md` on `main` and the VS Code stub on `area-2`.
 

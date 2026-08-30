@@ -95,7 +95,7 @@ order, rather than guessed at twice.
 **The runner is Python, and this repository has a standard for that.** `apps/runner/**` is
 `.py`, so the `python-quality-developer` skill applies: ruff and pyright clean, no `Any`,
 exception chaining. That is not housekeeping here — §5.10's Idiomatic medal is *literally*
-"ruff and pyright clean", so this is the code that has to meet the bar the 11-14-year-old is
+"ruff and pyright clean", so this is the code that has to meet the bar the 11–14-year-old is
 graded against. He opens this repository at Boss 7.
 
 The security properties are the tests. Write a job that opens a socket and assert it

@@ -95,7 +95,7 @@ vocabulary he has not earned.
 loops — which this area actively teaches him to write in the `nested-structures` sessions —
 is 8,000 blocks, and unfused that measured 14.9 fps. `start()` fuses, so the fused number is
 what matters, but the cap exists because his machine is not the machine the spike ran on.
-Take the number from the shim plan's laptop measurement and write every exercise under it.
+Take the number from the shim plan's the son's laptop measurement and write every exercise under it.
 
 An exercise that invites a triple nested loop needs its ranges chosen so the product stays
 under the cap. That is a design constraint on the *exercise*, and `verify.py` should assert
@@ -265,7 +265,7 @@ deliberately drilled most and why, the way Area 1's coverage line does.
 
 **The block cap gate, with a stop/go rule.** Confirm the measured cap from the shim plan
 before any exercise is written. If `feature_world-shim_2026-08-28.md` has not landed its
-laptop measurement — as of 2026-08-29 it is still `Status: Planned` and `curriculum/lib/`
+the son's laptop measurement — as of 2026-08-29 it is still `Status: Planned` and `curriculum/lib/`
 does not exist — then:
 
 - **Stop:** anything that places a block. No exercise, no reference solution, no quest
@@ -318,7 +318,7 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 ## Dependencies / Prerequisites
 
-- **`feature_world-shim_2026-08-28.md` must be complete**, including its laptop measurement,
+- **`feature_world-shim_2026-08-28.md` must be complete**, including its the son's laptop measurement,
   before any block is placed. **It creates `curriculum/lib/world.py`; this track assumes that
   file exists and never writes it** — `curriculum/lib/` is not in Files Expected to Change
   below, and if an exercise needs the shim changed, that is an edit to the shim plan. As of

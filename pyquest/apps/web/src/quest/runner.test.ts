@@ -135,7 +135,7 @@ describe('Submit refuses to pretend', () => {
  * A worker that dies is not the same thing as a program that raised, and until this existed the
  * screen showed `Run · working` forever with a Stop button that had nothing to stop.
  *
- * The distinction matters to an 11-14-year-old more than to anyone else: one of these is his
+ * The distinction matters to an 11–14-year-old more than to anyone else: one of these is his
  * fault and one is not, and a tool that blames him for its own failure teaches him to distrust
  * his own reading of an error.
  */

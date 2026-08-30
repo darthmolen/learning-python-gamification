@@ -113,7 +113,7 @@ describe('the calls that do nothing', () => {
  * dome-shaped machine that crawled over paper with a pen in its belly. Papert's argument for it
  * was *body-syntonic* reasoning — you can work out why your square came out wrong by standing
  * up and walking it. That is why `forward(100); right(90)` beats `draw_line(0, 0, 100, 0)` for
- * an 11-14-year-old, and why the marker matters at all.
+ * an 11–14-year-old, and why the marker matters at all.
  */
 describe('the marker', () => {
   it('ends where the turtle ended, facing where it faced', () => {

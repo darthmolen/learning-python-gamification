@@ -131,7 +131,7 @@ const ERROR_CODES: Record<RunnerJobStatus, ApiErrorCode | null> = {
  *
  * A job whose quest has vanished from content — renamed, or the api restarted against a different
  * root — is finished as `killed` rather than left in the queue. A submission that can never be
- * answered is the failure an 11-14-year-old experiences as the button doing nothing, and the lease
+ * answered is the failure an 11–14-year-old experiences as the button doing nothing, and the lease
  * would otherwise hand it round three workers before giving up silently.
  */
 export async function dispatchOne(

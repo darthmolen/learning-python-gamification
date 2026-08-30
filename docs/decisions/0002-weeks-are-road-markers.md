@@ -66,7 +66,7 @@ called that "ahead" would also, on a different week, call him "behind" — and t
 design refuses that move deliberately. §5.8 makes the completion board "a record, not a race",
 does not rank, and does not reset. §5.10 makes medals elective depth so autonomy stays intact.
 
-The learner is 11-14. `week 10` sitting beside `Area 3 · weeks 9–14` is a quiet, reassuring
+The learner is 11–14. `week 10` sitting beside `Area 3 · weeks 9–14` is a quiet, reassuring
 signal that he is where he expected to be. A **behind schedule** badge is a different product,
 and it is three lines of arithmetic away from the data this decision stores — which is exactly
 why the ruling is written down rather than left to whoever writes those three lines.

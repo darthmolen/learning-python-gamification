@@ -75,7 +75,7 @@ describe('the rail', () => {
 
   /**
    * The badge is a count, and a count of zero is not a quiet badge — it is no badge. An
-   * always-rendered badge showing "0" tells an 11-14-year-old he has work waiting when he
+   * always-rendered badge showing "0" tells an 11–14-year-old he has work waiting when he
    * does not.
    */
   it('badges a destination that has a count, and leaves the rest bare', () => {

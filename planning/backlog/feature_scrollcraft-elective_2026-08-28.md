@@ -40,7 +40,7 @@ is the skill.
 
 Almost all of the work is **writing six convincing transcripts**, and that is harder than it
 sounds: each has to be fluent enough that catching the planted failure is a real achievement,
-and each has to plant a failure an 11-14-year-old with a year of Python can actually find.
+and each has to plant a failure an 11–14-year-old with a year of Python can actually find.
 A transcript that is obviously wrong teaches nothing, and one he cannot catch teaches
 helplessness.
 

@@ -99,7 +99,7 @@ export async function job(client: Writable, jobId: string): Promise<RunnerJob | 
  * `FOR UPDATE SKIP LOCKED` is what makes a second worker safe, and it is here now rather than
  * later because retrofitting it means finding the day two workers ran the same submission twice.
  * The lease is the other half: a worker that died mid-job would otherwise park a submission
- * forever, which an 11-14-year-old experiences as "the button did nothing."
+ * forever, which an 11–14-year-old experiences as "the button did nothing."
  *
  * `attempts_made` increments on every claim, including a reclaim, and the ceiling is what stops a
  * job that crashes workers from taking them all down one at a time.
