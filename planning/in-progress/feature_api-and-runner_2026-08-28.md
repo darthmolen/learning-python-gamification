@@ -287,8 +287,27 @@ The container, the queue, the caps, and the attack tests above. Then Submit end 
 
 ### Phase 3 — the remaining verifiers
 
-`peer-signoff` and `git-signal` first (no runner needed), then `local-repo` once Gitea is
-reachable from his laptop.
+`peer-signoff` and `git-signal` first (no runner needed), then `local-repo`.
+
+**Revised 2026-08-30: this phase is not Gitea-gated, and treating it as blocked was a
+misreading of its own words.** The sentence above used to end "once Gitea is reachable from his
+laptop", and this plan's Approach says `local-repo` "needs the Gitea LAN work … before it can be
+tested **against his machine**". Those are different claims, and only the second one is true.
+
+Gitea is running and healthy on the parent's machine. `infra/smoke.sh` step 4 already creates a
+real repository, pushes a real commit to it, and reads it back — all from the host, over
+`localhost`. Everything both verifiers do is server-side: `local-repo` clones a repository the
+API can reach and runs the quest's tests against the checkout; `git-signal` reads a log through
+the Gitea API with a token the API already needs. **None of that requires the son's laptop.**
+
+So build both now, against local Gitea, with a fixture repository the integration tests create
+and delete the way `smoke.sh` does.
+
+**What genuinely waits for the laptop** is one human check: that *he* can push from *his*
+machine over the LAN. That is Area 2a's win condition rather than this phase's gate, and it is
+`planning/reminders/follow-up_gitea-reachable-from-his-laptop_2026-08-30.md`. Until it is done,
+these verifiers are correct and unproven end to end — which is a reminder, not a blocker, and
+the distinction is the difference between this track waiting a fortnight and not.
 
 ### Phase 4 — awarding
 
@@ -311,6 +330,39 @@ the seam:
 Every write goes through the repository layer. An API that calls `xpFor` or re-derives an
 effective DC has crossed §6.7, and the test for that is that `apps/api` imports no engine
 function that returns money it did not first ask for.
+
+### Phase 5 — the boss rate, this track's half  *(added 2026-08-30)*
+
+`planning/feature_boss-pays-boss-rates_2026-08-30.md` makes `medalDelta` take the kind it prices
+as a required first argument, because a default reproduces the bug for anyone who forgets. That
+is the `engine` track's change. **Eleven of its nineteen call sites are in this tree**, and they
+are this track's because this track owns these files — one plan per track, so they arrive as a
+phase here rather than as a second plan that could not have the files anyway.
+
+| File | Calls | What to pass |
+|---|---|---|
+| `src/dispatcher.ts:241` | 1 | `item.kind`, already in scope |
+| `src/server.ts:426` | 1 | `item.kind`, already in scope |
+| `src/views.ts:86` | 1 | `item.kind`, already in scope |
+| `scripts/e2e.ts:127` | 1 | fetch the kind beside the DC it already fetches |
+| `tests/dispatcher.test.ts` | 3 | the fixture's kind, known at the call |
+| `tests/server.test.ts` | 4 | the fixture's kind, known at the call |
+
+**`views.ts:86` is the one worth understanding rather than mechanically editing.** It is the
+quest-slot projection, pricing every medal slot *for display*. A boss has been quoting a tenth of
+the real number to the player deciding whether to attempt it — so this is not only an awarding
+bug, it is a screen that has been lying about the stakes.
+
+**Two comments must change, and they are the reason this phase is not purely mechanical.**
+`tests/dispatcher.test.ts:154` and `tests/server.test.ts:323` both explain in prose that *"on a
+fresh quest `medalDelta(dc, [], 'cleared')` is exactly `dc * 2`"*. That stays true of quests and
+becomes a trap: it is the reasoning a future author trusts, and the first person writing a boss
+test will read it and conclude the rate is universal. Say **quest** explicitly and name the boss
+rate beside it.
+
+**It lands in the same push as the engine half, not after it.** A required parameter means the
+instant the engine commit exists alone, `tsc -b` is red inside this tree for every track. Wave 3
+already learned what one track's red gate does to another that did not cause it.
 
 ## Dependencies / Prerequisites
 

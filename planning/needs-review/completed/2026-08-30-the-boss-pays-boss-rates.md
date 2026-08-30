@@ -166,3 +166,55 @@ composes with it, is a spec question rather than an arithmetic one and is not an
 **Re-pricing history.** §5.10 pays once, and `quest_medals.xp_awarded` records what was paid. If
 a boss medal has already been written at quest rates before this lands, correcting that row is a
 decision about a child's XP total and belongs to a person, not to a migration.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-08-30 07:44
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+
+- Correct diagnosis: `xpFor('boss', …)` has exactly one caller (the test), zero production callers — the constant with a passing test and no production wire.
+- Required `ScaledXpKind` parameter is the right fix shape; a default would leave the bug callable by omission.
+- `ScaledXpKind` vs `Kind` distinction is sound — invasions carry no medals, so a caller pricing a medal on an invasion gets a compile error, not a runtime throw.
+- DC-2 telescoping argument is correct; the property test extending to both kinds is the right verification shape.
+- Both-directions mutant seeding (hardcode `'quest'`, then hardcode `'boss'`) is the right completeness check for a binary choice.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+
+- **Missing call site: `apps/api/src/views.ts:86`**
+  - Section: Phase 3 / Files Expected to Change
+  - What's wrong: The plan names three API call sites (`dispatcher.ts:241`, `server.ts:426`, `scripts/e2e.ts:127`) and says "four call sites." The actual production callers are `dispatcher.ts:241`, `server.ts:426`, and **`views.ts:86`** — `medalDelta(item.dc, held, medal)` in the quest-slot projection loop. `views.ts` holds `item: ContentItem` and would fail compile after the signature change. `scripts/e2e.ts` is a script, not a production caller in the same sense.
+  - Suggested fix: Add `pyquest/apps/api/src/views.ts` to Files Expected to Change and Phase 3. Correct the call-site count.
+
+- **Track discipline violation: `engine` plan edits `apps/api` files**
+  - Section: Track discipline / Files Expected to Change
+  - What's wrong: The plan is `engine` track but explicitly claims `apps/api/src/dispatcher.ts`, `server.ts`, and `scripts/e2e.ts` (and the missing `views.ts`). The project's disjoint-files rule applies to concurrently in-progress plans in Lane A. If an `api` track plan is in progress while this lands, the overlap is a conflict, not a coordination. "Same commit" keeps the tree green but does not resolve file ownership.
+  - Suggested fix: Either (a) treat this as a coordinated two-track commit — the engine track makes the engine change, and a named API-track commit in the same atomic push updates the four API call sites — or (b) declare this plan's file set as `engine` only and state the API call-site updates are the API track's responsibility to pick up immediately. Option (a) is what "same commit" intends but needs to say so explicitly as a cross-track coordination, not as the engine track owning API files.
+
+#### Important (Should Address)
+
+- **`scripts/e2e.ts:127` does not hold a `ContentItem`; kind must be derived**
+  - Section: Approach — "at all four, the answer is already in scope: they hold the ContentItem"
+  - What's wrong: `e2e.ts:127` calls `content.item(QUEST)?.dc ?? 0` — the item is fetchable but not a local variable named `item`. The assertion `all four … hold the ContentItem` is overstated for this site.
+  - Suggested fix: Note that `e2e.ts` must fetch the item to read its kind before calling `medalDelta`; the fix is one extra line, but the plan's claim is wrong as written.
+
+- **Phase 1 RED test is underspecified**
+  - Section: Phase 1 — the test that does not exist
+  - What's wrong: "capture the output" satisfies the test-filter-development form but does not name the exact command. Per repo conventions, `cd pyquest && npm run test -- packages/engine` (or equivalent targeted run) should be stated.
+  - Suggested fix: Add the exact command: `cd pyquest && npx vitest run packages/engine`.
+
+#### Minor (Consider)
+
+- **`store.ts` is not in Files Expected to Change** — it has relevant docblock commentary referencing `medalDelta` (lines 14 and 226); those comments may need updating when the function is renamed, but this is cosmetic.
+- **`src/index.ts` docblock** — "the docblock's vocabulary" is called out in Phase 2; confirm the docblock does not contain hardcoded XP figures that become wrong for bosses.
+
+### Assessment
+
+**Implementable as written?** With fixes
+
+**Reasoning:** The engine fix is correct and the arithmetic is sound, but the plan misses a real production call site (`views.ts:86`) and its track-discipline story needs to be explicit about cross-track ownership rather than relying on "same commit" to paper over it.

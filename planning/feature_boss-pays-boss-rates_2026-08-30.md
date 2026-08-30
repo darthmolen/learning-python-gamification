@@ -58,6 +58,7 @@ wrong today, and §5.10 writes the row once and never re-prices it.
 - [ ] The kind is a **required argument with no default**, so no call site can inherit the bug
       by omission
 - [ ] The change lands with no `// TODO` and no fallback — every call site chose
+- [ ] Both halves land in one push: engine and api, no window where `tsc -b` is red
 - [ ] A seeded mutant hardcoding `'quest'` in the priced path is caught, and so is one
       hardcoding `'boss'`
 
@@ -84,8 +85,26 @@ Three rulings, made rather than named:
 
 **No default.** `kind: ScaledXpKind = 'quest'` would compile every existing call site untouched
 and leave the bug exactly where it is for bosses — a fix that fixes nothing anybody forgets to
-opt into. Required means the compiler stops at each call site and makes somebody choose. At all
-four, the answer is already in scope: they hold the `ContentItem`.
+opt into. Required means the compiler stops at each call site and makes somebody choose.
+
+**There are nineteen of them, not four.** An earlier draft of this plan said four, because the
+census behind it was a `grep` piped through `head` and the count was read off the truncation:
+
+| Where | Calls | Whose |
+|---|---|---|
+| `apps/api/src` — `dispatcher.ts`, `server.ts`, **`views.ts`** | 3 | `api` |
+| `apps/api/scripts/e2e.ts` | 1 | `api` |
+| `apps/api/tests` — `dispatcher.test.ts`, `server.test.ts` | 7 | `api` |
+| `packages/engine/tests/scoring.test.ts` | 8 | `engine` |
+
+Only the three in `apps/api/src` hold a `ContentItem` and can pass `item.kind` directly. `e2e.ts`
+fetches with `content.item(QUEST)?.dc ?? 0` and must fetch the kind alongside it; the test sites
+hold a fixture and already know which kind they mean.
+
+**`views.ts:86` widens what this bug costs.** It is the quest-slot projection, computing XP *per
+medal slot for display*. So a boss does not merely pay wrong on award — every unearned medal slot
+on a boss screen has been quoting a tenth of the real number to the player deciding whether to
+attempt it.
 
 **`ScaledXpKind`, not `Kind`.** Content's `Kind` is `quest | invasion | boss`; §5.1 prices an
 invasion flat at 5, and an invasion carries no medals. A caller pricing a medal on an invasion
@@ -105,7 +124,8 @@ survives the change — and the property test proves it for both kinds rather th
 
 ### Phase 1 — the test that does not exist
 
-RED first, and capture the output: a medal earned on a boss, priced against §5.1's 20×DC.
+RED first, and capture the output of `cd pyquest && npx vitest run packages/engine`: a medal
+earned on a boss, priced against §5.1's 20×DC.
 `xpFor`'s own test already fixes the numbers — a DC 15 boss pays 300 — so the expected value is
 read off the spec rather than guessed.
 
@@ -121,10 +141,11 @@ Seed the mutant that decides it: hardcode `'quest'` in the priced path and confi
 reddens. Then hardcode `'boss'` and confirm a quest test reddens. Neither may survive — a suite
 that catches only one direction is measuring a constant rather than a choice.
 
-### Phase 3 — the four call sites  *(coordinated; see below)*
+### Phase 3 — hand the api half over  *(not this track's work)*
 
-`apps/api/src/dispatcher.ts:241`, `src/server.ts:426`, `scripts/e2e.ts:127`, each passing the
-kind it already holds. **Same commit as Phase 2.**
+Eleven of the nineteen call sites are the `api` track's, and this plan does not touch them. They
+land as a phase on `planning/in-progress/feature_api-and-runner_2026-08-28.md`, in the same push
+as Phase 2. See Track discipline.
 
 ## Dependencies / Prerequisites
 
@@ -136,25 +157,32 @@ kind it already holds. **Same commit as Phase 2.**
 - `pyquest/packages/engine/src/scoring.ts` — the two functions
 - `pyquest/packages/engine/src/index.ts` — exports, and the docblock's vocabulary
 - `pyquest/packages/engine/tests/scoring.test.ts` — the boss medal, the extended property
-- `pyquest/apps/api/src/dispatcher.ts`, `pyquest/apps/api/src/server.ts`,
-  `pyquest/apps/api/scripts/e2e.ts` — **the `api` track's files.** One argument each; see below
+
+**Not this plan's, and deliberately absent:** every file under `pyquest/apps/api`. Eleven call
+sites live there and they belong to the `api` track.
 
 ## Track discipline
 
-**This plan reaches into a track that is in flight, and it has to.** A required parameter is a
-breaking signature change: land it in the engine alone and `tsc -b` fails inside `apps/api` until
-somebody else fixes four lines. That is exactly the failure Wave 3 already learned — one track's
-deliberate red gate read by another as its own breakage.
+**This is two tracks doing one change, not one track reaching into another.** An earlier draft
+claimed the api files and argued that a single commit made that safe. It does keep the tree
+green, and it still has the `engine` track editing eleven files it does not own — which the
+disjointness rule exists to prevent, and which "same commit" papers over rather than resolves.
 
-So **Phases 2 and 3 land in one commit.** The tree is never broken, and the `api` track finds
-three of its lines carrying one extra argument each, with no behaviour changed on the quest path
-it is currently exercising.
+So the split is by owner:
 
-Tell the `api` track before starting. The change is mechanical, but `scripts/e2e.ts` asserts an
-exact XP figure, and that assertion is the one place a quest-priced number could already have
-been baked in as expected.
+- **`engine`** — `scoring.ts`, `index.ts`, `scoring.test.ts`. This plan.
+- **`api`** — the eleven call sites, as a phase on the plan already in flight on that track. It
+  owns those files today and a second plan cannot take them; one plan per track.
 
-Nothing else here is shared. `packages/engine` has no other claimant.
+**They land in the same push.** Not "immediately after" — a required parameter means the moment
+the engine commit exists alone, `tsc -b` is red inside `apps/api` for everyone, and Wave 3
+already learned what one track's red gate does to another that did not cause it.
+
+The api phase carries one thing beyond the mechanical edit. `dispatcher.test.ts:154` and
+`server.test.ts:323` both explain, in prose, that *"on a fresh quest `medalDelta(dc, [], 'cleared')`
+is exactly `dc * 2`"*. That stays true of quests and becomes a trap: it is the reasoning a future
+author trusts, and the first person writing a boss test will read it and believe the rate is
+universal. Both comments say **quest** explicitly, and name the boss rate.
 
 ## Out of Scope
 
