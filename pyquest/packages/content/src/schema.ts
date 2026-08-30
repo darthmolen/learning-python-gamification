@@ -257,6 +257,13 @@ export type ContentItem = z.infer<typeof ContentItemSchema>;
  *
  * The manifest carries the fact. Whether it renders as a tilde is the UI's decision, the same
  * layer boundary §5.1 draws for the DC warning threshold.
+ *
+ * **`weeks` and `blurb` are optional, and that is temporary rather than permissive.** Six of the
+ * eight manifests carry them; `area-0.yml` and `area-2.yml` are held by in-flight tracks that
+ * own those files and land their two fields when they next open them. Requiring the fields today
+ * would fail `validate:content` on two files this package's own plan may not edit. Tighten this
+ * to required once all eight carry them — the wire shape in `@pyquest/contract` already requires
+ * both, so an area without them simply has no identity to send until then.
  */
 export const AreaManifestSchema = z
   .object({
@@ -269,6 +276,37 @@ export const AreaManifestSchema = z
     authoring: z.enum(['complete', 'partial']),
     /** Expected quest count when `authoring` is `partial`. Ignored when `complete`. */
     estimatedQuests: z.number().int().positive().optional(),
+    /**
+     * When the area runs, from spec §3's headings — Area 3 is weeks 9–14. Two integers, because
+     * `Weeks 9–14` is the UI's to format (ADR 0002).
+     *
+     * **`to >= from` is the only rule.** The ranges overlap in the real curriculum: Area 1 is
+     * weeks 3–6, Area 2a is 6–7 and Area 2b is 7–8, with `area-2.yml` a single manifest covering
+     * both halves. A "ranges must not overlap" refinement rejects the content in this repository
+     * on the day it is written.
+     *
+     * Weeks gate nothing — every unlock is earned (§359, §483) and §361 invites him to attempt a
+     * boss early — so nothing derives ahead, behind or on-track from them. ADR 0002 leaves that
+     * decision unmade, and reopening it is an argument against §361 and §5.8.
+     */
+    weeks: z
+      .object({
+        from: z.number().int().positive(),
+        to: z.number().int().positive(),
+      })
+      .strict()
+      .refine((weeks) => weeks.to >= weeks.from, {
+        message: 'a week range cannot end before it starts',
+        path: ['to'],
+      })
+      .optional(),
+    /**
+     * The one line under the area's title: `Minecraft data. Inventories are lists.`
+     *
+     * Authored, not transcribed. §3's **Vehicle:** lines are prose about an area rather than a
+     * subtitle for one, so this is the one manifest field with no §3 source of the right shape.
+     */
+    blurb: z.string().min(1).optional(),
   })
   .strict()
   .superRefine((manifest, ctx) => {

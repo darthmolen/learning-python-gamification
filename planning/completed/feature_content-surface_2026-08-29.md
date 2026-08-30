@@ -1,6 +1,6 @@
 # The Content Surface, So the SPA Stops Inventing Curriculum
 
-**Status:** Planned
+**Status:** Completed
 **Track:** content-wire
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -236,3 +236,91 @@ in the SPA track, after this lands.
 - **Whether the Map needs anything else per area** — the artboard drains locked areas of colour,
   which is a presentation decision over progress the contract already carries. Believed covered;
   confirmed when SPA Phase 2 builds the Map against real shapes
+## Status
+
+**Final Status:** Completed
+**Track:** content-wire
+**Completed:** 2026-08-29
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+- `WeekRangeSchema`, `AreaIdentitySchema` and `AreaIdentitiesSchema` in
+  `packages/contract/src/payloads.ts`, exported from `@pyquest/contract` through the wholesale
+  re-export the modules split left in place — no edit to `index.ts`.
+- The collection refuses a duplicate area with a message naming the rule; it does **not** check
+  its length, because a screen showing one area's identity is a legitimate use of the shape and
+  "the Map has eight" is the Map's rule.
+- `AreaManifestSchema` gains `weeks: { from, to }` and `blurb`, both optional — see *Deviations*.
+- Six manifests carry their range and blurb: `area-1` 3–6, `area-3` 9–14, `area-4` 15–20,
+  `area-5` 21–28, `area-6` 29–36, `area-7` 37–48, each verified against spec §3's own heading.
+  Blurbs are authored, one line each. `area-0.yml` and `area-2.yml` untouched, as the track
+  discipline section required.
+- `tests/round-trip.test.ts` reads the real `content/` through `checkContent` — the reader
+  `validate:content` itself runs — and maps each manifest to an identity. It hardcodes no title,
+  which is what makes the acceptance test true rather than asserted.
+- **The acceptance test was run, not reasoned about.** `title: Collections` was edited to
+  `Collections and Crates` in the YAML; `validate:content` stayed green and the new title reached
+  the wire shape with no TypeScript touched and no test edited. Reverted.
+- 311 tests across 16 files, up from the baseline 243 across 14. `npm run validate:content` reports
+  17 items across 8 areas; `npm run typecheck` clean across all five workspaces.
+
+### Mutants seeded, and what caught them
+
+Every one was caught on its first pass; none survived.
+
+| Mutant | Caught by |
+|---|---|
+| Drop the `to >= from` refinement | 2 failed — `refuses a range that ends before it starts`, and the collection test that carries a bad identity |
+| Add a "ranges must not overlap" refinement | 2 failed — the literal fixture holding Area 1 (3–6) beside Area 2 (6–8) |
+| Drop `title` from the wire shape | 26 failed across both suites |
+| Drop the duplicate-area refinement | 1 failed, on the message as well as the throw |
+| Remove `weeks:` from `content/areas/area-3.yml` | 8 failed in the round trip |
+
+The overlap mutant is the one worth recording: the six manifests this plan authored do **not**
+overlap each other, because the overlap in the real curriculum is Area 1 against Area 2 and
+`area-2.yml` has no weeks yet. The round-trip suite alone would have survived it. The object
+literal in `payloads.test.ts` that names Area 2's 6–8 range is what killed it — the one case where
+the fixture is stronger than the file, and it stops being needed the day `area-2.yml` lands.
+
+### Deviations
+
+**`weeks` and `blurb` are optional on `AreaManifestSchema`, not required.** Requiring them fails
+`validate:content` on `area-0.yml` and `area-2.yml` the moment the schema widens, and those two
+files belong to in-flight tracks. The field comment says so and says what to do about it. The wire
+shape requires both, so an area without them has no identity to send — which is the honest
+rendering of "not authored yet" rather than a hole.
+
+**The round trip reads the whole content root, not `area-0.yml` alone.** Two reasons, and the
+first is fatal to the plan's wording: `area-0.yml` has no weeks and cannot map to an identity
+until its own track lands them. The second is that `packages/contract` does not depend on `yaml`,
+and adding a dependency to a `package.json` this track does not own to parse one file is worse
+than calling the content package's own reader. `checkContent` is that reader — the same one
+`validate:content` runs — so the test proves the shipping path rather than a parallel one.
+
+**The "file schema does not reach the wire" guard reads the import lines, not the whole file.**
+Its first pass failed against `payloads.ts` itself, because the header comment names
+`AreaManifestSchema` in order to argue against re-exporting it. A guard that forbids naming the
+thing forbids explaining why, so it now matches `^import` lines and asserts it found the real
+import list rather than an empty one.
+
+### Lessons Learned
+
+- **A round-trip test over real files is only as strong as the files.** The overlap mutant
+  survived the file-driven half and died to a literal. "Test against reality" and "test against
+  the case that matters" are not the same instruction, and today the real content does not yet
+  contain the case ADR 0002 exists to protect.
+- **A weekless manifest is invisible to `validate:content`.** The mutant that stripped
+  `area-3.yml` left the validator green and only the contract suite complained. That is correct
+  while the fields are optional, and it is the thing to fix when they become required.
+- **The negative tests passed vacuously in RED.** `expect(() => Schema.parse(x)).toThrow()` passes
+  when `Schema` is `undefined`, so before the schemas existed six positive assertions were the
+  only real red. The mutants are what turned the refusals into evidence.
+
+### Backlog Items Created
+
+- **Tighten `weeks` and `blurb` to required** once `area-0.yml` and `area-2.yml` carry them, and
+  add a `validate:content` rule so a weekless manifest is an issue rather than a silence. Belongs
+  with whichever of the two deferred tracks lands second.
+- The campaign start date remains unraised against `planning/feature_progress-schema_2026-08-28.md`
+  — that plan is another track's file. It is still the missing half of `week 10 of 48`.

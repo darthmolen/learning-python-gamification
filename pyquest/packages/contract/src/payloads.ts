@@ -16,6 +16,80 @@ import { AreaSchema, DifficultyClassSchema, MedalSchema } from '@pyquest/content
 import { ConceptIdSchema, ContentIdSchema, CountSchema, INVASION_QUEUE_CAP } from './primitives.ts';
 
 /* -------------------------------------------------------------------------------------------
+ * Area identity — the Map, the Area screen, every crumb
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * When an area runs, as two integers. ADR 0002: the wire carries the numbers and the UI
+ * formats `Weeks 9–14`, which is the standing split — the engine returns numbers, presentation
+ * decisions live in the UI.
+ *
+ * **`to >= from` is the only rule, and the obvious second one is a bug.** The real ranges
+ * overlap: Area 1 is weeks 3–6, Area 2a is 6–7, Area 2b is 7–8, and `area-2.yml` is one
+ * manifest covering both halves. A "ranges must not overlap" refinement rejects the content on
+ * disk the day it is written, which is why `tests/round-trip.test.ts` parses the real files.
+ *
+ * Nothing derives a pace judgement from these numbers. §361 lets him attempt any boss early and
+ * §5.8 makes the board a record rather than a race, so ahead, behind and on-track are a
+ * decision ADR 0002 deliberately leaves unmade — and a field here would make it by accident.
+ */
+export const WeekRangeSchema = z
+  .object({
+    from: z.number().int().positive(),
+    to: z.number().int().positive(),
+  })
+  .strict()
+  .refine((weeks) => weeks.to >= weeks.from, {
+    message: 'a week range cannot end before it starts',
+    path: ['to'],
+  });
+
+export type WeekRange = z.infer<typeof WeekRangeSchema>;
+
+/**
+ * What an area is called, when it runs, and the one line under its title. Three surfaces need
+ * it — the Map draws eight areas, the Area screen titles itself, and every crumb reads
+ * `Area 3 · Collections` — and until this existed the SPA had no source, so it shipped a table
+ * of names inside a React component and invented five it could only have made up.
+ *
+ * The source is `content/areas/*.yml`. Editing a title there changes the app with no
+ * TypeScript touched, which is the whole point and is what `tests/round-trip.test.ts` proves.
+ *
+ * **This is identity only, and it is deliberately not `AreaManifestSchema`.** That schema
+ * validates a file on disk; this describes a payload on a wire, and the translation between
+ * the two has already happened once: `AreaProgressSchema.estimated` below carries the
+ * manifest's `authoring: partial` in wire vocabulary. Re-exporting the file schema would put
+ * `authoring` and `estimatedQuests` beside the `estimated` and `total` that already say it —
+ * two sources for one fact, which is the thing this package exists to prevent. If you are here
+ * to remove the duplication, the duplication is the point; the shapes differ because the file
+ * and the wire differ.
+ */
+export const AreaIdentitySchema = z
+  .object({
+    area: AreaSchema,
+    title: z.string().min(1),
+    weeks: WeekRangeSchema,
+    blurb: z.string().min(1),
+  })
+  .strict();
+
+export type AreaIdentity = z.infer<typeof AreaIdentitySchema>;
+
+/**
+ * The Map's list. The collection is where the collection rule lives: an area appears once.
+ *
+ * Checked here rather than trusted from the caller, on the same argument as the invasion
+ * queue — a list naming area 3 twice must not cross the wire even when whatever built it is
+ * the thing that is wrong. Length is not checked: a screen showing one area's identity is a
+ * legitimate use of this shape, and a rule that the Map has eight belongs to the Map.
+ */
+export const AreaIdentitiesSchema = z
+  .array(AreaIdentitySchema)
+  .refine((areas) => new Set(areas.map((a) => a.area)).size === areas.length, {
+    message: 'an area appears once — a duplicate identity means two names for one area',
+  });
+
+/* -------------------------------------------------------------------------------------------
  * Area progress — spec §5.1a
  * ----------------------------------------------------------------------------------------- */
 

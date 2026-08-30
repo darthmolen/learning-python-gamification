@@ -5,7 +5,14 @@
 # document of record's, and `estimatedQuests` is §5.2's rule of five quests per area rather
 # than a count of anything written. Nothing in this area exists yet, which is what `partial`
 # says. Flip it to `complete` when curriculum/area-4/README.md's authoring status says so.
+#
+# Weeks come from spec §3's heading and are road markers, not a schedule (ADR 0002): they
+# gate nothing, and nothing derives ahead or behind from them. The blurb is the line under
+# the title on the Area screen, authored here — §3's Vehicle: lines are prose about the area
+# rather than a subtitle for it.
 area: 4
 title: Functions and Decomposition
+weeks: { from: 15, to: 20 }
+blurb: Pygame Zero and a game loop. A long script becomes functions worth naming.
 authoring: partial
 estimatedQuests: 5

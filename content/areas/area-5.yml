@@ -5,7 +5,14 @@
 # document of record's, and `estimatedQuests` is §5.2's rule of five quests per area rather
 # than a count of anything written. Nothing in this area exists yet, which is what `partial`
 # says. Flip it to `complete` when curriculum/area-5/README.md's authoring status says so.
+#
+# Weeks come from spec §3's heading and are road markers, not a schedule (ADR 0002): they
+# gate nothing, and nothing derives ahead or behind from them. The blurb is the line under
+# the title on the Area screen, authored here — §3's Vehicle: lines are prose about the area
+# rather than a subtitle for it.
 area: 5
 title: State and Objects
+weeks: { from: 21, to: 28 }
+blurb: Modelling a world. Block, Player and Inventory hold their own state.
 authoring: partial
 estimatedQuests: 5

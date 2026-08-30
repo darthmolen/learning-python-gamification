@@ -9,6 +9,8 @@
 
 import { describe, expect, it } from 'vitest';
 import {
+  AreaIdentitiesSchema,
+  AreaIdentitySchema,
   AreaProgressSchema,
   BossStateSchema,
   DueInvasionSchema,
@@ -37,6 +39,121 @@ const standing = {
   areaXp: 320,
   areas: [{ area: 3, cleared: 2, medals: ['cleared', 'ironman'] }],
 } as const;
+
+const identity = {
+  area: 3,
+  title: 'Collections',
+  weeks: { from: 9, to: 14 },
+  blurb: 'Minecraft data. Inventories are lists. Recipes are dicts.',
+} as const;
+
+/** The real curriculum, whose ranges overlap — see ADR 0002 and the collection tests below. */
+const realRanges = [
+  { area: 1, title: 'Control', weeks: { from: 3, to: 6 }, blurb: 'Loops repeat, conditions choose.' },
+  { area: 2, title: "The Scribe's Rite", weeks: { from: 6, to: 8 }, blurb: 'Git, then a real file on disk.' },
+  { area: 3, title: 'Collections', weeks: { from: 9, to: 14 }, blurb: 'Inventories are lists.' },
+] as const;
+
+describe('AreaIdentitySchema — the name the Map, the Area screen and every crumb read', () => {
+  it('carries the title, which is the whole reason it exists', () => {
+    // Renaming this field to `name` is the mutant the plan names first. The schema is strict,
+    // so a rename makes this line throw rather than quietly read undefined.
+    expect(AreaIdentitySchema.parse(identity).title).toBe('Collections');
+  });
+
+  it('refuses an identity with no title — an unnamed area is what this shape exists to end', () => {
+    const { title: _title, ...untitled } = identity;
+    expect(() => AreaIdentitySchema.parse(untitled)).toThrow();
+  });
+
+  it('refuses an empty title', () => {
+    expect(() => AreaIdentitySchema.parse({ ...identity, title: '' })).toThrow();
+  });
+
+  it('refuses an area outside 0–7', () => {
+    expect(() => AreaIdentitySchema.parse({ ...identity, area: 8 })).toThrow();
+  });
+
+  it('carries the weeks as integers, not as a formatted string', () => {
+    // ADR 0002: the wire carries the numbers and the UI formats "Weeks 9–14".
+    const parsed = AreaIdentitySchema.parse(identity);
+    expect(parsed.weeks).toEqual({ from: 9, to: 14 });
+    expect(() => AreaIdentitySchema.parse({ ...identity, weeks: 'Weeks 9–14' })).toThrow();
+  });
+
+  it('refuses a range that ends before it starts', () => {
+    // The one rule over the range, per ADR 0002.
+    expect(() => AreaIdentitySchema.parse({ ...identity, weeks: { from: 14, to: 9 } })).toThrow();
+  });
+
+  it('accepts a range of one week', () => {
+    expect(AreaIdentitySchema.parse({ ...identity, weeks: { from: 9, to: 9 } }).weeks.to).toBe(9);
+  });
+
+  it('refuses a week zero, a negative week and a fractional one', () => {
+    // Weeks are 1-based road markers; there is no week 0 and no week 9.5.
+    expect(() => AreaIdentitySchema.parse({ ...identity, weeks: { from: 0, to: 14 } })).toThrow();
+    expect(() => AreaIdentitySchema.parse({ ...identity, weeks: { from: 9, to: -1 } })).toThrow();
+    expect(() => AreaIdentitySchema.parse({ ...identity, weeks: { from: 9.5, to: 14 } })).toThrow();
+  });
+
+  it('refuses weeks that are missing an end', () => {
+    expect(() => AreaIdentitySchema.parse({ ...identity, weeks: { from: 9 } })).toThrow();
+  });
+
+  it('refuses an identity with no weeks and one with no blurb', () => {
+    const { weeks: _weeks, ...weekless } = identity;
+    const { blurb: _blurb, ...blurbless } = identity;
+    expect(() => AreaIdentitySchema.parse(weekless)).toThrow();
+    expect(() => AreaIdentitySchema.parse(blurbless)).toThrow();
+  });
+
+  it('refuses an empty blurb', () => {
+    expect(() => AreaIdentitySchema.parse({ ...identity, blurb: '' })).toThrow();
+  });
+
+  it('carries no authoring and no estimatedQuests — the file schema is not the wire shape', () => {
+    // The success criterion asserted rather than intended: `AreaProgressSchema.estimated`
+    // already carries `authoring: partial` in wire vocabulary, so re-exporting the manifest
+    // schema would put two sources beside one fact.
+    expect(() => AreaIdentitySchema.parse({ ...identity, authoring: 'partial' })).toThrow();
+    expect(() => AreaIdentitySchema.parse({ ...identity, estimatedQuests: 5 })).toThrow();
+  });
+
+  it.each(PRESENTATION_FIELDS)('refuses the presentation field %s', (field) => {
+    expect(() => AreaIdentitySchema.parse({ ...identity, [field]: 'anything' })).toThrow();
+  });
+
+  it('derives no pace judgement — ahead, behind and on-track are not fields here', () => {
+    // ADR 0002 leaves that decision unmade. A field would make it by accident.
+    for (const field of ['ahead', 'behind', 'onTrack', 'currentWeek']) {
+      expect(() => AreaIdentitySchema.parse({ ...identity, [field]: true })).toThrow();
+    }
+  });
+});
+
+describe("AreaIdentitiesSchema — the Map's list, where the collection rules live", () => {
+  it('accepts one entry per area', () => {
+    expect(AreaIdentitiesSchema.parse(realRanges)).toHaveLength(3);
+  });
+
+  it('refuses the same area twice, and says which rule was broken', () => {
+    const twice = [identity, { ...identity, title: 'Collections, again' }];
+    expect(() => AreaIdentitiesSchema.parse(twice)).toThrow(/once/i);
+  });
+
+  it('accepts the overlapping ranges the real curriculum has', () => {
+    // Area 1 is weeks 3–6 and Area 2 is 6–8. ADR 0002: a "ranges must not overlap" refinement
+    // rejects the actual content on the day it is written. This test is why it cannot be added.
+    const parsed = AreaIdentitiesSchema.parse(realRanges);
+    expect(parsed[0]?.weeks.to).toBe(6);
+    expect(parsed[1]?.weeks.from).toBe(6);
+  });
+
+  it('refuses a list holding one bad identity', () => {
+    expect(() => AreaIdentitiesSchema.parse([{ ...identity, weeks: { from: 14, to: 9 } }])).toThrow();
+  });
+});
 
 describe('AreaProgressSchema — §5.1a cleared of total', () => {
   it('accepts a complete area', () => {
