@@ -1,6 +1,6 @@
 # Reminders as a First-Class Surface — a VS Code Extension for `set-reminders`
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** reminders-ext
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
