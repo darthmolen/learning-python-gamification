@@ -172,3 +172,35 @@ belongs to the `spa` track and is written down in the backlog rather than done h
   vacuously.** `[\/]` arrived as `[\/]`, which matches only forward slashes, so the assertion
   that the browser entry reaches neither `validate` nor `scaffold` was true of nothing on
   Windows. Normalising separators once, at the source, is what the file does now.
+
+---
+
+## Closing note — 2026-08-30, from the `spa` track
+
+The two deferred lines are done and the guard is written.
+
+`apps/web/src/present/index.ts` and `present/present.test.ts` now import from
+`@pyquest/content/browser`. `npm run build --workspace @pyquest/web` **succeeds**, and the
+served dev graph resolves `packages/contract/dist/payloads.js` to `content/dist/browser.js` with
+no `vite-browser-external` shim anywhere in it.
+
+The guard is `apps/web/src/gateway/boundary.test.ts` —
+*imports the browser entry of the content package, never the bare one*. It walks every file
+under `apps/web/src/` and fails on a bare `@pyquest/content` specifier, naming the file that did
+it. Verified by seeding the bare import back: caught, one test, pointing at
+`present/index.ts` rather than at `packages/content/dist/validate.js`.
+
+**Correcting this plan's Out of Scope**, which said "the SPA needs no change; it is the thing
+that noticed." Wrong, and usefully so: fixing the contract's four imports left the build broken
+on one line in a package the plan had excluded. A safe entry is not a property of the package
+that offers it — it is a property of every consumer that remembers to ask.
+
+Two things this leaves standing, both already named above and neither closed here:
+
+- **`vite build` is still in no gate.** The SPA's gate stayed green through the entire outage,
+  because jsdom never evaluates an unused `node:fs` import and vite dev serves modules
+  unbundled. The new guard catches this particular cause; it does not make the build a gate.
+- **The dev server fails differently from the build, and later.** `curl` returns 200 because
+  that is the HTML shell; the graph only breaks when the browser evaluates it. A reachability
+  check that stops at the status code will report a blank page as healthy — which is what
+  happened here, in this session, to me.

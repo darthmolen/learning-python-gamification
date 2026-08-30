@@ -1,17 +1,14 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { color, font } from '../design/tokens';
+import { getDueInvasions } from '../gateway/index.ts';
 import { Rail } from '../shell/Rail';
-import {
-  AreaScreen,
-  BossScreen,
-  ConsoleScreen,
-  DefendScreen,
-  JournalScreen,
-  MapScreen,
-  PartyScreen,
-  QuestScreen,
-  TomeScreen,
-} from '../screens/placeholders';
+import { AreaScreen } from '../screens/AreaScreen';
+import { BossScreen } from '../screens/BossScreen';
+import { DefendScreen } from '../screens/DefendScreen';
+import { MapScreen } from '../screens/MapScreen';
+import { ConsoleScreen, JournalScreen, TomeScreen } from '../screens/OverlandScreens';
+import { PartyScreen } from '../screens/PartyScreen';
+import { QuestScreen } from '../screens/QuestScreen';
 
 /**
  * The shell: the rail, then whatever screen you are standing on.
@@ -33,8 +30,7 @@ function Shell() {
         lineHeight: 1.5,
       }}
     >
-      {/* Counts are stubbed until Phase 2 wires the gateway. */}
-      <Rail />
+      <Rail counts={{ defend: getDueInvasions().length }} />
       <div style={{ flexGrow: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <Outlet />
       </div>

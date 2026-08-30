@@ -1,0 +1,93 @@
+import { DEFAULT_MEDALS } from '@pyquest/content/browser';
+import { describe, expect, it } from 'vitest';
+import { formatPayout, formatTotal, isRisky, medalSlots } from './index.ts';
+
+/**
+ * The decisions §5.1 says the engine deliberately does not make.
+ *
+ * "The engine returns numbers; presentation decisions live in the UI" (CLAUDE.md). Each of
+ * these is a rule about what a number *means* on screen, and each of them is a rule a
+ * reasonable person would delete as decoration. They are tested here, apart from any screen,
+ * so the reason survives in one place rather than four components.
+ */
+describe('the DC ≥ 20 warning', () => {
+  it('marks 20 and above as risky', () => {
+    expect(isRisky(20)).toBe(true);
+    expect(isRisky(24)).toBe(true);
+    expect(isRisky(30)).toBe(true);
+  });
+
+  it('leaves everything below 20 unmarked', () => {
+    expect(isRisky(19)).toBe(false);
+    expect(isRisky(12)).toBe(false);
+    expect(isRisky(5)).toBe(false);
+  });
+
+  /** The boundary is the whole rule. Off by one and the warning is on the wrong quests. */
+  it('puts the boundary at exactly 20', () => {
+    expect(isRisky(19)).toBe(false);
+    expect(isRisky(20)).toBe(true);
+  });
+});
+
+/**
+ * §5.1a. `authoring: partial` means the denominator is an estimate, and an estimate presented
+ * as fact is dishonest — the Map artboard's own note says "the tilde is not decoration".
+ */
+describe('the tilde on an estimated total', () => {
+  it('marks an estimate', () => {
+    expect(formatTotal(5, true)).toBe('~5');
+  });
+
+  it('leaves a settled total bare', () => {
+    expect(formatTotal(5, false)).toBe('5');
+  });
+});
+
+/**
+ * §5.10: "Unearned slots render greyed on the quest card, borrowing the visible-but-locked
+ * treatment." Visible is the point — a slot he cannot see is depth he does not know exists,
+ * and the Map makes the same argument for locked areas: "anticipation, not frustration."
+ */
+describe('medal slots', () => {
+  it('shows every slot the quest offers, not only the ones earned', () => {
+    const slots = medalSlots(['cleared']);
+    expect(slots).toHaveLength(DEFAULT_MEDALS.length);
+  });
+
+  it('marks which are held and which are still open', () => {
+    const slots = medalSlots(['cleared', 'idiomatic']);
+    const held = slots.filter((s) => s.held).map((s) => s.medal);
+    const open = slots.filter((s) => !s.held).map((s) => s.medal);
+
+    expect(held).toEqual(['cleared', 'idiomatic']);
+    expect(open).toContain('ironman');
+    expect(open).toContain('teach-back');
+  });
+
+  it('keeps the slots in their canonical order however the medals arrive', () => {
+    const slots = medalSlots(['teach-back', 'cleared']);
+    expect(slots.map((s) => s.medal)).toEqual([...DEFAULT_MEDALS]);
+  });
+
+  it('shows every slot open on a quest with nothing earned', () => {
+    const slots = medalSlots([]);
+    expect(slots.every((s) => !s.held)).toBe(true);
+    expect(slots).toHaveLength(DEFAULT_MEDALS.length);
+  });
+});
+
+/**
+ * §5.10: a medal that pays no XP "reads as a brag, not as a zero." Rendering `0 xp` beside a
+ * thing he chose to go back and earn tells him it was worth nothing, which is the opposite of
+ * what the medal is for.
+ */
+describe('a zero payout', () => {
+  it('reads as a brag rather than a zero', () => {
+    expect(formatPayout(0)).toBe('brag');
+  });
+
+  it('leaves a real payout as a number', () => {
+    expect(formatPayout(40)).toBe('40 xp');
+  });
+});

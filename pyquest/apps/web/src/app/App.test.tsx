@@ -31,8 +31,8 @@ describe('routing', () => {
   });
 
   const SUB: readonly [string, string][] = [
-    ['/area/3', 'Area 3'],
-    ['/area/3/quest/a3-recipe-book', 'a3-recipe-book'],
+    ['/area/3', 'Collections'],
+    ['/area/3/quest/a3-recipe-book', 'The Recipe Book'],
     ['/area/3/boss', 'Boss 3'],
   ];
 
@@ -57,23 +57,15 @@ describe('routing', () => {
   });
 
   /**
-   * Content lives in git and reaches the app through the contract (CLAUDE.md's diagram). A
-   * title the SPA can produce on its own is a title the SPA invented, and it goes stale
-   * silently the moment the curriculum is edited — which is the whole failure mode.
+   * Phase 1 carried a guard here — `names no area it could only have invented` — that failed if
+   * a name the SPA could only have made up reached the screen. It has been replaced rather than
+   * deleted: now that the gateway serves real titles, "Collections" on screen is correct, so a
+   * rendered-text assertion can no longer tell invention from data.
    *
-   * Phase 1 shipped an `AREA_NAMES` table that duplicated `content/areas/*.yml` for the three
-   * authored areas and made up names for the five that do not exist yet. This test is the
-   * guard that replaced it. It stays until the gateway serves area manifests, and then it
-   * gets stricter, not deleted.
+   * The strict version reads the source instead and forbids any screen from containing an area
+   * title at all. It lives in `src/gateway/boundary.test.ts`, beside the other rule about what
+   * a screen is not allowed to reach for.
    */
-  it('names no area it could only have invented', () => {
-    at('/area/3');
-    expect(screen.queryByText(/Collections/)).toBeNull();
-
-    at('/area/0');
-    expect(screen.queryByText(/First Light/)).toBeNull();
-  });
-
   it('always offers the rail, wherever you are standing', () => {
     at('/area/3/quest/a3-recipe-book');
     expect(screen.getByRole('navigation', { name: 'Overland' })).toBeInTheDocument();

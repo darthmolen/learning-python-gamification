@@ -306,6 +306,11 @@ something implements it.
 - `packages/contract` — **done**, `planning/completed/feature_engine-query-layer_2026-08-28.md`.
   Phases 1 through 4 need **only the schemas** — the query layer shipped behind them in the
   same plan, but nothing here calls the engine at runtime
+- **The content surface — done, `81dc3ab`, Wave 3.** `AreaIdentitySchema`,
+  `AreaIdentitiesSchema` and `WeekRangeSchema` in `packages/contract/src/payloads.ts`, sourced
+  from `content/areas/*.yml`. Phase 1 discovered the contract carried no area title at all and
+  shipped a hardcoded table instead; Phase 2's Map, Area screen and every area breadcrumb were
+  blocked on this and are not any more. All eight manifests now carry `weeks` and `blurb`
 - The artboards, which exist
 - The API, **only at Phase 5**
 
