@@ -1,6 +1,6 @@
 # The API and the Runner
 
-**Status:** Planned
+**Status:** In Progress
 **Track:** api
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
