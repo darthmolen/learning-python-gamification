@@ -28,11 +28,34 @@ import { migrate } from '@pyquest/db';
 import { medalDelta } from '@pyquest/engine';
 import { loadContentRoot } from '../src/content.ts';
 import { Spool, pump } from '../src/dispatcher.ts';
+import { gitea } from '../src/gitea.ts';
 import { buildServer } from '../src/server.ts';
+import { createGiteaRepo, HAVE_GITEA } from '../tests/support/gitea.ts';
 
 const ADA = '11111111-1111-1111-1111-111111111111';
 const QUEST = 'a0-name-tag';
 const SOLUTION = 'name = input("Name? ")\nprint(f"Welcome, {name}!")\n';
+
+/**
+ * The second loop: `local-repo`, from a push to a medal.
+ *
+ * `a2-where-the-file-lives` is graded against a repository rather than against a file, so the
+ * files below are the quest's win condition written out — a project directory, a script that
+ * prints the line the brief names, and notes long enough to be three real sentences. There is
+ * deliberately **no** `run_me.py` at the repository root, because the quest's last assertion is
+ * that the same command fails one directory up. That is the lesson, and a second copy would
+ * quietly delete it.
+ */
+const REPO_QUEST = 'a2-where-the-file-lives';
+const REPO_FILES: ReadonlyArray<readonly [string, string]> = [
+  ['where-the-file-lives/run_me.py', 'print("I am running from a file.")\n'],
+  [
+    'where-the-file-lives/NOTES.md',
+    'The file lives in where-the-file-lives/run_me.py. I first ran it from the top of the\n' +
+      'repository and python said it could not find it. Running it from inside its own\n' +
+      'directory worked, because a relative path is relative to where you are standing.\n',
+  ],
+];
 
 const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
 const ADMIN_URL = process.env['E2E_DATABASE_URL'];
@@ -134,9 +157,120 @@ async function main(): Promise<void> {
 
     say('OK — Submit to medal, nothing mocked');
     await app.close();
+
+    await localRepoLoop(db, content, spool, spoolRoot);
   } finally {
     await db.end();
     rmSync(spoolRoot, { recursive: true, force: true });
+  }
+}
+
+/**
+ * The same loop for `local-repo`, and it is a different loop in every part that can break.
+ *
+ * `hidden-tests` hands the runner a string the client typed. This hands it a **tar the api built
+ * from a clone of a repository on a real Gitea** — so it is the only thing that has ever proven
+ * the api and the runner agree about that file: that `git archive` writes an archive the runner's
+ * `tarfile` will open under `filter="data"`, that the paths inside it survive the trip, and that
+ * pytest run with its cwd at the unpacked root finds the project where the quest's specification
+ * looks for it. Every one of those is a seam between two suites that each pass alone.
+ *
+ * It is also the §6.4 claim end to end: the api graded what was pushed, and nothing else was ever
+ * on this machine to grade.
+ */
+async function localRepoLoop(
+  db: Pool,
+  content: ReturnType<typeof loadContentRoot>,
+  spool: Spool,
+  spoolRoot: string,
+): Promise<void> {
+  if (!HAVE_GITEA) {
+    say('SKIPPED — local-repo needs the gitea container; start the stack to run this half');
+    return;
+  }
+
+  say('creating a throwaway gitea account and repository');
+  const fixture = await createGiteaRepo('e2e');
+  const workspaceRoot = join(tmpdir(), `pyquest-e2e-work-${process.pid}`);
+
+  try {
+    for (const [path, text] of REPO_FILES) {
+      await fixture.commit(path, text, `e2e: ${path}`);
+    }
+    console.log(`pushed ${REPO_FILES.length} files to ${fixture.owner}/${fixture.repo}`);
+
+    await db.query('DELETE FROM runner_jobs');
+    await db.query('DELETE FROM attempts');
+    await db.query('DELETE FROM quest_medals');
+
+    const app = buildServer({
+      content,
+      db,
+      spool,
+      workspaceRoot,
+      gitea: gitea({
+        baseUrl: fixture.baseUrl,
+        token: fixture.token,
+        repos: new Map([['ada', { owner: fixture.owner, name: fixture.repo }]]),
+        journalPath: 'journal.md',
+      }),
+    });
+    await app.ready();
+
+    try {
+      say('submitting a local-repo quest — the api clones, resets to origin/main and exports');
+      const submitted = await app.inject({
+        method: 'POST',
+        url: `/api/players/${ADA}/quests/${REPO_QUEST}/submit`,
+        payload: { type: 'local-repo' },
+      });
+      if (submitted.statusCode !== 202) {
+        throw new Error(`submit answered ${submitted.statusCode}: ${submitted.body}`);
+      }
+      const { jobId } = submitted.json() as { jobId: string };
+      console.log(`job ${jobId} queued`);
+
+      say('dispatching the tree to the spool');
+      console.log(await pump(db, content, spool));
+
+      say('running the real runner container over a repository it has never seen');
+      runTheRunner(spoolRoot);
+
+      say('collecting the verdict');
+      console.log(await pump(db, content, spool));
+
+      const polled = await app.inject({ method: 'GET', url: `/api/jobs/${jobId}` });
+      console.log(polled.body);
+
+      const { rows } = await db.query('SELECT medal, xp_awarded FROM quest_medals');
+      const expected = medalDelta(content.item(REPO_QUEST)?.dc ?? 0, [], 'cleared');
+      console.log('medals:', rows, 'expected xp:', expected);
+
+      const state = (polled.json() as { state: string }).state;
+      if (state !== 'passed') throw new Error(`expected passed, got ${state}`);
+      if (rows.length !== 1) throw new Error('expected exactly one medal');
+
+      /** The attempt has to name the commit it graded, or §3.5's record cannot be checked. */
+      const attempts = await db.query('SELECT detail FROM attempts');
+      const sha = (attempts.rows[0] as { detail: { localRepo?: { sha?: string } } } | undefined)
+        ?.detail.localRepo?.sha;
+      if (sha === undefined || !/^[0-9a-f]{40}$/.test(sha)) {
+        throw new Error(`the attempt does not name the commit it graded: ${String(sha)}`);
+      }
+      console.log(`graded against ${sha}`);
+
+      /** §6.3 on the verifier that pulls a whole repository: the specification is still secret. */
+      if (polled.body.includes('MIN_NOTES_CHARACTERS')) {
+        throw new Error('the hidden tests leaked (§6.3)');
+      }
+
+      say('OK — push to medal, against a real repository and a real sandbox');
+    } finally {
+      await app.close();
+    }
+  } finally {
+    fixture.destroy();
+    rmSync(workspaceRoot, { recursive: true, force: true });
   }
 }
 

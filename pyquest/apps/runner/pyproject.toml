@@ -64,3 +64,16 @@ pythonVersion = "3.14"
 pythonPlatform = "Linux"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
+
+# **Run it against `py -3.14`, or it reports eight errors that are not there:**
+#
+#     npx pyright --pythonpath "$(py -3.14 -c 'import sys;print(sys.executable)')"
+#
+# Pyright resolves imports out of whichever interpreter it finds, and on this machine bare
+# `python` is 3.12 with no pytest in it (CLAUDE.md: use `py -3.14`, never `python`). Unresolved
+# `import pytest` then cascades under `strict`: `pytest.fixture` and `pytest.raises` become
+# Unknown, and every use of them is reported as `reportUntypedFunctionDecorator` or
+# `reportUnknownMemberType`. None of those is a fact about this code — they are the same eight
+# errors on files nobody has touched — and chasing them would mean adding suppressions to make a
+# wrong invocation quiet. Against the documented interpreter it is 0 errors, and §5.10 makes that
+# the bar: the Idiomatic medal is literally "ruff and pyright clean".

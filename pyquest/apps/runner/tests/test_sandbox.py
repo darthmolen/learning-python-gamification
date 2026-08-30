@@ -1,6 +1,6 @@
 """Attacks on the boundary. A boundary you have not attacked is a boundary you have assumed.
 
-Every test here is a program an 11–14-year-old could plausibly write in his first three months,
+Every test here is a program an 11-to-14-year-old could plausibly write in his first three months,
 and each one is run for real: a socket is opened, a gigabyte is asked for, a loop spins, a process
 forks itself, a file grows, a print statement never stops. None of it is simulated, because a
 simulated attack proves that the simulation is safe.

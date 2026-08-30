@@ -21,17 +21,17 @@ would not.
 
 ## Success Criteria
 
-- [ ] Every response body typed against `@pyquest/contract`, no payload shape invented here
-- [ ] The endpoint list, request bodies and error shape **added to** `@pyquest/contract` by
+- [x] Every response body typed against `@pyquest/contract`, no payload shape invented here
+- [x] The endpoint list, request bodies and error shape **added to** `@pyquest/contract` by
       this plan, because they do not exist yet — see below
-- [ ] `npm run typecheck` from `pyquest/` covers both apps and their tests
-- [ ] Every `.py` in the runner is ruff and pyright clean
-- [ ] All four verifiers: `hidden-tests`, `local-repo`, `peer-signoff`, `git-signal` (§6.3)
-- [ ] The runner refuses network access, exceeds neither its CPU nor memory cap, and dies
+- [x] `npm run typecheck` from `pyquest/` covers both apps and their tests
+- [x] Every `.py` in the runner is ruff and pyright clean
+- [x] All four verifiers: `hidden-tests`, `local-repo`, `peer-signoff`, `git-signal` (§6.3)
+- [x] The runner refuses network access, exceeds neither its CPU nor memory cap, and dies
       at ten seconds — each **proven by a test that tries** (§6.6)
-- [ ] Integration tests against the real compose stack. Nothing that mocks the database or
+- [x] Integration tests against the real compose stack. Nothing that mocks the database or
       the runner counts
-- [ ] Hidden tests never reach the client, asserted by a test that greps the response
+- [x] Hidden tests never reach the client, asserted by a test that greps the response
 
 ## Approach
 
@@ -494,9 +494,11 @@ and no track lists that file for an alias any more.
 
 ## Status
 
-**Stopped at Phase 3, deliberately.** Phases 1, 2 and 4 are done and proven; two of the four
-verifiers are not built, because both need the Gitea work this plan already lists as a
-prerequisite. The plan stays in `in-progress/` and the `api` track stays held.
+**Phases 1 to 4 are done. Phase 5 is not, and it is the only thing left.** All four verifiers of
+§6.3 are built, tested against a real Gitea and a real Postgres, and `local-repo` is proven from a
+push to a medal through the real sandbox. The plan stays in `in-progress/` and the `api` track stays
+held, because Phase 5's eleven call sites have to land in the same push as the engine change that
+requires them.
 
 ### Outcomes
 
@@ -528,10 +530,51 @@ printing — plus a write to `/usr/local/lib`, a read of the worker's environmen
 The image is built and pinned, runs as uid 10001 on a read-only root with `cap_drop: ALL` and
 `no-new-privileges`, and the per-job workspace is on tmpfs and removed unconditionally.
 
-**Phase 3 — `peer-signoff` only.** Submit records an attempt awaiting a person, `GET /api/signoffs`
-is the household-wide queue, and `POST /api/signoffs/:attemptId` enforces that the approver is not
-the submitter and holds the role the quest's `by` field names — a role check against `player_roles`,
+**Phase 3 — all four verifiers. Done 2026-08-30.**
+
+*`peer-signoff`.* Submit records an attempt awaiting a person, `GET /api/signoffs` is the
+household-wide queue, and `POST /api/signoffs/:attemptId` enforces that the approver is not the
+submitter and holds the role the quest's `by` field names — a role check against `player_roles`,
 never a name check.
+
+*`git-signal`.* `src/gitea.ts` is the one integration, read through the Gitea API rather than by
+shelling out to git. `src/gitsignal.ts` asks the four signals one question — *is there evidence
+dated after the last recorded attempt?* — which is what makes a second Submit on unchanged history
+fail rather than pay twice. `commit` and `push` read the same evidence and that is the honest
+answer: the api is looking at a bare repository on a server, so a commit it can see is a commit
+that was pushed (§6.4). `journal-entry` is a path rather than a message convention, because
+nothing in `GitSignalVerifierSchema` carries a pattern and a rule the learner is graded against
+must be one he can read (§5.3). An empty repository answers `409` and is turned into "no signal
+yet", because the day he presses Submit before his first commit is the likeliest day for him to
+press it.
+
+*`local-repo`.* `src/checkout.ts` clones over HTTP, then fetches and hard-resets to `origin/main`
+and cleans — never merges, because a merge leaves a commit that is on no server in the tree the
+api then grades. The tree is exported with `git archive` into a per-job tar on the spool, so the
+learner's files never land on a disk the api writes to. The token is on a command line here and
+nowhere else, so every git failure is redacted before it becomes an error.
+
+**Both resolve through `POST /submit`**, with `SubmitRequest` discriminated on `verifier.type`: the
+button says Submit on every quest, and which verifier runs is a property of the quest rather than
+of the URL the client picked.
+
+**Neither was gated on the son's laptop, and the earlier wording that implied it was wrong.**
+Everything both verifiers do is server-side. They are built and integration-tested against the
+Gitea running on this machine, with a fixture account and repository each suite creates and purges
+— the same sequence `infra/smoke.sh` step 4 already uses, driven from a suite. What still waits for
+the laptop is one human check, that *he* can push from *his* machine:
+`planning/reminders/follow-up_gitea-reachable-from-his-laptop_2026-08-30.md`. A reminder, not a
+gate.
+
+**The `local-repo` loop closes too.** `npm run e2e --workspace @pyquest/api` now runs a second leg:
+a throwaway Gitea repository is created and pushed to, the api clones it and exports the tree, the
+real runner container opens the tar with no network and a read-only root, pytest runs the quest's
+six hidden tests against the unpacked repository, and one `cleared` medal comes back priced at
+exactly `medalDelta`'s 20 XP with the attempt naming the 40-character commit it graded. That is the
+only thing that proves the api and the runner agree about the tar — that `git archive` writes an
+archive `tarfile` will open under `filter="data"`, that the paths survive, and that pytest run with
+its cwd at the unpacked root finds the project where the specification looks for it. Three seams,
+each between two suites that pass alone.
 
 **Phase 4 — awarding. Done for both verifiers that run.**
 
@@ -541,18 +584,44 @@ Every runner outcome writes an `attempts` row; `failed`, `timed-out` and `killed
 
 **The loop closes.** `npm run e2e --workspace @pyquest/api` submits real code through the real api
 into a real Postgres, hands it to the real runner container with no network and a read-only root,
-and gets back a `passed` job and one `cleared` medal priced at exactly `medalDelta`'s ten XP.
+and gets back a `passed` job and one `cleared` medal priced at exactly `medalDelta`'s ten XP. It runs
+the same loop a second time for `local-repo`, from a push rather than from typed code — see Phase 3
+above.
 
-**Verification.** `npm run typecheck` clean. `npx vitest run` — 505 tests across 27 files, up from
-361 across 18 (105 are this track's; the rest arrived from `spa`). `npm run validate:content` clean.
-`ruff check`, `ruff format --check` and `pyright --strict` all clean on `apps/runner`.
+**Verification, 2026-08-30.** `npx vitest run --project api` — **125 tests across 9 files**, up
+from 106 across 8 at the Phase 3 checkpoint. That project is this track's gate; the root suite spans
+tracks that are working concurrently and is not this track's signal. `npm run typecheck` clean.
+`ruff check` and `ruff format --check` clean on `apps/runner`, and `pyright` **0 errors**. The
+runner's own 31 tests pass inside the container, under the real limits.
+
+**The pyright question the checkpoint left open is settled, and it was an invocation difference
+rather than a regression.** Pyright resolves imports out of whichever interpreter it finds, and on
+this machine bare `python` is 3.12 with no pytest in it — CLAUDE.md already says to use `py -3.14`,
+never `python`. An unresolved `import pytest` then cascades under `typeCheckingMode = "strict"`:
+`pytest.fixture` and `pytest.raises` become Unknown, and every use of them is reported as
+`reportUntypedFunctionDecorator` or `reportUnknownMemberType`. That is the whole of the eight
+errors, on two files, one of which nothing had touched. Against the documented interpreter it is
+zero:
+
+    npx pyright --pythonpath "$(py -3.14 -c 'import sys;print(sys.executable)')"
+
+That invocation is now recorded in `apps/runner/pyproject.toml` beside the `pythonPlatform` note,
+which is the other setting stated rather than inherited from whoever runs the check. **No
+suppression was added**, and that is the point: the fix for a wrong invocation is the right
+invocation, never a `reportX = false` that makes the right one quiet too. §5.10 makes the Idiomatic
+medal literally "ruff and pyright clean", so this is the bar the learner is graded against.
 
 ### What is not built, and why
 
-- **`git-signal` and `local-repo`.** Both read the player's Gitea repository over its API, and
-  `planning/backlog/feature_gitea-lan-access-for-the-son_2026-08-27.md` is not done. `POST /submit`
-  refuses them with a stated reason rather than recording a scar for a verifier that never ran — a
-  false entry in the one record §3.5 says is never edited would be worse than a refusal.
+- **Phase 5, the boss rate.** Blocked on the engine half of
+  `planning/feature_boss-pays-boss-rates_2026-08-30.md`. A required first argument on `medalDelta`
+  turns `tsc -b` red inside this tree for every track the instant the engine commit exists alone,
+  so the two halves land in one push or not at all. The plan stays in `in-progress/` and the `api`
+  track stays held for it.
+- **A `local-repo` quest with a `path` subdirectory.** `exportTree` takes the quest's optional
+  `path` and limits the export to it, and neither `local-repo` quest in the campaign sets one — so
+  that branch is written, typed and never executed. The first Area 2 quest that uses `path` is the
+  test for it, and it should be written the day one does.
 - **`GET` and `POST /journal`.** Blocked by
   `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md`. The shapes are typed in
   `endpoints.ts` so the SPA is not held up; the routes are not registered, and the 404 they produce
@@ -566,6 +635,24 @@ and gets back a `passed` job and one `cleared` medal priced at exactly `medalDel
 
 ### Deviations
 
+- **Another track edited this track's files, and it broke the ruff gate.** `6c453ed [REFACTOR] The
+  laptop loses its model number and the learner gains a range` — a prose scrub — rewrote
+  `apps/runner/src/pyquest_runner/sandbox.py` and `apps/runner/tests/test_sandbox.py` to say
+  `11–14` with an en dash. Ruff's `RUF001`/`RUF002` flag ambiguous Unicode in Python source, so
+  `ruff check` went from clean to three errors on files this track owns and whose author had no
+  reason to look. Fixed by rewording to `11 to 14` rather than by adding `RUF001` to the ignore
+  list: CLAUDE.md's rule for the content validator is the same rule here — **fix the source, never
+  loosen the check.** Worth recording as a track-discipline miss rather than only as a fix, because
+  a repository-wide `sed` is exactly the edit that crosses every track's files at once, and the
+  gates it trips are not the ones the author is watching.
+- **`scripts/e2e.ts` gained a second leg and now imports `tests/support/gitea.ts`.** A script
+  importing from a suite's support directory is backwards on the face of it, and it is what
+  `createGiteaRepo` was factored out for: it is separate from `useGiteaRepo` precisely because the
+  script is not a vitest suite and has no `beforeAll` to hang a fixture off. One creation sequence
+  with two callers beats a second copy of it in a script where nobody would notice it drifting.
+- **`apps/api/tests/server.localrepo.test.ts` is new**, and covers the seam `checkout.test.ts`
+  cannot: whether Submit calls the checkout at all, what lands in `runner_jobs.payload`, and what
+  the api does with the verdict that comes back.
 - **`packages/db` has no writers, so the api's SQL lives in `apps/api/src/store.ts`.** Phase 4 says
   "every write goes through the repository layer"; that layer is twelve `SELECT`s and belongs to the
   `db` track, which this one may not edit. The seam the rule protects still exists — nothing above
@@ -591,7 +678,30 @@ and gets back a `passed` job and one `cleared` medal priced at exactly `medalDel
 
 ### Mutants that survived their first pass
 
-Twenty-seven seeded; three survived, all three because a *test* was wrong rather than the code.
+**Phase 3, 2026-08-30 — twelve seeded, one survived.** The three the plan named as worth seeding
+all died: a `git-signal` that accepts any repository state (10 tests), a `local-repo` that tests the
+clone's cached copy (3), and a failing verifier that writes no `attempts` row (7 for the runner
+path, 5 for `git-signal`). So did a checkout that resets to the local branch instead of
+`origin/main` (5), an unremoved repository tar (2), an unredacted token (1), a `404` on a path
+filter believed without asking whether the repository exists (1), and a Submit that records no
+commit on the job (2).
+
+**The survivor was an export rewritten to archive the working tree instead of the pushed commit,
+and it survived because the property is not observable through `POST /submit`.** `syncCheckout`
+resets and cleans immediately before `exportTree` runs, so by export time the index and the commit
+are the same tree and both produce byte-identical tars. The mutant was re-seeded in its true
+`git write-tree` form to confirm that reading rather than assume it, and it survived that too.
+
+This was worth finding, because the test written for it claimed more than it could deliver: it
+asserted that a file planted in the api's own checkout does not reach the sandbox, which
+`git archive <sha>` guarantees on its own whatever the checkout hygiene. The comment on that test
+now says so, and points at `checkout.test.ts` — which does hold the hygiene, and whose `clean` test
+is the one that dies when `clean` is removed. **A test believed to be stronger than it is, is worse
+than one known to be weak**, and this is the fourth time on this track that the test was wrong
+rather than the code.
+
+**Phase 2, 2026-08-29 — twenty-seven seeded; three survived**, all three because a *test* was wrong
+rather than the code.
 
 1. **`nextRung(rung, repelled)` replaced by `repelled ? rung + 1 : 0`** — survived the whole server
    suite. The fixture seeded rung 1, where the ladder and the naive version agree on both answers.
@@ -628,6 +738,20 @@ Twenty-seven seeded; three survived, all three because a *test* was wrong rather
 - **`AreaIdentity` requires `weeks` and `blurb`; `area-0.yml` and `area-2.yml` carry neither.** The
   map would not render at all under a strict reading. `AreaCard.identity` is optional, which is what
   `payloads.ts` already ruled: an area without them has no identity to send.
+- **Eight pyright errors were a wrong interpreter, not a regression — and the tell was in the
+  first line of the report.** Five of the eight were `reportUnknownMemberType` and
+  `reportUntypedFunctionDecorator` against pytest, which reads like an argument about how strictly
+  to type a test suite. It was not: above them sat `Import "pytest" could not be resolved`, and
+  every other error was downstream of that one. **Read the first diagnostic before reacting to the
+  loudest.** The cost of not doing so would have been a suppression that silenced the check
+  permanently to quieten a command that was wrong once.
+- **A test can pass for a reason that has nothing to do with what it claims.** The `local-repo`
+  test asserting that a file planted in the api's checkout never reaches the sandbox was true, and
+  would have been true against any implementation at all: `git archive <sha>` reads the object
+  database, so the working tree cannot enter the tar however the checkout is managed. Only seeding
+  the mutant exposed it — the test survived a `syncCheckout` with its `clean` removed. **The seeded
+  mutant is not a formality at the end; it is the only thing that tells a real assertion from a
+  tautology**, and it is the fourth time on this track that the test was wrong rather than the code.
 - **`medalDelta` has no boss variant.** §5.1 prices a boss at 20×DC and `xpFor('boss', dc)` exists,
   but `medalDelta` calls `xpFor('quest', ...)` unconditionally — so a boss sign-off pays quest rates.
   The api calls `medalDelta` as instructed and does not correct it, because correcting it here would
@@ -635,35 +759,3 @@ Twenty-seven seeded; three survived, all three because a *test* was wrong rather
   successor plan.**
 
 ---
-
-## Phase 3 checkpoint — 2026-08-30
-
-**Stopped mid-flight, committed green.** The session running Phase 3 was cancelled partway. Its
-work was left uncommitted in a shared tree that needed to be pushed, so it was verified and
-committed as a checkpoint rather than discarded or swept in blind.
-
-**What is in the tree and green:** `src/gitea.ts` (the Gitea API client), `src/checkout.ts`
-(clone, then fetch and hard-reset to `origin/main` — never a merge, because §6.4 tests what was
-pushed), `src/gitsignal.ts`, and their suites plus `tests/support/gitea.ts` and
-`tests/server.gitsignal.test.ts`. `dispatcher.ts`, `server.ts`, `store.ts` and `main.ts` are
-modified to wire them. The runner's `job.py` and `worker.py` gained repository-tar handling.
-
-**Verified at the checkpoint, not assumed:** 628 tests across 38 files, `typecheck` clean,
-`validate:content` clean, `ruff check` and `ruff format --check` clean on `apps/runner`.
-
-**Four ruff violations were fixed while checkpointing**, because CLAUDE.md makes that bar
-non-negotiable and §5.10 grades the learner on exactly it: an unused `noqa` in `job.py`, a
-non-imperative docstring, and two function-local imports in `tests/test_job.py` hoisted to the
-top of the file.
-
-**Not verified, and worth a look before Phase 3 is called done:** `pyright` reports errors in
-`tests/test_job.py` (3) and `tests/test_sandbox.py` (5) — all `reportUntypedFunctionDecorator`
-and `reportUnknownMemberType` against pytest. `test_sandbox.py` was not touched by this work and
-shows the same class of error, so this reads as an invocation difference rather than a
-regression: the earlier session reported pyright-strict clean, probably running it inside the
-container. **Resolve which invocation is authoritative before trusting either result.**
-
-**What remains of Phase 3:** whether `local-repo` and `git-signal` are complete is not
-established — the session did not reach its own report. Re-read the suites first; they are the
-record of how far it got. Phase 5 remains blocked on the engine half of
-`planning/feature_boss-pays-boss-rates_2026-08-30.md`.
