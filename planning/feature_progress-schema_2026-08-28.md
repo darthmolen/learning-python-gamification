@@ -329,7 +329,9 @@ Every one of those is a row the application would happily have written on some T
 - `pyquest/tsconfig.json` — a project reference. Unlike `apps/*`, this package **is** imported
   — `apps/api` depends on it — so it joins the composite build, and a package missing from
   that explicit list is silently skipped by `tsc -b`
-- `pyquest/vitest.config.ts` — the source alias, so tests never resolve through a stale `dist`
+- ~~`pyquest/vitest.config.ts`~~ — **no longer needed.** Wave 3 made the alias map derive
+  itself from `packages/`, and the `packages/**` project glob already collects this
+  package's tests. A new package under `packages/` is wired by existing
 - `infra/compose/migrate.yml` — the migration job; this track owns the file,
   and the root `docker-compose.yml` is not the place
 - `infra/smoke.sh` — assert migrations applied and restore still round-trips
@@ -339,12 +341,11 @@ Every one of those is a row the application would happily have written on some T
 `pyquest/tsconfig.json` is uncontended: `apps/*` are leaves that nothing imports, so only
 `packages/db` needs a project reference.
 
-**`pyquest/vitest.config.ts` is not**, and an earlier draft of this plan claimed it was. The
-`spa` track names that file too, for the `projects` entry that gives `apps/web` a DOM. Two
-tracks, one file, both adding a distinct entry — so coordinate on it rather than assume: this
-track adds one alias line, and if the `spa` track is mid-edit the two changes are appended, not
-merged blind. It is a candidate for the same treatment `infra/docker-compose.yml` got, if it
-blocks anything.
+**`pyquest/vitest.config.ts` is no longer this track's concern.** It was, and it was the file
+that held this plan for a day. Wave 3's second gate made the alias map derive itself by reading
+`packages/`, so a package that exists is aliased and there is no list to add a line to. The
+`packages/**` project glob already collects any test under this package. The `spa` track keeps
+that file; this one no longer touches it.
 
 `pyquest/packages/contract/src/progress.ts` is this track's alone, and has been since
 `planning/completed/feature_contract-modules_2026-08-29.md` landed on 2026-08-29. `index.ts`,

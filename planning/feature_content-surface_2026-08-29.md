@@ -1,7 +1,7 @@
 # The Content Surface, So the SPA Stops Inventing Curriculum
 
 **Status:** Planned
-**Track:** db
+**Track:** content-wire
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
 **Lane:** A — the seam, a third time
@@ -96,8 +96,9 @@ the engine returns numbers, presentation decisions live in the UI.
   Area 2b is 7–8. An obvious-looking "ranges must not be overlapping" refinement rejects the
   real curriculum on the day it is written. The only rule is `to >= from`. Note too that
   `area-2.yml` is a single manifest covering both halves, so its range is 6–8.
-- **All eight areas have a manifest as of 2026-08-29**, so this plan writes weeks and a blurb
-  into eight files, not three. Areas 3–7 were transcribed from spec §3 — title from the
+- **All eight areas have a manifest as of 2026-08-29**, but this plan writes weeks and a blurb
+  into **six** of them. `area-0.yml` and `area-2.yml` are held by their own in-flight tracks,
+  and those two edits are deferred into those plans — see *Track discipline*. Areas 3–7 were transcribed from spec §3 — title from the
   heading, `estimatedQuests` from §5.2's rule of five, `authoring: partial` because nothing in
   them is written. ADR 0002's amendment covers why that is transcription and not the
   `AREA_NAMES` mistake this plan exists to replace: a manifest may carry any value the spec
@@ -109,7 +110,7 @@ the engine returns numbers, presentation decisions live in the UI.
   rather than a wiring detail.
 
 This does mean widening `AreaManifestSchema` in `packages/content/src/schema.ts` and editing
-**eight** YAML files — a content-side change, in Lane B's tree, named in *Files Expected to
+**six** YAML files — a content-side change, in Lane B's tree, named in *Files Expected to
 Change* rather than done quietly. It was three when this plan was written; areas 3–7 have had
 manifests since 2026-08-29, which is also what makes `max(area.weeks.to)` resolve to 48 rather
 than to 8.
@@ -182,12 +183,27 @@ own suite in isolation.
 - `pyquest/packages/content/src/schema.ts` — `AreaManifestSchema` gains `weeks` and `blurb`.
   **The one file here that is not `main`'s usual ground**, and the reason this plan says so out
   loud: it is the file every authored area is validated against
-- `content/areas/area-0.yml` through `area-7.yml` — **all eight** manifests gain
-  their week range and blurb. Lane B's tree, eight small edits, no quest touched
+- `content/areas/area-1.yml`, and `area-3.yml` through `area-7.yml` — **six** manifests gain
+  their week range and blurb. Lane B's tree, six small edits, no quest touched.
+  `area-0.yml` and `area-2.yml` are deliberately absent: see *Track discipline*
 
 ## Track discipline
 
-`db`. It shares no file with `spa` or `api` once the modules split has landed — `api` owns
+`content-wire`, its own track as of Wave 3. It declared `db` and queued behind the progress
+schema for no reason: one writes SQL and a repository, the other writes wire shapes and YAML,
+and they share not one file.
+
+**Two manifests are not this plan's to edit.** `content/areas/area-0.yml` is held by
+`feature_area-0-quest-backfill` and `area-2.yml` by `feature_area-2-scribes-rite-and-sandbox`,
+both in flight. Two tracks editing different fields of the same small YAML is precisely the
+merge the disjointness rule exists to prevent, so each of those plans now carries its own
+manifest's `weeks` and `blurb` as deferred work, to land when it next opens the file.
+
+Ordering matters and is one-way: **this plan widens `AreaManifestSchema` first.** Until it has,
+`weeks` and `blurb` are unknown keys and the schema is `.strict()` — either track landing its
+two fields early fails `validate:content`. Neither is blocked by that; both simply wait.
+
+It shares no other file with `spa` or `api` once the modules split has landed — `api` owns
 `endpoints.ts`, and this plan touches neither that nor `apps/`. Before the split it would
 collide with both, which is the whole reason it queues behind the gate.
 

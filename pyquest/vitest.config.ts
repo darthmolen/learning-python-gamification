@@ -1,9 +1,7 @@
+import { readFileSync, readdirSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
-
-const src = (pkg: string) =>
-  fileURLToPath(new URL(`./packages/${pkg}/src/index.ts`, import.meta.url));
 
 /**
  * Run the tests against source, never against a build.
@@ -21,12 +19,25 @@ const src = (pkg: string) =>
  * down, and the second place is the one that goes stale — `packages/contract/dist/`
  * exists on disk, so a web project missing the contract alias would parse its
  * fixtures against compiled output and stay green against a contract that moved.
+ *
+ * **Derived, not listed** — Wave 3, 2026-08-29. The map used to name each package by
+ * hand, which made this file something every new package's track had to edit: the
+ * `db` track's plan listed it for one line, and `api`'s did too. Reading each
+ * package's own `package.json` keeps the single definition the paragraph above argues
+ * for and removes the queue behind it. A package that exists is aliased; there is no
+ * list to forget to update, which is the failure mode that paragraph is guarding.
  */
-const alias = {
-  '@pyquest/content': src('content'),
-  '@pyquest/contract': src('contract'),
-  '@pyquest/engine': src('engine'),
-};
+const packagesDir = fileURLToPath(new URL('./packages', import.meta.url));
+
+const alias = Object.fromEntries(
+  readdirSync(packagesDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => {
+      const manifest = new URL(`./packages/${entry.name}/package.json`, import.meta.url);
+      const { name } = JSON.parse(readFileSync(manifest, 'utf8')) as { name: string };
+      return [name, fileURLToPath(new URL(`./packages/${entry.name}/src/index.ts`, import.meta.url))];
+    }),
+);
 
 /**
  * `tsc -b` emits compiled copies of anything it is given. Without this, vitest

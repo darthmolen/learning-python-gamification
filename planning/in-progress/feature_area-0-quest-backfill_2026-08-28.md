@@ -100,6 +100,44 @@ finding for Lane A's API plan, not a workaround here.
 Not in scope: `b7_no_error_at_all.py`. Its win condition is that the learner *says what is
 wrong*, and the curriculum README already rules it `peer-signoff` for that reason.
 
+## Files Expected to Change
+
+Added 2026-08-29 as Wave 3's first gate. This plan was promoted from a backlog stub and never
+grew the section, which meant the rule that admits plans in parallel — a comparison of these
+lists — could not be evaluated against it at all. Derived from what the track has actually
+committed (`9bb627d`) plus what Known Scope still owes.
+
+- `content/quests/a0-*.yml` — the quest definitions
+- `content/briefs/a0-*.md` — one brief per quest
+- `content/starters/a0-*.py` — starter files
+- `content/tests/a0-*_test.py` — the hidden tests
+- `content/areas/area-0.yml` — the manifest. **Held, not yet edited**: Known Scope defers
+  `authoring: complete` until a person decides it, and Wave 3 adds the deferred wire fields
+  below
+
+**Read, not written — and declared because an unlisted read is still a collision.**
+`curriculum/area-0/exercises/**` and `curriculum/area-0/sessions/**` are where these quests come
+from; each `a0-` quest is an exercise promoted into content. `feature_curriculum-voice_2026-08-29.md`
+rewrites that prose on the `main` track. The two are compatible — voice edits prose, this track
+reads it and writes `content/` — but they are not disjoint, so they coordinate rather than
+assume: if a session's wording changes under a quest being derived from it, this track re-reads
+before it publishes.
+
+## Deferred here from the content surface
+
+`feature_content-surface_2026-08-29.md` adds `weeks` and `blurb` to every area manifest. It
+cannot touch `content/areas/area-0.yml` while this track holds it, so that one edit lands here
+instead, when this plan next opens the file:
+
+```yaml
+weeks: { from: 1, to: 2 }     # spec §3, Area 0 — First Light
+blurb: <one line, authored — §3's prose is about the area, not a subtitle for it>
+```
+
+The schema widening is the content surface's; only this file's two fields are this track's. Do
+not widen `AreaManifestSchema` here, and do not land these fields before that plan has — they
+will not validate.
+
 ## Trigger for Promotion
 
 **Two triggers now, because the work splits.**

@@ -385,3 +385,45 @@ timed-out and killed outcomes each write an `attempts` row and stop, and `runner
 constrained to code plus identifiers. That last one was the sharpest finding in three rounds —
 "the verifier spec" would have put hidden tests in Postgres, breaking §6.7 and making every
 queued job a stale copy of a file that lives in git.
+
+---
+
+## Plan Review (v4)
+
+**Reviewed:** 2026-08-29 20:37
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Previous Issues — Resolution Status
+
+1. **Resolved** — Route table now lists all six `JobState` values including `killed`; storage mapping table matches.
+2. **Resolved** — `git-signal` routes through `POST /submit` via `SubmitRequest` discriminated union on `verifier.type`; no new route needed and the one-button UI rule holds.
+3. **Resolved** — `GET /api/tome` returns "concepts by area. Content only"; unlocked state derived client-side from `/campaign`.
+4. **Resolved** — `JournalEntry` now has a named shape: `{ sessionDate, prompt, body, commitSha, xpAwarded, reply? }`.
+5. **Resolved** — Phase 4 step 1 now states every outcome writes an `attempts` row; failed/timed-out/killed write `passed = false` and stop.
+6. **Resolved** — `payload` carries identifiers/paths never test content; runner reads tests from mounted content root.
+
+### New Issues
+
+#### Important (Should Address)
+
+- **`runner_jobs` queue schema uses storage states; contract row shape type not declared**
+  - Section: `runner_jobs`, in full / Success Criteria
+  - What's wrong: `runner_jobs.status` uses storage states (`claimed`, etc.); the API translates to `JobState` for the client. But the plan does not say whether `@pyquest/contract`'s `progress.ts` (db track) types the queue row with storage states or client states. Without a ruling, the db and api tracks will make inconsistent choices when writing the `runner_jobs` row schema into the contract.
+  - Suggested fix: Add one sentence: "`progress.ts` types `runner_jobs` rows with storage states; the API's `JobState` type (in `endpoints.ts`) is the client-facing translation."
+
+- **`GET /api/signoffs` scope not stated**
+  - Section: The routes table
+  - What's wrong: The route is not player-scoped and returns "pending peer-signoffs, for the Console," but it is not stated whether this is all pending signoffs household-wide or filtered by the caller's role. In Kitchen Table mode with two players, the parent and the son would see the same queue — likely correct for the Console, but the plan should say so explicitly to prevent an implementer filtering it unnecessarily.
+  - Suggested fix: Add: "Returns all pending signoffs household-wide; the Console is the parent seat and sees everything."
+
+#### Minor (Consider)
+
+- **`vitest.config.ts` listed as owned by two tracks** — acknowledged as a coordination point and correctly listed in Files Expected to Change. This is not a disjointness violation; the disjoint rule applies to *concurrently in-progress* plans, and `spa` and `api` tracks run sequentially. No action needed beyond what the plan already says.
+- **Composite response shapes for `/campaign` and `/areas/:area` are still prose, not named types** — lower priority given `JournalEntry` is now a model, but naming the area-screen payload would reduce contract drift.
+- **`/quests/:questId` should state which verifier metadata is safe to expose** — obvious for hidden-tests (path never sent), worth one explicit line.
+
+### Assessment
+
+**Implementable as written?** Yes, with one clarification
+
+**Reasoning:** All six v3 issues are fully resolved and the plan is architecturally coherent throughout. The one remaining gap — which state domain types `runner_jobs` rows in the contract — is a one-sentence ruling that prevents the db and api tracks from making inconsistent choices; everything else is implementation detail the plan covers.

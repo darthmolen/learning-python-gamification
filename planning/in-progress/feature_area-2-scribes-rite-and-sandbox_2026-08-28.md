@@ -460,6 +460,34 @@ as "read only," which was wrong twice over — this plan does not write them, an
 does not write does not belong in a list of files expected to change. The learner's entries
 are copied into **his** repository during the session; nothing in this repository moves.
 
+## Deferred here from the content surface
+
+**Added 2026-08-29, Wave 3.** This track is blocked on hardware — the son's laptop — and
+`feature_content-surface_2026-08-29.md` is not. Rather than hold the content surface behind a
+laptop, it lands the six manifests nobody is holding and leaves this one here.
+
+So when this plan next opens `content/areas/area-2.yml`, it also adds the two wire fields:
+
+```yaml
+weeks: { from: 6, to: 8 }     # spec §3 — Area 2a is 6–7 and 2b is 7–8; one manifest covers both
+blurb: <one line, authored — §3's prose is about the area, not a subtitle for it>
+```
+
+Three things to know before writing them:
+
+- **The schema widening is not this track's.** `AreaManifestSchema` gains `weeks` and `blurb`
+  in the content surface plan. Until that lands the schema is `.strict()`, these are unknown
+  keys, and `validate:content` will refuse them. Check that plan is in `completed/` first.
+- **The range is 6–8 and it overlaps its neighbours.** Area 1 is 3–6 and Area 3 is 9–14; Area 2a
+  and 2b are 6–7 and 7–8, and one manifest covers both halves. ADR 0002 records that the
+  validator must not require ranges to be disjoint — the real curriculum overlaps.
+- **The blurb is authored, not copied.** §3's prose describes the area rather than subtitling
+  it, which is why the content surface authors blurbs rather than transcribing them.
+
+Nothing else about the manifest changes here. `authoring` stays `partial` until this plan's own
+criteria say otherwise, which is a decision a person makes rather than a consequence of the
+fifth quest landing.
+
 ## Out of Scope
 
 The Gitea configuration itself, the firewall, and anything under `infra/`. This plan names
