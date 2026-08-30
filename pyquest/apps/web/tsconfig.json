@@ -1,0 +1,29 @@
+{
+  // The app is bundled by Vite and never emitted by `tsc`, so this project typechecks only.
+  // That is also why it is absent from the root `tsconfig.json`'s `references`: nothing imports
+  // an app, so nothing needs its declarations. The root `typecheck` script reaches it through
+  // `--workspaces --if-present` instead, which is the path that actually covers test files.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+
+    // Vite resolves imports, not Node. `NodeNext` from the base would demand extensioned
+    // relative specifiers and reject the `@pyquest/contract` source alias the test run uses.
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["vite/client", "@testing-library/jest-dom"],
+
+    // `rewriteRelativeImportExtensions` is a base setting for emitted packages; the bundler
+    // rewrites nothing, so relative imports here are extensionless in the ordinary way.
+    "rewriteRelativeImportExtensions": false,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"]
+}
