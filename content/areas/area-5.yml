@@ -1,0 +1,11 @@
+# Spec §5.1a — the manifest carries the denominator every progress display needs.
+# `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~5".
+#
+# Transcribed from spec §3's Area 5 heading on 2026-08-29, not authored: the title is the
+# document of record's, and `estimatedQuests` is §5.2's rule of five quests per area rather
+# than a count of anything written. Nothing in this area exists yet, which is what `partial`
+# says. Flip it to `complete` when curriculum/area-5/README.md's authoring status says so.
+area: 5
+title: State and Objects
+authoring: partial
+estimatedQuests: 5

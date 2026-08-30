@@ -44,9 +44,8 @@ The only rule over the range is `to >= from`. See *Consequences* for why that is
 The wire carries the integers; formatting `Weeks 9–14` is the UI's, consistent with the
 standing split where the engine returns numbers and presentation decisions live in the UI.
 
-Weeks are authored **only for areas that have a manifest** — 0, 1 and 2 today. Areas 3–7 have
-week ranges in the spec and no content file, and inventing manifests for unauthored areas is
-the same mistake as inventing their titles.
+Weeks are authored **only for areas that have a manifest** — 0, 1 and 2 when this was written,
+all eight since. See the amendment below.
 
 ## Why not a schedule
 
@@ -88,8 +87,8 @@ re-pacing the curriculum a two-integer edit rather than a migration.
   that `area-2.yml` is one manifest covering both halves, so its range is 6–8.
 - **A current week needs a campaign start date**, which is household state and therefore
   Postgres, not content. The engine reads no clock — `now` arrives as a parameter (§6.7) — so
-  the start date is a row the `db` track owes, and `planning/feature_progress-schema_2026-08-28.md`
-  does not currently name it.
+  the start date is a row the `db` track owes. Named in
+  `planning/feature_progress-schema_2026-08-28.md` as of 2026-08-29.
 
 ## What this does not decide
 
@@ -97,3 +96,28 @@ Whether the app ever derives a pace judgement from these numbers — ahead, behi
 This decision deliberately leaves that unmade and unbuilt. Reopening it means arguing against
 §361 and §5.8, which is a real argument someone may win; it is not one to have by accident
 while wiring up a Map screen.
+
+## Amendment, 2026-08-29 — transcription is not invention
+
+**Status: still Accepted.** The ruling stands. One consequence sentence was wrong, and is
+corrected here rather than by a superseding record, because nothing about the decision changed.
+
+The struck sentence said "inventing manifests for unauthored areas is the same mistake as
+inventing their titles." It conflates two acts. The mistake this decision was written against
+was an `AREA_NAMES` table that **made up names the spec does not contain**. Writing
+`title: State and Objects` into `content/areas/area-5.yml` is a copy of §3's own heading — the
+opposite act. And a manifest asserts less than the sentence assumed: `authoring: partial` exists
+to say the area is unwritten and its total an estimate, which `area-2.yml` has said since it was
+authored.
+
+**The cost of the error was in this decision's own text.** It derives `week 10 of 48` from
+`max(area.weeks.to)`, and with three manifests that maximum is 8 — the header would have read
+`week 10 of 8`. The derivation was right and unreachable, for want of five files transcribing
+what the spec already says.
+
+All eight manifests now exist, areas 3–7 marked `partial` with §5.2's estimate of five.
+`validate:content` reports 8 areas and the denominator resolves to 48, as intended.
+
+**The replacing rule:** a manifest may carry any value the spec states, and must not carry one
+it does not. Titles and week ranges for all eight areas are in §3; quest counts are not, which
+is why `estimatedQuests` follows §5.2's rule of five and is an estimate rather than a total.

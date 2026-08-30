@@ -334,7 +334,10 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 ## Files Expected to Change
 
 - `curriculum/area-3/**` — new, the whole area
-- `content/areas/area-3.yml` — new
+- ~~`content/areas/area-3.yml` — new~~ — **transcribed on 2026-08-29** and no longer this
+  plan's to create. It carries the spec's title and §5.2's estimate of five, marked
+  `authoring: partial`. This plan flips that to `complete` when the five quests exist,
+  which is an edit to one word rather than a new file
 - `content/quests/a3-*.yml` — new, **seven**: five collections quests, the breakpoints rung,
   and Boss 3
 - `content/briefs/a3-*.md` — new, **seven**: every item has a brief

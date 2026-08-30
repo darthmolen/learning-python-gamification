@@ -96,16 +96,23 @@ the engine returns numbers, presentation decisions live in the UI.
   Area 2b is 7–8. An obvious-looking "ranges must not be overlapping" refinement rejects the
   real curriculum on the day it is written. The only rule is `to >= from`. Note too that
   `area-2.yml` is a single manifest covering both halves, so its range is 6–8.
-- **Weeks are authored only for areas that have a manifest** — 0, 1 and 2. Areas 3–7 have week
-  ranges in the spec and no content file. Creating manifests for unauthored areas is the same
-  mistake as the `AREA_NAMES` table this plan exists to replace, one level up.
+- **All eight areas have a manifest as of 2026-08-29**, so this plan writes weeks and a blurb
+  into eight files, not three. Areas 3–7 were transcribed from spec §3 — title from the
+  heading, `estimatedQuests` from §5.2's rule of five, `authoring: partial` because nothing in
+  them is written. ADR 0002's amendment covers why that is transcription and not the
+  `AREA_NAMES` mistake this plan exists to replace: a manifest may carry any value the spec
+  states and must not carry one it does not. Blurbs are the one field with no §3 source of the
+  right shape — §3's **Vehicle:** lines are close but written as prose about the area rather
+  than as a subtitle for it, so a blurb is authored here rather than copied.
 - **No pace judgement.** Nothing derives ahead, behind or on-track from these numbers. The
   decision record says why, and says that reopening it is an argument against §361 and §5.8
   rather than a wiring detail.
 
 This does mean widening `AreaManifestSchema` in `packages/content/src/schema.ts` and editing
-three YAML files — a content-side change, in Lane B's tree, named in *Files Expected to Change*
-rather than done quietly.
+**eight** YAML files — a content-side change, in Lane B's tree, named in *Files Expected to
+Change* rather than done quietly. It was three when this plan was written; areas 3–7 have had
+manifests since 2026-08-29, which is also what makes `max(area.weeks.to)` resolve to 48 rather
+than to 8.
 
 ## Success Criteria
 
@@ -175,8 +182,8 @@ own suite in isolation.
 - `pyquest/packages/content/src/schema.ts` — `AreaManifestSchema` gains `weeks` and `blurb`.
   **The one file here that is not `main`'s usual ground**, and the reason this plan says so out
   loud: it is the file every authored area is validated against
-- `content/areas/area-0.yml`, `area-1.yml`, `area-2.yml` — the three authored manifests gain
-  their week range and blurb. Lane B's tree, three small edits, no quest touched
+- `content/areas/area-0.yml` through `area-7.yml` — **all eight** manifests gain
+  their week range and blurb. Lane B's tree, eight small edits, no quest touched
 
 ## Track discipline
 
@@ -185,7 +192,7 @@ own suite in isolation.
 collide with both, which is the whole reason it queues behind the gate.
 
 The one file it touches outside its own ownership is `payloads.ts` (`main`'s), named as a
-coordination point above. It also edits `packages/content/src/schema.ts` and three YAML
+coordination point above. It also edits `packages/content/src/schema.ts` and eight YAML
 manifests in Lane B's tree — small, additive, and no quest touched, but worth `area-2`'s
 track knowing since that track is in `content/` right now.
 
