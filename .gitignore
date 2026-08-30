@@ -3,6 +3,10 @@ __pycache__/
 
 node_modules/
 dist/
+# Generator scratch output. `dist/` alone does not match these, and a test that writes
+# beside its own source will otherwise commit its output.
+dist-test/
+dist-broken-out/
 *.tsbuildinfo
 
 .env
