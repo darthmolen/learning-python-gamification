@@ -30,6 +30,8 @@ a second, stale copy of the curriculum.
       in a test — the database's half of the check the engine already makes
 - [ ] `npm run typecheck` from `pyquest/` covers this package and its tests
 - [ ] Integration tests run against a scratch database and leave the real one untouched
+- [ ] The campaign start date has a home, and the current week is derived from it rather than
+      stored
 
 ## Approach
 
@@ -217,6 +219,38 @@ adjust, and it names who did it, because a forgiveness nobody signed is one nobo
 `claimed_at timestamptz null`, plus `check ((state = 'open') = (claimed_by is null))` so a
 claimed bounty cannot pretend to be open. §5.8: either player posts for the other, and both pay.
 
+**`campaign`** — the household's single row. `id boolean primary key default true check (id)`,
+`started_on date not null`, `created_at timestamptz not null default now()`. The one-row idiom
+is deliberate: there is one campaign, and the check is exactly the line to delete on the day the
+modes backlog turns this into many.
+
+It exists because **the campaign start date has no other home**, which the SPA track found in
+Phase 1: the Area screen's header reads `week 10 of 48`, and a week number needs a date to count
+from. That date is not content — content is identical for every household — and it is not
+per-player, since both players share one campaign. It is household state, which is this
+database's subject and nothing else's.
+
+**Nothing stores the current week.** It is whole weeks between `started_on` and `now`, computed
+by the caller with `now` as a parameter (§6.7). A stored week number is the cached total this
+plan already refuses, with the added indignity of being wrong every Monday morning until someone
+runs a job. Per `docs/decisions/0002-weeks-are-road-markers.md` the number is a road marker and
+nothing derives ahead, behind or on-track from it.
+
+**The denominator is already ruled and is not this table's.**
+`docs/decisions/0002-weeks-are-road-markers.md` derives it from `max(area.weeks.to)` so that it
+stays true after a re-pace instead of quietly disagreeing with the spec. Nothing here authors a
+48, and nothing here stores one.
+
+Worth flagging upward rather than solving here: that derivation is honest once every area has a
+manifest and misleading before. Areas 3–7 have none today, so `max(weeks.to)` is 8, and a header
+reading `week 10 of 8` is worse than one reading nothing. §5.1a ruled this same shape one level
+down — a total that is an estimate must say so, which is why `AreaProgress` carries `estimated`
+and the UI renders `~5`. The same flag on the campaign total gives `week 10 of ~48` while
+manifests are missing, and it refines ADR 0002 rather than reopening it: the source stays
+`max(weeks.to)`, and only the honesty of a partial answer is added. That belongs to whoever owns
+the manifest wire shape — `planning/feature_content-surface_2026-08-29.md` — or to an amendment
+on the decision itself.
+
 **`runner_jobs`** — per the api plan's appendix. Not restated here; one definition.
 
 ## Phases
@@ -270,7 +304,8 @@ and store `''`. Drop the `forced_reviews` primary key and schedule the same revi
 a foreign key and orphan an `attempts` row against a player who does not exist. Drop the `datamines`
 `attempts_before > 0` check and record a Datamine granted after zero failures. Drop the
 `journal_entries` sha pattern and store `not-a-sha`. Drop `sessions.forgiven_by`'s foreign key
-and forgive a streak in the name of a player who does not exist.
+and forgive a streak in the name of a player who does not exist. Drop the `campaign` single-row
+check and insert a second campaign, which is how `week 10 of 48` quietly becomes two answers.
 
 Every one of those is a row the application would happily have written on some Tuesday.
 
