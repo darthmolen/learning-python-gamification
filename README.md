@@ -17,6 +17,7 @@ Design: [`docs/specs/2026-08-26-gamified-python-curriculum-design.md`](docs/spec
 | `docs/design/` | UI artboards for the Claude Design canvas |
 | `infra/` | Docker Compose, backup and restore, the smoke check |
 | `planning/` | The kanban: queued, `in-progress/`, `completed/`, `backlog/` |
+| `planning/waves/` | Waves — the order plans start in, when the board stops fitting in a head |
 | `spikes/` | Throwaway experiments, kept as a record. Nothing here ships |
 
 `content/` and `curriculum/` sit outside `pyquest/` on purpose: both are authored by a
