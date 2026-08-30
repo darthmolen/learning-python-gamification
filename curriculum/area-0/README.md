@@ -5,7 +5,7 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Area 0.
 
 `print` · `variables` · `int` `float` `str` `bool` · `input` · `f-strings` · reading errors
 
-**Vehicle: turtle graphics.** The first line he types draws something.
+**Vehicle: turtle graphics.** The first line they type draws something.
 
 This area needs a text editor, a terminal, and Python 3.14. It needs no application, no
 server, no browser and no internet. That is deliberate — spec §8 warns that if Area 0
@@ -38,17 +38,17 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 
 **Errors come third, not last.** Every platform surveyed in spec §2.3 treats error
 messages as an interruption to teaching. Here they *are* the teaching, and they land at
-session 3 because by then he has already caused four or five by accident and has a
-grievance. A concept he already resents is the cheapest one to teach.
+session 3 because by then they have already caused four or five by accident and have a
+grievance. A concept they already resent is the cheapest one to teach.
 
-Session 3 also arrives before `input`, which matters: session 5 breaks his own program in
-two ways he cannot fix yet, and he can only find that interesting rather than
-demoralising if he already knows how to read what fell out.
+Session 3 also arrives before `input`, which matters: session 5 breaks the learner's own
+program in two ways they cannot fix yet, and they can only find that interesting rather
+than demoralising if they already know how to read what fell out.
 
 **Types come fourth, not first.** Most curricula open with a tour of int/float/str/bool
-before the learner has any use for one. Here he meets three of the four by accident —
+before the learner has any use for one. Here they meet three of the four by accident —
 the string in `color("red")`, the decimals from a 1.5 staircase, the `TypeError` from
-passing `"100"` to `forward` — and session 4 names things he has already tripped over.
+passing `"100"` to `forward` — and session 4 names things they have already tripped over.
 
 **Session 4 is the weak one and is scheduled as such.** Types are the least visual
 material in the area. It sits between the two strongest sessions on purpose, and the
@@ -58,11 +58,11 @@ session plan says explicitly that it is fine to cut it short.
 
 The plan says 4–6. If the calendar bites:
 
-- **Merge 1 and 2.** Keep the REPL hook and `s1e1`; move `s1e3` to his own time.
+- **Merge 1 and 2.** Keep the REPL hook and `s1e1`; move `s1e3` to their own time.
 - **Merge 4 into 5.** Types get their real lesson under pressure in session 5 anyway,
   when `input` hands back a `str` and nothing works.
 - **Never cut session 3, and never cut session 6.** Session 3 is the area's actual
-  subject and session 6 is the only rehearsal for Boss 2 he gets this early.
+  subject and session 6 is the only rehearsal for Boss 2 they get this early.
 
 ---
 
@@ -110,12 +110,12 @@ engine will later read. They are set against the D&D scale as it reads for **thi
 learner in week one**, not against Python difficulty in the abstract.
 
 - **5** — one idea, one line to change. `s1e1`, `b1`.
-- **8** — one idea plus a thing that will surprise him.
-- **10–12** — two ideas at once, or one idea plus a prediction he will get wrong.
-- **14–18** — he has to decide something, not just type something. `s5e2`, `s6`.
+- **8** — one idea plus a thing that will surprise them.
+- **10–12** — two ideas at once, or one idea plus a prediction they will get wrong.
+- **14–18** — they have to decide something, not just type something. `s5e2`, `s6`.
 
 Nothing in Area 0 is above 18. Spec §5.1 renders DC ≥ 20 with a warning, and a warning
-label in week one would be teaching him to be afraid of the material rather than of
+label in week one would be teaching them to be afraid of the material rather than of
 genuinely hard quests.
 
 ---
@@ -139,7 +139,7 @@ Per the brief, this directory does not contain quest YAML and does not touch
 | Exercise | DC | Why |
 |---|---|---|
 | Every choice board | 8–12 | Open-ended by design. There is no right picture. |
-| `b7_no_error_at_all.py` | 12 | The win condition is that he *says what is wrong*, which no test can check. |
+| `b7_no_error_at_all.py` | 12 | The win condition is that they *say what is wrong*, which no test can check. |
 | `s5e2_the_nameplate.py` | 14 | It draws. Someone has to see it. |
 | **The Commission** | 18 | Win condition is "it ran on your dad's machine". That is `local-repo` in spirit and peer-signoff in week two. |
 
@@ -166,15 +166,16 @@ what says who the Journal is for.
 
 §5.6 defines the Journal as "committed and pushed", and git is Area 2a, week 6. Read
 strictly, the Journal could not start before the thing that carries it. But §5.6 also
-says he rereads his Journal *from the start of that area* before every boss fight, and
+says they reread their Journal *from the start of that area* before every boss fight, and
 Boss 1 lands at the end of Area 1 — so entries beginning any later would leave the first
 boss fight with almost nothing to reread, which is the one moment §5.6 says the mechanic
 earns its keep.
 
 **So: entries start now as plain markdown in a plain folder, and the commit-and-push
 half arrives at Area 2a on schedule.** The six Area 0 entries then become the first real
-commit in his repository, which is a considerably better first commit than an empty
-README, and gives the Area 2a session something of his own to put under version control.
+commit in their repository, which is a considerably better first commit than an empty
+README, and gives the Area 2a session something of their own to put under version
+control.
 
 Nothing about §5.6's substance rule changes: ten XP per entry, paid for substance rather
 than existence, and empty prompts pay nothing. `dm-guide.md` §6 has the rubric.
@@ -208,7 +209,7 @@ nothing at all. The harness counts pen-down moves instead. That was measured, no
 assumed.
 
 **Use `py -3.14` explicitly.** On the DM's machine `python` is 3.12 in PowerShell and
-3.14 in Git Bash. The son is on 3.14.
+3.14 in Git Bash. The learner's machine is on 3.14.
 
 ---
 
@@ -220,12 +221,12 @@ area-0/
   dm-guide.md        how to run a session; the Socratic ladder; every predicted stall
   verify.py              runs every exercise and checks it against its own tags
   sessions/              one plan per session, in delivery order
-  exercises/             the .py files he actually runs
-    session-3/error-log.md   the table he fills in while breaking things
+  exercises/             the .py files the learner actually runs
+    session-3/error-log.md   the table they fill in while breaking things
     session-6/commission-brief.md
   journal/
     TEMPLATE.md          copied once per session
     entry-01-prompt.md   what to say the first time, and how to score it
-    entries/             his, empty
-  reference/             Datamine payloads (spec 5.5). Parent's copy. Not his.
+    entries/             theirs, empty
+  reference/             Datamine payloads (spec 5.5). The DM's copy, not the learner's.
 ```

@@ -4,14 +4,14 @@
 **Files:** `exercises/session-3/`
 **Journal:** entry 3
 
-Tonight he breaks things on purpose, seven times, and reads what falls out.
+Tonight they break things on purpose, seven times, and read what falls out.
 
 This is the session the area is built around. Spec §3 principle 5 is *never hide
 failure*, and the Ursina spike found the same thing from the other end: it recommended a
 shim over the raw engine largely because raw Ursina's failures are illegible, and
 illegible failure quietly destroys a learner's belief that the machine is knowable. An
-error message is not the machine telling him off. It is the machine telling him where to
-look, in more detail than any human would bother with.
+error message is not the machine telling them off. It is the machine telling them where
+to look, in more detail than any human would bother with.
 
 **The framing, said out loud at the start, in these words:**
 
@@ -55,7 +55,7 @@ Four things to name, and only four:
 tracebacks wrong. It means the bottom is the newest and the most specific. **Read from
 the bottom up.**
 
-That is the entire teaching for this session. Everything else is him doing it.
+That is the entire teaching for this session. Everything else is them doing it.
 
 ---
 
@@ -84,14 +84,14 @@ Seven files. For **each one**, in this order, no skipping:
 
 It produces a five-frame traceback, four frames of which are inside Python's own
 `turtle.py`, ending in a sentence about multiplying sequences that has nothing to do
-with anything he wrote. It looks terrifying. It is the shape of ninety percent of real
-tracebacks he will meet for the rest of his life.
+with anything they wrote. It looks terrifying. It is the shape of ninety percent of real
+tracebacks they will meet for the rest of their life.
 
 The skill is one question, and it is the whole reason this file exists:
 
 > **"Which of those files did you write?"**
 
-One. Start there. The rest is Python narrating its own insides. Make him say that
+One. Start there. The rest is Python narrating its own insides. Make them say that
 sentence back to you.
 
 ### b1 versus b5
@@ -104,11 +104,11 @@ Ask: **"In which one does Python know what `turtle` is?"** Do not accept "they'r
 basically the same". They are the difference between a wrong noun and a wrong verb.
 
 Both suggest the fix. Point out that the suggestion is a guess, that Python is often
-wrong about it, and that it has no idea what he was trying to do.
+wrong about it, and that it has no idea what they were trying to do.
 
 ### b3 and b4 are a different kind of error, and that is the lesson
 
-Run `b1` and `b3` back to back and ask him to spot two differences.
+Run `b1` and `b3` back to back and ask them to spot two differences.
 
 **The window.** b1 opens a turtle window and draws a line before it dies. b3 opens
 nothing. Not a flicker.
@@ -116,7 +116,7 @@ nothing. Not a flicker.
 **The word "Traceback".** b1, b2, b5 and b6 all start with `Traceback (most recent call
 last)`. b3 and b4 do not.
 
-Both differences have the same cause, and it is worth him arriving at it himself:
+Both differences have the same cause, and it is worth them arriving at it themselves:
 
 > "b1 got as far as line 17 before it died. How far did b3 get?"
 
@@ -129,10 +129,10 @@ nothing ever ran — which is why there are no frames to trace and no window to 
 Two more things worth noticing on b3, once that has landed:
 
 - The caret points at the **opening** bracket, not at the end of the line. Python is
-  showing him the thing that was never finished, not the place it noticed.
+  showing them the thing that was never finished, not the place it noticed.
 - It says `line 20` and line 20 really is the wrong line. Python 3.14 is genuinely good
-  at this. Older Pythons — and most other languages — blame the line *after*, so if he
-  ever sees a syntax error pointing at a line that looks perfectly fine, the answer is
+  at this. Older Pythons — and most other languages — blame the line *after*, so if they
+  ever meet a syntax error pointing at a line that looks perfectly fine, the answer is
   to look up.
 
 ### b7 is the point of the whole session
@@ -142,7 +142,7 @@ It runs. It exits cleanly. It prints "Square finished." There is no error of any
 It is also completely broken — the turns are 80 degrees, not 90 — and it draws a lopsided
 mess.
 
-Do not tell him. Let him run it, see no error, and say it works.
+Do not tell them. Let them run it, see no error, and say it works.
 
 Then:
 
@@ -153,14 +153,14 @@ And then the sentence to end the session on:
 > **"Errors are the easy failures. They come with a name, a line number and an arrow.
 > The ones that don't tell you anything are the ones that cost real money."**
 
-He has now met the failure mode that every platform in spec §2.3 fails to teach, in week
-two, drawing a square.
+They have now met the failure mode that every platform in spec §2.3 fails to teach, in
+week two, drawing a square.
 
 ---
 
-## Beat 4 — Reversal: he breaks yours (10 minutes)
+## Beat 4 — Reversal: they break yours (10 minutes)
 
-Hand him a working file — `s2e1_square_by_name.py` is ideal. He plants **three** bugs
+Hand them a working file — `s2e1_square_by_name.py` is ideal. They plant **three** bugs
 in it while you look away. At least one must be silent, b7-style.
 
 Then you find them, out loud, narrating.
@@ -184,20 +184,20 @@ code.
 
 ---
 
-## Where he will stall
+## Where they will stall
 
 See `dm-guide.md` §4. The main one, and it will happen on file one:
 
-**He will start fixing before he finishes reading.** Every time, the same sentence:
+**They will start fixing before they finish reading.** Every time, the same sentence:
 **"Not yet. Read me the last line first. What is it called?"**
 
 ## Success condition
 
-By the end of tonight he can, unprompted:
+By the end of tonight they can, unprompted:
 
 - read the last line of a traceback first
 - say the error's name
-- find the frame that names a file he wrote
+- find the frame that names a file they wrote
 - say that a program with no error may still be wrong
 
 That is the whole of Area 0's `reading-errors` concept, and everything after this

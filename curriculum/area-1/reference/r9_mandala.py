@@ -3,12 +3,12 @@
 Unlocks: session 9, and ONLY after two real attempts and a written sentence.
 
 Show this one whole, or not at all. A half-revealed mandala is worse than none,
-because the half he gets is always the half he already had.
+because the half they get is always the half they already had.
 
 **Read this before you show it.** Everything in it is Area 1 vocabulary and
 nothing else. No functions, no lists, no random, no modulo. That is deliberate:
-if the reference solution uses something he has not met, it teaches him that the
-good version was out of his reach, which is the opposite of the message.
+if the reference solution uses something they have not met, it teaches them that
+the good version was out of their reach, which is the opposite of the message.
 
 It is three rings and about forty lines. Every one of the mandala brief's seven
 requirements is in here exactly once, so it doubles as the checklist.
@@ -98,20 +98,20 @@ turtle.update()
 print(f"petals {petals}, sides {sides}, ticks {ticks}")
 print(f"lines drawn {lines}, ink about {int(ink)} pixels")
 
-# What to say while he reads it, in this order:
+# What to say while they read it, in this order:
 #
 # 1. "Find the two dials. Change one. Run it." Do this FIRST, before any
 #    explanation. The point of the file is that it survives being turned.
 #
-# 2. "Which lines are in which loop?" Make him point. Three of the rings are
+# 2. "Which lines are in which loop?" Make them point. Three of the rings are
 #    nested two deep and one is nested one deep, and the indentation is the
 #    only thing that says so.
 #
 # 3. "Where does `length` change, and why is it not inside the inner loop?"
-#    That is the accumulator, and it is the one thing here he is most likely
+#    That is the accumulator, and it is the one thing here they are most likely
 #    to have put in the wrong place.
 #
-# 4. tracer(0) and update() are equipment, not a concept. He has earned them by
+# 4. tracer(0) and update() are equipment, not a concept. They have earned them by
 #    having a drawing slow enough to need them. Say that out loud.
 
 

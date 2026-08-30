@@ -5,8 +5,8 @@ already given away the shape of the answer by looking down.
 
 Six files. **Three of them produce no error message of any kind**, which is the whole
 difference between this session and Area 0's session 3. There, every failure announced
-itself. Here, half of them do not, and the session's real subject is what he does when
-nothing is announced.
+itself. Here, half of them do not, and the session's real subject is what a learner does
+when nothing is announced.
 
 The tracebacks below were captured by `py -3.14 verify.py` on Python 3.14.6. **Editing a
 docstring in any of these files shifts the line numbers.** Re-run the harness after any
@@ -38,17 +38,17 @@ The value is not the fix. It is the two minutes before the fix, and the question
 
 > **"How many sides did it draw? Do not count the picture. Make the program count."**
 
-He will try to count the picture and get it wrong, because five and six lines at 60
-degrees look extremely similar. Let him. Then let him discover that a `print` inside the
+They will try to count the picture and get it wrong, because five and six lines at 60
+degrees look extremely similar. Let them. Then let them discover that a `print` inside the
 loop settles it in four seconds and never lies. That move — instrument it rather than
 squint at it — is the single most transferable thing in Area 1.
 
-**Say out loud, when he fixes it:** *"Python was completely happy with that file. Whose
+**Say out loud, when they fix it:** *"Python was completely happy with that file. Whose
 job was it to notice?"*
 
 ## b2 — The Loop That Never Ends
 
-**Silent, and it hangs.** He knows the escape hatch from session 3: Ctrl-C in the
+**Silent, and it hangs.** They know the escape hatch from session 3: Ctrl-C in the
 terminal.
 
 The trap is that this file *does* change a variable inside the loop, every single time
@@ -58,11 +58,11 @@ program ever touches `height` after it is set to zero.
 > **"Name the two variables. Which one is the condition asking about? Which one does the
 > body change?"**
 
-The fix is one line inside the loop — `height = height + 20` — and it is worth making him
+The fix is one line inside the loop — `height = height + 20` — and it is worth making them
 say why 20 rather than 5 or 40, because the answer is "that is how far up each step
 actually goes", which means reading the drawing code rather than the loop.
 
-**Once fixed it draws 10 steps.** Ask him to predict that number before he runs it.
+**Once fixed it draws 10 steps.** Ask them to predict that number before they run it.
 
 **Refuse the delete-the-loop fix.** It removes the symptom and the program. *"That works.
 Does it still do the job it was for?"*
@@ -91,8 +91,8 @@ number, and Area 0 session 4 spent a whole evening on exactly that distinction.
 There are two fixes and the second one is the lesson:
 
 1. `range(360 // turn)` — floor division, which always gives a whole number. Correct, and
-   still a strange way to say what he means.
-2. `range(sides)` — because the number he wants is already sitting in a variable, three
+   still a strange way to say what is meant.
+2. `range(sides)` — because the number wanted is already sitting in a variable, three
    lines up, with the right name on it.
 
 > **"Which of those two would you rather read in a month?"**
@@ -109,17 +109,17 @@ The name is spelled correctly and it is right there on line 26. It does not exis
 line is created by the loop going round — not by the loop being written.
 
 Python's suggestion is `sides`, which is wrong, and that is worth pointing at: the
-suggestion is a guess based on spelling, and Python has no idea what he was trying to do.
+suggestion is a guess based on spelling, and Python has no idea what was intended.
 Area 0 session 3 made the same point about `turtel`.
 
-Two defensible fixes, and he should say both before picking one:
+Two defensible fixes, and they should say both before picking one:
 
 - Set `sides` to something above zero — the author meant to draw a shape.
 - Move the final `print` inside the loop — the author meant to report each side.
 
 **The quiet lesson:** a loop that runs zero times is completely normal and completely
 silent. Nothing warns you. It is one of the three ways an Area 1 program goes wrong
-without saying anything, and he has now met all three tonight.
+without saying anything, and they have now met all three tonight.
 
 ## b6 — The Shape That Does Not Close
 
@@ -128,14 +128,14 @@ without saying anything, and he has now met all three tonight.
 Everything about it is defensible on a fast read. It says five sides, it draws five
 sides, the count is correct, the loop is correct, and it exits cleanly.
 
-Five turns of 70 degrees is 350. A closed shape needs 360. **He can prove it is broken
-with arithmetic before he looks at the picture at all**, and getting him to do that — to
+Five turns of 70 degrees is 350. A closed shape needs 360. **They can prove it is broken
+with arithmetic before looking at the picture at all**, and getting them to do that — to
 find a bug on paper — is the best thing available in this session.
 
-The fix is `turn = 360 / sides`, which is the rule from session 1 that he has used in
+The fix is `turn = 360 / sides`, which is the rule from session 1 that they have used in
 every file since. Do not accept `turn = 72`. Ask what happens when `sides` changes.
 
-**Read the whole file fast, in front of him, and say "looks fine to me."** Then let him
+**Read the whole file fast, in front of them, and say "looks fine to me."** Then let them
 find it. §5.8, and it only pays when it is real.
 
 ---
@@ -149,18 +149,18 @@ Tonight finishes the sentence:
 
 > **"Three of those six said nothing at all. So who is the detector now?"**
 
-He is. And the tool, every single time tonight, was the same one: **make the program
+They are. And the tool, every single time tonight, was the same one: **make the program
 count, and print the count.**
 
 ---
 
-## The reversal — he breaks yours
+## The reversal — they break yours
 
-Same as Area 0 session 3, with one rule added: **at least two of his three bugs must be
+Same as Area 0 session 3, with one rule added: **at least two of their three bugs must be
 silent.** No error message. That is much harder to author than it sounds and doing it
-teaches him more about this session than finding your bugs does.
+teaches them more about this session than finding your bugs does.
 
-`s1e3_the_polygon_engine.py` and `s5e2_the_ladder.py` are the best files to hand him.
+`s1e3_the_polygon_engine.py` and `s5e2_the_ladder.py` are the best files to hand over.
 
 **Get one wrong out loud.** Really try, really fail, really find it. If you find all
 three instantly, say which was hardest and why. Never make it look free.

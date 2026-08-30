@@ -3,7 +3,7 @@
 Unlocks: s5e3_the_gatekeeper.py, the de-duplication task.
 
 The shipped file draws the same square twice with different settings, once in
-the `elif` and once in the `else`. He can feel that it is wrong and often cannot
+the `elif` and once in the `else`. They feel that it is wrong and often cannot
 see the move, which is: **the ladder decides, and then the drawing happens after
 it.** A branch sets values; it does not have to do the work.
 
@@ -55,14 +55,14 @@ if draw:
 
 print("done")
 
-# Two things to say out loud after showing him this:
+# Two things to say out loud after showing them this:
 #
 # 1. The ladder now DECIDES and the loop DRAWS. Each part does one job. That
-#    split is most of what makes a long program readable, and he will see it
+#    split is most of what makes a long program readable, and they will see it
 #    again as functions in Area 4.
 #
 # 2. `draw = True` is a bool with an actual job -- the thing Area 0 could not
-#    give it. Point at it. He wrote his first useful boolean tonight.
+#    give it. Point at it. That is their first useful boolean.
 
 
 turtle.done()

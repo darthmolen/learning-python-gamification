@@ -52,16 +52,16 @@ Area 0 established that failure is *scheduled* rather than stumbled into, and th
 discipline applies here: the hang gets its own session, with the escape hatch taught
 before it happens.
 
-**`while` before `if`, and session 3 is where `while True:` happens on purpose.** He is
-going to write it this month whether or not anybody plans for it. Session 3 makes it a
-lesson with a Ctrl-C at the end rather than an ambush on a Tuesday night. This mirrors
-Area 0's session 3, which taught tracebacks at the exact moment he already had a
+**`while` before `if`, and session 3 is where `while True:` happens on purpose.** They
+are going to write it this month whether or not anybody plans for it. Session 3 makes it
+a lesson with a Ctrl-C at the end rather than an ambush on a Tuesday night. This mirrors
+Area 0's session 3, which taught tracebacks at the exact moment they already had a
 grievance.
 
 **`if` arrives when a loop needs to branch, not before.** A conditional with nothing to
 condition on is the "tour of types before you need a type" mistake Area 0 explicitly
-refused. By session 4 he has a loop with a counter in it, so *"the first six sides are
-red"* is a thing he actually wants.
+refused. By session 4 they have a loop with a counter in it, so *"the first six sides are
+red"* is a thing they actually want.
 
 **Session 6 is errors, second pass.** §3 principle 7: nothing is taught once and
 abandoned. Area 0 session 3 taught reading a traceback. Session 6 here teaches the loop
@@ -71,17 +71,17 @@ false, the loop that runs zero times, the shape whose turns add up to 350.
 **This is the hardest and most valuable session in the area, and it is the reason the area
 is laid out the way it is.** Three of its six files say nothing whatsoever. Area 0's
 subject was that an error message is the computer helping; this session's subject is what
-he does when there is no message and he is the only detector in the room.
+they do when there is no message and they are the only detector in the room.
 
 **Nesting before the accumulator.** Nesting is visual and instantly rewarding — a loop
-inside a loop is a mandala. The accumulator is abstract and lands far better once he has
-watched a shape grow, so session 8 gives it a job (a spiral whose side length increases)
+inside a loop is a mandala. The accumulator is abstract and lands far better once they
+have watched a shape grow, so session 8 gives it a job (a spiral whose side length increases)
 rather than a definition.
 
 **Session 8 sits after session 6 on purpose.** The accumulator's two signature bugs — the
 total reset inside the loop, and `total = length` instead of `total = total + length` —
-are both silent, and the second one leaves the picture completely unchanged. He needs
-session 6's habit before he needs the pattern.
+are both silent, and the second one leaves the picture completely unchanged. They need
+session 6's habit before they need the pattern.
 
 **Session 9 is the boss rehearsal**, exactly as Area 0's session 6 was, and session 10 is
 the boss itself.
@@ -91,7 +91,7 @@ the boss itself.
 The plan says ten. If the calendar bites:
 
 - **Merge 1 and 2.** Keep `s1e3`'s polygon engine and `s2e1`'s five predictions; `s2e2`
-  goes to his own time.
+  goes to their own time.
 - **Merge 4 into 5.** Session 5 teaches the same material under more pressure anyway.
 - **Never cut session 3, session 6, or session 9.** Session 3 is where the hang gets
   taught, session 6 is the area's actual subject, and session 9 is the only rehearsal
@@ -158,7 +158,7 @@ inside it: `s5e1`, `s5e2`, `s5e3`, and then the boss starter. Area 0 said the sa
 about `bool` at three exercises, for a related reason.
 
 The reason here is different from Area 0's, and worth stating rather than glossing.
-`if`/`else` gives him a fork, and a fork covers most of what an Area 1 drawing wants to
+`if`/`else` gives them a fork, and a fork covers most of what an Area 1 drawing wants to
 decide. `elif` and `and`/`or` are the shape you reach for when the *rule* gets
 complicated, and Area 1's rules are mostly simple: which half of the shape is this, is
 this size allowed. **They are not padded out with make-work**; they appear where a rule
@@ -195,12 +195,13 @@ can be trusted with.
 
 Spec §5.1 derives XP from Difficulty Class, so these are the only numbers here the engine
 will later read. They are set against the D&D scale as it reads for **this learner in week
-three** — with two weeks of Area 0 behind him — not against Python difficulty in the
+three** — with two weeks of Area 0 behind them — not against Python difficulty in the
 abstract.
 
 - **8** — one idea, and the surprise is the point. `s1e1`, `s1e2`, `b3`.
-- **10–12** — two ideas at once, or one idea plus a prediction he will get wrong.
-- **14–16** — he has to decide something, not just type something. `s5e2`, `s7e3`, `s8e2`.
+- **10–12** — two ideas at once, or one idea plus a prediction they will get wrong.
+- **14–16** — they have to decide something, not just type something. `s5e2`, `s7e3`,
+  `s8e2`.
 - **18** — a build with a blank half. `s9`.
 - **20** — the boss.
 
@@ -217,8 +218,8 @@ levels at this stage and it should be.
 
 Spec §5.1 renders DC ≥ 20 with a warning, and Area 0 deliberately stayed under it because
 a warning label in week one teaches fear of the material rather than of hard quests. **By
-week six that reasoning has inverted.** He has cleared an area, read seven tracebacks, and
-survived a hung program on purpose. A boss that arrives with a warning on it is a boss
+week six that reasoning has inverted.** They have cleared an area, read seven tracebacks,
+and survived a hung program on purpose. A boss that arrives with a warning on it is a boss
 that looks worth beating, and it is the only item in the area that carries one.
 
 ---
@@ -250,12 +251,12 @@ ask which. The YAML says so where the field would go.
 
 **Session 6's six broken loops.** They would make excellent fix-it quests — starter is the
 broken file, test is that it behaves — and that is exactly the problem. Three of the six
-are *silent*, and the win condition for those is that **he says what is wrong**, which no
+are *silent*, and the win condition for those is that **they say what is wrong**, which no
 test can check. A quest that accepted "it ran" would accept deleting the loop, which is
 the wrong lesson taught by the right mechanism. They stay DM-delivered.
 
 **`s1e2_what_range_gives.py` and `s5e1_and_or_not.py`.** Both are prediction exercises.
-The value is in the wrong prediction he wrote down before running, and automating them
+The value is in the wrong prediction they wrote down before running, and automating them
 deletes the only part that teaches.
 
 **Every choice board.** Open-ended by design. There is no right picture, and offering one
@@ -322,7 +323,7 @@ pen-down moves instead of canvas items.
 there and check the numbers still match.
 
 **Use `py -3.14` explicitly.** On the DM's machine `python` is 3.12 in PowerShell and
-3.14 in Git Bash. The son is on 3.14.
+3.14 in Git Bash. The learner's machine is on 3.14.
 
 ---
 
@@ -334,13 +335,13 @@ area-1/
   dm-guide.md              how to run a session; predicted stalls; the invasion drills
   verify.py                runs every exercise and checks it against its own tags
   sessions/                one plan per session, in delivery order
-  exercises/               the .py files he actually runs
-    session-6/error-log.md      the table he fills in while finding silent bugs
+  exercises/               the .py files the learner actually runs
+    session-6/error-log.md      the table they fill in while finding silent bugs
     session-9/mandala-brief.md  the boss rehearsal
     session-10/sigil-brief.md   Boss 1
   journal/
     TEMPLATE.md            copied once per session. Four prompts
     entry-07-prompt.md     what changes at entry 07, and how to score it
-    entries/               his, empty
-  reference/               Datamine payloads (spec 5.5). Parent's copy. Not his.
+    entries/               theirs, empty
+  reference/               Datamine payloads (spec 5.5). The DM's copy, not the learner's.
 ```

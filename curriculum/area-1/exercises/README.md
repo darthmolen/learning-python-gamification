@@ -1,7 +1,7 @@
 # Exercises
 
-Copy this whole directory into the same folder he has been using since Area 0 — the one
-that is his. Area 2a turns it into a git repository; until then it is still just a
+Copy this whole directory into the same folder you have been using since Area 0 — the
+one that is yours. Area 2a turns it into a git repository; until then it is still just a
 folder, and that is still fine.
 
 Nothing new to install. Same Python, same turtle, same editor.
@@ -23,7 +23,7 @@ Area 1 draws hundreds of lines instead of four, and at the default speed a manda
 a minute and a half to appear. Think of it as a throttle, not a concept.
 
 **Ctrl-C kills a running program.** Press it in the **terminal** window — the one with
-the text — not in the drawing. Session 3 makes him use it on purpose. It is the most
+the text — not in the drawing. Session 3 makes you use it on purpose. It is the most
 useful key combination in this area and one of the most useful of the year.
 
 **Two files never finish, and that is correct.** `session-3/s3e4_the_hang.py` and
@@ -37,7 +37,7 @@ Every file has:
 - **a docstring at the top** — what it is for, and what to do before running it
 - **a header of tags** — `# concepts:`, `# dc:`, `# expect:`, and sometimes `# strokes:`
   and `# stdin:`. These are for the game engine and the verification harness, not for
-  him. He can ignore them.
+  you. You can ignore them.
 - **a `YOUR MOVE` block near the bottom** — the actual work, ending in a choice board
 
 **The shipped code always runs and always draws.** It is a starting point, never a
@@ -49,9 +49,9 @@ few reference solutions that exist live in `../reference/` and are the DM's.
 Five files ask for written predictions **before** running: `s1e2`, `s2e1`, `s4e1`,
 `s5e1`, and every file in `session-6`.
 
-This is not a ritual. A wrong prediction he wrote down is the entire mechanism, and a
-wrong prediction he kept in his head teaches nobody anything. Enforce it. It costs ninety
-seconds and it is the difference between this area landing and not.
+This is not a ritual. A wrong prediction you wrote down is the entire mechanism, and a
+wrong prediction you kept in your head teaches nobody anything. Do not skip it. It costs
+ninety seconds and it is the difference between this area landing and not.
 
 ## Session 6 is different, and differently from Area 0
 
@@ -74,5 +74,5 @@ py -3.14 verify.py
 
 Runs every file with the window suppressed and checks each against its own header tags,
 including the two that are supposed to hang and the ones whose stroke count is pinned.
-Worth running after any edit — including his, if he ever asks whether he has broken
-something.
+Worth running after any edit — including yours, whenever you want to know whether you
+have broken something.

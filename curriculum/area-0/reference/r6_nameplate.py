@@ -1,11 +1,11 @@
-"""REFERENCE -- Datamine payload for Commission A. Parent's copy.
+"""REFERENCE -- Datamine payload for Commission A. The DM's copy.
 
 Do not put this on the learner's machine. See README.md in this directory for the rules
 that come with unlocking it.
 
-This is what a good Area 0 answer looks like: it uses nothing he has not been
-taught, it has no clever tricks in it, and every name means something. If his
-version is messier than this but works, his version is better, because it is his.
+This is what a good Area 0 answer looks like: it uses nothing the learner has
+not been taught, no clever tricks, and every name means something. If their own
+version is messier than this but works, theirs is better, because it is theirs.
 
 Run:  py -3.14 r6_nameplate.py
 """
@@ -59,11 +59,11 @@ print("Plate finished.")
 #
 # * `0 - width / 2` rather than `-width / 2` is deliberate. Unary minus on an
 #   expression is not something Area 0 has been shown, and writing it the long
-#   way costs nothing and keeps every line inside his vocabulary. If he writes
-#   `-width / 2` himself, that is him reaching, and it is correct -- say so.
+#   way costs nothing and keeps every line inside their vocabulary. If they write
+#   `-width / 2` themselves, that is them reaching, and it is correct -- say so.
 #
 # * The plate still does not resize itself around a long title. Neither does
-#   his. That is an Area 1 problem and it is fine to leave standing; if he asks
+#   theirs. That is an Area 1 problem and fine to leave standing; if they ask
 #   how, the honest answer is "you need a way to ask how long the text is, and
 #   a way to decide -- you get both soon".
 #

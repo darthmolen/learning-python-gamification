@@ -60,3 +60,22 @@ Established by Area 0 and worth keeping.
   under spec §5.5, not handouts.
 - **The DM guide predicts named stalls and gives the exact question to ask.** "Ask a
   Socratic question" is not usable advice at 7pm on a Tuesday.
+- **The learner is never `he`.** The voice depends on who is being addressed, and
+  conflating the two is what makes a sweep read badly:
+
+  | Audience | Files | Voice |
+  |---|---|---|
+  | The learner | `exercises/`, `journal/`, `content/briefs/` | **Second person.** "You will type this and it will fail" |
+  | The DM | `dm-guide.md`, `sessions/`, `reference/`, area `README.md` | **Singular *they*** for the learner — "you" is already the DM |
+  | Either, when ambiguous | anywhere | `the learner`, which is stiff enough to earn its place only where *they* could mean the DM |
+
+  This convention is not invented here. `content/briefs/` already addresses the learner
+  directly and has never needed a pronoun; the rest of the corpus is catching up to the
+  half that got it right. *"He or she"* is rejected — it is dated, it doubles the word
+  count in a document read at 7pm on a Tuesday, and it still leaves people out.
+  Quotations are exempt and must stay verbatim, but must also be visibly quotations.
+- **The arrangement is stated once, in the `dm-guide.md`, and not re-implied by every
+  pronoun after it.** This was built for one household — a parent and an 11-14-year-old —
+  and §2.4 counts a parent in the room as the design's single largest advantage, so the
+  relationship is worth naming where that argument is being made. Naming it once is what
+  lets every other page speak to whoever is actually holding the book.

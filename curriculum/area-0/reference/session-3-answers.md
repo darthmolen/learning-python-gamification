@@ -1,7 +1,7 @@
 # Session 3 — the seven sigils, answered
 
 **Read this before session 3, not during it.** You need to know what is coming so you
-can stay quiet while he finds it. If you are reading this in front of him, you have
+can stay quiet while they find it. If you are reading this in front of them, you have
 already given it away.
 
 Every message below was captured by running the file on Python 3.14.6 on Windows. If
@@ -23,7 +23,7 @@ NameError: name 'turtel' is not defined. Did you mean: 'turtle'?
 **Broken:** `turtel` on line 17.
 **Teaches:** the four parts of a traceback. Python even offers the fix, and it is worth
 saying out loud that the suggestion is a *guess* based on spelling — it has no idea what
-he meant.
+they meant.
 **Window opens?** Yes, and it draws the first line before dying. Worth noticing.
 
 ## b2 — `b2_wrong_kind.py`
@@ -44,15 +44,15 @@ TypeError: can't multiply sequence by non-int of type 'float'
 ```
 
 **Broken:** `"100"` is text; `forward` needs a number.
-**Teaches:** the most important reading skill in the area. Five frames, and he wrote
+**Teaches:** the most important reading skill in the area. Five frames, and they wrote
 exactly one of them. The message is about multiplying sequences, which relates to
-nothing he did — it is Python narrating its own insides.
+nothing they did — it is Python narrating its own insides.
 
 The question to ask, and the only one: **"which of those files did you write?"**
 
 Do not try to explain "can't multiply sequence by non-int". You could, and it would cost
-you ten minutes and teach him that tracebacks require an adult to interpret. The skill
-is finding his own line, not decoding library internals.
+you ten minutes and teach them that tracebacks require an adult to interpret. The skill
+is finding their own line, not decoding library internals.
 
 ## b3 — `b3_never_closed.py`
 
@@ -88,8 +88,8 @@ IndentationError: unexpected indent
 **Broken:** four spaces before `turtle.left(90)`.
 **Teaches:** the same class as b3 — no traceback, no window, nothing ran. Also that
 leading whitespace is syntax in Python, which surprises people arriving from almost
-anywhere else. He has met indentation in Scratch as the shape of the blocks, which is a
-genuinely useful comparison if he raises it.
+anywhere else. They have met indentation in Scratch as the shape of the blocks, which is
+a genuinely useful comparison if they raise it.
 
 ## b5 — `b5_no_such_order.py`
 
@@ -122,10 +122,10 @@ ValueError: invalid literal for int() with base 10: 'ten'
 
 **Broken:** `"ten"` is a number in English, not in digits.
 **Teaches:** the right *kind* of thing with the wrong *value* in it — the difference
-between `TypeError` and `ValueError`, which he will re-meet for real in session 5 when a
-user types "big" at his prompt.
+between `TypeError` and `ValueError`, which they will re-meet for real in session 5 when
+a user types "big" at their prompt.
 
-"literal" and "base 10" are jargon. If he asks, "base 10" means ordinary digits. Do not
+"literal" and "base 10" are jargon. If they ask, "base 10" means ordinary digits. Do not
 volunteer it.
 
 ## b7 — `b7_no_error_at_all.py`
@@ -135,7 +135,7 @@ volunteer it.
 **Broken:** `turtle.left(80)` four times instead of `left(90)`. It draws a lopsided
 open shape.
 
-**This is the point of the session, so protect it.** Let him run it, see no red text,
+**This is the point of the session, so protect it.** Let them run it, see no red text,
 and declare it working. Then:
 
 > "Python is happy. Are you happy? Look at the picture."
@@ -145,7 +145,7 @@ And then the line the whole session exists for:
 > **"Errors are the easy failures. They come with a name, a line number and an arrow.
 > The ones that don't tell you anything are the ones that cost real money."**
 
-If you want one concrete story here, tell him about a real silent bug you shipped. He
+If you want one concrete story here, tell them about a real silent bug you shipped. They
 will remember the story and forget the sentence.
 
 ---
@@ -156,7 +156,7 @@ will remember the story and forget the sentence.
    before anything ran.
 2. **Which opened no window?** b3 (and b4). Because nothing executed at all.
 3. **b1 vs b5 — where does Python know `turtle`?** b5.
-4. **b2's files — how many did he write?** One. Line 16. That is where to look.
+4. **b2's files — how many did they write?** One. Line 16. That is where to look.
 5. **Was b7 correct?** No. It ran perfectly and drew the wrong thing.
 6. **Hardest to find unaided?** b7, and it is not close. Every other one announces
    itself with a name and a line number. b7 requires somebody to look at the result and
@@ -166,10 +166,10 @@ will remember the story and forget the sentence.
 
 ## The reversal, at the end
 
-He plants three bugs in a working file and you find them.
+They plant three bugs in a working file and you find them.
 
 **Get one wrong on purpose is the wrong instruction — get one wrong for real.** Do not
-pre-read his file. Work through it out loud, guess a line, be wrong, say "huh, no,
+pre-read their file. Work through it out loud, guess a line, be wrong, say "huh, no,
 that's fine", and go back.
 
 Spec §5.8 calls this the highest-value mechanic in the design, on the grounds that a

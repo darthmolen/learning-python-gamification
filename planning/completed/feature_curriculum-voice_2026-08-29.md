@@ -1,6 +1,6 @@
 # The Curriculum's Voice — Second Person, and Singular They
 
-**Status:** Planned
+**Status:** Completed
 **Track:** main
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -148,3 +148,87 @@ a generic cohort may be a worse document rather than a more inclusive one. That 
 not this plan's to make.
 
 **`content/briefs/`.** Already correct — 186 "you", zero "he". It is the model, not the work.
+
+---
+
+## Status -- completed 2026-08-29
+
+All four phases done. **875 pronoun instances across 44 files** are now zero for the
+learner. `curriculum/README.md` carries the rule so every future area inherits it.
+
+| Criterion | Result |
+|---|---|
+| Voice rule in `curriculum/README.md` Conventions | Two entries -- the audience table, and where the origin gets stated |
+| Zero learner `he`/`him`/`his` in Areas 0 and 1 | Zero. Eleven survivors, all listed below, none of them the learner |
+| Quotations verbatim | Unchanged. See below |
+| `py -3.14 verify.py` | **19 of 19** Area 0, **35 of 35** Area 1 -- same as before the pass |
+| `npm run validate:content` | Exits 0. 17 items across 8 areas |
+| `npx vitest run` | 361 passed, 18 files |
+| Origin stated once | `area-0/dm-guide.md`, unchanged; `curriculum/README.md` now points at it |
+
+### The register split held, and it was the whole job
+
+The plan's claim that this is not a `sed` job is the finding, not the hypothesis. Roughly
+a third of the instances needed a rewrite rather than a substitution, and the two that a
+regex would have wrecked outright are worth naming:
+
+- *"He will assume they are from his point of view"* -- swapping `he` for `they` gives a
+  sentence with two different referents for the same word. It is now *"They will assume
+  `left` and `right` are from their own point of view"*, which names the subject.
+- *"He never moved or turned between them"* -- same collision. Rewritten to name the
+  turtle and the shapes.
+
+Learner-facing files went to **second person**, which shortened them: *"Three files ask
+him to write predictions"* became *"Three files ask you to write predictions"*, and
+*"Enforce it"* -- an instruction to a DM sitting in a file addressed to the learner --
+became *"Do not skip it"*.
+
+### The eleven survivors, and why each one stays
+
+**Nine of them are Dad.** `area-0/exercises/session-3/error-log.md`,
+`area-0/exercises/session-6/commission-brief.md`,
+`area-0/exercises/session-4/s4e2_the_dashed_orbit.py`,
+`area-1/exercises/session-1/s1e2_what_range_gives.py` and
+`area-1/exercises/session-6/error-log.md` are written *to* the learner *about* a named
+parent -- *"how long each one took him"*, *"it has to run on your dad's machine"*. The
+pronoun is correct, it is not an assumption about the learner, and the warmth is the
+point. Per the 2026-08-29 nuance: the spec states rules against roles, the curriculum may
+name the actual people.
+
+**Two are `curriculum/README.md` stating the convention** -- the rule's own name for the
+thing it forbids, and the sentence rejecting *"he or she"*.
+
+### Machine-and-role language cleaned up on the way past
+
+Four phrases the earlier pass (`afb9375`, `09bcf13`) had left, all now consistent with the
+`peer`/`dm` lexicon rather than with people:
+
+- *"The son is on 3.14"* -> *"The learner's machine is on 3.14"* (both area READMEs)
+- *"Parent's copy. Not his."* -> *"The DM's copy, not the learner's."* (both `reference/`
+  directory maps, and the docstrings of `r5_ask_and_draw.py` and `r6_nameplate.py`)
+- `area-1/dm-guide.md`'s *"that is his father"* -> *"that is a parent"*, with a pointer to
+  Area 0's guide, which is where the relationship is explained once and properly
+
+### Seven `.py` files were edited, all comments and docstrings
+
+`area-0/verify.py`, `area-1/verify.py`, `area-0/reference/r5_ask_and_draw.py`,
+`r6_nameplate.py`, and `area-1/reference/r3`, `r5`, `r7`, `r8`, `r9`. Every edit is inside
+a `#` comment or a module docstring; **no executable line changed and no file's line count
+changed**, which matters because both area READMEs warn that shifting a docstring moves
+the line numbers the answer keys quote. Both harnesses re-run clean, and `ruff` reports
+the same two pre-existing findings in each `verify.py` that it reported before the pass.
+
+### Nothing was changed that would alter exercise substance
+
+The `area-0` track holds `content/` and reads `curriculum/area-0/exercises/**` and
+`sessions/**` beneath this work. No file was renamed, no signature altered, no expected
+output touched, no task renumbered. Every `# concepts:`, `# dc:`, `# expect:`,
+`# stdin:`, `# min-strokes:` and `# timeout-seconds:` tag is byte-identical.
+
+### Out of scope, as planned
+
+`curriculum/area-2/**` (351 instances) and `curriculum/lib/**` (41) belong to the
+`area-2` and `world-shim` tracks and were not touched. They now have a written rule to
+apply to their own remaining work, which is the better outcome for Area 2's unwritten
+sessions 5--8. `docs/specs/` and `content/briefs/` are untouched for the reasons the plan
+gives.

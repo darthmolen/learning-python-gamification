@@ -2,16 +2,16 @@
 
 Unlocks: s3e2_the_shrinking_line.py, the third choice on the board.
 
-The task he cannot see his way into is holding TWO things across the loop at
+The task nobody sees their way into is holding TWO things across the loop at
 once: the length, which shrinks, and the total, which grows. The stall is almost
-never the syntax. It is that he is trying to work out the count in advance, and
+never the syntax. It is that they are working out the count in advance, and
 there is no count -- the budget decides it.
 
-The question to ask before showing him this:
+The question to ask before showing them this:
 
     "You have a number that changes every go round. Can you have two?"
 
-If he says yes, hand the keyboard back. He does not need this file.
+If the answer is yes, hand the keyboard back. They do not need this file.
 
 Run:  py -3.14 r3_the_shrinking_line.py
 """

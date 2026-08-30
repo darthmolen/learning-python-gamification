@@ -16,7 +16,7 @@ Read `reference/session-6-answers.md` before tonight. Not during.
 
 ## Why this session exists
 
-Area 0 session 3 taught him that an error message is the computer helping: a name, a line
+Area 0 session 3 taught them that an error message is the computer helping: a name, a line
 number, an arrow, and the exact characters. That was true and it was training wheels.
 
 Half of what goes wrong in a loop produces no message of any kind. The off-by-one. The
@@ -42,7 +42,7 @@ Entry 11's forecast, read back, then what happened.
 
 ## Beat 3 — The hook (5 minutes)
 
-Short tonight. He needs the keyboard early because there are six files.
+Short tonight. They need the keyboard early because there are six files.
 
 Say the framing, in these words:
 
@@ -50,7 +50,7 @@ Say the framing, in these words:
 > not. They run, they finish, they print nothing red, and they are wrong. Your job is to
 > be the detector, because nothing else is going to be."**
 
-Then give him the one tool, once, and let him use it six times:
+Then give them the one tool, once, and let them use it six times:
 
 > **"How many times did that loop go round? Do not count the picture. Make the program
 > count."**
@@ -76,11 +76,11 @@ Six files. For **each one**, in this order, no skipping:
 | `b5_the_name_that_never_was.py` | `NameError` | `range(0)`, so the loop body never ran |
 | `b6_the_shape_that_does_not_close.py` | **nothing** | Provable with arithmetic before you look |
 
-### b1 is where he learns not to trust his eyes
+### b1 is where the eyes stop being trusted
 
-Five sides and six sides at 60 degrees look extremely similar. He will count the picture
-and get it wrong. **Let him.** Then let him discover that a `print` inside the loop settles
-it in four seconds and never lies.
+Five sides and six sides at 60 degrees look extremely similar. They will count the picture
+and get it wrong. **Let them.** Then let them discover that a `print` inside the loop
+settles it in four seconds and never lies.
 
 Then: *"Python was completely happy with that file. Whose job was it to notice?"*
 
@@ -99,24 +99,25 @@ one. The condition asks about `height`; the body changes `steps`.
 This is Area 1's `b7`. It says five sides, it draws five sides, the count is right, the
 loop is right, and it exits cleanly. Five turns of 70 is 350, and a closed shape needs 360.
 
-**He can prove it is broken on paper before he looks at the picture.** Getting him to do
+**They can prove it is broken on paper before looking at the picture.** Getting them to do
 that is the best thing available in this session.
 
 **Read b1 and b6 fast, out loud, and say "looks fine to me."** Then be wrong in front of
-him. §5.8 calls this the highest-value mechanic in the design and it only pays when it is
+them. §5.8 calls this the highest-value mechanic in the design and it only pays when it is
 real.
 
 ---
 
-## Beat 5 — Reversal: he breaks yours (8 minutes)
+## Beat 5 — Reversal: they break yours (8 minutes)
 
 Same as Area 0 session 3, with one rule added.
 
-He plants **three** bugs in one of his own working files — `s1e3_the_polygon_engine.py` or
-`s5e2_the_ladder.py` are the best candidates — while you look away.
+They plant **three** bugs in one of their own working files —
+`s1e3_the_polygon_engine.py` or `s5e2_the_ladder.py` are the best candidates — while you
+look away.
 
 **At least two of the three must be silent.** No error message. That is much harder to
-author than it sounds, and doing it teaches him more about tonight than finding your bugs
+author than it sounds, and doing it teaches them more about tonight than finding your bugs
 does.
 
 Then you find them, out loud, narrating. **Genuinely get one wrong.** Not theatrically.
@@ -126,25 +127,25 @@ Then you find them, out loud, narrating. **Genuinely get one wrong.** Not theatr
 ## Beat 6 — Journal (5 minutes)
 
 Entry 12. *What broke* writes itself tonight, so push on **what I would do differently** —
-and the honest answer is usually about how he looked rather than about code.
+and the honest answer is usually about how they looked rather than about code.
 
-The sentence to end the session on, said out loud before he writes:
+The sentence to end the session on, said out loud before they write:
 
 > **"Errors are the easy failures. They come with a name, a line number and an arrow.
 > Three of those six said nothing at all. So who is the detector now?"**
 
 ---
 
-## Where he will stall
+## Where they will stall
 
 `dm-guide.md` §4. The one that will definitely happen:
 
-**He waits for red text that never comes.** Area 0 trained him to. *"There is no error.
+**They wait for red text that never comes.** Area 0 trained them to. *"There is no error.
 There is still a bug. What did you want to happen?"*
 
 ## Success condition
 
-Given a program that ran, produced no error, and did the wrong thing, he can **find out
+Given a program that ran, produced no error, and did the wrong thing, they can **find out
 how many times the loop went round** — without being told to, and without waiting for a
 traceback to point at a line.
 

@@ -2,20 +2,20 @@
 
 Unlocks: s8e3_the_ink_budget.py, choices (b) and (c).
 
-The stall in (b) is that he has two reasons to stop and only one `while` line.
-The move is `or` -- session 5 -- inside the condition, and the reason he does
-not reach for it is that `or` has so far only appeared inside `if`. A condition
+The stall in (b) is two reasons to stop and only one `while` line.
+The move is `or` -- session 5 -- inside the condition, and the reason nobody
+reaches for it is that `or` has so far only appeared inside `if`. A condition
 is a condition wherever it sits, and saying that out loud is usually enough.
 
-The trap in (b), and it is worth letting him hit it first: the loop must stop
+The trap in (b), and it is worth letting them hit it first: the loop must stop
 when EITHER limit is reached, so the condition that keeps it going is *neither
 limit reached yet* -- `and`, not `or`. Writing it with `or` gives a loop that
 keeps going until BOTH limits are blown, which is not what anybody meant and
 does not crash.
 
-(c) is an f-string receipt, which is Area 0 vocabulary. If he stalls there, the
+(c) is an f-string receipt, which is Area 0 vocabulary. If they stall there, the
 stall is arithmetic, not Python: an average is a total divided by a count and
-he has both.
+they have both.
 
 Run:  py -3.14 r8_the_ink_budget.py
 """
@@ -64,7 +64,7 @@ print("---------------------------------")
 #   "Stop when the budget is gone OR the lines are gone"           -- or.
 #
 # Those two sentences describe the same loop and they use opposite words,
-# because one is about carrying on and the other is about stopping. Make him
+# because one is about carrying on and the other is about stopping. Make them
 # say both. That swap has a name and it is the same one from s5e1 task 3.
 
 

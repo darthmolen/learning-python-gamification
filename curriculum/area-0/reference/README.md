@@ -3,20 +3,20 @@
 **This directory is yours, not the learner's.** Do not copy it onto the learner's machine.
 
 Spec §5.5 defines **Datamine**: after two genuine attempts and one written sentence
-about what he tried, he may unlock the reference solution. It is a legal, named, costed
-move — not cheating, and not a failure. Shame produces hiding, and hiding destroys your
-signal about what he actually knows.
+about what they tried, the learner may unlock the reference solution. It is a legal,
+named, costed move — not cheating, and not a failure. Shame produces hiding, and hiding
+destroys your signal about what they actually know.
 
 These are the payloads for the Area 0 exercises most likely to need one.
 
 ## The rules that come with using one
 
 1. **Two genuine attempts first.** Not two minutes of staring. Two attempts.
-2. **One written sentence** in the Journal about what he tried. This is the price and
+2. **One written sentence** in the Journal about what they tried. This is the price and
    it is not optional, because it is the part that does the teaching.
-3. **Show him the whole thing**, not a drip-feed. A half-revealed answer is the worst of
+3. **Show them the whole thing**, not a drip-feed. A half-revealed answer is the worst of
    both.
-4. **Ask him to explain it back.** If he cannot, he has not received it.
+4. **Ask them to explain it back.** If they cannot, they have not received it.
 5. **Invasion that concept next session, and again the session after.** §5.5 guarantees a
    review at +3 days and +10 days. Do it by hand; there is no engine yet.
 
@@ -38,7 +38,7 @@ picture — and offering one would quietly convert an exercise about making some
 an exercise about guessing what the author had in mind. That is precisely the failure
 spec §2.3 diagnoses in the puzzle platforms.
 
-If he is stuck on one of those, he is not stuck on knowledge. He is stuck on scope, and
+A learner stuck on one of those is not stuck on knowledge. They are stuck on scope, and
 the fix is a smaller first step, not an answer.
 
 ## Verifying these still run

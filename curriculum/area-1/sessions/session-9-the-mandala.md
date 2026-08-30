@@ -27,7 +27,7 @@ Entry 14's forecast, read back, then what happened.
 
 ## Beat 3 — The hook (4 minutes)
 
-Shortest hook in the area. Hand him `mandala-brief.md` and read the requirements list
+Shortest hook in the area. Hand them `mandala-brief.md` and read the requirements list
 together, out loud, once. Seven checkboxes.
 
 Then the one thing that is not on the list and matters more than the list:
@@ -44,15 +44,15 @@ Then get out of the way.
 ## Beat 4 — The work (35 minutes)
 
 `s9_mandala_lab.py` runs, draws one plain ring, prints one number, and has two dials at
-the top. Everything else is his.
+the top. Everything else is theirs.
 
-**Say nothing for the first five minutes.** He has enough to start with and the first
-thing he builds is more useful than the first thing you suggest.
+**Say nothing for the first five minutes.** They have enough to start with and the first
+thing they build is more useful than the first thing you suggest.
 
-### The equipment he has now earned
+### The equipment they have now earned
 
-`turtle.speed(0)` he has had since session 1. If the drawing passes about ten seconds,
-give him the next one up — and give it as equipment, not as a concept:
+`turtle.speed(0)` has been available since session 1. If the drawing passes about ten
+seconds, give them the next one up — and give it as equipment, not as a concept:
 
 ```python
 turtle.tracer(0)     # near the top: stop drawing to the screen as you go
@@ -63,16 +63,16 @@ turtle.update()      # at the end, just before turtle.done()
 **Do not spend this early.** It is the reward for having built something slow enough to
 need it, and it lands much better as a reward than as a fact.
 
-### Copying his own files is not cheating
+### Copying their own files is not cheating
 
-Say so explicitly if he hesitates. `s1e3`, `s7e3` and `s8e2` are the three worth opening,
+Say so explicitly if they hesitate. `s1e3`, `s7e3` and `s8e2` are the three worth opening,
 and opening your own earlier work is what everybody does.
 
 ### The Datamine
 
 `reference/r9_mandala.py` is a complete mandala using nothing above Area 1 vocabulary. Two
 real attempts and one written sentence first (§5.5). **Show it whole or not at all** — the
-half he gets from a drip-feed is always the half he already had.
+half they get from a drip-feed is always the half they already had.
 
 ---
 
@@ -83,14 +83,14 @@ Entry 15, and **this is the most important entry in the area.**
 Push hardest on *what I would do differently*, because tonight's answer is next week's boss
 plan, written a week early by the person who has to carry it out.
 
-The prompt to give him:
+The prompt to give them:
 
 > "What did you run out of time to build? Write it down properly — what you wanted, and
 > how far you got. Next Thursday you get another go at it with nobody helping."
 
 ---
 
-## Where he will stall
+## Where they will stall
 
 `dm-guide.md` §4. The two that matter:
 
@@ -106,6 +106,6 @@ to do. It'll still be there on Thursday."* — and this time that is literally t
 ## Success condition
 
 There is a picture, it survives having a dial turned, and there is a Journal entry naming
-the thing he did not get to.
+the thing they did not get to.
 
 All three matter, and the third one is the one that makes session 10 work.

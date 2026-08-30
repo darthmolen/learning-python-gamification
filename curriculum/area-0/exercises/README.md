@@ -1,7 +1,7 @@
 # Exercises
 
-Copy this whole directory somewhere he owns — `Documents/code/` or similar. He needs a
-folder that is his. Area 2a turns it into a git repository; until then it is just a
+Copy this whole directory somewhere you own — `Documents/code/` or similar. You need a
+folder that is yours. Area 2a turns it into a git repository; until then it is just a
 folder.
 
 ## Running one
@@ -27,7 +27,7 @@ Every file has:
 
 - **a docstring at the top** — what it is for, and what to do before running it
 - **a header of tags** — `# concepts:`, `# dc:`, `# expect:`. These are for the game
-  engine and the verification harness, not for him. He can ignore them.
+  engine and the verification harness, not for you. You can ignore them.
 - **a `YOUR MOVE` block near the bottom** — the actual work
 
 **The shipped code always runs and always draws.** It is a starting point, never a
@@ -36,11 +36,11 @@ few reference solutions that exist live in `../reference/` and are the DM's.
 
 ## Predictions
 
-Three files ask him to write predictions on paper **before** running: `s1e2`, `s4e1`,
+Three files ask you to write predictions on paper **before** running: `s1e2`, `s4e1`,
 and every file in `session-3`.
 
-This is not a ritual. A wrong prediction he wrote down is the entire mechanism, and a
-wrong prediction he kept in his head teaches nobody anything. Enforce it. It costs
+This is not a ritual. A wrong prediction you wrote down is the entire mechanism, and a
+wrong prediction you kept in your head teaches nobody anything. Do not skip it. It costs
 ninety seconds.
 
 ## Session 3 is different
@@ -60,5 +60,5 @@ py -3.14 verify.py
 ```
 
 Runs every file with the window suppressed, and checks each against its own header tags.
-Worth running after any edit — including his, if he ever asks whether he has broken
-something.
+Worth running after any edit — including yours, whenever you want to know whether you
+have broken something.

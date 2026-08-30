@@ -1,23 +1,24 @@
 # Area 1 — DM Guide
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11) that
-is his father, who is also a player. Area 0's guide established the seat; this one
-assumes you have read it and does not repeat it.
+is a parent, who is also a player. Area 0's guide established the seat and says why the
+word *parent* is used where it is; this one assumes you have read it and does not repeat
+it.
 
 **What changed since Area 0.** Two things, and both of them change how you sit beside
-him.
+the learner.
 
 1. **The failures stop announcing themselves.** Area 0's subject was reading a
    traceback. Half of Area 1's failures produce no traceback at all: a loop that runs
    four times instead of five, a loop that never ends, a loop that never starts. The
    red text was training wheels and this area takes them off.
-2. **He can now build things that are genuinely his.** A polygon engine with a number
-   at the top is a *machine*, not an exercise. By session 7 he will want to change
-   numbers just to see what happens, and that is the first time in the year the
+2. **They can now build things that are genuinely theirs.** A polygon engine with a
+   number at the top is a *machine*, not an exercise. By session 7 they will want to
+   change numbers just to see what happens, and that is the first time in the year the
    curriculum becomes optional to enjoy. Protect it. Do not fill the space with tasks.
 
-Read this once before session 1. Come back to §4 mid-session, on your phone, while he
-is staring at a hexagon with five sides.
+Read this once before session 1. Come back to §4 mid-session, on your phone, while they
+are staring at a hexagon with five sides.
 
 ---
 
@@ -29,23 +30,23 @@ stopped costing attention in week two.
 | Beat | Minutes | What happens |
 |---|---|---|
 | **Invasion** | 3–5 | Three questions from the ladder in §5. Out loud, no computer. |
-| **Forecast** | 1 | Read his last Journal answer to *what will break next time* back to him. Then say what actually happened. |
-| **The hook** | 5–10 | You show one thing. He has the keyboard by minute ten. |
-| **The work** | 25–30 | He types. You do not touch the keyboard. |
+| **Forecast** | 1 | Read their last Journal answer to *what will break next time* back to them. Then say what actually happened. |
+| **The hook** | 5–10 | You show one thing. They have the keyboard by minute ten. |
+| **The work** | 25–30 | They type. You do not touch the keyboard. |
 | **The choice** | included | Every session has a choice board. Give options everywhere (§3 principle 3). |
 | **Journal** | 5 | Four prompts. The fourth is the forecast you will read back next time. |
 
 The Forecast beat is new to this guide and is one minute long. §5.6 is explicit that
 *a forecast nobody checks is a wish*. Area 0 wrote them; Area 1 is where you start
-reading them back, out loud, before he touches anything.
+reading them back, out loud, before they touch anything.
 
 **The keyboard rule still holds.** All of it. Including "just let me show you the
 `while` loop", which you will want to say in session 3.
 
 **The 90-second rule still holds**, with one Area 1 exception: **if the window has
-hung, say so immediately.** A hung program is not a stall he can think his way out of;
-it is a state he does not yet know the exit from. Tell him Ctrl-C, once, in session 3,
-and then never again.
+hung, say so immediately.** A hung program is not a stall they can think their way out
+of; it is a state they do not yet know the exit from. Tell them Ctrl-C, once, in session
+3, and then never again.
 
 ---
 
@@ -56,7 +57,7 @@ before session 1.
 
 **Ctrl-C in the terminal kills a running program.** Press it in the *terminal window*,
 not in the turtle window. If the turtle window is unresponsive, the terminal still
-listens. He needs this in session 3 and will use it for the rest of his life.
+listens. They need this in session 3 and will use it for the rest of their life.
 
 **`turtle.speed(0)` turns the animation off.** Area 1 draws hundreds of lines instead
 of four, and at the default speed a mandala takes ninety seconds to appear. Introduce
@@ -92,10 +93,10 @@ everything that goes wrong for the next four weeks.
 1. **"How many times does that run?"** — for every off-by-one, every `range` confusion,
    every loop that did too much or too little.
 2. **"What has to change for that to become false?"** — for every `while` loop that
-   does not stop. If the answer is "nothing in the loop changes it", he has found it
-   himself, which is the whole point.
+   does not stop. If the answer is "nothing in the loop changes it", they have found it
+   themselves, which is the whole point.
 3. **"Which loop is that line in?"** — for every nesting problem in sessions 7 and 9.
-   Point at the indentation with a finger. Do not read it out for him.
+   Point at the indentation with a finger. Do not read it out for them.
 
 ### Sentences you may not say, and their replacements
 
@@ -106,17 +107,17 @@ everything that goes wrong for the next four weeks.
 | "The turn should be 360 divided by the sides." | "You have drawn all the sides and you are not back where you started. How far round did you actually turn?" |
 | "That line is in the wrong loop." | "Which loop is that line in? Show me with your finger." |
 | "It's an infinite loop." | "Is it stuck, or is it slow? How could you tell the difference?" |
-| "Just press Ctrl-C." | *(Say this one. Exactly once, in session 3, and then it is his.)* |
+| "Just press Ctrl-C." | *(Say this one. Exactly once, in session 3, and then it is theirs.)* |
 
 ### Datamine in this area
 
 Same rules as Area 0 (§5.5): two genuine attempts, one written sentence, then the whole
 answer and an explain-back. `reference/` holds the payloads. The one addition for Area 1:
-**after a Datamine on a loop, make him change a number in it.** A loop he has read and a
-loop he has steered are different amounts of understanding, and the second one costs
-fifteen seconds.
+**after a Datamine on a loop, make them change a number in it.** A loop they have read
+and a loop they have steered are different amounts of understanding, and the second one
+costs fifteen seconds.
 
-### He is right and you are wrong
+### They are right and you are wrong
 
 Session 6 is built for this, exactly as Area 0's session 3 was. Six broken loops, and
 **two of them are broken in ways that will genuinely catch you** if you read them fast —
@@ -134,28 +135,28 @@ Written in the order you will hit them. Predictions, not a completeness exercise
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| `range(4)` draws four sides, so he reads it as "1 to 4" | It is 0, 1, 2, 3. He is right about the count and wrong about the numbers, and it will cost him in session 8 | "Print every number it gives you. What is the first one?" |
+| `range(4)` draws four sides, so they read it as "1 to 4" | It is 0, 1, 2, 3. They are right about the count and wrong about the numbers, and it will cost them in session 8 | "Print every number it gives you. What is the first one?" |
 | Forgets the colon, gets `SyntaxError` | Area 0 material, arriving on schedule | "You have seen this error before. Which broken sigil was it? What was missing there?" |
-| Indents the body with a mix of tabs and spaces | The editor, not him | "Delete the whole indent and put it back with spaces. All of it." |
+| Indents the body with a mix of tabs and spaces | The editor, not the learner | "Delete the whole indent and put it back with spaces. All of it." |
 | Puts `turtle.done()` inside the loop | Indentation is meaning now, and this is the first time it bites | "Which lines are inside the loop? Read me only those." |
 | Draws a square with `range(4)` and `left(90)`, then wants a pentagon and uses `left(90)` again | Good instinct, wrong number, and it is a better lesson than the square was | "Draw it and look. You went round once and a bit. How far round should you have gone in total?" |
 
-**Let him get wrong:** the pentagon turn. He will try 90, then 100, then guess. Let him
-guess for a full minute before asking what all the turns have to add up to. The moment
+**Let them get wrong:** the pentagon turn. They will try 90, then 100, then guess. Let
+them guess for a full minute before asking what all the turns have to add up to. The moment
 360 arrives it never leaves.
 
 ### Session 2 — Any Shape You Like
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| `range(2, 10)` gives 8 numbers and he expected 9 | The stop is not included. The most common off-by-one in the language | "Write down what you think it gives. Then print it. Which end did you get wrong?" |
+| `range(2, 10)` gives 8 numbers and they expected 9 | The stop is not included. The most common off-by-one in the language | "Write down what you think it gives. Then print it. Which end did you get wrong?" |
 | `range(10, 0)` gives nothing at all, silently | Counting down needs the third number | "Nothing happened, and nothing broke. What did the loop have to count through?" |
 | Wants a shape with 2.5 sides | Reasonable, and it will raise `TypeError` | "Read the error. What kind of thing did `range` want? What did you hand it?" |
-| Changes `sides` at the top and the turn does not follow | He typed the turn as a number instead of computing it | "You changed one number and the shape broke. Which other number secretly depended on it?" |
-| Copies the loop three times to draw three shapes | He has not seen a reason not to yet | Nothing. Say nothing. Session 7 is coming and it lands much harder if he has felt this. |
+| Changes `sides` at the top and the turn does not follow | They typed the turn as a number instead of computing it | "You changed one number and the shape broke. Which other number secretly depended on it?" |
+| Copies the loop three times to draw three shapes | They have not seen a reason not to yet | Nothing. Say nothing. Session 7 is coming and it lands much harder if they have felt this. |
 
-**Let him get wrong:** the hard-coded turn. It is the setup for the whole session and
-the fix — `turn = 360 / sides` — is a line he should write himself out of irritation.
+**Let them get wrong:** the hard-coded turn. It is the setup for the whole session and
+the fix — `turn = 360 / sides` — is a line they should write themselves out of irritation.
 
 ### Session 3 — The Loop That Does Not Stop
 
@@ -164,13 +165,13 @@ before you run it.
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| The window freezes and he panics | Nothing is broken. Nothing is damaged. Say so first, and quickly | "Nothing is broken. Go to the terminal — the black window, not the drawing — and press Ctrl and C." |
-| Writes `while side < 200:` and never changes `side` | **The defining Area 1 bug.** He will write it more than once | "What has to change for that to become false? Show me the line that changes it." |
-| Uses `=` where he means `==` | It is a `SyntaxError` in a condition, which is a mercy | "Read the error. What is the difference between saying something *is* and asking whether it *is*?" |
-| Cannot see why anyone would use `while` over `for` | Fair. He has no example yet where the count is unknown | "How many times does the spiral go round before the line gets shorter than 5? Don't work it out — could the computer?" |
+| The window freezes and they panic | Nothing is broken. Nothing is damaged. Say so first, and quickly | "Nothing is broken. Go to the terminal — the black window, not the drawing — and press Ctrl and C." |
+| Writes `while side < 200:` and never changes `side` | **The defining Area 1 bug.** They will write it more than once | "What has to change for that to become false? Show me the line that changes it." |
+| Uses `=` where `==` was meant | It is a `SyntaxError` in a condition, which is a mercy | "Read the error. What is the difference between saying something *is* and asking whether it *is*?" |
+| Cannot see why anyone would use `while` over `for` | Fair. They have no example yet where the count is unknown | "How many times does the spiral go round before the line gets shorter than 5? Don't work it out — could the computer?" |
 | Loop runs one time too many | Off-by-one at the boundary. `>` and `>=` are not the same | "At the very last go round, what was the value? Was the condition true or false then? Print it." |
 
-**Let him get wrong:** the hang. Genuinely let it hang. He needs the seven seconds of
+**Let them get wrong:** the hang. Genuinely let it hang. They need the seven seconds of
 *this is not responding* to convert Ctrl-C from a fact into a reflex.
 
 ### Session 4 — Two Roads
@@ -180,24 +181,24 @@ before you run it.
 | Uses `=` instead of `==` inside `if` | Same confusion as session 3, new location | "Which one is a question and which one is an order? Say both lines out loud in English." |
 | `if` body not indented, or indented under the wrong loop | Nesting arrives before it has a name | "Which lines belong to the `if`? Read me only those, and then read me the next line after them." |
 | Writes `if i == 0 or 1 or 2:` | It runs. It is always true. It is a **silent** bug | "That ran and it did the wrong thing. What is `or 1` asking? Print `1 == 0 or 1` on its own." |
-| Wants `else if` | Every other language he has seen | "Try it. What does Python call it? Read the error — it is telling you the word." |
+| Wants `else if` | Every other language they have seen | "Try it. What does Python call it? Read the error — it is telling you the word." |
 | The colour changes and never changes back | `color` is a setting, not a one-off order | "When did you tell it red? When did you tell it anything else? What is it still holding?" |
 
-**Let him get wrong:** the `or 1 or 2` one, if he writes it. It is Area 1's `b7` — no
-error, wrong answer — and it is worth more than anything you could tell him.
+**Let them get wrong:** the `or 1 or 2` one, if they write it. It is Area 1's `b7` — no
+error, wrong answer — and it is worth more than anything you could tell them.
 
 ### Session 5 — And, Or, Not
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| `and` and `or` swapped | He is reading them as English, where "and" often means "or" | "Say the rule out loud as a sentence. Now say it again with 'both' or 'either' in it. Which word did you use?" |
-| `elif` chain where all branches fire | He wrote three separate `if`s | "How many of those can be true at once? How many did you want to be?" |
+| `and` and `or` swapped | They are reading them as English, where "and" often means "or" | "Say the rule out loud as a sentence. Now say it again with 'both' or 'either' in it. Which word did you use?" |
+| `elif` chain where all branches fire | They wrote three separate `if`s | "How many of those can be true at once? How many did you want to be?" |
 | Orders the `elif` chain widest-first, so nothing after the first ever runs | The chain stops at the first true one | "Put a `print` in every branch. Which one fires? Why is it always that one?" |
-| `not` in front of a comparison confuses him | It usually can be written without `not` | "Can you say that rule without the word 'not'? Which version would you rather read in a month?" |
-| Deep chain of five `elif`s he cannot follow | He is holding it all in his head | "Draw the branches on paper. One line each. Which line does size 50 take?" |
+| `not` in front of a comparison is hard to read | It usually can be written without `not` | "Can you say that rule without the word 'not'? Which version would you rather read in a month?" |
+| Deep chain of five `elif`s they cannot follow | They are holding it all in their head | "Draw the branches on paper. One line each. Which line does size 50 take?" |
 
-**Let him get wrong:** the ordering of an `elif` chain. Getting one branch that can
-never fire is the lesson, and it is invisible until he instruments it.
+**Let them get wrong:** the ordering of an `elif` chain. Getting one branch that can
+never fire is the lesson, and it is invisible until they instrument it.
 
 ### Session 6 — The Broken Loop
 
@@ -206,14 +207,14 @@ crash.
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| Waits for red text that never comes | Area 0 trained him to expect it | "There is no error. There is still a bug. What did you *want* to happen?" |
+| Waits for red text that never comes | Area 0 trained them to expect it | "There is no error. There is still a bug. What did you *want* to happen?" |
 | Counts the sides of the picture by eye and gets it wrong | Six is hard to count at a glance | "Don't count the picture. Make the program count. Where would the `print` go?" |
 | Fixes `b2` by deleting the loop | It removes the symptom and the program | "That works. Does it still do the job it was for? Put the loop back and change one line instead." |
-| `b5` NameError baffles him — the name is right there | The loop never ran, so it was never created | "How many times did that loop go round? What is `range(0)`?" |
+| `b5` NameError baffles them — the name is right there | The loop never ran, so it was never created | "How many times did that loop go round? What is `range(0)`?" |
 | Says `b6` looks fine | It does look fine. That is the whole file | "Fine is not the test. Does it close? Add up every turn it made and tell me the total." |
 
-**Let him get wrong:** all of it, as in Area 0 session 3. Two minutes of no rescue per
-file, minimum. And **you should get `b1` or `b6` wrong yourself, in front of him.**
+**Let them get wrong:** all of it, as in Area 0 session 3. Two minutes of no rescue per
+file, minimum. And **you should get `b1` or `b6` wrong yourself, in front of them.**
 
 ### Session 7 — A Loop Inside A Loop
 
@@ -223,10 +224,10 @@ file, minimum. And **you should get `b1` or `b6` wrong yourself, in front of him
 | Expects 3 + 4 shapes and gets 12 | Multiplication is not obvious from the shape of the code | "How many times does the outer one go round? For each of those, how many times does the inner one? So how many in total?" |
 | Reuses `i` for both loops | It runs and misbehaves silently | "You have two counters with one name. What is `i` at the moment the inner loop finishes?" |
 | It is unbearably slow | It genuinely is. Twelve polygons at default speed | "How fast is it drawing? Do you remember the throttle?" — then `turtle.speed(0)` |
-| Nested loop draws every shape on top of the last | He never moved or turned between them | "What is different about the turtle between shape one and shape two? Is anything?" |
+| Nested loop draws every shape on top of the last | They never moved or turned the turtle between shapes | "What is different about the turtle between shape one and shape two? Is anything?" |
 
-**Let him get wrong:** the multiplication. Ask him to predict the number of shapes
-before running. He will add. Everyone adds.
+**Let them get wrong:** the multiplication. Ask them to predict the number of shapes
+before running. They will add. Everyone adds.
 
 ### Session 8 — Carrying A Number
 
@@ -234,11 +235,11 @@ before running. He will add. Everyone adds.
 |---|---|---|
 | Resets the total inside the loop | The single defining accumulator bug | "Which line sets the total to zero? How many times does that line run? How many times did you want it to?" |
 | Forgets to set the total before the loop | `NameError`, and a good one | "Read the error. When does that name first get created? Has that happened yet at the moment the loop needs it?" |
-| `total = length` instead of `total = total + length` | He is storing rather than adding | "Say that line out loud in English. Now say the one you meant. What is different?" |
+| `total = length` instead of `total = total + length` | They are storing rather than adding | "Say that line out loud in English. Now say the one you meant. What is different?" |
 | Prints the total inside the loop and gets twenty lines | Nearly right, and the fix is one indent | "How many totals did you want? Which loop is that print in?" |
 | Cannot see the point | It is the most abstract thing in the area | Point at the spiral. "How long is that line? Not the last one — all of it. Could you measure it with a ruler?" |
 
-**Let him get wrong:** `total = length`. The picture still looks right, so this one is
+**Let them get wrong:** `total = length`. The picture still looks right, so this one is
 silent, and it is the reason session 8 sits after session 6 rather than before it.
 
 ### Session 9 — The Mandala
@@ -251,7 +252,7 @@ silent, and it is the reason session 8 sits after session 6 rather than before i
 | Colours all come out the same | The colour is being set outside the loop that changes it | "Which loop is the colour line in? Which one did you want it in?" |
 | Wants to keep going past time | Stop anyway | "Write down the next thing you were going to do. It will still be there on Thursday." |
 
-**Let him get wrong:** nothing in particular. This session is a rehearsal, and the
+**Let them get wrong:** nothing in particular. This session is a rehearsal, and the
 things that go wrong in it are the list of what to watch for in session 10.
 
 ### Session 10 — The Sigil
@@ -259,8 +260,8 @@ things that go wrong in it are the list of what to watch for in session 10.
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | Rebuilds session 9's mandala exactly | Safe, and it is not the brief | "That one already exists. What does the person who asked for this get to choose?" |
-| No `input` anywhere | The brief requires it and he forgot, not refused | "Read the specification back to me. Which line have you not done?" |
-| Crashes on an input he did not expect | Correct behaviour, correctly discovered | "Is that your bug, or the person's? What would you *want* to happen? Can you do that now?" — **he can. This is the first boss where the answer is yes.** |
+| No `input` anywhere | The brief requires it and they forgot, not refused | "Read the specification back to me. Which line have you not done?" |
+| Crashes on an input they did not expect | Correct behaviour, correctly discovered | "Is that your bug, or the person's? What would you *want* to happen? Can you do that now?" — **they can. This is the first boss where the answer is yes.** |
 | It runs on the learner's machine and not on yours | **The best outcome available** | "Excellent. This is the real thing. What is different between our two machines?" |
 | Declares it finished in twenty minutes | Possible, and probably true | "Show me. Now change one number at the top and show me again." |
 
@@ -277,11 +278,11 @@ you run them by hand: three questions at the start of each session, out loud, no
 computer, nothing looked up. Two minutes.
 
 **The ladder is 1, 3, 7, 16, 35 days.** A concept sits on a rung, and the rung says how
-long it may go untouched before it comes back. Repel it — he answers cleanly — and it
+long it may go untouched before it comes back. Repel it — they answer cleanly — and it
 climbs one rung, so it stays away longer. Miss it and it steps back **exactly one rung,
 never to the beginning.** That last clause is the entire design: resetting a well-known
 concept to day one punishes one bad evening by flooding the next three sessions with
-material he already had.
+material they already had.
 
 You will not track nineteen concepts on paper and you do not have to. The drills below
 already spread the ladder across the ten sessions: the Area 1 concepts arrive on the
@@ -289,13 +290,13 @@ short rungs and repeat often, and Area 0's nine sit at 16 and 35 days, coming ro
 and worth more when they do. Running the list as written is close enough to correct, and
 correct enough to work.
 
-**Do not let `reading-errors` slide.** Session 6 depends on it, and Area 1 gives him far
+**Do not let `reading-errors` slide.** Session 6 depends on it, and Area 1 gives far
 fewer chances to practise it by accident than Area 0 did.
 
 ### The drills
 
 Three per session. **Retrieval, not recognition** — "what does `range(4)` give you?" is
-retrieval; "does `range(4)` give you four numbers?" is a coin flip he can win by
+retrieval; "does `range(4)` give you four numbers?" is a coin flip they can win by
 guessing.
 
 **Session 1** (Area 0 only — nothing of Area 1 exists yet)
@@ -399,8 +400,8 @@ to session 10 if nobody schedules it.
 arrives in session 8 and the boss is session 10; there is not room for it to climb the
 ladder, so it gets drilled hard on the way past.
 
-**Say out loud, at least twice this area, that the repetition is deliberate.** He should
-know retrieval is a mechanism and not a quiz, and that the questions coming back is the
+**Say out loud, at least twice this area, that the repetition is deliberate.** They
+should know retrieval is a mechanism and not a quiz, and that the questions coming back is the
 system working rather than you forgetting.
 
 ---
@@ -412,14 +413,14 @@ rubric still applies and `../area-0/dm-guide.md` §6 still holds it. Two Area 1 
 
 **The fourth prompt is now load-bearing.** §5.6: *a forecast nobody checks is a wish.*
 Entries 07 onward are read back at the start of the following session, out loud, before
-anything else happens. Two sentences: what he predicted, and what actually happened.
-When he is right — and in this area he will be, about loops that do not stop — say so
-clearly. Being right about your own future failures is a real skill and almost nobody
+anything else happens. Two sentences: what they predicted, and what actually happened.
+When they are right — and in this area they will be, about loops that do not stop — say
+so clearly. Being right about your own future failures is a real skill and almost nobody
 tells a child they have it.
 
 **"What broke" gets harder to answer honestly this area, and that is worth naming.** In
 Area 0 things crashed and the answer was in the terminal. Here, half of what breaks
-produces a wrong picture and no message. If he writes "nothing broke" after a session
+produces a wrong picture and no message. If they write "nothing broke" after a session
 where a shape did not close, one push:
 
 > "The hexagon had five sides for a while. What did the computer say about that?"
@@ -439,23 +440,23 @@ Nothing. It said nothing. That is the entry.
 
 Area 0's §7 holds. One addition for this area.
 
-**If he is fed up in sessions 3, 6 or 8**, the recovery is the same and it is a picture.
-Stop the exercise, open `s1e3_the_polygon_engine.py`, and let him change the number at
-the top four or five times. It takes three minutes, it produces five different shapes,
+**If they are fed up in sessions 3, 6 or 8**, the recovery is the same and it is a
+picture. Stop the exercise, open `s1e3_the_polygon_engine.py`, and let them change the
+number at the top four or five times. It takes three minutes, it produces five different shapes,
 and it ends the evening on something that works.
 
-That file exists partly for this. Do not tell him that.
+That file exists partly for this. Do not tell them that.
 
 ---
 
 ## 8. What you are actually being graded on
 
-Not whether he finishes ten sessions. Not whether the mandala is beautiful.
+Not whether they finish ten sessions. Not whether the mandala is beautiful.
 
-By the end of Area 1 he should be able to look at a program that ran, produced no error,
-and did the wrong thing — and **find out how many times the loop went round**, without
-you in the room and without waiting for red text to tell him where to look.
+By the end of Area 1 they should be able to look at a program that ran, produced no
+error, and did the wrong thing — and **find out how many times the loop went round**,
+without you in the room and without waiting for red text to tell them where to look.
 
 That is the skill. Everything else in this area — the spirals, the mandalas, the sigil —
-is a vehicle for it. Area 0 taught him that failure has a name and a line number. Area 1
-teaches him that most failure has neither, and that he can still find it.
+is a vehicle for it. Area 0 taught them that failure has a name and a line number. Area 1
+teaches them that most failure has neither, and that they can still find it.

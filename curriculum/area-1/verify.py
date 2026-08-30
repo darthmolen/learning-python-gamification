@@ -147,7 +147,7 @@ def check_tags(text: str) -> tuple[str, str | None] | str:
     named = [c.strip() for c in tagged.split(",")]
     unknown = [c for c in named if c not in ALLOWED_CONCEPTS]
     if unknown:
-        # Either a typo, or vocabulary from an area he has not reached. Both are
+        # Either a typo, or vocabulary from an area not yet reached. Both are
         # authoring bugs and both are silent without this check.
         return f"concepts not in the Area 0-1 registry: {unknown}"
 

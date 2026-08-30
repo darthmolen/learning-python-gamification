@@ -1,4 +1,4 @@
-"""REFERENCE -- Datamine payload for s5e1 tasks 3 and 4. Parent's copy.
+"""REFERENCE -- Datamine payload for s5e1 tasks 3 and 4. The DM's copy.
 
 Do not put this on the learner's machine. See README.md in this directory for the rules
 that come with unlocking it.
@@ -39,19 +39,19 @@ print(f"Done. Four sides of {size}, turning {turn} each time.")
 
 # Notes for the DM, not for the learner:
 #
-# * `shade` is not converted, and he should be able to say why: turtle.color
+# * `shade` is not converted, and they should be able to say why: turtle.color
 #   wants text, and input already hands back text. The conversion in int() is
 #   not a ritual you perform on every input -- it is a conversion you do when
 #   the kind you have is not the kind you need.
 #
 # * The name is `shade` rather than `color` on purpose. Naming a variable
-#   `color` shadows nothing here, but it will confuse the two the moment he
-#   reads the line back. Worth mentioning only if he asks.
+#   `color` shadows nothing here, but it will confuse the two the moment they
+#   read the line back. Worth mentioning only if they ask.
 #
 # * `turn` is a float even when it divides evenly -- 360 / 4 is 90.0. That is
 #   session 4 resurfacing on its own, which is what concept tags are for.
 #
-# * This only draws four sides no matter what he asked for, and says so out
+# * This only draws four sides no matter what was asked for, and says so out
 #   loud rather than pretending. Being honest in the output about a limitation
 #   is better craft than hiding it, and Area 1 removes the limitation.
 

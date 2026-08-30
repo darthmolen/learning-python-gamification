@@ -5,13 +5,13 @@ Unlocks: s7e3_the_rosette.py, choices (a) and (b) together.
 Two separate stalls hide in this one file and they are worth separating before
 showing it:
 
-**(a) growing copies.** The outer counter is right there and he is not using it.
-`length = 30 + copy * 6` is the whole answer, and the question that gets him
+**(a) growing copies.** The outer counter is right there and it is not in use.
+`length = 30 + copy * 6` is the whole answer, and the question that gets them
 there is *"what number is different on every copy, and where is it already?"*
 
-**(b) a colour per copy.** He reaches for a ladder of `elif`s, which works and
+**(b) a colour per copy.** They reach for a ladder of `elif`s, which works and
 is long. The ladder here is deliberately short and uses bands rather than one
-rung per copy, because one rung per copy is the version that teaches him nothing
+rung per copy, because one rung per copy is the version that teaches nothing
 and takes twenty minutes to type.
 
 Run:  py -3.14 r7_the_rosette.py
@@ -59,15 +59,15 @@ print("ink used    :", ink, "pixels")
 # Three things to say out loud, in this order:
 #
 # 1. `length` is worked out from `copy`, so it is different on every copy and
-#    nobody typed twelve numbers. Ask him what happens if he changes `copies`
-#    to 30. Then have him do it.
+#    nobody typed twelve numbers. Ask what happens if they change `copies`
+#    to 30. Then have them do it.
 #
 # 2. The band edges are `copies / 3` and `copies * 2 / 3`, not 4 and 8. Ask
 #    which version still works when `copies` changes. That is the difference
 #    between a drawing and a generator and it is the whole of Boss 1.
 #
 # 3. `ink` is the accumulator from session 8 arriving one session early, in the
-#    innermost loop. Ask him how many times that line runs. It is not 12.
+#    innermost loop. Ask how many times that line runs. It is not 12.
 
 
 turtle.done()

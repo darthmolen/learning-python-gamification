@@ -9,8 +9,8 @@ Tonight the program stops doing the same thing every time.
 
 `if` arrives now rather than in session 1 on purpose. A conditional with nothing to
 condition on is the "tour of types before you need a type" mistake Area 0 explicitly
-refused. By tonight he has a loop with a counter in it, so *"the first six sides are red"*
-is a thing he actually wants.
+refused. By tonight they have a loop with a counter in it, so *"the first six sides are
+red"* is a thing they actually want.
 
 ---
 
@@ -22,8 +22,8 @@ is a thing he actually wants.
 
 ## Beat 2 — Forecast (1 minute)
 
-Entry 09's forecast, read back. Then what actually happened. He will have predicted
-another hang; find out whether he was right.
+Entry 09's forecast, read back. Then what actually happened. They will have predicted
+another hang; find out whether they were right.
 
 ---
 
@@ -61,14 +61,14 @@ of thing from Area 0 that has had nothing to do until tonight.
 ### `s4e1_two_roads.py` — the fork on its own
 
 Predictions before running: the file prints the question, the answer, and the type of the
-answer, so he can see `True` and `<class 'bool'>` next to each other.
+answer, so they can see `True` and `<class 'bool'>` next to each other.
 
 Task 2 is the boundary — `size` exactly 100, then `>` swapped for `>=`. **This is where
 nearly every `if` bug in the world lives** and it costs ninety seconds to meet it
 deliberately.
 
-Task 4 asks him to type `if size = 100:` on purpose. It is a `SyntaxError`, which is a
-mercy, and it is Python telling him the difference between giving a name and asking a
+Task 4 asks them to type `if size = 100:` on purpose. It is a `SyntaxError`, which is a
+mercy, and it is Python naming the difference between giving a name and asking a
 question.
 
 ### `s4e2_the_first_half.py` — the fork inside a loop
@@ -77,8 +77,8 @@ Twelve sides, red for the first six and black for the rest. One question asked t
 times, with a different answer each time, because the counter is what it asks about.
 
 **Three levels of indentation now, and each one means something.** Task 1 asks why
-`turtle.forward` is inside the loop but not inside the `if`, and invites him to indent it
-one level further and see what happens. Let him do it — the picture goes wrong in a way
+`turtle.forward` is inside the loop but not inside the `if`, and invites them to indent it
+one level further and see what happens. Let them do it — the picture goes wrong in a way
 that is instantly readable.
 
 Task 3 is the real one: change 12 sides to 20 and the `6` becomes a lie. The fix makes the
@@ -91,32 +91,32 @@ worth naming as such.
 between runs.
 
 Task 2 is the silent bug: answering `Big` with a capital B draws a small one, with no
-error, because `"Big" == "big"` is False. He may or may not be able to fix it; either way
-it goes in the Journal in his own words.
+error, because `"Big" == "big"` is False. They may or may not be able to fix it; either
+way it goes in the Journal in their own words.
 
-Task 3 is the one to protect the time for. Answering 0 crashes the program, and he can now
-stop that — an `if` that refuses a number below 3. **Getting the drawing to not happen is
-the tricky part**, and if it defeats him tonight, session 5 gives him the cleaner way and
-he will recognise it when it arrives.
+Task 3 is the one to protect the time for. Answering 0 crashes the program, and they can
+now stop that — an `if` that refuses a number below 3. **Getting the drawing to not happen
+is the tricky part**, and if it defeats them tonight, session 5 gives them the cleaner way
+and they will recognise it when it arrives.
 
 ---
 
 ## Beat 5 — Journal (5 minutes)
 
-Entry 10. Worth capturing: **the first program he has written that does different things
-on different runs.** Ask him what the smallest change to an answer was that changed the
+Entry 10. Worth capturing: **the first program they have written that does different
+things on different runs.** Ask what the smallest change to an answer was that changed the
 picture.
 
 ---
 
-## Where he will stall
+## Where they will stall
 
 `dm-guide.md` §4. The two that matter:
 
-**`if i == 0 or 1 or 2:`** — it runs, it is always true, and nothing complains. If he
-writes it, do not correct it. *"That ran and did the wrong thing. What is `or 1` asking?
+**`if i == 0 or 1 or 2:`** — it runs, it is always true, and nothing complains. If they
+write it, do not correct it. *"That ran and did the wrong thing. What is `or 1` asking?
 Print `1 == 0 or 1` on its own."* This is Area 1's `b7` arriving early and it is worth
-more than anything you could tell him.
+more than anything you could tell them.
 
 **The colour changes and never changes back.** `color` is a setting, not a one-off order.
 *"When did you tell it red? When did you tell it anything else?"*
@@ -129,5 +129,5 @@ folds into session 5's gatekeeper.
 
 ## Success condition
 
-He can write an `if`/`else` inside a loop, say which lines belong to which block by
+They can write an `if`/`else` inside a loop, say which lines belong to which block by
 pointing at the indentation, and explain why exactly one branch runs.

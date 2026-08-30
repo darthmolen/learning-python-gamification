@@ -5,12 +5,12 @@
 **Files:** `exercises/session-3/`
 **Journal:** entry 09
 
-**Tonight a program hangs on purpose, and he learns the way out.**
+**Tonight a program hangs on purpose, and they learn the way out.**
 
 This is the session that mirrors Area 0's session 3. There, the lesson was reading a
-traceback, taught at the moment he already had a grievance. Here, the lesson is what to do
+traceback, taught at the moment they already had a grievance. Here, the lesson is what to do
 when there is no traceback and the window has simply stopped answering — and it is
-scheduled rather than stumbled into, because he *will* write `while True:` this month
+scheduled rather than stumbled into, because they *will* write `while True:` this month
 whether or not anybody plans for it.
 
 **Never cut this session.**
@@ -37,14 +37,14 @@ Two things, in this order, and the second one is the important one.
 A `while` loop does not — it asks a question at the top of every go round and keeps going
 while the answer is True.
 
-**Second, the three rules.** Write them where he can see them for the rest of the evening,
-because every stuck program he writes for the next four weeks is missing one:
+**Second, the three rules.** Write them where they stay visible for the rest of the
+evening, because every stuck program written for the next four weeks is missing one:
 
 > 1. the variable exists **before** the loop
 > 2. the condition **can** be False
 > 3. something **inside the body** changes the variable the condition asks about
 
-Then, before he types anything:
+Then, before they type anything:
 
 > **"If rule three is missing, the program never stops. It does not crash. There is no
 > error message. The window just stops answering. That is going to happen tonight, on
@@ -65,9 +65,9 @@ It prints all six comparison operators against the same pair of numbers, then ru
 `while` loop that reports its own condition every go round.
 
 Task 2 — swapping `> 20` for `>= 20` — is exactly one extra go round, and knowing *which*
-one is the entire skill. Make him predict before running.
+one is the entire skill. Make them predict before running.
 
-Task 4 asks him to delete the line that changes the variable and **not run it**. Just look
+Task 4 asks them to delete the line that changes the variable and **not run it**. Just look
 at it and name which rule broke. That is the rehearsal for what happens in twenty minutes.
 
 ### `s3e2_the_shrinking_line.py` — the loop whose count nobody knows
@@ -81,13 +81,13 @@ That is the whole justification for `while` and it is worth stating plainly:
 > `for` loop cannot do honestly."
 
 Task 4 quietly introduces a counter — `drawn = drawn + 1`, set to 0 *before* the loop —
-and asks him to move it inside and see what happens. He has now written an accumulator
-twice without the word. Session 8 names it.
+and asks them to move it inside and see what happens. They have now written an
+accumulator twice without the word. Session 8 names it.
 
 ### `s3e3_while_versus_for.py` — the same hexagon, twice
 
 Both loops draw an identical shape. The `for` version is three lines; the `while` version
-is five, and two of them are bookkeeping he has to get right.
+is five, and two of them are bookkeeping they have to get right.
 
 The point is not that `while` is worse. It is that using `while` where `for` would do
 means taking on all three rules for no reason, which is how an infinite loop gets written
@@ -99,15 +99,15 @@ cleanly?
 
 ### `s3e4_the_hang.py` — the one the session is named after
 
-He reads it first and says which rule is broken. **Then he runs it anyway.**
+They read it first and say which rule is broken. **Then they run it anyway.**
 
 Let it hang. Actually let it — seven or eight seconds of *this is not responding* is what
-converts Ctrl-C from a fact he was told into a reflex he owns. Do not rescue it at three
-seconds.
+converts Ctrl-C from a fact they were told into a reflex they own. Do not rescue it at
+three seconds.
 
-When he presses Ctrl-C, red text appears with the word `Traceback` in it. **Read it
-together.** The last line says `KeyboardInterrupt`. That is him, in the traceback, by
-name, and it is the one error in the area that he caused deliberately.
+When they press Ctrl-C, red text appears with the word `Traceback` in it. **Read it
+together.** The last line says `KeyboardInterrupt`. That is them, in the traceback, by
+name, and it is the one error in the area they caused deliberately.
 
 Task 4 is the second failure and it is the sneakier one: with the fix in, change `< 200`
 to `> 200`. Now the loop body never runs at all. Nothing hangs, nothing crashes, nothing
@@ -120,25 +120,25 @@ draws. **Ask which of the two failures is harder to notice.**
 Entry 09. Both of tonight's failures go under *what broke*: one hung and one did nothing,
 and **neither printed an error message**.
 
-That sentence is the thesis of the whole area and this is the night he writes it in his
-own words.
+That sentence is the thesis of the whole area and this is the night they write it in
+their own words.
 
 ---
 
-## Where he will stall
+## Where they will stall
 
 `dm-guide.md` §4. The two that matter:
 
-**The window freezes and he panics.** Say "nothing is broken" first, and quickly, before
+**The window freezes and they panic.** Say "nothing is broken" first, and quickly, before
 anything else. Then the terminal, then Ctrl-C.
 
-**He writes `while side < 200:` and never changes `side`.** The defining Area 1 bug, and he
-will write it more than once. *"What has to change for that to become false? Show me the
+**They write `while side < 200:` and never change `side`.** The defining Area 1 bug, and
+they will write it more than once. *"What has to change for that to become false? Show me the
 line that changes it."*
 
 ## Success condition
 
-By the end of tonight he can:
+By the end of tonight they can:
 
 - write a `while` loop that stops
 - name the three rules without looking
