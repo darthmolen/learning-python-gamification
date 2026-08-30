@@ -27,6 +27,31 @@ import {
   type ContentIssue,
   type ContentItem,
 } from '@pyquest/content';
+import type { ScaledXpKind } from '@pyquest/engine';
+
+import { ApiFailure } from './errors.ts';
+
+/**
+ * Content's `Kind` narrowed to the two kinds §5.1 prices from a DC.
+ *
+ * The engine's medal functions take a `ScaledXpKind` — `quest | boss` — because §5.1 prices an
+ * invasion flat at 5 and §5.10 puts no medals on one. Content's `Kind` has the third member, so
+ * this is the one place the two vocabularies are reconciled, and it is a function rather than a
+ * cast so that the impossible case has somewhere to go.
+ *
+ * It throws, and the throw is not defensive dressing: an invasion reaching a medal price means a
+ * caller has mixed up two kinds of item, and paying it *something* would write a wrong number
+ * into a row §5.10 never re-prices. Refusing is the only answer that cannot be silently wrong.
+ */
+export function pricedKind(item: ContentItem): ScaledXpKind {
+  if (item.kind === 'invasion') {
+    throw new ApiFailure(
+      'content-invalid',
+      `${item.id} is an invasion — §5.1 prices one flat and §5.10 puts no medals on it`,
+    );
+  }
+  return item.kind;
+}
 
 /**
  * The boot refused, with the issues that refused it.

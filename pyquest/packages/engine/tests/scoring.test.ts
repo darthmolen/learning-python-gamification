@@ -9,7 +9,7 @@ import {
   effectiveDC,
   medalDelta,
   modifierConflict,
-  questXpEarned,
+  medalXpEarned,
   xpFor,
   type DifficultyModifier,
 } from '../src/scoring.ts';
@@ -128,32 +128,81 @@ describe('xpFor — spec §5.1', () => {
 
 describe('medalDelta — spec §5.10 (DC-2)', () => {
   it('pays a first Cleared the whole quest at its base DC', () => {
-    expect(medalDelta(15, [], 'cleared')).toBe(30);
+    expect(medalDelta('quest', 15, [], 'cleared')).toBe(30);
   });
 
   it("pays Ironman the gap the spec names: DC 15 to DC 20", () => {
     // §5.10, verbatim: "replaying a DC 15 quest for Ironman pays the gap between DC 15 and
     // DC 20" — 40 minus 30.
-    expect(medalDelta(15, ['cleared'], 'ironman')).toBe(10);
+    expect(medalDelta('quest', 15, ['cleared'], 'ironman')).toBe(10);
   });
 
   it('pays a medal once, so re-earning it pays nothing', () => {
-    expect(medalDelta(15, ['cleared', 'ironman'], 'ironman')).toBe(0);
+    expect(medalDelta('quest', 15, ['cleared', 'ironman'], 'ironman')).toBe(0);
   });
 
   it('pays nothing at all until a medal is earned, whatever the standing modifiers', () => {
     // A Datamine re-prices the quest (§5.5); it is not itself an achievement to be paid for.
-    expect(questXpEarned(15, [])).toBe(0);
-    expect(questXpEarned(15, ['datamine'])).toBe(0);
-    expect(medalDelta(15, ['datamine'], 'cleared')).toBe(20);
+    expect(medalXpEarned('quest', 15, [])).toBe(0);
+    expect(medalXpEarned('quest', 15, ['datamine'])).toBe(0);
+    expect(medalDelta('quest', 15, ['datamine'], 'cleared')).toBe(20);
   });
 
   it('refuses to price a medal §5.12 forbids beside what is already earned', () => {
-    expect(() => medalDelta(15, ['conjured'], 'ironman')).toThrow(IllegalModifierSetError);
+    expect(() => medalDelta('quest', 15, ['conjured'], 'ironman')).toThrow(IllegalModifierSetError);
   });
 
   it('never pays a negative amount, because the effective DC is floored (DC-1)', () => {
-    expect(medalDelta(5, ['cleared', 'conjured'], 'datamine')).toBe(0);
+    expect(medalDelta('quest', 5, ['cleared', 'conjured'], 'datamine')).toBe(0);
+  });
+
+  describe('the kind is priced, not assumed — §5.1 × §5.10', () => {
+    /**
+     * The bug this block exists for: `medalDelta` used to ask `xpFor` for `'quest'`
+     * unconditionally, so a medal on a boss paid 2×DC where §5.1 says 20×DC. `xpFor('boss', …)`
+     * was correct, tested, and reached by nothing in production — the constant was right and
+     * the wire was missing.
+     */
+
+    it('pays a first Cleared on a boss twenty times its DC, not twice', () => {
+      // §5.1's own worked example, reached through the medal path this time: a DC 15 boss
+      // pays 300. Before this change the same call paid 30.
+      expect(medalDelta('boss', 15, [], 'cleared')).toBe(300);
+      expect(medalDelta('boss', 30, [], 'cleared')).toBe(600);
+    });
+
+    it('prices a boss medal on the gap, the same arithmetic at the other rate', () => {
+      // Ironman moves DC 15 to DC 20 (§5.10). On a quest that gap is 40 - 30 = 10; on a boss
+      // it is 400 - 300 = 100. One formula, two rates.
+      expect(medalDelta('quest', 15, ['cleared'], 'ironman')).toBe(10);
+      expect(medalDelta('boss', 15, ['cleared'], 'ironman')).toBe(100);
+    });
+
+    it('pays a boss exactly ten times a quest for the same DC and the same medals', () => {
+      // The ratio is XP_PER_DC.boss / XP_PER_DC.quest, and it must hold for every medal
+      // rather than only for the first — a fix that priced Cleared and forgot the rest
+      // would pass the two assertions above.
+      for (const medal of ['cleared', 'ironman', 'idiomatic', 'time-attack'] as const) {
+        const onAQuest = medalDelta('quest', 15, [], medal);
+        const onABoss = medalDelta('boss', 15, [], medal);
+        expect({ medal, onABoss }).toEqual({ medal, onABoss: onAQuest * 10 });
+      }
+    });
+
+    it('pays nothing on a boss until a medal is earned, at either rate', () => {
+      // §5.10 is unchanged by the rate: a standing modifier re-prices, it does not pay.
+      expect(medalXpEarned('boss', 15, [])).toBe(0);
+      expect(medalXpEarned('boss', 15, ['datamine'])).toBe(0);
+      expect(medalXpEarned('boss', 15, ['cleared'])).toBe(300);
+    });
+
+    it('still refuses a §5.12-illegal set on a boss, before it prices anything', () => {
+      expect(() => medalDelta('boss', 15, ['conjured'], 'ironman')).toThrow(IllegalModifierSetError);
+    });
+
+    it('floors a boss at DC 5 too, so no medal pays a negative (DC-1)', () => {
+      expect(medalDelta('boss', 5, ['cleared', 'conjured'], 'datamine')).toBe(0);
+    });
   });
 
   describe('DC-2: the total is the same however the medals were earned', () => {
@@ -182,7 +231,14 @@ describe('medalDelta — spec §5.10 (DC-2)', () => {
       conjured: -5,
     };
 
-    it('sums to xp(final effective DC) across randomised earn orders', () => {
+    /**
+     * Both kinds. Order-independence is a property of the telescoping difference, not of the
+     * rate, so it must survive the rate changing — and running it over `'boss'` is what proves
+     * the new argument threads all the way to `xpFor` rather than being accepted and dropped.
+     */
+    it.each(['quest', 'boss'] as const)(
+      'sums to xp(final effective DC) across randomised earn orders — %s',
+      (kind) => {
       const next = lcg(20260827);
 
       for (let trial = 0; trial < 500; trial++) {
@@ -203,7 +259,7 @@ describe('medalDelta — spec §5.10 (DC-2)', () => {
         let paid = 0;
         const earned: DifficultyModifier[] = [];
         for (const medal of order) {
-          paid += medalDelta(baseDC, earned, medal);
+          paid += medalDelta(kind, baseDC, earned, medal);
           earned.push(medal);
         }
 
@@ -211,11 +267,12 @@ describe('medalDelta — spec §5.10 (DC-2)', () => {
         // merely its own self-consistency: max is order-independent too, and an assertion
         // written against effectiveDC would hold just as well if effectiveDC took a maximum.
         const summed = set.reduce((dc, m) => dc + EXPECTED_DELTA[m], baseDC);
-        const expected = xpFor('quest', Math.min(30, Math.max(5, summed)));
+        const expected = xpFor(kind, Math.min(30, Math.max(5, summed)));
 
-        expect({ baseDC, order, paid }).toEqual({ baseDC, order, paid: expected });
+        expect({ kind, baseDC, order, paid }).toEqual({ kind, baseDC, order, paid: expected });
       }
-    });
+      },
+    );
   });
 });
 
@@ -258,8 +315,8 @@ describe('the boundaries this module is not allowed to cross', () => {
       effectiveDC(15, ['ironman']),
       xpFor('quest', 20),
       xpFor('invasion'),
-      medalDelta(15, ['cleared'], 'ironman'),
-      questXpEarned(15, ['cleared']),
+      medalDelta('quest', 15, ['cleared'], 'ironman'),
+      medalXpEarned('quest', 15, ['cleared']),
       bossUnlocked(3),
     ];
     for (const result of results) {

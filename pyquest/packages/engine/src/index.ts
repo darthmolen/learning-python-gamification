@@ -13,6 +13,14 @@
  *
  * The contract is a type-only dependency here. The engine computes and returns plain data; it
  * validates nothing, so zod never reaches this package's runtime path.
+ *
+ * Mutation-tested is not the same as covered. Thirty-three seeded mutants died here and a real
+ * bug lived through all of them: `medalDelta` asked `xpFor` for `'quest'` unconditionally, so a
+ * medal on a boss paid a tenth of §5.1's rate. No mutant could reveal it, because no test ever
+ * priced a medal on a boss — mutation testing proves the suite notices a change in what the code
+ * does, never a case the suite does not exercise. The fix was to make the kind a required
+ * argument, so the compiler asks the question at every call site instead of the tests being
+ * relied on to.
  */
 
 export {
@@ -25,8 +33,8 @@ export {
   bossUnlocked,
   effectiveDC,
   medalDelta,
+  medalXpEarned,
   modifierConflict,
-  questXpEarned,
   xpFor,
   type DifficultyModifier,
   type FlatXpKind,

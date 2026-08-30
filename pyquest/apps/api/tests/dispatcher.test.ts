@@ -140,7 +140,7 @@ describe('recording a verdict', () => {
     const quest = CONTENT.item('a0-name-tag');
     const { rows } = await client.query('SELECT medal, xp_awarded, earned_at::text AS d FROM quest_medals');
     expect(rows).toEqual([
-      { medal: 'cleared', xp_awarded: medalDelta(quest?.dc ?? 0, [], 'cleared'), d: '2026-08-25' },
+      { medal: 'cleared', xp_awarded: medalDelta('quest', quest?.dc ?? 0, [], 'cleared'), d: '2026-08-25' },
     ]);
 
     const attempts = await client.query('SELECT passed FROM attempts');
@@ -151,11 +151,16 @@ describe('recording a verdict', () => {
     /**
      * The test that makes "the engine decides" checkable.
      *
-     * On a fresh quest `medalDelta(dc, [], 'cleared')` is exactly `dc * 2`, so a dispatcher that
-     * priced the medal itself passed every assertion in this file — a mutant survived on that
-     * arithmetic and this is the fix. With Ironman already held the two answers separate: §5.10
-     * pays the *difference* between two totals, and the difference here is nothing. A zero payout
-     * is legal and reads as a brag; `dc * 2` would be paying for the quest twice.
+     * On a fresh **quest** `medalDelta('quest', dc, [], 'cleared')` is exactly `dc * 2`, so a
+     * dispatcher that priced the medal itself passed every assertion in this file — a mutant
+     * survived on that arithmetic and this is the fix. With Ironman already held the two answers
+     * separate: §5.10 pays the *difference* between two totals, and the difference here is
+     * nothing. A zero payout is legal and reads as a brag; `dc * 2` would be paying for the quest
+     * twice.
+     *
+     * **`dc * 2` is the quest rate and only the quest rate.** §5.1 pays a boss `dc * 20`, and
+     * `medalDelta` takes the kind precisely so nothing infers one from the other. Anybody
+     * reaching for this reasoning while writing a boss test wants `dc * 20`.
      */
     const { client } = scratch();
     const quest = CONTENT.item('a0-name-tag');
@@ -170,7 +175,7 @@ describe('recording a verdict', () => {
     publishVerdict(jobId, 'passed', true);
     await collectVerdicts(client, CONTENT, spool, () => NOW);
 
-    const expected = medalDelta(quest?.dc ?? 0, ['ironman'], 'cleared');
+    const expected = medalDelta('quest', quest?.dc ?? 0, ['ironman'], 'cleared');
     expect(expected).not.toBe((quest?.dc ?? 0) * 2);
 
     const { rows } = await client.query(
@@ -232,7 +237,7 @@ describe('recording a verdict', () => {
 
     const quest = CONTENT.item('a0-name-tag');
     const { rows } = await client.query('SELECT xp_awarded FROM quest_medals');
-    expect(rows).toEqual([{ xp_awarded: medalDelta(quest?.dc ?? 0, [], 'cleared') }]);
+    expect(rows).toEqual([{ xp_awarded: medalDelta('quest', quest?.dc ?? 0, [], 'cleared') }]);
   });
 
   it('discards a verdict file it cannot parse rather than stalling on it', async () => {

@@ -26,7 +26,8 @@ import { fileURLToPath } from 'node:url';
 import { Pool } from 'pg';
 import { migrate } from '@pyquest/db';
 import { medalDelta } from '@pyquest/engine';
-import { loadContentRoot } from '../src/content.ts';
+
+import { loadContentRoot, pricedKind } from '../src/content.ts';
 import { Spool, pump } from '../src/dispatcher.ts';
 import { gitea } from '../src/gitea.ts';
 import { buildServer } from '../src/server.ts';
@@ -147,7 +148,9 @@ async function main(): Promise<void> {
     console.log(polled.body);
 
     const { rows } = await db.query('SELECT medal, xp_awarded FROM quest_medals');
-    const expected = medalDelta(content.item(QUEST)?.dc ?? 0, [], 'cleared');
+    const priced = content.item(QUEST);
+    if (priced === undefined) throw new Error(`${QUEST} is not in the content root`);
+    const expected = medalDelta(pricedKind(priced), priced.dc, [], 'cleared');
     console.log('medals:', rows, 'expected xp:', expected);
 
     const state = (polled.json() as { state: string }).state;
@@ -243,7 +246,9 @@ async function localRepoLoop(
       console.log(polled.body);
 
       const { rows } = await db.query('SELECT medal, xp_awarded FROM quest_medals');
-      const expected = medalDelta(content.item(REPO_QUEST)?.dc ?? 0, [], 'cleared');
+      const priced = content.item(REPO_QUEST);
+      if (priced === undefined) throw new Error(`${REPO_QUEST} is not in the content root`);
+      const expected = medalDelta(pricedKind(priced), priced.dc, [], 'cleared');
       console.log('medals:', rows, 'expected xp:', expected);
 
       const state = (polled.json() as { state: string }).state;

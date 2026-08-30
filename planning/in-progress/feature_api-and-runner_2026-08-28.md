@@ -331,7 +331,7 @@ Every write goes through the repository layer. An API that calls `xpFor` or re-d
 effective DC has crossed §6.7, and the test for that is that `apps/api` imports no engine
 function that returns money it did not first ask for.
 
-### Phase 5 — the boss rate, this track's half  *(added 2026-08-30)*
+### Phase 5 — the boss rate, this track's half  *(added 2026-08-30; **done** 2026-08-30)*
 
 `planning/feature_boss-pays-boss-rates_2026-08-30.md` makes `medalDelta` take the kind it prices
 as a required first argument, because a default reproduces the bug for anyone who forgets. That
@@ -339,26 +339,46 @@ is the `engine` track's change. **Eleven of its nineteen call sites are in this 
 are this track's because this track owns these files — one plan per track, so they arrive as a
 phase here rather than as a second plan that could not have the files anyway.
 
+**The table below said eleven and the compiler said seventeen.** Two files it never named —
+`tests/server.gitsignal.test.ts` and `tests/server.localrepo.test.ts` — landed with this track's
+own Phase 3 on the same day the census was taken. Corrected here as executed:
+
 | File | Calls | What to pass |
 |---|---|---|
-| `src/dispatcher.ts:241` | 1 | `item.kind`, already in scope |
-| `src/server.ts:426` | 1 | `item.kind`, already in scope |
-| `src/views.ts:86` | 1 | `item.kind`, already in scope |
-| `scripts/e2e.ts:127` | 1 | fetch the kind beside the DC it already fetches |
-| `tests/dispatcher.test.ts` | 3 | the fixture's kind, known at the call |
-| `tests/server.test.ts` | 4 | the fixture's kind, known at the call |
+| `src/dispatcher.ts` | 1 | `pricedKind(item)` |
+| `src/server.ts` | 2 | `pricedKind(item)`; `awardCleared` takes `kind` beside `dc` |
+| `src/views.ts` | 1 | `pricedKind(item)`, hoisted out of the slot loop |
+| `scripts/e2e.ts` | 2 | fetch the item once, narrow it, pass kind and DC |
+| `tests/dispatcher.test.ts` | 3 | `'quest'` — the fixture is `a0-name-tag` |
+| `tests/server.test.ts` | 4 | **`'boss'` for the three `a0-first-light` sites**, `'quest'` for one |
+| `tests/server.gitsignal.test.ts` | 2 | `'quest'` — *not in the original table* |
+| `tests/server.localrepo.test.ts` | 2 | `'quest'` — *not in the original table* |
 
 **`views.ts:86` is the one worth understanding rather than mechanically editing.** It is the
 quest-slot projection, pricing every medal slot *for display*. A boss has been quoting a tenth of
 the real number to the player deciding whether to attempt it — so this is not only an awarding
 bug, it is a screen that has been lying about the stakes.
 
-**Two comments must change, and they are the reason this phase is not purely mechanical.**
-`tests/dispatcher.test.ts:154` and `tests/server.test.ts:323` both explain in prose that *"on a
-fresh quest `medalDelta(dc, [], 'cleared')` is exactly `dc * 2`"*. That stays true of quests and
-becomes a trap: it is the reasoning a future author trusts, and the first person writing a boss
-test will read it and conclude the rate is universal. Say **quest** explicitly and name the boss
-rate beside it.
+**Four comments must change — the plan found two — and they are the reason this phase is not
+purely mechanical.** `tests/dispatcher.test.ts:154` and `tests/server.test.ts:323` both explain
+in prose that *"on a fresh quest `medalDelta(dc, [], 'cleared')` is exactly `dc * 2`"*; the same
+reasoning was also written into `tests/server.gitsignal.test.ts:157` and
+`tests/server.localrepo.test.ts:331`. That stays true of quests and becomes a trap: it is the
+reasoning a future author trusts, and the first person writing a boss test will read it and
+conclude the rate is universal. All four now say **quest** explicitly and name the boss rate
+beside it.
+
+**And the phase was not mechanical in a way nobody predicted.** The obvious edit is `'quest'` at
+every test call site. That is wrong at three of them: `a0-first-light` is **Area 0's boss**, and
+the peer-sign-off tests in `server.test.ts` are the boss sign-off path. `npm test` failed with
+`xpAwarded: expected 16, received 160` — the bug caught in the wild, on the exact path §5.11
+makes the parent's gap detector. A blanket replace would have gone green with the bug asserted
+as correct.
+
+**`views.ts` needed a test this tree did not have.** Mutating the narrowing to always return
+`'quest'` reddened exactly one test — the award. No api test had ever fetched a boss's *quest
+view*, so the display path stayed silent. `tests/server.test.ts` gains
+`prices a boss slot at the boss rate`; the mutant now reddens two.
 
 **It lands in the same push as the engine half, not after it.** A required parameter means the
 instant the engine commit exists alone, `tsc -b` is red inside this tree for every track. Wave 3
@@ -613,11 +633,11 @@ medal literally "ruff and pyright clean", so this is the bar the learner is grad
 
 ### What is not built, and why
 
-- **Phase 5, the boss rate.** Blocked on the engine half of
-  `planning/feature_boss-pays-boss-rates_2026-08-30.md`. A required first argument on `medalDelta`
-  turns `tsc -b` red inside this tree for every track the instant the engine commit exists alone,
-  so the two halves land in one push or not at all. The plan stays in `in-progress/` and the `api`
-  track stays held for it.
+- ~~**Phase 5, the boss rate.**~~ **Delivered 2026-08-30**, in one commit with the engine half —
+  `planning/completed/feature_boss-pays-boss-rates_2026-08-30.md`. Seventeen call sites in this
+  tree, not the eleven the phase table predicted; `pricedKind` in `src/content.ts` is the one
+  place content's three-member `Kind` narrows to the engine's two-member `ScaledXpKind`. The
+  `api` track is no longer held.
 - **A `local-repo` quest with a `path` subdirectory.** `exportTree` takes the quest's optional
   `path` and limits the export to it, and neither `local-repo` quest in the campaign sets one — so
   that branch is written, typed and never executed. The first Area 2 quest that uses `path` is the

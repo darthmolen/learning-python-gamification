@@ -1,6 +1,6 @@
 # The Boss Pays Boss Rates
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** engine
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
@@ -50,16 +50,16 @@ wrong today, and §5.10 writes the row once and never re-prices it.
 
 ## Success Criteria
 
-- [ ] A medal earned on a boss pays `20 × effectiveDC`; the same medal on a quest still pays
+- [x] A medal earned on a boss pays `20 × effectiveDC`; the same medal on a quest still pays
       `2 × effectiveDC`
-- [ ] `xpFor('boss', …)` has a production caller — the condition whose absence was the bug
-- [ ] DC-2 still holds for bosses: the total across medals earned in any order equals
+- [x] `xpFor('boss', …)` has a production caller — the condition whose absence was the bug
+- [x] DC-2 still holds for bosses: the total across medals earned in any order equals
       `xp(final effective DC)`, order-independent, exactly as it does for quests
-- [ ] The kind is a **required argument with no default**, so no call site can inherit the bug
+- [x] The kind is a **required argument with no default**, so no call site can inherit the bug
       by omission
-- [ ] The change lands with no `// TODO` and no fallback — every call site chose
-- [ ] Both halves land in one push: engine and api, no window where `tsc -b` is red
-- [ ] A seeded mutant hardcoding `'quest'` in the priced path is caught, and so is one
+- [x] The change lands with no `// TODO` and no fallback — every call site chose
+- [x] Both halves land in one push: engine and api, no window where `tsc -b` is red
+- [x] A seeded mutant hardcoding `'quest'` in the priced path is caught, and so is one
       hardcoding `'boss'`
 
 ## Approach
@@ -210,3 +210,91 @@ composes with it, is a spec question rather than an arithmetic one and is not an
 **Re-pricing history.** §5.10 pays once, and `quest_medals.xp_awarded` records what was paid. If
 a boss medal has already been written at quest rates before this lands, correcting that row is a
 decision about a child's XP total and belongs to a person, not to a migration.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** engine
+**Completed:** 2026-08-30
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+- `questXpEarned` is now `medalXpEarned(kind, baseDC, earned)` and `medalDelta` is
+  `medalDelta(kind, baseDC, alreadyEarned, newMedal)`. `kind` is `ScaledXpKind`, first, required,
+  no default. `xpFor('boss', …)` has production callers for the first time.
+- **RED was captured as a value, not an arity error.** The first pass produced ten failures that
+  all read `TypeError: alreadyEarned is not iterable` — which proves only that the signature does
+  not exist yet, and would have passed just as well against a fix that priced everything wrong.
+  A throwaway assertion against the *old* signature produced the filter that matters:
+
+  ```
+  AssertionError: expected 30 to be 300 // Object.is equality
+  ```
+
+  A DC 15 boss paid 30 where §5.1 says 300 — the bug, in one line, at exactly a tenth.
+- **Both mutants killed, both directions, on values.** Hardcoding `'quest'` in the priced path
+  reddened 5 tests (`expected 30 to be 300`); hardcoding `'boss'` reddened 6 (`expected 300 to
+  be 30`). A third mutant on the api half — `pricedKind` always returning `'quest'` — reddened 2.
+- The DC-2 property now runs as `it.each(['quest', 'boss'])`, so order-independence is proven at
+  both rates rather than assumed to survive the change.
+- Final gate: `npm run typecheck` clean, `npm test` **661 passed / 40 files**.
+
+### Deviations
+
+- **The census was wrong a second time, and the plan now says why that is structural.** It
+  claimed nineteen call sites; there were twenty-eight. The `api` track's Phase 3 landed
+  `server.gitsignal.test.ts` and `server.localrepo.test.ts` on the same day the census was taken,
+  four call sites in two files this plan had never heard of. Corrected on admission, and the
+  Approach now records the actual lesson: a call-site census is a sizing estimate with an expiry
+  date, and `tsc -b` is the list. The compiler duly produced all seventeen api sites, including
+  both files the table missed.
+- **A narrowing helper was needed and was not in the plan.** Content's `Kind` has three members
+  and `ScaledXpKind` has two, so `item.kind` does not typecheck as a rate. `pricedKind(item)` in
+  `apps/api/src/content.ts` is the single place the two vocabularies are reconciled; it throws
+  `ApiFailure('content-invalid')` for an invasion rather than casting, because paying an invasion
+  *something* would write a wrong number into a row §5.10 never re-prices.
+- **`awardCleared` in `server.ts` grew a parameter the plan did not anticipate.** It takes a bare
+  `dc` and a bare `questId`, so it had nowhere to get a kind from. Rather than look one up inside
+  — which would have made it a second place that decides what a boss pays — it takes `kind`
+  beside `dc` and the caller, which holds the `ContentItem`, narrows and passes both.
+- **Two more copies of the trap comment existed than the plan found.** The plan named
+  `dispatcher.test.ts:154` and `server.test.ts:323` as the two prose comments asserting
+  `medalDelta(dc, [], 'cleared')` is `dc * 2`. The same reasoning was also written into
+  `server.gitsignal.test.ts:157` and `server.localrepo.test.ts:331`. All four now say **quest**
+  explicitly and name the boss rate beside it.
+
+### Lessons Learned
+
+- **The suite caught the author, which is the strongest evidence the filter is real.** Threading
+  the kind through eleven api test sites, the mechanical answer was `'quest'` everywhere. It was
+  wrong: `a0-first-light` is **Area 0's boss**, DC 8, and the peer-sign-off tests are the boss
+  sign-off path. `npm test` failed with `xpAwarded: expected 16, received 160`. A blanket
+  find-and-replace would have re-asserted the bug as correct behaviour and gone green — the
+  compiler cannot tell `'quest'` from `'boss'`, and only a test that runs the real content can.
+- **The award site was covered and the display site was not.** The first api mutant reddened
+  exactly one test. `views.ts:86` prices every *unearned* medal slot for the quest screen, and no
+  api test had ever fetched a boss's quest view, so the mutant survived that path silently. A
+  test was added for it; the mutant now reddens two. Awarding and quoting are separate call sites
+  and covering one says nothing about the other — which is a smaller restatement of why
+  thirty-three mutants missed the original bug.
+- **A required parameter is a better census than a grep.** The two files the plan's table missed
+  were found by `tsc`, not by re-reading the plan. That is the argument for "no default" arriving
+  from the other end: the value of the required argument is not only that it forces a choice, but
+  that it *enumerates* every place a choice is owed, at the moment the change lands rather than
+  at the moment the plan was written.
+- **`160` versus `16` is what this cost.** §5.11 makes boss sign-off the parent's entire gap
+  detector. Area 0's boss is the first one a learner meets, and it was paying a tenth — on award,
+  and on the screen that quotes the price before the attempt.
+
+### Backlog Items Created
+
+- `planning/backlog/feature_one-unidentified-api-suite-flake_2026-08-30.md` — one api test failed
+  on one full-suite run and passed on the fourteen runs either side of it. The failure's identity
+  was lost to a `tail -5`, and it has not recurred. Filed rather than rounded to green.
+
+The one open question — what to do about boss medals already written at quest rates —
+  is a decision for a person rather than work for a track, so it is a reminder instead:
+  `planning/reminders/decide_boss-medals-already-paid-at-quest-rates_2026-08-30.md`.

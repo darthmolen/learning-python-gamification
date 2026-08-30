@@ -103,7 +103,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
       [COMMIT_QUEST],
     );
     expect(medals.rows).toEqual([
-      { medal: 'cleared', xp: medalDelta(item?.dc ?? 0, [], 'cleared') },
+      { medal: 'cleared', xp: medalDelta('quest', item?.dc ?? 0, [], 'cleared') },
     ]);
   });
 
@@ -156,7 +156,10 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
    * §5.10 pays the difference, once — and on a fresh quest the difference happens to equal
    * `dc * 2`, which is why the test above cannot tell `medalDelta` from that arithmetic. With
    * Ironman already held the delta is zero and `dc * 2` is not, so this is the case that can.
-   * A zero payout reads as a brag rather than as a refusal, and that sentence is the UI's.
+   * A zero payout reads as a brag rather than as a refusal, and that sentence is the UI's.   *
+   * **`dc * 2` is the quest rate and only the quest rate.** §5.1 pays a boss `dc * 20`, and
+   * `medalDelta` takes the kind precisely so nothing infers one from the other. Anybody reaching
+   * for this reasoning while writing a boss test wants `dc * 20`.
    */
   it('pays the difference and not the price, when a better medal is already held', async () => {
     const { client: db } = scratch();
@@ -174,7 +177,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
       `SELECT xp_awarded AS "xp" FROM quest_medals WHERE quest_id = $1 AND medal = 'cleared'`,
       [COMMIT_QUEST],
     );
-    expect(rows).toEqual([{ xp: medalDelta(item?.dc ?? 0, ['ironman'], 'cleared') }]);
+    expect(rows).toEqual([{ xp: medalDelta('quest', item?.dc ?? 0, ['ironman'], 'cleared') }]);
     expect((rows[0] as { xp: number }).xp).toBe(0);
   });
 

@@ -31,7 +31,7 @@ import { medalDelta } from '@pyquest/engine';
 import { mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { playerProgress } from '@pyquest/db';
-import type { ContentRoot } from './content.ts';
+import { pricedKind, type ContentRoot } from './content.ts';
 import {
   awardMedal,
   claimJob,
@@ -293,7 +293,7 @@ async function record(
     questId: item.id,
     medal: 'cleared',
     earnedAt: clock().toISOString().split('T')[0] as string,
-    xpAwarded: medalDelta(item.dc, held, 'cleared'),
+    xpAwarded: medalDelta(pricedKind(item), item.dc, held, 'cleared'),
   });
 }
 

@@ -127,7 +127,31 @@ describe('the reads', () => {
     });
     const quest = QuestViewSchema.parse(response.json());
     const cleared = quest.medalSlots.find((slot) => slot.medal === 'cleared');
-    expect(cleared?.xp).toBe(medalDelta(quest.dc, [], 'cleared'));
+    expect(cleared?.xp).toBe(medalDelta('quest', quest.dc, [], 'cleared'));
+  });
+
+  it('prices a boss slot at the boss rate, because the screen quotes it before the attempt', async () => {
+    /**
+     * The display half of the same bug, and the half that reached the player first.
+     *
+     * `medalSlots` prices every *unearned* slot for the quest screen, so before the kind was
+     * threaded through, a boss card quoted `dc * 2` to whoever was deciding whether to attempt
+     * it — a tenth of what §5.1 actually pays. They would have read the number, judged the boss
+     * not worth the evening, and been wrong because of an argument nobody passed.
+     *
+     * Awarding and quoting are separate call sites and this is the one the award test cannot
+     * reach, so it gets its own assertion rather than being assumed to follow.
+     */
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/players/${ADA}/quests/a0-first-light`,
+    });
+    const boss = QuestViewSchema.parse(response.json());
+    const cleared = boss.medalSlots.find((slot) => slot.medal === 'cleared');
+
+    expect(CONTENT.item('a0-first-light')?.kind).toBe('boss');
+    expect(cleared?.xp).toBe(medalDelta('boss', boss.dc, [], 'cleared'));
+    expect(cleared?.xp).toBe(boss.dc * 20);
   });
 
   it('never ships the hidden tests, nor the path to them (§6.3)', async () => {
@@ -303,26 +327,42 @@ describe('peer sign-off', () => {
     });
     expect(response.statusCode).toBe(200);
 
-    const quest = CONTENT.item('a0-first-light');
+    /**
+     * `a0-first-light` is **Area 0's boss**, not a quest, and that is the whole point of this
+     * assertion. Peer sign-off is the boss path (§5.11) — the parent's gap detector — so this is
+     * precisely where the missing kind was costing real XP: a DC 8 boss paid 16 where §5.1 says
+     * 160. Pass the fixture's own kind rather than a literal, so renaming the fixture cannot
+     * quietly restore the bug.
+     */
+    const boss = CONTENT.item('a0-first-light');
+    expect(boss?.kind).toBe('boss');
+    const expected = medalDelta('boss', boss?.dc ?? 0, [], 'cleared');
+    expect(expected).toBe((boss?.dc ?? 0) * 20);
+
     expect(response.json()).toMatchObject({
       questId: 'a0-first-light',
       medal: 'cleared',
-      xpAwarded: medalDelta(quest?.dc ?? 0, [], 'cleared'),
+      xpAwarded: expected,
     });
 
     const { rows } = await scratch().client.query(
       `SELECT xp_awarded FROM quest_medals WHERE player_id = $1 AND quest_id = 'a0-first-light'`,
       [ADA],
     );
-    expect(rows).toEqual([{ xp_awarded: medalDelta(quest?.dc ?? 0, [], 'cleared') }]);
+    expect(rows).toEqual([{ xp_awarded: expected }]);
     expect((await app.inject({ method: 'GET', url: '/api/signoffs' })).json()).toEqual([]);
   });
 
   it('pays the delta and not the base price, when a medal is already held', async () => {
     /**
-     * On a fresh quest `medalDelta(dc, [], 'cleared')` and `dc * 2` are the same number, so an api
-     * that priced the medal itself would pass the test above. With Ironman already held they
-     * separate, and §5.10's "pays the difference, once" becomes something a suite can check.
+     * On a fresh item the delta and the base price are the same number, so an api that priced the
+     * medal itself would pass the test above. With Ironman already held they separate, and
+     * §5.10's "pays the difference, once" becomes something a suite can check.
+     *
+     * The fixture is Area 0's **boss**, so the base price here is `dc * 20` (§5.1) and not the
+     * `dc * 2` a quest pays. The rate is named rather than assumed on purpose: `medalDelta` takes
+     * the kind precisely so that no test infers one rate from the other, which is the mistake
+     * that let a boss pay a tenth of the spec for as long as it did.
      */
     const { client } = scratch();
     await client.query(
@@ -337,9 +377,10 @@ describe('peer sign-off', () => {
       payload: { by: GRACE, granted: true },
     });
 
-    const quest = CONTENT.item('a0-first-light');
-    const expected = medalDelta(quest?.dc ?? 0, ['ironman'], 'cleared');
-    expect(expected).not.toBe((quest?.dc ?? 0) * 2);
+    const boss = CONTENT.item('a0-first-light');
+    expect(boss?.kind).toBe('boss');
+    const expected = medalDelta('boss', boss?.dc ?? 0, ['ironman'], 'cleared');
+    expect(expected).not.toBe((boss?.dc ?? 0) * 20);
     expect(response.json()).toMatchObject({ xpAwarded: expected });
   });
 

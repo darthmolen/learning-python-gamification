@@ -144,38 +144,60 @@ export function xpFor(kind: XpKind, effectiveDC?: number): number {
 const MEDAL_NAMES: ReadonlySet<string> = new Set(MEDALS);
 
 /**
- * Everything a quest has paid its player so far, given what they hold on it.
+ * Everything an item has paid its player so far in medals, given what they hold on it.
  *
  * The set may carry the standing non-medal modifiers too — a Datamine (§5.5), a challenge run
- * (§5.2) — because §5.10 prices a medal on the quest's *effective* DC, and those move it.
- * They earn nothing on their own: a Datamine is a legal move that re-prices the quest, not an
- * achievement, so a quest with no medal on it has paid nothing.
+ * (§5.2) — because §5.10 prices a medal on the item's *effective* DC, and those move it.
+ * They earn nothing on their own: a Datamine is a legal move that re-prices the item, not an
+ * achievement, so an item with no medal on it has paid nothing.
+ *
+ * `kind` is required and has no default. It was once absent, and `'quest'` was assumed here —
+ * which meant every medal earned on a boss paid a tenth of §5.1's rate, silently, into a row
+ * §5.10 writes once and never re-prices. A default would have compiled every call site
+ * untouched and left that bug in place for whoever forgot to opt out of it; a required argument
+ * makes the compiler stop at each call site and makes somebody choose.
+ *
+ * It is `ScaledXpKind`, not content's `Kind`, because §5.1 prices an invasion flat at 5 and an
+ * invasion carries no medals. A caller pricing a medal on one has already gone wrong, and a
+ * compile error says so at the line rather than a runtime throw saying it in a log.
  */
-export function questXpEarned(baseDC: number, earned: readonly DifficultyModifier[]): number {
+export function medalXpEarned(
+  kind: ScaledXpKind,
+  baseDC: number,
+  earned: readonly DifficultyModifier[],
+): number {
   const holdsAMedal = earned.some((modifier) => MEDAL_NAMES.has(modifier));
   if (!holdsAMedal) return 0;
-  return xpFor('quest', effectiveDC(baseDC, earned));
+  return xpFor(kind, effectiveDC(baseDC, earned));
 }
 
 /**
- * Spec §5.10 — each medal "raises the quest's effective DC and pays the difference, once".
+ * Spec §5.10 — each medal "raises the item's effective DC and pays the difference, once".
  *
  * Written as a difference of two totals rather than as a per-medal price, which is what makes
  * DC-2 hold: because modifiers sum, the total paid across every medal earned is
  * `xp(final effective DC)` no matter what order they were earned in. The intermediate terms
  * telescope away. Order-independence is not a nicety here — medals are earned on replay over
  * weeks (§5.10), so the order is whatever it happens to be, and two players holding the same
- * medals on the same quest must show the same XP.
+ * medals on the same item must show the same XP.
+ *
+ * The rate does not disturb that: both terms are priced at the same `kind`, so they telescope
+ * exactly as before and DC-2 holds for a boss at 20×DC for the same reason it holds for a quest
+ * at 2×. The property test runs over both kinds rather than assuming it.
  *
  * A medal already held pays nothing: "once" is enforced by the arithmetic rather than by a
  * caller remembering to check.
  */
 export function medalDelta(
+  kind: ScaledXpKind,
   baseDC: number,
   alreadyEarned: readonly DifficultyModifier[],
   newMedal: DifficultyModifier,
 ): number {
-  return questXpEarned(baseDC, [...alreadyEarned, newMedal]) - questXpEarned(baseDC, alreadyEarned);
+  return (
+    medalXpEarned(kind, baseDC, [...alreadyEarned, newMedal]) -
+    medalXpEarned(kind, baseDC, alreadyEarned)
+  );
 }
 
 /* -------------------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ import {
   medalDelta,
 } from '@pyquest/engine';
 import { CONCEPTS } from '@pyquest/content';
-import type { ContentRoot } from './content.ts';
+import { pricedKind, type ContentRoot } from './content.ts';
 
 /**
  * The half of a verifier a client may see (§6.3).
@@ -77,13 +77,17 @@ function heldOn(progress: PlayerProgress, questId: string): Medal[] {
  */
 export function medalSlots(item: ContentItem, held: readonly Medal[]): MedalSlot[] {
   const slots: MedalSlot[] = [];
+  // The kind, not the quest rate. This is the *displayed* price of every unearned slot, so
+  // before it was passed a boss screen quoted a tenth of the real number to the player deciding
+  // whether to attempt it — the bug cost a wrong payout on award and a wrong promise before it.
+  const kind = pricedKind(item);
   for (const medal of medalsFor(item)) {
     if (held.includes(medal)) continue;
     try {
       slots.push({
         medal,
         effectiveDC: effectiveDC(item.dc, [...held, medal]),
-        xp: medalDelta(item.dc, held, medal),
+        xp: medalDelta(kind, item.dc, held, medal),
       });
     } catch (error) {
       if (error instanceof IllegalModifierSetError) continue;

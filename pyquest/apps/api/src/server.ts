@@ -45,10 +45,17 @@ import {
   type RunnerJobStatus,
 } from '@pyquest/contract';
 import { bounties, playerProgress, players } from '@pyquest/db';
-import { dueInvasions, intervalDays, medalDelta, nextRung, standings } from '@pyquest/engine';
+import {
+  dueInvasions,
+  intervalDays,
+  medalDelta,
+  nextRung,
+  standings,
+  type ScaledXpKind,
+} from '@pyquest/engine';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ApiFailure, asFailure, notFound } from './errors.ts';
-import type { ContentRoot } from './content.ts';
+import { pricedKind, type ContentRoot } from './content.ts';
 import { randomUUID } from 'node:crypto';
 import { rmSync } from 'node:fs';
 import { join } from 'node:path';
@@ -187,11 +194,20 @@ export function buildServer(options: ServerOptions): FastifyInstance {
    * The engine prices the delta and exactly that number is written. A medal already held pays
    * nothing and is not an error: §5.10 pays the difference once, and a zero payout is a brag
    * rather than a refusal — which is the UI's sentence to write, not this one's.
+   *
+   * `kind` travels beside `dc` rather than being looked up from `questId`, because this function
+   * takes a bare DC and a bare id — and a rate inferred here would be a second place that
+   * decides what a boss pays. The caller holds the `ContentItem`; it narrows and passes both.
    */
-  async function awardCleared(questId: string, dc: number, playerId: string): Promise<number> {
+  async function awardCleared(
+    kind: ScaledXpKind,
+    questId: string,
+    dc: number,
+    playerId: string,
+  ): Promise<number> {
     const progress = await playerProgress(db, playerId);
     const held = progress.questMedals.filter((row) => row.questId === questId).map((row) => row.medal);
-    const xpAwarded = medalDelta(dc, held, 'cleared');
+    const xpAwarded = medalDelta(kind, dc, held, 'cleared');
     await awardMedal(db, {
       playerId,
       questId,
@@ -371,7 +387,7 @@ export function buildServer(options: ServerOptions): FastifyInstance {
             detail: attemptDetail.gitSignal(item.verifier.signal, evidence),
           });
 
-          if (evidence.satisfied) await awardCleared(item.id, item.dc, playerId);
+          if (evidence.satisfied) await awardCleared(pricedKind(item), item.id, item.dc, playerId);
 
           return reply
             .code(200)
@@ -618,7 +634,7 @@ export function buildServer(options: ServerOptions): FastifyInstance {
      */
     const progress = await playerProgress(db, pending.playerId);
     const held = progress.questMedals.filter((row) => row.questId === item.id).map((row) => row.medal);
-    const xpAwarded = medalDelta(item.dc, held, 'cleared');
+    const xpAwarded = medalDelta(pricedKind(item), item.dc, held, 'cleared');
 
     const written = await awardMedal(db, {
       playerId: pending.playerId,
