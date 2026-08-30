@@ -15,8 +15,21 @@ export function Display({ children, size = 24 }: { children: ReactNode; size?: n
   );
 }
 
-export function Mono({ children, style }: { children: ReactNode; style?: React.CSSProperties }) {
-  return <span style={{ fontFamily: font.mono, fontSize: '11px', color: color.muted, ...style }}>{children}</span>;
+export function Mono({
+  children,
+  style,
+  id,
+}: {
+  children: ReactNode;
+  style?: React.CSSProperties;
+  /** For `aria-describedby`, where a control needs to point at its own explanation. */
+  id?: string;
+}) {
+  return (
+    <span id={id} style={{ fontFamily: font.mono, fontSize: '11px', color: color.muted, ...style }}>
+      {children}
+    </span>
+  );
 }
 
 export function Panel({ children, style }: { children: ReactNode; style?: React.CSSProperties }) {
