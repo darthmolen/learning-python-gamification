@@ -1,0 +1,293 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/.claude/worktrees/reminders-ext
+
+ ❯ tools/vscode/reminders/src/model.test.ts (14 tests | 14 failed) 11ms
+     × keeps only the open ones 4ms
+     × the open vocabulary is configuration, not a constant 1ms
+     × warns when an open reminder needs the learner, whose time it costs 1ms
+     × does not warn when the only learner reminders are closed 0ms
+     × the warning audience is configuration 0ms
+     × shows the count against a bell 0ms
+     × is empty at zero, so a clean board costs no pixels 0ms
+     × groups by subject, and the groups carry their entries 0ms
+     × groups by audience when asked 1ms
+     × flat yields exactly one unlabelled group 1ms
+     × a reminder missing the grouping field is filed, not dropped 0ms
+     × lists the open reminders by title 0ms
+     × does not list the closed ones 0ms
+     × names malformed files by path, which is the only useful thing to say 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > openEntries > keeps only the open ones
+AssertionError: expected [] to deeply equal [ 'a.md', 'b.md', 'c.md' ]
+
+- Expected
++ Received
+
+- [
+-   "a.md",
+-   "b.md",
+-   "c.md",
+- ]
++ []
+
+ ❯ tools/vscode/reminders/src/model.test.ts:56:37
+     54|     const open = openEntries(ENTRIES, CONFIG)
+     55|
+     56|     expect(open.map((e) => e.path)).toEqual(['a.md', 'b.md', 'c.md'])
+       |                                     ^
+     57|   })
+     58|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > openEntries > the open vocabulary is configuration, not a constant
+AssertionError: expected [] to deeply equal [ 'e.md' ]
+
+- Expected
++ Received
+
+- [
+-   "e.md",
+- ]
++ []
+
+ ❯ tools/vscode/reminders/src/model.test.ts:62:37
+     60|     const open = openEntries(ENTRIES, { ...CONFIG, openStatus: 'droppe…
+     61|
+     62|     expect(open.map((e) => e.path)).toEqual(['e.md'])
+       |                                     ^
+     63|   })
+     64| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > shouldWarn > warns when an open reminder needs the learner, whose time it costs
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/vscode/reminders/src/model.test.ts:68:41
+     66| describe('shouldWarn', () => {
+     67|   test('warns when an open reminder needs the learner, whose time it c…
+     68|     expect(shouldWarn(ENTRIES, CONFIG)).toBe(true)
+       |                                         ^
+     69|   })
+     70|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > shouldWarn > does not warn when the only learner reminders are closed
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/vscode/reminders/src/model.test.ts:76:41
+     74|     // Positive control in the same test: without it a function that a…
+     75|     // returns false passes this, which is the hollow case a bare nega…
+     76|     expect(shouldWarn(ENTRIES, CONFIG)).toBe(true)
+       |                                         ^
+     77|     expect(shouldWarn(withoutOpenLearner, CONFIG)).toBe(false)
+     78|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > shouldWarn > the warning audience is configuration
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/vscode/reminders/src/model.test.ts:82:72
+     80|   test('the warning audience is configuration', () => {
+     81|     expect(shouldWarn(ENTRIES, { ...CONFIG, warnOnAudience: [] })).toB…
+     82|     expect(shouldWarn(ENTRIES, { ...CONFIG, warnOnAudience: ['dm'] }))…
+       |                                                                        ^
+     83|   })
+     84| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > statusBarText > shows the count against a bell
+AssertionError: expected '' to be '$(bell) 3' // Object.is equality
+
+- Expected
++ Received
+
+- $(bell) 3
+
+ ❯ tools/vscode/reminders/src/model.test.ts:88:30
+     86| describe('statusBarText', () => {
+     87|   test('shows the count against a bell', () => {
+     88|     expect(statusBarText(3)).toBe('$(bell) 3')
+       |                              ^
+     89|   })
+     90|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > statusBarText > is empty at zero, so a clean board costs no pixels
+AssertionError: expected '' to be '$(bell) 1' // Object.is equality
+
+- Expected
++ Received
+
+- $(bell) 1
+
+ ❯ tools/vscode/reminders/src/model.test.ts:92:30
+     90|
+     91|   test('is empty at zero, so a clean board costs no pixels', () => {
+     92|     expect(statusBarText(1)).toBe('$(bell) 1')
+       |                              ^
+     93|     expect(statusBarText(0)).toBe('')
+     94|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > groupEntries > groups by subject, and the groups carry their entries
+AssertionError: expected [] to deeply equal [ 'hardware', 'screens' ]
+
+- Expected
++ Received
+
+- [
+-   "hardware",
+-   "screens",
+- ]
++ []
+
+ ❯ tools/vscode/reminders/src/model.test.ts:101:40
+     99|     const groups = groupEntries(openEntries(ENTRIES, CONFIG), CONFIG)
+    100|
+    101|     expect(groups.map((g) => g.label)).toEqual(['hardware', 'screens'])
+       |                                        ^
+    102|     expect(groups[0]?.entries.map((e) => e.path)).toEqual(['a.md', 'b.…
+    103|     expect(groups[1]?.entries.map((e) => e.path)).toEqual(['c.md'])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > groupEntries > groups by audience when asked
+AssertionError: expected [] to deeply equal [ 'dm', 'learner' ]
+
+- Expected
++ Received
+
+- [
+-   "dm",
+-   "learner",
+- ]
++ []
+
+ ❯ tools/vscode/reminders/src/model.test.ts:112:40
+    110|     })
+    111|
+    112|     expect(groups.map((g) => g.label)).toEqual(['dm', 'learner'])
+       |                                        ^
+    113|   })
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > groupEntries > flat yields exactly one unlabelled group
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tools/vscode/reminders/src/model.test.ts:118:20
+    116|     const groups = groupEntries(openEntries(ENTRIES, CONFIG), { ...CON…
+    117|
+    118|     expect(groups).toHaveLength(1)
+       |                    ^
+    119|     expect(groups[0]?.label).toBe('')
+    120|     expect(groups[0]?.entries).toHaveLength(3)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > groupEntries > a reminder missing the grouping field is filed, not dropped
+AssertionError: expected [] to include 'f.md'
+ ❯ tools/vscode/reminders/src/model.test.ts:128:17
+    126|
+    127|     const all = groups.flatMap((g) => g.entries.map((e) => e.path))
+    128|     expect(all).toContain('f.md')
+       |                 ^
+    129|   })
+    130| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > tooltipMarkdown > lists the open reminders by title
+AssertionError: expected '' to contain 'Reach Gitea'
+
+- Expected
++ Received
+
+- Reach Gitea
+
+ ❯ tools/vscode/reminders/src/model.test.ts:136:16
+    134|     const md = tooltipMarkdown(openEntries(ENTRIES, CONFIG), [], CONFI…
+    135|
+    136|     expect(md).toContain('Reach Gitea')
+       |                ^
+    137|     expect(md).toContain('Open nine screens')
+    138|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > tooltipMarkdown > does not list the closed ones
+AssertionError: expected '' to contain 'Install the profile'
+
+- Expected
++ Received
+
+- Install the profile
+
+ ❯ tools/vscode/reminders/src/model.test.ts:143:16
+    141|     const md = tooltipMarkdown(openEntries(ENTRIES, CONFIG), [], CONFI…
+    142|
+    143|     expect(md).toContain('Install the profile') // control: it lists s…
+       |                ^
+    144|     expect(md).not.toContain('Old thing')
+    145|     expect(md).not.toContain('Abandoned thing')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯
+
+ FAIL  tools/vscode/reminders/src/model.test.ts > tooltipMarkdown > names malformed files by path, which is the only useful thing to say
+AssertionError: expected '' to contain 'planning/reminders/broken.md'
+
+- Expected
++ Received
+
+- planning/reminders/broken.md
+
+ ❯ tools/vscode/reminders/src/model.test.ts:153:16
+    151|     ], CONFIG)
+    152|
+    153|     expect(md).toContain('planning/reminders/broken.md')
+       |                ^
+    154|     expect(md).toContain('no **Status:** label')
+    155|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/14]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  14 failed (14)
+   Start at  10:02:44
+   Duration  247ms (transform 18ms, setup 0ms, import 30ms, tests 11ms, environment 0ms)
+

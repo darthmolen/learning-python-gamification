@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Reminders extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tools/vscode/reminders",
+        "${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/tools/vscode/reminders/dist/**/*.js"
+      ],
+      "preLaunchTask": "reminders: compile"
+    }
+  ]
+}
