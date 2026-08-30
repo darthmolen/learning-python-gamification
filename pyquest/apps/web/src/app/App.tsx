@@ -6,7 +6,8 @@ import { AreaScreen } from '../screens/AreaScreen';
 import { BossScreen } from '../screens/BossScreen';
 import { DefendScreen } from '../screens/DefendScreen';
 import { MapScreen } from '../screens/MapScreen';
-import { ConsoleScreen, JournalScreen, TomeScreen } from '../screens/OverlandScreens';
+import { ConsoleScreen, JournalScreen } from '../screens/OverlandScreens';
+import { TomeScreen } from '../screens/TomeScreen';
 import { PartyScreen } from '../screens/PartyScreen';
 import { QuestScreen } from '../screens/QuestScreen';
 

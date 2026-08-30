@@ -2,6 +2,7 @@ import { useParams } from 'react-router';
 import { color, font } from '../design/tokens';
 import { getAreaIdentity, getAvailableQuests } from '../gateway/index.ts';
 import { Breadcrumbs } from '../shell/Breadcrumbs';
+import { Tome } from '../tome/Tome';
 import { Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
 
 /**
@@ -45,6 +46,20 @@ export function QuestScreen() {
             <MedalSlots held={quest.medals} />
           </>
         )}
+
+        {/*
+          * The in-place Tome, mounted where §6.8's argument actually applies: "If looking
+          * something up costs a learner the code in his editor, he stops looking things up."
+          * The rail's Tome is a place; this one expands over the work without closing it.
+          */}
+        <div style={{ marginTop: '28px' }}>
+          <Tome>
+            <p style={{ margin: 0, color: color.fgBright }}>
+              The field manual for this area opens here, in place. Nothing above is covered and
+              nothing is lost — your editor keeps whatever is in it.
+            </p>
+          </Tome>
+        </div>
 
         <Eyebrow style={{ margin: '30px 0 12px' }}>The work</Eyebrow>
         <Panel>

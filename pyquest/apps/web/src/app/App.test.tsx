@@ -18,7 +18,7 @@ const at = (path: string) =>
 describe('routing', () => {
   const RAIL: readonly [string, string][] = [
     ['/map', 'The Campaign'],
-    ['/tome', 'Tome'],
+    ['/tome', 'The Tome'],
     ['/defend', 'Defend'],
     ['/party', 'Party'],
     ['/journal', 'Journal'],
@@ -66,6 +66,31 @@ describe('routing', () => {
    * title at all. It lives in `src/gateway/boundary.test.ts`, beside the other rule about what
    * a screen is not allowed to reach for.
    */
+  /**
+   * §6.8 lists the Tome twice, and the two are not the same control. Reached from the rail it
+   * is a **place** — the whole syllabus, open, nothing to reveal. The expand-in-place behaviour
+   * belongs where he is working, which is the only place its argument applies: "If looking
+   * something up costs a learner the code in his editor, he stops looking things up."
+   *
+   * Shipping the expander on the rail destination made him press a button to see the thing he
+   * had just navigated to.
+   */
+  it('gives the Tome destination no reveal button — it is already open', () => {
+    at('/tome');
+
+    expect(screen.queryByRole('button', { name: 'Tome' })).toBeNull();
+    expect(screen.getByRole('navigation', { name: 'Syllabus' })).toBeInTheDocument();
+    // Every area is listed and none of it is locked: "every page is open from day one".
+    expect(screen.getAllByRole('button', { name: /concepts$/ })).toHaveLength(8);
+  });
+
+  it('keeps the expanding Tome on the screen where he is working', async () => {
+    at('/area/3/quest/a3-recipe-book');
+
+    // Here the button is right: it opens over the work without closing it.
+    expect(screen.getByRole('button', { name: 'Tome' })).toHaveAttribute('aria-expanded', 'false');
+  });
+
   it('always offers the rail, wherever you are standing', () => {
     at('/area/3/quest/a3-recipe-book');
     expect(screen.getByRole('navigation', { name: 'Overland' })).toBeInTheDocument();

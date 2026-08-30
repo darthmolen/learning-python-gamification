@@ -16,6 +16,7 @@ import {
   type Standing,
   type XpSource,
 } from '@pyquest/contract';
+import { CONCEPTS } from '@pyquest/content/browser';
 import * as fixtures from '../fixtures/index.ts';
 
 /**
@@ -91,3 +92,27 @@ export const getLevel = (): Level => parseLevel(fixtures.level);
  * is. It parses like the rest, because the shape is real even though the source is not.
  */
 export const getXpSources = (): XpSource[] => parseXpSources(fixtures.xpSources);
+
+/* -------------------------------------------------------------------------------------------
+ * The syllabus — the Tome's left rail
+ * ----------------------------------------------------------------------------------------- */
+
+export interface SyllabusEntry {
+  area: AreaIdentity;
+  /** How many concepts this area first teaches, per §4's registry. */
+  concepts: number;
+}
+
+/**
+ * Every area with its concept count. The registry is static content compiled into the bundle
+ * rather than a payload, but it is reached through the gateway like everything else — a screen
+ * that imports `CONCEPTS` directly is a screen that has to change when it stops being static.
+ */
+export const getSyllabus = (): SyllabusEntry[] =>
+  getAreaIdentities().map((area) => ({
+    area,
+    concepts: CONCEPTS.filter((c) => c.area === area.area).length,
+  }));
+
+/** The whole registry, for the Tome's "N concepts" header. */
+export const getConceptTotal = (): number => CONCEPTS.length;
