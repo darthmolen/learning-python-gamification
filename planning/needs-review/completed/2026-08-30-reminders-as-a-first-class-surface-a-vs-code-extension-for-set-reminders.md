@@ -313,3 +313,81 @@ installed extension rather than a dev host.
 *Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
 
 **Not acted on.** Filed unread on 2026-08-30 at the parent's direction — the VS Code extension idea was set aside rather than evaluated. No findings were accepted, rejected or considered, and this review remains live if the idea is picked up.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as
+received and is unaltered.*
+
+**7 accepted, 3 merged, 1 rejected, 0 outstanding** — applied to
+`planning/feature_reminders-vscode-extension_2026-08-30.md`. The one flagged item was ruled by
+the parent and is recorded below as accepted.
+
+### The rejection, and the evidence
+
+**Critical — "`StatusBarAlignment` casing inconsistency, one form is wrong."** Rejected. The
+review read two different enums as one enum written two ways. The plan's line 99 is code written
+against the public extension API — `StatusBarAlignment.Left`, correct. The other occurrence was a
+verbatim quotation of VS Code's own workbench source, where the internal enum genuinely is
+`StatusbarAlignment.LEFT`:
+
+```
+this.statusbarService.addEntry(this.getMarkersItem(), 'status.problems', StatusbarAlignment.LEFT, 50 /* Medium Priority */);
+```
+
+— `vs/workbench/contrib/markers/browser/markers.contribution.ts`, fetched from
+`raw.githubusercontent.com/microsoft/vscode/main` on 2026-08-30. The internal `IStatusbarService`
+enum and the public `vscode.StatusBarAlignment` are separate types with separate casing
+conventions. Nothing in the plan would have failed to compile.
+
+The ambiguity was real even though the defect was not, and the merge honours it: the quotation is
+now inside a fenced `ts` block carrying a comment that names both enums explicitly, so the next
+reader cannot make the same read.
+
+### The correction that matters most
+
+**Important — `engines.vscode` not pinned.** Accepted as a requirement, **rejected as a number.**
+The review proposed `^1.79.0`, citing `checkboxState` ≥ 1.79 and badge ≥ 1.75. Both figures are
+wrong. `TreeItem.checkboxState` and `TreeView.onDidChangeCheckboxState` were **finalized in 1.80**
+(June 2023) after being proposed in 1.72; `TreeView` badges date to roughly 1.72. Verified against
+the VS Code release notes on 2026-08-30, not assumed.
+
+Taking the suggestion verbatim would have shipped a manifest permitting a host where the checkbox
+is the core interaction and silently does nothing — a worse failure than no floor at all, because
+it looks like a broken extension rather than a mis-hosted one. The plan now pins `^1.80.0` and
+says why in the manifest.
+
+### The flagged item, ruled
+
+**Important — soften "immediately right of the Problems indicator."** The author argued for
+keeping the strict wording, on the grounds that a criterion softened until it cannot fail is
+decorative, and that this repository already models the honest alternative (`feature_world-shim`
+carries an unmet criterion marked BLOCKED rather than reworded).
+
+**The parent overruled it, and was right.** That argument assumed a two-user machine. The plan's
+own Objective says the extension ships as a standalone `.vsix` to strangers, whose VS Code
+version may move Problems and whose other extensions may claim any adjacent priority — possibly
+by means nobody here has thought of. On someone else's status bar, "immediately right of Problems"
+is not a criterion, it is a wish. The criterion now reads "in the left cluster, adjacent to
+Problems," which is the part actually within the extension's control, and the slack is taken up
+by a new `reminders.statusBarPriority` setting.
+
+### Everything else
+
+Accepted without argument, because the review was right each time: `applyEdit` does not reach
+disk without `document.save()` (a real bug in the plan's own risk mitigation, and now the only
+verification step exercising that path); `RelativePattern` needed its base stated, so
+`reminders.directory` is workspace-root-relative in v1; the RED capture needed to be a committed
+artifact rather than an attestation, per `test-filter-development`; `workspace.findFiles` is
+undefined across multi-root workspaces; and the success criterion forbidding filenames
+contradicted the parse contract requiring a path on malformed files — a contradiction inside the
+author's own document.
+
+Merged rather than taken wholesale: the status-bar priority finding (the observed `50` is kept,
+relabelled *observed, not contracted*, plus a setting and a strengthened Risks entry — deleting
+the observation would have left the next reader to re-derive or guess it), the `launch.json`
+clobber warning (`test -f .vscode/launch.json` confirms no such file exists today, but
+read-then-append is the right instruction regardless), and the wording of the watcher deletion
+check, which now names `onDidDelete`.
