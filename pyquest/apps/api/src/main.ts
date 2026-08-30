@@ -9,11 +9,14 @@
 import { Pool } from 'pg';
 import { loadContentRoot } from './content.ts';
 import { Spool, pump } from './dispatcher.ts';
+import { gitea, giteaSettings } from './gitea.ts';
 import { buildServer } from './server.ts';
 
 const CONTENT_ROOT = process.env['CONTENT_ROOT'] ?? '/content';
 const DATABASE_URL = process.env['DATABASE_URL'];
 const SPOOL_ROOT = process.env['SPOOL_ROOT'] ?? '/spool';
+/** One clone per player, reused between submissions and hard-reset on each. See `checkout.ts`. */
+const WORKSPACE_ROOT = process.env['WORKSPACE_ROOT'] ?? '/workspaces';
 const PORT = Number(process.env['API_PORT'] ?? 3081);
 
 /**
@@ -32,15 +35,37 @@ async function main(): Promise<void> {
 
   const content = loadContentRoot(CONTENT_ROOT);
   const db = new Pool({ connectionString: DATABASE_URL });
+  const spool = new Spool(SPOOL_ROOT);
+  spool.ensure();
 
-  const app = buildServer({ content, db, logger: true });
+  /**
+   * Gitea is optional, and the api boots without it.
+   *
+   * Eleven of the thirteen routes have nothing to do with git; refusing to start over a missing
+   * token would take the whole campaign down for the sake of two quests in Area 2. What the api
+   * must not do is pretend — without this, `local-repo` and `git-signal` refuse with a stated
+   * reason and record nothing, because a scar for a verifier that never ran is a lie in the one
+   * record §3.5 says is never edited.
+   */
+  const settings = giteaSettings(process.env);
+  const client = settings === undefined ? undefined : gitea(settings);
+
+  const app = buildServer({
+    content,
+    db,
+    logger: true,
+    spool,
+    workspaceRoot: WORKSPACE_ROOT,
+    ...(client === undefined ? {} : { gitea: client }),
+  });
   app.log.info(
     { root: content.root, items: content.items.length, areas: content.manifests.length },
     'content loaded',
   );
 
-  const spool = new Spool(SPOOL_ROOT);
-  spool.ensure();
+  if (client === undefined) {
+    app.log.warn('no GITEA_TOKEN: local-repo and git-signal will refuse rather than guess');
+  }
 
   /**
    * The pump never rejects the process. A transient database error must not take the api down

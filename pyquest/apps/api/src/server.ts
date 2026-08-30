@@ -49,11 +49,19 @@ import { dueInvasions, intervalDays, medalDelta, nextRung, standings } from '@py
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ApiFailure, asFailure, notFound } from './errors.ts';
 import type { ContentRoot } from './content.ts';
+import { randomUUID } from 'node:crypto';
+import { rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { exportTree, syncCheckout } from './checkout.ts';
+import type { Spool } from './dispatcher.ts';
+import type { Gitea, GiteaRepo } from './gitea.ts';
+import { readSignal } from './gitsignal.ts';
 import {
   awardMedal,
   clearForcedReviews,
   enqueueJob,
   job as readJob,
+  lastAttemptAt,
   pendingSignoff,
   pendingSignoffs,
   playerRoles,
@@ -83,8 +91,35 @@ export interface ServerOptions {
   readonly db: Writable;
   /** Injected so a suite can pin a date. Never reachable from a request. */
   readonly clock?: () => Date;
+  /**
+   * Gitea, for the two verifiers that read the learner's repository.
+   *
+   * Optional, because the other eleven routes have nothing to do with git and an api that refused
+   * to boot without a token would take the whole campaign down over two quests in Area 2. Absent,
+   * `local-repo` and `git-signal` refuse with a stated reason and record nothing.
+   */
+  readonly gitea?: Gitea;
+  /**
+   * The spool, so `local-repo` can put the exported tree where the runner will find it.
+   *
+   * Optional for the same reason `gitea` is: the eleven routes that are not Submit do not need
+   * one, and a suite that only reads should not have to invent a directory to get them.
+   */
+  readonly spool?: Spool;
+  /** `/workspaces/` — one clone per player lives under it. See `checkout.ts`. */
+  readonly workspaceRoot?: string;
   readonly logger?: boolean;
 }
+
+/**
+ * How large an exported repository may be before Submit refuses it.
+ *
+ * The runner unpacks it onto a 64 MB tmpfs, so a repository bigger than this does not fail in the
+ * sandbox — it fails the *next* job too, by filling the memory that one needed. Refusing it here
+ * is the difference between one learner being told his repository is too big and every submission
+ * after his being killed for no reason he can see.
+ */
+const MAX_EXPORT_BYTES = 24 * 1024 * 1024;
 
 /** ISO calendar date in UTC. The engine takes `now` as a string and this is where it comes from. */
 const today = (clock: () => Date): string => (clock().toISOString().split('T')[0] as string);
@@ -96,13 +131,19 @@ function asArea(raw: string): Area {
   return area;
 }
 
-/** Progress for one player, or a 404. A player id that is not a uuid is not a player. */
-async function progressFor(db: Writable, playerId: string): Promise<PlayerProgress> {
+/** One player by id, or a 404. A player id that is not a uuid is not a player. */
+async function playerFor(db: Writable, playerId: string): Promise<{ id: string; handle: string }> {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(playerId)) {
     throw notFound(`player ${playerId}`);
   }
-  const roster = await players(db);
-  if (!roster.some((player) => player.id === playerId)) throw notFound(`player ${playerId}`);
+  const found = (await players(db)).find((player) => player.id === playerId);
+  if (found === undefined) throw notFound(`player ${playerId}`);
+  return found;
+}
+
+/** Progress for one player, or a 404. */
+async function progressFor(db: Writable, playerId: string): Promise<PlayerProgress> {
+  await playerFor(db, playerId);
   return playerProgress(db, playerId);
 }
 
@@ -110,6 +151,56 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   const { content, db } = options;
   const clock = options.clock ?? ((): Date => new Date());
   const app = Fastify({ logger: options.logger ?? false });
+
+  /**
+   * The Gitea client, or a refusal that records nothing.
+   *
+   * `internal` rather than `verifier-failed`, and the distinction is the whole reason this is a
+   * function. A missing token is the parent's configuration, not the learner's work; recording it
+   * as a failed attempt would write a scar for a verifier that never ran, into the one record
+   * §3.5 says is never edited.
+   */
+  function requireGitea(what: string): Gitea {
+    if (options.gitea === undefined) {
+      throw new ApiFailure(
+        'internal',
+        `${what} reads the player's git repository, and this api has no GITEA_TOKEN configured`,
+      );
+    }
+    return options.gitea;
+  }
+
+  function requireRepo(client: Gitea, handle: string): GiteaRepo {
+    const repo = client.repoFor(handle);
+    if (repo === undefined) {
+      throw new ApiFailure(
+        'internal',
+        `no git repository is configured for ${handle} — set PLAYER_REPOS, e.g. ${handle}=${handle}/quests`,
+      );
+    }
+    return repo;
+  }
+
+  /**
+   * Phase 4's step 2, for a verifier that resolved without the runner.
+   *
+   * The engine prices the delta and exactly that number is written. A medal already held pays
+   * nothing and is not an error: §5.10 pays the difference once, and a zero payout is a brag
+   * rather than a refusal — which is the UI's sentence to write, not this one's.
+   */
+  async function awardCleared(questId: string, dc: number, playerId: string): Promise<number> {
+    const progress = await playerProgress(db, playerId);
+    const held = progress.questMedals.filter((row) => row.questId === questId).map((row) => row.medal);
+    const xpAwarded = medalDelta(dc, held, 'cleared');
+    await awardMedal(db, {
+      playerId,
+      questId,
+      medal: 'cleared',
+      earnedAt: today(clock),
+      xpAwarded,
+    });
+    return xpAwarded;
+  }
 
   /**
    * One error shape on the way out, whatever went wrong on the way in.
@@ -185,7 +276,7 @@ export function buildServer(options: ServerOptions): FastifyInstance {
     '/api/players/:playerId/quests/:questId/submit',
     async (request, reply) => {
       const { playerId, questId } = request.params;
-      await progressFor(db, playerId);
+      const player = await playerFor(db, playerId);
 
       const item = content.item(questId);
       if (item === undefined) throw notFound(`quest ${questId}`);
@@ -246,18 +337,122 @@ export function buildServer(options: ServerOptions): FastifyInstance {
           return reply.code(202).send(JobAcceptedSchema.parse({ jobId, state: 'queued' }));
         }
 
-        case 'local-repo':
-        case 'git-signal':
-          /**
-           * Both read the player's Gitea repository, which is not reachable from his machine yet
-           * — see `planning/backlog/feature_gitea-lan-access-for-the-son_2026-08-27.md`. Refused
-           * rather than silently recorded as a failure, because a scar for a verifier that never
-           * ran is a lie in the one record §3.5 says is never edited.
-           */
-          throw new ApiFailure(
-            'internal',
-            `the ${item.verifier.type} verifier needs Gitea reachable from the player's machine`,
-          );
+        /**
+         * `git-signal` resolves here and now, because there is nothing to run.
+         *
+         * The evidence is the history, the history is already on the server, and the answer is a
+         * read. So Submit returns a terminal state with a `200` rather than a `202` and an id to
+         * poll: there is no job, and telling a client to poll for an answer it already has is how
+         * a screen ends up saying "working" about something that finished.
+         */
+        case 'git-signal': {
+          if (body.type !== 'git-signal') throw mismatch();
+          const client = requireGitea('git-signal');
+          const repo = requireRepo(client, player.handle);
+          const since = await lastAttemptAt(db, playerId, questId);
+
+          let evidence;
+          try {
+            evidence = await readSignal(client, repo, item.verifier.signal, { since });
+          } catch (cause) {
+            /** Gitea refused. Not the learner's failure, so no scar — see `requireGitea`. */
+            throw new ApiFailure(
+              'internal',
+              `gitea could not be read for ${repo.owner}/${repo.name}`,
+              { cause },
+            );
+          }
+
+          /** Every outcome writes an attempts row, pass or fail (§5.3, §3.5). */
+          const attemptId = await recordAttempt(db, {
+            playerId,
+            questId,
+            passed: evidence.satisfied,
+            detail: attemptDetail.gitSignal(item.verifier.signal, evidence),
+          });
+
+          if (evidence.satisfied) await awardCleared(item.id, item.dc, playerId);
+
+          return reply
+            .code(200)
+            .send(
+              JobAcceptedSchema.parse({
+                jobId: attemptId,
+                state: evidence.satisfied ? 'passed' : 'failed',
+              }),
+            );
+        }
+
+        /**
+         * `local-repo` — the api pulls what he pushed and the runner grades it (§6.4).
+         *
+         * The clone happens here rather than in the dispatcher, and that placement is the point:
+         * a repository that cannot be reached, a ref that does not exist, or a tree too large for
+         * the sandbox are all things to tell the person who just pressed the button, in the
+         * response to the press. Discovered a tick later in a background pump they become a job
+         * that quietly died.
+         *
+         * No `attempts` row is written here. The verdict comes from the runner, and Phase 4 writes
+         * exactly one row from it — recording a second one at submit time would double every scar
+         * §5.3 counts.
+         */
+        case 'local-repo': {
+          if (body.type !== 'local-repo') throw mismatch();
+          const client = requireGitea('local-repo');
+          const repo = requireRepo(client, player.handle);
+          if (options.spool === undefined || options.workspaceRoot === undefined) {
+            throw new ApiFailure(
+              'internal',
+              'local-repo needs SPOOL_ROOT and WORKSPACE_ROOT, and this api has neither',
+            );
+          }
+
+          let checkout;
+          try {
+            checkout = syncCheckout({
+              root: options.workspaceRoot,
+              handle: player.handle,
+              cloneUrl: client.cloneUrl(repo),
+              ref: body.ref,
+            });
+          } catch (cause) {
+            /** git refused. Not the learner failing a test, so no scar — see `requireGitea`. */
+            throw new ApiFailure(
+              'internal',
+              `the api could not check out ${repo.owner}/${repo.name}: ${
+                cause instanceof Error ? cause.message : String(cause)
+              }`,
+              { cause },
+            );
+          }
+
+          options.spool.ensure();
+          const relative = `repos/${randomUUID()}.tar`;
+          const absolute = join(options.spool.root, relative);
+          const bytes = exportTree(checkout, absolute, item.verifier.path);
+          if (bytes > MAX_EXPORT_BYTES) {
+            rmSync(absolute, { force: true });
+            throw new ApiFailure(
+              'verifier-failed',
+              `${repo.owner}/${repo.name} exports ${Math.round(bytes / 1_048_576)} MB, and the sandbox has room for ${MAX_EXPORT_BYTES / 1_048_576} MB`,
+            );
+          }
+
+          const jobId = await enqueueJob(db, {
+            playerId,
+            questId,
+            payload: {
+              verifier: 'local-repo',
+              questId,
+              /** The path to the tests, never the tests: they are content and content is in git. */
+              tests: item.verifier.tests,
+              repoTar: relative,
+              ref: checkout.ref,
+              sha: checkout.sha,
+            },
+          });
+          return reply.code(202).send(JobAcceptedSchema.parse({ jobId, state: 'queued' }));
+        }
       }
     },
   );

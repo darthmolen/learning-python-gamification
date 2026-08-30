@@ -8,7 +8,9 @@ merely for the word "test".
 
 from __future__ import annotations
 
+import io
 import json
+import tarfile
 import tempfile
 from pathlib import Path
 
@@ -203,3 +205,108 @@ def test_the_workspace_does_not_survive_the_job() -> None:
         )
         poll_once(spool, TIGHT)
         assert list(spool.work.iterdir()) == []
+
+
+# ---------------------------------------------------------------------------------------------
+# `local-repo`: the tree that was pushed, not the code that was typed
+# ---------------------------------------------------------------------------------------------
+#
+# `hidden-tests` hands over one file. `local-repo` hands over a whole repository, because §6.4's
+# evidence is the repository and the authored tests for it read the filesystem — `content/tests/
+# a2-where-the-file-lives_test.py` looks for a directory, runs a script out of it, and checks that
+# the same command fails one directory up. None of that is expressible as a `solution.py`.
+#
+# It arrives as ONE TAR, which is what keeps the boundary intact. The api exports `git archive` of
+# the commit it reset to, drops the tar in the spool, and this process unpacks it onto its own
+# tmpfs — so the learner's files never land on the disk the api writes to, which is the disk fill
+# the tmpfs exists to contain. The extraction is `filter="data"`, so a tar that names an absolute
+# path or climbs out of the workspace is refused by the standard library rather than by a comment.
+
+REPO_TESTS = '''"""A local-repo specification: the tree, not a solution file."""
+
+import io
+import pathlib
+import tarfile
+
+
+def test_the_project_directory_exists() -> None:
+    assert pathlib.Path("project").is_dir()
+
+
+def test_the_script_is_where_he_pushed_it() -> None:
+    assert pathlib.Path("project/run_me.py").read_text(encoding="utf-8").startswith("print")
+
+
+def test_no_solution_file_was_invented_for_a_repository_job() -> None:
+    """A `local-repo` job submits no code, so nothing must appear pretending it did."""
+    assert not pathlib.Path("solution.py").exists()
+'''
+
+
+def _write_repo_tar(path: Path) -> None:
+    """Write a tar shaped like `git archive` output: relative paths, no leading slash."""
+    with tarfile.open(path, "w") as archive:
+        for name, body in (
+            ("project/run_me.py", 'print("I am running from a file.")\n'),
+            ("README.md", "# his repository\n"),
+        ):
+            data = body.encode("utf-8")
+            info = tarfile.TarInfo(name)
+            info.size = len(data)
+            archive.addfile(info, io.BytesIO(data))
+
+
+def test_a_local_repo_job_runs_against_the_tree_that_was_pushed() -> None:
+    with tempfile.TemporaryDirectory() as root:
+        spool = Spool(Path(root), Path(root) / "tmp")
+        spool.ensure()
+        (spool.root / "repos").mkdir(exist_ok=True)
+        _write_repo_tar(spool.root / "repos" / "11.tar")
+        (spool.incoming / "11.json").write_text(
+            json.dumps(
+                {
+                    "job_id": "11",
+                    "quest_id": "a2-where-the-file-lives",
+                    "code": "",
+                    "tests": REPO_TESTS,
+                    "repo_tar": "repos/11.tar",
+                },
+            ),
+            encoding="utf-8",
+        )
+
+        verdict = poll_once(spool, TIGHT)
+        assert verdict is not None, "the job was not claimed"
+        assert verdict.outcome is Outcome.PASSED, verdict.stdout + verdict.stderr
+
+
+def test_a_repo_tar_that_climbs_out_of_the_spool_is_refused() -> None:
+    """The path crosses a process boundary, so it is checked rather than trusted.
+
+    Nothing in the api writes such a path. That is exactly why it is asserted here: the spool is
+    the one interface where a bug on the other side becomes an arbitrary read on this one.
+    """
+    with tempfile.TemporaryDirectory() as root:
+        spool = Spool(Path(root), Path(root) / "tmp")
+        spool.ensure()
+        outside = Path(root).parent / "outside.tar"
+        _write_repo_tar(outside)
+        try:
+            (spool.incoming / "12.json").write_text(
+                json.dumps(
+                    {
+                        "job_id": "12",
+                        "quest_id": "a2-where-the-file-lives",
+                        "code": "",
+                        "tests": REPO_TESTS,
+                        "repo_tar": "../outside.tar",
+                    },
+                ),
+                encoding="utf-8",
+            )
+
+            verdict = poll_once(spool, TIGHT)
+            assert verdict is not None
+            assert verdict.outcome is Outcome.KILLED
+        finally:
+            outside.unlink(missing_ok=True)

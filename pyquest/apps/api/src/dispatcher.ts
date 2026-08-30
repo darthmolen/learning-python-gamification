@@ -60,8 +60,26 @@ export class Spool {
     return join(this.root, 'done');
   }
 
+  /**
+   * Where a `local-repo` submission's exported tree waits.
+   *
+   * One tar per job, written by `POST /submit` and removed once the verdict is recorded. A tar
+   * rather than an unpacked tree: one file appears atomically, the runner unpacks it onto its own
+   * tmpfs, and the learner's files never land on the disk the api writes to — which is the disk
+   * fill §6.6's tmpfs exists to contain.
+   */
+  get repos(): string {
+    return join(this.root, 'repos');
+  }
+
   ensure(): void {
-    for (const path of [this.incoming, join(this.root, 'running'), this.done, join(this.root, 'work')]) {
+    for (const path of [
+      this.incoming,
+      join(this.root, 'running'),
+      this.done,
+      this.repos,
+      join(this.root, 'work'),
+    ]) {
       mkdirSync(path, { recursive: true });
     }
   }
@@ -125,13 +143,21 @@ export async function dispatchOne(
   const claimed = await claimJob(db, { workerId, leaseSeconds: LEASE_SECONDS });
   if (claimed === undefined) return undefined;
 
-  const payload = claimed.payload as { tests?: unknown; code?: unknown };
+  const payload = claimed.payload as { tests?: unknown; code?: unknown; repoTar?: unknown };
   const item = content.item(claimed.questId);
+
+  /**
+   * A `local-repo` job carries a tree and no code; a `hidden-tests` job carries code and no tree.
+   * Requiring both would refuse every repository submission before it ran, which is the failure a
+   * learner experiences as the button doing nothing.
+   */
+  const repoTar = typeof payload.repoTar === 'string' ? payload.repoTar : undefined;
+  const code = typeof payload.code === 'string' ? payload.code : undefined;
 
   if (
     item === undefined ||
     typeof payload.tests !== 'string' ||
-    typeof payload.code !== 'string'
+    (code === undefined && repoTar === undefined)
   ) {
     await finishJob(db, {
       jobId: claimed.id,
@@ -150,9 +176,10 @@ export async function dispatchOne(
     JSON.stringify({
       job_id: claimed.id,
       quest_id: claimed.questId,
-      code: payload.code,
+      code: code ?? '',
       /** Read from git at dispatch time. The row held the path; the sandbox gets the source. */
       tests: content.read(payload.tests),
+      ...(repoTar === undefined ? {} : { repo_tar: repoTar }),
     }),
     'utf8',
   );
@@ -188,7 +215,7 @@ export async function collectVerdicts(
       continue;
     }
 
-    await record(db, content, verdict, clock);
+    await record(db, content, spool, verdict, clock);
     rmSync(path, { force: true });
     recorded += 1;
   }
@@ -199,23 +226,51 @@ export async function collectVerdicts(
 async function record(
   db: Writable,
   content: ContentRoot,
+  spool: Spool,
   verdict: RunnerVerdict,
   clock: () => Date,
 ): Promise<void> {
   const { rows } = await db.query(
-    `SELECT player_id::text AS "playerId", quest_id AS "questId" FROM runner_jobs WHERE id = $1::bigint`,
+    `SELECT player_id::text AS "playerId", quest_id AS "questId", payload FROM runner_jobs WHERE id = $1::bigint`,
     [verdict.jobId],
   );
-  const owner = rows[0] as { playerId: string; questId: string } | undefined;
+  const owner = rows[0] as
+    | { playerId: string; questId: string; payload: Record<string, unknown> }
+    | undefined;
   if (owner === undefined) return;
+
+  /**
+   * A `local-repo` verdict records the commit it was graded against.
+   *
+   * §3.5 keeps attempts forever, and an attempt that says "passed" without saying what it passed
+   * against is a record nobody can check — which is the same as no record. It is also the only
+   * way to answer "which push earned this" a month later.
+   */
+  const sha = typeof owner.payload['sha'] === 'string' ? owner.payload['sha'] : undefined;
+  const ref = typeof owner.payload['ref'] === 'string' ? owner.payload['ref'] : undefined;
 
   /** Step 1: every outcome writes an attempts row, not only a pass (§5.3, §3.5). */
   const attemptId = await recordAttempt(db, {
     playerId: owner.playerId,
     questId: owner.questId,
     passed: verdict.status === 'passed',
-    detail: { runner: verdict.status, ...(verdict.result as unknown as Record<string, unknown>) },
+    detail: {
+      runner: verdict.status,
+      ...(verdict.result as unknown as Record<string, unknown>),
+      ...(sha === undefined ? {} : { localRepo: { ref: ref ?? 'main', sha } }),
+    },
   });
+
+  /**
+   * The exported tree goes as soon as the verdict is recorded, whatever the verdict was.
+   *
+   * Unconditional for the same reason the runner's workspace cleanup is: a tar left behind by a
+   * *failing* job is the one holding a whole repository, and the spool is a volume the api shares.
+   */
+  const repoTar = owner.payload['repoTar'];
+  if (typeof repoTar === 'string' && !repoTar.includes('..')) {
+    rmSync(join(spool.root, repoTar), { force: true });
+  }
 
   await finishJob(db, {
     jobId: verdict.jobId,

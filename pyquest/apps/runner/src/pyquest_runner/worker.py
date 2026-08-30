@@ -18,6 +18,7 @@ file is a worker that dies again on restart, and the submission behind it never 
 from __future__ import annotations
 
 import logging
+import tarfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -137,8 +138,12 @@ def poll_once(spool: Spool, limits: Limits = DEFAULT_LIMITS) -> JobVerdict | Non
 
     try:
         with workspace(spool.work, spec.job_id) as work:
-            verdict = run_job(spec, work, limits)
-    except OSError as error:
+            verdict = run_job(spec, work, limits, spool_root=spool.root)
+    except (OSError, ValueError, tarfile.TarError) as error:
+        # A `local-repo` job whose tar is missing, unreadable, or names a path outside the spool
+        # lands here. It is answered as `killed` rather than allowed to stop the loop: a worker
+        # that dies on one bad job dies again on restart, and the submission behind it never gets
+        # an answer at all.
         logger.exception("job %s could not be run", spec.job_id)
         verdict = JobVerdict(
             job_id=spec.job_id,

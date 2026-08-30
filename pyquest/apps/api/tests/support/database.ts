@@ -24,7 +24,7 @@ import { migrate } from '@pyquest/db';
 /** This machine's credentials live in one place and it is not source control. */
 const ENV_FILE = fileURLToPath(new URL('../../../../../infra/.env', import.meta.url));
 
-function readInfraEnv(): Record<string, string> {
+export function infraEnv(): Record<string, string> {
   try {
     const out: Record<string, string> = {};
     for (const line of readFileSync(ENV_FILE, 'utf8').split(/\r?\n/)) {
@@ -42,7 +42,7 @@ export function adminUrl(): string | undefined {
   const override = process.env['TEST_DATABASE_URL'];
   if (override !== undefined && override !== '') return override;
 
-  const env = readInfraEnv();
+  const env = infraEnv();
   const user = env['POSTGRES_USER'];
   const password = env['POSTGRES_PASSWORD'];
   if (user === undefined || password === undefined) return undefined;

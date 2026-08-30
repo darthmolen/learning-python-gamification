@@ -181,7 +181,47 @@ export async function finishJob(
  */
 export const attemptDetail = {
   awaitingSignoff: (by: 'peer' | 'dm'): Record<string, unknown> => ({ awaitingSignoff: by }),
+  /**
+   * What the history said, and which commit it said it about.
+   *
+   * The sha is stored because §3.5 keeps attempts forever and an attempt that says "passed"
+   * without saying what it passed against is a record nobody can check — which is the same as no
+   * record. It is also what makes a wrongly-awarded medal findable a month later.
+   */
+  gitSignal: (
+    signal: string,
+    evidence: { satisfied: boolean; reason: string; sha: string | null },
+  ): Record<string, unknown> => ({
+    gitSignal: { signal, satisfied: evidence.satisfied, reason: evidence.reason, sha: evidence.sha },
+  }),
+  /** The commit the checkout was reset to, for the same reason. */
+  localRepo: (evidence: { ref: string; sha: string }): Record<string, unknown> => ({
+    localRepo: { ref: evidence.ref, sha: evidence.sha },
+  }),
 } as const;
+
+/**
+ * When this player last attempted this quest, or `undefined` if never.
+ *
+ * `git-signal` is "evidence since the last recorded attempt", and this is the last recorded
+ * attempt. A quest with no attempts has no baseline, so anything in the history counts — which is
+ * right: none of it has been claimed yet.
+ */
+export async function lastAttemptAt(
+  client: Writable,
+  playerId: string,
+  questId: string,
+): Promise<string | undefined> {
+  const { rows } = await client.query(
+    `SELECT to_char(attempted_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "at"
+       FROM attempts
+      WHERE player_id = $1::uuid AND quest_id = $2
+      ORDER BY attempted_at DESC, id DESC
+      LIMIT 1`,
+    [playerId, questId],
+  );
+  return (rows[0] as { at: string } | undefined)?.at;
+}
 
 /**
  * Every runner outcome writes one of these, not only a pass.

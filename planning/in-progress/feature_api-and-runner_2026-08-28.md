@@ -633,3 +633,37 @@ Twenty-seven seeded; three survived, all three because a *test* was wrong rather
   The api calls `medalDelta` as instructed and does not correct it, because correcting it here would
   be the api doing engine arithmetic. **This is an engine bug and it belongs to the engine's
   successor plan.**
+
+---
+
+## Phase 3 checkpoint — 2026-08-30
+
+**Stopped mid-flight, committed green.** The session running Phase 3 was cancelled partway. Its
+work was left uncommitted in a shared tree that needed to be pushed, so it was verified and
+committed as a checkpoint rather than discarded or swept in blind.
+
+**What is in the tree and green:** `src/gitea.ts` (the Gitea API client), `src/checkout.ts`
+(clone, then fetch and hard-reset to `origin/main` — never a merge, because §6.4 tests what was
+pushed), `src/gitsignal.ts`, and their suites plus `tests/support/gitea.ts` and
+`tests/server.gitsignal.test.ts`. `dispatcher.ts`, `server.ts`, `store.ts` and `main.ts` are
+modified to wire them. The runner's `job.py` and `worker.py` gained repository-tar handling.
+
+**Verified at the checkpoint, not assumed:** 628 tests across 38 files, `typecheck` clean,
+`validate:content` clean, `ruff check` and `ruff format --check` clean on `apps/runner`.
+
+**Four ruff violations were fixed while checkpointing**, because CLAUDE.md makes that bar
+non-negotiable and §5.10 grades the learner on exactly it: an unused `noqa` in `job.py`, a
+non-imperative docstring, and two function-local imports in `tests/test_job.py` hoisted to the
+top of the file.
+
+**Not verified, and worth a look before Phase 3 is called done:** `pyright` reports errors in
+`tests/test_job.py` (3) and `tests/test_sandbox.py` (5) — all `reportUntypedFunctionDecorator`
+and `reportUnknownMemberType` against pytest. `test_sandbox.py` was not touched by this work and
+shows the same class of error, so this reads as an invocation difference rather than a
+regression: the earlier session reported pyright-strict clean, probably running it inside the
+container. **Resolve which invocation is authoritative before trusting either result.**
+
+**What remains of Phase 3:** whether `local-repo` and `git-signal` are complete is not
+established — the session did not reach its own report. Re-read the suites first; they are the
+record of how far it got. Phase 5 remains blocked on the engine half of
+`planning/feature_boss-pays-boss-rates_2026-08-30.md`.
