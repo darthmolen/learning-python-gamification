@@ -19,7 +19,7 @@
 
 import { z } from 'zod';
 import { ConceptIdSchema, ContentIdSchema, CountSchema, TOP_RUNG_BOUND } from './primitives.ts';
-import { MedalSchema } from '@pyquest/content';
+import { MedalSchema } from '@pyquest/content/browser';
 
 /** The `quest_medals` row, exactly as §6.2 writes it. */
 export const QuestMedalRecordSchema = z

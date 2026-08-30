@@ -33,7 +33,7 @@ import {
   DifficultyClassSchema,
   KindSchema,
   MedalSchema,
-} from '@pyquest/content';
+} from '@pyquest/content/browser';
 import { ConceptIdSchema, ContentIdSchema, CountSchema } from './primitives.ts';
 import {
   AreaIdentitySchema,

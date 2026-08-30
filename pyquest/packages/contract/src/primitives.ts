@@ -13,7 +13,7 @@
  */
 
 import { z } from 'zod';
-import { CONCEPT_IDS } from '@pyquest/content';
+import { CONCEPT_IDS } from '@pyquest/content/browser';
 
 /* -------------------------------------------------------------------------------------------
  * The layer boundary — spec §5.1

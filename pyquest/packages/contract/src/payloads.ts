@@ -12,7 +12,7 @@
  */
 
 import { z } from 'zod';
-import { AreaSchema, DifficultyClassSchema, MedalSchema } from '@pyquest/content';
+import { AreaSchema, DifficultyClassSchema, MedalSchema } from '@pyquest/content/browser';
 import { ConceptIdSchema, ContentIdSchema, CountSchema, INVASION_QUEUE_CAP } from './primitives.ts';
 
 /* -------------------------------------------------------------------------------------------

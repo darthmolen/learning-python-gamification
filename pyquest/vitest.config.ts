@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
@@ -32,10 +32,23 @@ const packagesDir = fileURLToPath(new URL('./packages', import.meta.url));
 const alias = Object.fromEntries(
   readdirSync(packagesDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
-    .map((entry) => {
+    .flatMap((entry) => {
       const manifest = new URL(`./packages/${entry.name}/package.json`, import.meta.url);
       const { name } = JSON.parse(readFileSync(manifest, 'utf8')) as { name: string };
-      return [name, fileURLToPath(new URL(`./packages/${entry.name}/src/index.ts`, import.meta.url))];
+      const file = (basename: string) =>
+        fileURLToPath(new URL(`./packages/${entry.name}/src/${basename}.ts`, import.meta.url));
+
+      /**
+       * A package with a `src/browser.ts` also publishes `<name>/browser`, and that key must
+       * come FIRST. Vite matches string aliases by prefix, so a bare `@pyquest/content` sitting
+       * ahead of it would rewrite `@pyquest/content/browser` into a path ending `index.ts/browser`
+       * — a resolution failure whose message names neither file.
+       */
+      const subpaths: [string, string][] = existsSync(file('browser'))
+        ? [[`${name}/browser`, file('browser')]]
+        : [];
+
+      return [...subpaths, [name, file('index')] as [string, string]];
     }),
 );
 
