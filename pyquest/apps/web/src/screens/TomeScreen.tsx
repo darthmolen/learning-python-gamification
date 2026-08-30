@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
+import type { CampaignView, Tome as TomeContent } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getConceptTotal, getSyllabus } from '../gateway/index.ts';
+import { PLAYER_ID, getCampaign, getTome } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
+import { Awaiting } from '../shell/Loading';
 import { Eyebrow, Mono } from '../shell/ui';
 
 /**

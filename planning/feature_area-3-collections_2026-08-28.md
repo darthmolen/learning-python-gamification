@@ -95,7 +95,7 @@ vocabulary he has not earned.
 loops — which this area actively teaches him to write in the `nested-structures` sessions —
 is 8,000 blocks, and unfused that measured 14.9 fps. `start()` fuses, so the fused number is
 what matters, but the cap exists because his machine is not the machine the spike ran on.
-Take the number from the shim plan's the son's laptop measurement and write every exercise under it.
+Take the number from the shim plan's laptop measurement and write every exercise under it.
 
 An exercise that invites a triple nested loop needs its ranges chosen so the product stays
 under the cap. That is a design constraint on the *exercise*, and `verify.py` should assert

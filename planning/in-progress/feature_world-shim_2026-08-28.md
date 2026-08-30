@@ -205,7 +205,7 @@ Editing the spike. It is the record of a measurement and it stays as it is.
 
 ## Status — 2026-08-29, stopped at the hardware gate
 
-**Phases 1, 2 and 4 are done. Phase 3 is not started and cannot be.** The son's the son's laptop
+**Phases 1, 2 and 4 are done. Phase 3 is not started and cannot be.** The son's laptop
 was not available, and Phase 3 is a measurement on that machine. This plan stays in
 `planning/in-progress/`.
 

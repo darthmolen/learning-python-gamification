@@ -1,6 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { color, font } from '../design/tokens';
-import { getDueInvasions } from '../gateway/index.ts';
 import { Rail } from '../shell/Rail';
 import { AreaScreen } from '../screens/AreaScreen';
 import { BossScreen } from '../screens/BossScreen';
@@ -31,7 +30,13 @@ function Shell() {
         lineHeight: 1.5,
       }}
     >
-      <Rail counts={{ defend: getDueInvasions().length }} />
+      {/*
+        * The rail's badge is gone for now. It is a count the shell would have to fetch on every
+        * route to keep honest, and a stale badge is worse than none — it tells him work is
+        * waiting when it is not, or hides work that is. Defend owns that number; the rail carries
+        * it again when something pushes it rather than the shell polling for it.
+        */}
+      <Rail />
       <div style={{ flexGrow: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <Outlet />
       </div>

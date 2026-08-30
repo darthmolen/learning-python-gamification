@@ -1,6 +1,10 @@
+import { useCallback } from 'react';
 import { useParams } from 'react-router';
+import type { AreaView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getAreaIdentity, getBossState } from '../gateway/index.ts';
+import { PLAYER_ID, getArea } from '../gateway/index.ts';
+import { useResource } from '../gateway/useResource.ts';
+import { Awaiting } from '../shell/Loading';
 import { Breadcrumbs } from '../shell/Breadcrumbs';
 import { Display, Eyebrow, Mono, Panel } from '../shell/ui';
 
@@ -8,10 +12,27 @@ import { Display, Eyebrow, Mono, Panel } from '../shell/ui';
 export function BossScreen() {
   const { areaId = '' } = useParams();
   const area = Number(areaId);
-  const identity = getAreaIdentity(area);
-  const boss = getBossState(area);
+  const load = useCallback(() => getArea(PLAYER_ID, area), [area]);
+  const view = useResource(load, [area]);
 
-  const title = identity === undefined ? `Area ${areaId}` : `Area ${area} · ${identity.title}`;
+  return (
+    <Awaiting resource={view} label={`Boss ${areaId}`}>
+      {(value) => <Boss view={value} areaId={areaId} />}
+    </Awaiting>
+  );
+}
+
+/**
+ * The boss reads from the area's own view rather than a route of its own. §6.8 is explicit that
+ * the boss is an aspect of a place rather than a place — and one request for both is what the
+ * API was shaped for.
+ */
+function Boss({ view, areaId }: { view: AreaView; areaId: string }) {
+  const area = view.area;
+  const boss = view.boss;
+  const identity = view.identity;
+
+  const title = identity === undefined ? `Area ${area}` : `Area ${area} · ${identity.title}`;
 
   return (
     <>
