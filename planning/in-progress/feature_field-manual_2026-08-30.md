@@ -28,12 +28,12 @@ it now costs the Tome screen nothing and takes nothing from it.
 
 ## Success Criteria
 
-- [ ] Eight areas, ninety-five concepts, and every authored exercise, rendered from `content/`
-- [ ] Areas 3–7 show their gap honestly rather than appearing complete or being hidden — §5.1a's
+- [x] Eight areas, ninety-five concepts, and every authored exercise, rendered from `content/`
+- [x] Areas 3–7 show their gap honestly rather than appearing complete or being hidden — §5.1a's
       rule, applied to a website
-- [ ] **The output carries no scoring vocabulary at all**, proven by a test over the built HTML
-- [ ] Every brief a content item references is rendered; a missing file fails the build
-- [ ] `npm run validate:content` runs in CI before anything publishes
+- [x] **The output carries no scoring vocabulary at all**, proven by a test over the built HTML
+- [x] Every brief a content item references is rendered; a missing file fails the build
+- [x] `npm run validate:content` runs in CI before anything publishes
 - [ ] A one-word content edit reaches the live page with no code change
 
 ## Approach
@@ -88,3 +88,46 @@ project entry; do not restructure. The alias map derives itself and needs nothin
 The Tome screen. `curriculum/` — a larger body of prose written for a DM rather than a reader,
 worth its own pass. And the field-manual prose itself: the Area 3 teaching in `Tome.dc.html` is
 hand-written HTML with no data source anywhere, which is authoring work rather than plumbing.
+
+---
+
+## Status — 2026-08-30: built and gated; Pages not yet switched on
+
+**Built.** Eight areas, 95 ideas, 14 exercises, rendered as nine pages of static HTML with no
+client script. `checkContent` is the reader, so the site cannot accept content the validator
+rejects. Full suite 678 across 41 files, typecheck clean, `validate:content` clean.
+
+**The gate was broken on its first three mutants, and that is the part worth keeping.** All
+twelve vocabulary assertions were vacuous. The pattern was written with a *single* backslash
+inside a template literal — `\b` rather than `\\b` — which JavaScript reads as the
+backspace character, not a word boundary. The regex was backspace-d-c-backspace and matched
+nothing, ever, while the suite reported fifteen passes and three seeded mutants walked through
+it. `String.raw` fixed it. That is the second time in one day an escape inside a heredoc
+produced a test that measured nothing, which is now a pattern rather than an accident.
+
+**The working gate immediately caught the rule rather than the site.** "boss" appears in three
+Area 2 briefs — in the author's own teaching prose. Rewriting an author's sentence to satisfy a
+test would be the site editing the curriculum, which is the opposite of what it is for. So the
+check is scoped to what the *generator* contributes: headings, labels, navigation, metadata. The
+author's words are excluded, and a difficulty class printed beside an exercise title still fails,
+which is the case that matters.
+
+**Six mutants die now. Two others taught something before they did:**
+
+- `exercises[].concepts` was **dead data** — computed and never rendered, so a mutant could put
+  anything in it and nothing noticed. It renders now, because what an exercise teaches is worth
+  reading.
+- The missing-brief guard was **unreachable**. `validate.ts:389` already enforces that every path
+  an item points at exists, so `buildSite` throws at the issues check before any brief is read.
+  Removed rather than tested — the same rule in two homes, and the copy further from the content
+  is the one that goes stale.
+
+### Remains
+
+- **GitHub Pages must be switched on** — Settings → Pages → Source → *GitHub Actions*. Until
+  then the build and both gates pass and nothing publishes: a green-looking run and no site.
+  `planning/reminders/follow-up_enable-github-pages_2026-08-30.md`.
+- **Evergreen is unproven until that round trip runs**: edit a blurb, push, read the page. Today
+  it is a claim about a workflow file.
+- `area-0.yml` and `area-2.yml` carry no `weeks` or `blurb`, so those two pages read "Weeks not
+  yet set". Honest today; it resolves when those tracks land their fields.

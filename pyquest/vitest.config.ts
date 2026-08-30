@@ -73,6 +73,20 @@ export default defineConfig({
       {
         resolve: { alias },
         test: {
+          /**
+           * The static curriculum site. Node, because it is a build-time generator and has no
+           * browser to run in — its whole point is that the published pages carry no script.
+           */
+          name: 'field-manual',
+          root: fileURLToPath(new URL('./apps/field-manual', import.meta.url)),
+          include: ['tests/**/*.{test,spec}.ts'],
+          exclude,
+          environment: 'node',
+        },
+      },
+      {
+        resolve: { alias },
+        test: {
           name: 'packages',
           include: ['packages/**/*.{test,spec}.ts'],
           exclude,

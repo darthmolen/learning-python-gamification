@@ -1,0 +1,14 @@
+{
+  "name": "@pyquest/field-manual",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/build.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@pyquest/content": "*",
+    "marked": "^15.0.6"
+  }
+}

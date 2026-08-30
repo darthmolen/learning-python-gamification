@@ -1,0 +1,78 @@
+# The Field Manual — publish the curriculum, rebuilt whenever the content changes.
+#
+# This is the first CI in this repository. Everything else is a command a person types, which is
+# how a broken `vite build` once survived a commit. Keeping the scope narrow is deliberate: this
+# workflow publishes one static site and gates it on the content validator. It is not a general
+# CI pipeline and should not quietly grow into one.
+#
+# Spec §6.5 notes that Gitea Actions is GitHub-Actions-compatible and that a pipeline can be
+# ported "almost verbatim". This file is written plainly enough to be that port when the time
+# comes, in whichever direction it runs.
+
+name: Field Manual
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/**'
+      - 'pyquest/packages/content/**'
+      - 'pyquest/apps/field-manual/**'
+      - '.github/workflows/field-manual.yml'
+  workflow_dispatch:
+
+# Least privilege plus the two Pages needs. `id-token` is required by deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One publish at a time. A second push mid-deploy queues rather than racing; `cancel-in-progress`
+# is deliberately false, because cancelling a half-finished deploy is how a site ends up serving
+# one build's HTML beside another's assets.
+concurrency:
+  group: field-manual
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pyquest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22          # pyquest/package.json engines: >=22, and the CLIs use --experimental-strip-types
+          cache: npm
+          cache-dependency-path: pyquest/package-lock.json
+
+      - run: npm ci
+
+      # The gate. Invalid content must not reach a published page, and until now nothing ran
+      # this except a person remembering to.
+      - name: Validate content
+        run: npm run validate:content
+
+      # The site's thesis, checked: the published HTML carries no scoring vocabulary.
+      - name: Check the published site adds no game
+        run: npx vitest run --project field-manual
+
+      - name: Build
+        run: npm run build --workspace @pyquest/field-manual
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: pyquest/apps/field-manual/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
