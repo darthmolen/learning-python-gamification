@@ -262,3 +262,13 @@ Start Phase 1 with a concrete decision block: migration tool, file naming conven
 **Implementable as written?** With fixes
 
 **Reasoning:** The architectural direction is sound and the boundary discipline is good, but several Phase 1 essentials are undecided — migration tooling, `runner_jobs` shape, and full table definitions for `sessions`, `bounties`, and `forced_reviews` — which blocks starting work.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**5 criticals, all closed** — applied in `f48aa93`.
+
+Every one was the same shape — the plan named a decision instead of making it. The migration runner, the `concept_id` naming, the composite-FK question and full shapes for four tables became rulings, and the schema appendix was written.

@@ -218,3 +218,17 @@ decision about a child's XP total and belongs to a person, not to a migration.
 **Implementable as written?** With fixes
 
 **Reasoning:** The engine fix is correct and the arithmetic is sound, but the plan misses a real production call site (`views.ts:86`) and its track-discipline story needs to be explicit about cross-track ownership rather than relying on "same commit" to paper over it.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**3 accepted, 1 merged, 2 rejected, 2 flagged** — applied in `76fde05`.
+
+The critical was right and worse than stated: `views.ts:86` was a missed call site, and the full census is nineteen, not four. The plan had said four because the grep behind it was piped through `head` and the count read off the truncation.
+
+Rejected, both verified rather than argued: `store.ts`'s docblocks reference `medalDelta`, which keeps its name — only `questXpEarned` is renamed; and `index.ts` carries no hardcoded XP figures.
+
+Merged: track discipline reframed as two tracks doing one change. Eleven of nineteen sites are the `api` track's, which is a phase of work rather than a coordination footnote, so it landed on the plan already in flight there.

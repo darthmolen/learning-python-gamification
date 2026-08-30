@@ -257,3 +257,15 @@ Add an appendix before Phase 1 begins: concrete endpoint table, request/response
 **Implementable as written?** With fixes
 
 **Reasoning:** The architecture is pointed correctly and Phase 1 ordering is sound, but the key implementation contracts — routes, error schema, `runner_jobs`, verifier mechanics, and awarding flow — are all still prose-only and must be specified before any phase can begin.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**6 criticals, all closed** — applied in `693a930`.
+
+The route table was written rather than promised, the error shape designed, `runner_jobs` specified in full, the three remaining verifiers given mechanisms, Phase 4 written as a sequence so no arithmetic crosses §6.7, and the runner isolation extended past `--network none` to the limits that stop a fork bomb and a disk fill.
+
+`xpSources` was declined and returned to the engine: an API that sums medals is doing engine arithmetic on the wrong side of §6.7.

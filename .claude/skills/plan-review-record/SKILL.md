@@ -29,9 +29,42 @@ someone with less context than the person who rejected it.
 
 **Rejections are the reason this skill exists.** If you record only one thing, record those.
 
-## Two places, both of which already exist
+## Three places, and the first one is the primary record
+
+### 0. A `## Disposition` section on the review file itself
+
+**Appended to the review in `planning/needs-review/completed/`, below the reviewer's findings,
+under a line saying it is the author's response.** This is the primary record, because it is the
+only one that sits next to the question it answers: somebody re-reading a finding two months from
+now is holding that file, not the plan and not the log.
+
+```markdown
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as
+received and is unaltered.*
+
+**N accepted, N merged, N rejected, N flagged** — applied in `<commit>`.
+
+<A paragraph per rejection, with the evidence. Then anything flagged, and how it was ruled.>
+```
+
+**This does not violate the audit trail.** That rule protects the reviewer's *words* from
+alteration — never edit a finding, never delete one, never soften one. Appending an attributed
+response below them alters nothing, and is the same move the review made when it was appended to
+a copy of the plan.
+
+**Write it even when there is nothing to say.** A review filed unread, or one whose findings were
+all rejected, still gets a section saying so. "Not acted on, set aside by the parent" is a
+disposition. An absent section means nobody knows, which is the state this skill exists to end.
+
+## Two more places, both of which already exist
 
 ### 1. A `## Review History` block in the plan
+
+The summary, for a reader of the plan rather than of the review.
 
 Appended to the plan itself, one paragraph per round, in its source location — not in the review
 copy, which is an audit trail and is never edited.
@@ -78,8 +111,12 @@ different fact from a review nobody read.
 
 ## Do not
 
-- **Do not edit the file in `needs-review/completed/`.** It is the review as received. The
-  disposition goes in the plan and the commit, never on top of the evidence.
+- **Do not edit the reviewer's findings.** Append below them, attributed. Never reword a
+  finding, never delete one, never soften one — the value of the file is that it says what was
+  actually said.
+- **Do not build an index of dispositions.** A hand-maintained table is a second place for the
+  same fact, and the second place is the one that goes stale — it is wrong the first time
+  somebody files a review without updating it. The review file carries its own answer.
 - **Do not record only counts.** "3 accepted, 2 rejected" without the reasoning is the same hole
   in a smaller font.
 - **Do not defer it.** The disposition is clearest in the minutes after the evaluation and is
@@ -88,6 +125,12 @@ different fact from a review nobody read.
 ## Checking
 
 ```bash
+# reviews filed without a disposition — the state this skill exists to prevent
+for f in planning/needs-review/completed/*.md; do
+  [ "$(basename "$f")" = README.md ] && continue
+  grep -q "^## Disposition" "$f" || echo "no disposition: $f"
+done
+
 # plans that have been through review and say nothing about it
 for f in planning/**/feature_*.md; do
   grep -q "## Review History" "$f" || echo "no disposition recorded: $f"

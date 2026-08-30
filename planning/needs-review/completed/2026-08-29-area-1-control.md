@@ -298,3 +298,15 @@ Specify the boss `requires` encoding first — it affects Phase 4 and may requir
 **Implementable as written?** With fixes
 
 **Reasoning:** The curriculum plan is strong and well-grounded, but the boss unlock encoding and `verify.py` contract are under-specified enough to cause incorrect implementation.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**Not recorded.** This review was read and acted on — `d99fdde`, `c056f58` revised the `area-1` plan — but nobody wrote down which findings were accepted, which were rejected, or why.
+
+It is unrecoverable, and that is the point of saying so here rather than leaving the section absent. A rejected finding leaves no trace in a plan, so nothing distinguishes "considered and argued down" from "missed". Anyone re-reading these findings should treat them as open questions rather than as settled ones.
+
+The rule that would have prevented it arrived on 2026-08-30: `.claude/skills/plan-review-record/SKILL.md`.

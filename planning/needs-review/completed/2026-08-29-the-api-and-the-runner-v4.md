@@ -427,3 +427,15 @@ queued job a stale copy of a file that lives in git.
 **Implementable as written?** Yes, with one clarification
 
 **Reasoning:** All six v3 issues are fully resolved and the plan is architecturally coherent throughout. The one remaining gap — which state domain types `runner_jobs` rows in the contract — is a one-sentence ruling that prevents the db and api tracks from making inconsistent choices; everything else is implementation detail the plan covers.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**2 taken, 3 minors left** — applied in `2970316`.
+
+`progress.ts` types `runner_jobs` in storage states and `endpoints.ts` owns the client-facing `JobState` — stated because both tracks touch that table from opposite sides and would otherwise each pick the vocabulary that suited them. `/api/signoffs` is household-wide: a queue filtered to what the caller can grant would hide the parent's own teach-back from the screen that exists to show it.
+
+Left: naming composite payload types is work Phase 1 does when it writes them, and the `vitest.config.ts` note was already moot.

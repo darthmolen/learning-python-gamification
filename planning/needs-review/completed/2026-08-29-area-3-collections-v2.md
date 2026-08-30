@@ -379,3 +379,15 @@ Area 3 is `local-repo` and that is the design, not a limitation.
 **Implementable as written?** With fixes
 
 **Reasoning:** All ten prior issues are resolved; the one real new finding is the `nesting` concept-id typo in the quest matrix resurfaces column, which will cause a validate:content failure if not corrected before scaffolding.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**Partially recorded** — `5ff3261`.
+
+Fully recorded, unusually: "both findings rejected, no changes". A review that changed nothing is a different fact from a review nobody read, and this commit says which it was.
+
+What is not named above was not written down anywhere and is unrecoverable.

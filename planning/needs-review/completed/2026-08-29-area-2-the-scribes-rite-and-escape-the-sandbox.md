@@ -302,3 +302,15 @@ Fix the prerequisite path reference first. Add the Boss 2 cold-clone acceptance 
 **Implementable as written?** With fixes
 
 **Reasoning:** The instructional direction is strong and spec-consistent, but the missing prerequisite file reference, ownership ambiguity on the VS Code stub, and under-specified Boss 2 win condition and quest details would create execution drift.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**Not recorded.** This review was read and acted on — `b68a6f7`, `3e9d910` revised the `area-2` plan — but nobody wrote down which findings were accepted, which were rejected, or why.
+
+It is unrecoverable, and that is the point of saying so here rather than leaving the section absent. A rejected finding leaves no trace in a plan, so nothing distinguishes "considered and argued down" from "missed". Anyone re-reading these findings should treat them as open questions rather than as settled ones.
+
+The rule that would have prevented it arrived on 2026-08-30: `.claude/skills/plan-review-record/SKILL.md`.

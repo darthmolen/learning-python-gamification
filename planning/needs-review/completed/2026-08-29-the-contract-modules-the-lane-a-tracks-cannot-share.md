@@ -163,3 +163,15 @@ work, in its own plan, after this lands.
 **Implementable as written?** With fixes
 
 **Reasoning:** The refactor shape matches the current package and no `exports` changes are needed, but the test-count criterion is wrong and the d.ts verification step is too weak to prove a byte-identical surface.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**5 taken, 1 rejected on the facts** — applied in `f48aa93`.
+
+Rejected: the review called the "54 existing tests" claim wrong and put it at 45, counting `it`/`test` calls statically. That misses `payloads.test.ts:88`, an `it.each(PRESENTATION_FIELDS)` expanding to nine cases at run time; `vitest run packages/contract` reports 54. Verified by running it.
+
+Its underlying point was better than its correction, so the criterion now names no number at all — a hardcoded count is falsified by the next test anyone writes.

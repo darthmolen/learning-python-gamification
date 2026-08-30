@@ -356,3 +356,15 @@ Content of any kind. If a migration inserts a quest, this plan has gone wrong.
 **Implementable as written?** Mostly — with minor fixes
 
 **Reasoning:** The major schema gaps are all closed and the decisions are made; the remaining items are a missing identity-mapping ruling and an incomplete mutant list, neither of which blocks starting Phase 1 migrations.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**3 taken** — applied in `f48aa93`.
+
+The identity mapping was the one that mattered: `playerId` is `players.id`, not `handle`, and the draft had said both.
+
+Partially rejected: three of four "missing" mutants were real and added. The fourth, the `bounties` claimed-implies-not-open check, was already in the list.

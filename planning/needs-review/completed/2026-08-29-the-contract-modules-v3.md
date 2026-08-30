@@ -191,3 +191,15 @@ falsified by the next test anyone writes.
 **Implementable as written?** With fixes (minor)
 
 **Reasoning:** All six prior issues are resolved and the design is correct. The one critical gap — lint not in the Success Criteria checklist — is a one-line fix; without it, a developer could ship unlinted code and genuinely believe the checklist was satisfied.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**2 taken, 1 declined** — applied in `dfb3f26`, `688ce48`.
+
+Declined: it asked that Success Criteria name `npm run lint`. There is no lint script, and no ESLint, Biome or oxlint config anywhere in `pyquest/` — the criterion would have been unmeetable rather than merely unticked.
+
+The gap behind it was real and became `planning/backlog/feature_typescript-has-no-linter_2026-08-29.md`: the repository requires ruff and pyright clean of every `.py`, §5.10 grades the learner on exactly that, and its own TypeScript has no equivalent bar.

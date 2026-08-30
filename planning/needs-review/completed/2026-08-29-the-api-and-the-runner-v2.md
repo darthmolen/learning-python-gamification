@@ -337,3 +337,15 @@ threshold, the `~`, and a zero payout reading as "brag" are all the UI's.
 **Implementable as written?** With fixes
 
 **Reasoning:** The plan is substantially improved — the route table, `runner_jobs`, awarding flow, and runner isolation are all now workable — but the missing `vitest.config.ts` file-set entry and the unspecified job-status mapping are design decisions that would be made inconsistently during implementation without a ruling here.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**3 taken, 1 not as suggested** — applied in `f48aa93`.
+
+`vitest.config.ts` was acknowledged in Track discipline and missing from the file set, which is the list the disjointness check actually reads. The `?now` query parameter was removed rather than schematised — a client that supplies the date can ask for yesterday and skip its own invasions, and §5.4 is a schedule not negotiable by the person being scheduled.
+
+Merged rather than accepted: the review proposed collapsing `killed` into `failed` or `timed-out`. `JobState` carries all six instead, because running out of memory and being wrong are different things to tell an 11-14-year-old.

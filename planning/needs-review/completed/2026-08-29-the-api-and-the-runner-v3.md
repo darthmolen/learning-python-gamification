@@ -395,3 +395,15 @@ genuine storage detail the client has no use for.
 **Implementable as written?** With fixes
 
 **Reasoning:** The v2 issues are fully resolved and the plan is substantially complete; the two critical gaps (`killed` missing from the route table, `git-signal` having no route) are quick to fix, and the important items are design decisions that should be recorded rather than discovered during implementation.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**6 taken, 1 not as suggested** — applied in `dfb3f26`.
+
+The sharpest finding of four rounds: `runner_jobs.payload` was described as "the submitted code and the verifier spec", and if "spec" meant the hidden tests then content had entered Postgres — forbidden by §6.7, and making every queued job a stale copy of a file that lives in git.
+
+Not as suggested: `git-signal` genuinely had no API surface, but rather than add a route, every verifier resolves through `POST /submit` with `SubmitRequest` a discriminated union on `verifier.type`. Which verifier runs is a property of the quest, not of the URL the client picked.

@@ -277,3 +277,15 @@ Area 3 is `local-repo` and that is the design, not a limitation.
 **Implementable as written?** With fixes
 
 **Reasoning:** The curriculum shape is strong and largely spec-aligned, but the prerequisite state is partly stale and the main operational contracts — cap gating, quest coverage, and headless verification — need sharper wording before execution.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**Not recorded.** This review was read and acted on — `4aa0321` revised the `area-3` plan — but nobody wrote down which findings were accepted, which were rejected, or why.
+
+It is unrecoverable, and that is the point of saying so here rather than leaving the section absent. A rejected finding leaves no trace in a plan, so nothing distinguishes "considered and argued down" from "missed". Anyone re-reading these findings should treat them as open questions rather than as settled ones.
+
+The rule that would have prevented it arrived on 2026-08-30: `.claude/skills/plan-review-record/SKILL.md`.

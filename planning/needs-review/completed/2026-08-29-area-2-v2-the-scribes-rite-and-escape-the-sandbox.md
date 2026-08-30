@@ -448,3 +448,15 @@ Any hook, linter or CI on **his** repository. §7 reason 3 is explicit and this 
 **Implementable as written?** With fixes
 
 **Reasoning:** All seven prior blockers are addressed; only two small consistency issues remain, neither of which would cause significant implementation drift.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**Partially recorded** — `70e6622`.
+
+Names one outcome — "one verifier per item, in both plans". The rest of the round is not recorded.
+
+What is not named above was not written down anywhere and is unrecoverable.

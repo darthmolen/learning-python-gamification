@@ -173,3 +173,15 @@ Define `availableQuests` and `standings` shapes first. Sequentialize Phase 2 →
 **Implementable as written?** With fixes
 
 **Reasoning:** The purity boundary is sound and most of the plan aligns with the codebase, but two success-criteria functions are still undefined and the workspace/test sequencing is not specified tightly enough to avoid rework.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**4 accepted, 4 merged, 2 rejected, 1 flagged and ruled** — applied in `5bb092f`.
+
+Rejected: the reviewer looked for `invasions.ts` in `packages/content` when it is in `packages/engine`, exporting `INVASION_LADDER`; and proposed provisional version names for a private workspace package whose only two consumers did not exist yet.
+
+Flagged and ruled by the parent: `standings` is the completion board only — `bounties` are Postgres records, `medalTotals` a UI sum, `xpSources` a shape shipped without an implementation.

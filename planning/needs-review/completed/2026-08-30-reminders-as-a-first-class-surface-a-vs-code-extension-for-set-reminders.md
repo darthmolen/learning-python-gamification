@@ -305,3 +305,11 @@ installed extension rather than a dev host.
 **Implementable as written?** With fixes
 
 **Reasoning:** The architecture is sound and nearly all VS Code API choices are correct. The three criticals are all concrete and fixable (priority undocumented, casing typo, `applyEdit` doesn't save); the important items are clarifications rather than design changes.
+
+---
+
+## Disposition
+
+*Appended by the author after `plan-receive-review`. Everything above is the review as received and is unaltered.*
+
+**Not acted on.** Filed unread on 2026-08-30 at the parent's direction — the VS Code extension idea was set aside rather than evaluated. No findings were accepted, rejected or considered, and this review remains live if the idea is picked up.
