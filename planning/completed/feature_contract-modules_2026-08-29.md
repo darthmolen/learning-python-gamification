@@ -1,6 +1,6 @@
 # The Contract Modules the Lane A Tracks Cannot Share
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** main
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -175,3 +175,88 @@ than merely unticked. The phrase is gone and the real gap is recorded in
 `planning/backlog/feature_typescript-has-no-linter_2026-08-29.md`, which is a larger question
 than this plan: the repository requires ruff and pyright clean of every `.py`, §5.10 grades the
 learner on exactly that, and its own TypeScript has no equivalent bar.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** main
+**Completed:** 2026-08-29
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+- `src/primitives.ts`, `src/payloads.ts`, `src/progress.ts` and `src/endpoints.ts` exist, each
+  with a header naming its owning track. `src/index.ts` is re-exports and a header, and holds no
+  schema.
+- Every schema moved verbatim. Nothing was rewritten, and nothing needed to be.
+- **54 tests pass, the same 54 as before the split, with no edit to any test file** —
+  `git status packages/contract/tests/` is empty. 243 pass across the workspace.
+- `npm run typecheck` clean across all four workspaces; `tsc -b` builds the package from clean.
+- The public surface is unchanged: 38 exports, every resolved type identical (see Deviations for
+  how that was measured, which is not what the plan said).
+- `ContentIdSchema`, `ConceptIdSchema` and `CountSchema` are exported to siblings and absent
+  from the package surface, checked by name against the snapshot rather than by reading the file.
+
+### Deviations
+
+**The `dist/index.d.ts` checksum could not be the check, and this was known before the split
+rather than discovered after.** Once `index.ts` is pure re-exports its emitted declaration file
+*is* re-export lines — `9c7218c8…` before, `c473c2e9…` after. The plan and its v3 review both
+expected that file to survive unchanged. It cannot, and the failure mode matters: a checksum
+that changes for a purely textual reason cannot distinguish "the surface moved" from "the
+surface was relocated", so it would have had to be waived, and a waived check is not a check.
+
+Replaced with the check the criterion was reaching for: **the resolved public surface**. A
+compiler-API probe enumerates every export of the built `dist/index.d.ts` and prints its fully
+expanded type — `AreaProgress` prints as `{ cleared: number; total: number; estimated: boolean; }`,
+not as a name — sorted, 114 lines. Captured before Phase 1 and again after Phase 3.
+
+That diff was not empty on the first run, and the six differing lines are worth recording. Every
+one was the print order of the `Area` union: `0 | 3 | 6 | 5 | 1 | 2 | 4 | 7` against
+`0 | 5 | 4 | 3 | 6 | 1 | 2 | 7`. Same eight members, reordered, because TypeScript prints union
+members in type-id order and the ids shift when the module graph changes shape. Normalising
+numeric-literal union order — and nothing else — the two sides are byte-identical at
+`523eed15…`. This is the same instability that made the raw checksum unusable, showing up a
+second time one layer down.
+
+**The check was then made load-bearing rather than trusted**, per `test-filter-development`.
+Seeded a mutant — dropped `estimated` from `AreaProgressSchema` — rebuilt, and the surface check
+caught it, naming the field. The existing suite caught it too, 2 failed of 54. Reverted, and the
+surface returned to `523eed15…`. A surface check that has not been seen to fail would have been
+the weakest part of a plan whose entire purpose is proving nothing moved.
+
+**`index.ts` re-exports the two owned modules wholesale rather than export by export.** House
+style in `packages/engine` and `packages/content` is a named list, and this departs from it
+deliberately: a named list would mean `db` editing `index.ts` to publish each of its seven row
+shapes and `api` editing it for the route table, which puts both tracks back in `main`'s file —
+the exact collision this plan exists to end. `primitives.ts` keeps the named list for the
+opposite reason, since a wholesale re-export there would publish the three internals by
+accident. The difference between the two lists is now the thing that enforces the boundary.
+
+### Lessons Learned
+
+- **A file with no exports is not a module, so it cannot be re-exported from.** `endpoints.ts`
+  ships comment-only, as Phase 1 required, which means `index.ts` does *not* mention it yet and
+  the Objective's "`index.ts` changes exactly once — here" does not quite hold: the `api` track
+  adds one line when its first shape lands. The alternative was an `export {}` marker, rejected
+  because Phase 1 said "carrying only that comment" and a marker is one more thing to delete.
+  One known line in one known place, recorded in that track's plan, is the cheaper of the two.
+  The `db` track has no equivalent — `progress.ts` already has exports, so it is re-exported
+  wholesale today and its seven shapes need no edit here at all.
+- **The plan's own check was the part that needed reviewing hardest.** Three review rounds
+  strengthened it — names, then a checksum, then the checksum scoped against the four new
+  declaration files — and it was still the one thing that could not work, because every round
+  refined the check rather than asking what the compiler actually emits. Reviewing a
+  verification step means predicting its output, not tightening its wording.
+- **Capture the baseline before touching anything.** The 54-count, the checksum and the surface
+  snapshot were all taken first. That is the only reason the checksum's failure was legible as a
+  textual artefact within a minute instead of an unexplained red flag at the end.
+- The union-order instability is a live hazard for anything else that compares TypeScript's
+  printed types across a refactor. It is not a zod quirk and it will recur.
+
+### Backlog Items Created
+
+- None here. `planning/backlog/feature_typescript-has-no-linter_2026-08-29.md` was written
+  during the v3 intake, before execution.

@@ -305,8 +305,9 @@ function that returns money it did not first ask for.
   and the payload half of the contract
 - `planning/feature_progress-schema_2026-08-28.md` — somewhere to write. The `runner_jobs`
   appendix above is what that plan is waiting on, and it is now written
-- `planning/feature_contract-modules_2026-08-29.md` — **blocks Phase 1**, which begins by
-  writing `endpoints.ts`, a file that gate creates
+- `planning/feature_contract-modules_2026-08-29.md` — **landed 2026-08-29**, in
+  `planning/completed/`. `endpoints.ts` exists, owned by this track and empty but for its
+  header. Phase 1 is unblocked
 - Gitea reachable from the son's machine, for `local-repo` only
 
 ## Files Expected to Change
@@ -317,9 +318,15 @@ function that returns money it did not first ask for.
   with the `spa` track**, which names the same file for `apps/web`. Listed here because the
   disjointness check reads this list and an acknowledged shared file that is not in it is a gap
 - `pyquest/packages/contract/src/endpoints.ts` — **this track owns it**, per
-  `planning/feature_contract-modules_2026-08-29.md`: the route table, request bodies and the
-  error shape. `index.ts`, `primitives.ts` and `payloads.ts` are `main`'s and `progress.ts` is
-  the `db` track's; none is edited here
+  `planning/completed/feature_contract-modules_2026-08-29.md`: the route table, request bodies
+  and the error shape. `primitives.ts` and `payloads.ts` are `main`'s and `progress.ts` is the
+  `db` track's; none is edited here
+- `pyquest/packages/contract/src/index.ts` — **exactly one line**, added once, when the first
+  shape lands in `endpoints.ts`: `export * from './endpoints.ts';`. The gate could not add it
+  in advance because a file with no exports is not a module and cannot be re-exported from, so
+  this is the one edit to a `main`-owned file the split could not remove. The `db` track needs
+  no equivalent — `progress.ts` is already re-exported wholesale, so its seven row shapes
+  appear on the public surface with no edit here at all
 - `infra/compose/api.yml` — the `api` and `runner` services; this track owns the file,
   and the root `docker-compose.yml` is not the place
 
@@ -329,7 +336,14 @@ function that returns money it did not first ask for.
 An earlier draft claimed the whole package for the duration, which would have blocked the `db`
 track from the seven row shapes it owes. `planning/feature_contract-modules_2026-08-29.md`
 splits the package by owner instead, and this track holds exactly one file: `endpoints.ts`.
-That gate runs before this plan starts.
+That gate ran on 2026-08-29 and is complete.
+
+**One line of `index.ts` is still this track's to write**, and the gate's own plan said
+otherwise. `endpoints.ts` ships empty — comment only, no marker export — which means it is not
+a module and `index.ts` cannot re-export from it yet. So the first shape that lands here also
+adds `export * from './endpoints.ts';` to `index.ts`. One line, one time, at a known place: if
+`main` is mid-edit on that file, append rather than merge blind, the same rule this plan
+already applies to `vitest.config.ts`.
 
 `apps/api` and `apps/runner` are leaves that nothing imports, so this track needs no project
 reference in the root `tsconfig.json`. **It does need a `vitest.config.ts` entry**, and an

@@ -279,8 +279,9 @@ Every one of those is a row the application would happily have written on some T
 - `infra/` compose stack — done, healthy, restore rehearsed
 - `packages/contract` — the shapes the repository returns. Its payload half is **done**; the
   seven row shapes this track owes are listed above
-- `planning/feature_contract-modules_2026-08-29.md` — **blocks Phase 2.** Phase 1 is SQL and
-  needs no TypeScript at all, so migrations can start before the split lands
+- `planning/feature_contract-modules_2026-08-29.md` — **landed 2026-08-29**, in
+  `planning/completed/`. `progress.ts` exists and holds the three row shapes the engine reads.
+  Phase 2 is unblocked
 - The api plan's `runner_jobs` appendix, before the migration that creates that table
 
 ## Files Expected to Change
@@ -310,9 +311,14 @@ track adds one alias line, and if the `spa` track is mid-edit the two changes ar
 merged blind. It is a candidate for the same treatment `infra/docker-compose.yml` got, if it
 blocks anything.
 
-`pyquest/packages/contract/src/progress.ts` is this track's alone after
-`planning/feature_contract-modules_2026-08-29.md` lands. `index.ts`, `primitives.ts` and
-`payloads.ts` are `main`'s; `endpoints.ts` is the `api` track's. This plan edits none of them.
+`pyquest/packages/contract/src/progress.ts` is this track's alone, and has been since
+`planning/completed/feature_contract-modules_2026-08-29.md` landed on 2026-08-29. `index.ts`,
+`primitives.ts` and `payloads.ts` are `main`'s; `endpoints.ts` is the `api` track's. This plan
+edits none of them, and that holds for the whole seven rather than by good behaviour:
+`index.ts` re-exports `progress.ts` wholesale, so a shape added here reaches the public surface
+with no edit to a `main`-owned file. Adding a *primitive* is the one thing that would —
+`primitives.ts` is named export by export — and a row shape needing one is the signal that the
+`api` track will need it too.
 
 `infra/compose/migrate.yml` is this track's, per
 `planning/completed/feature_compose-fragments_2026-08-29.md`. The root `docker-compose.yml`
