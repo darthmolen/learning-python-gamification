@@ -316,8 +316,12 @@ function that returns money it did not first ask for.
 
 - `planning/completed/feature_engine-query-layer_2026-08-28.md` — **done**. The query layer
   and the payload half of the contract
-- `planning/feature_progress-schema_2026-08-28.md` — somewhere to write. The `runner_jobs`
-  appendix above is what that plan is waiting on, and it is now written
+- `planning/completed/feature_progress-schema_2026-08-28.md` — **done** 2026-08-29. Thirteen
+  tables, the `runner_jobs` appendix above implemented as written
+- `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md` — **blocks the Journal
+  endpoints only.** `JournalEntry` above promises `prompt`, `body` and `reply`; the table has
+  no column for any of them. One forward-only migration, and it belongs to whichever phase
+  builds `GET`/`POST /journal` rather than to a plan of its own
 - `planning/feature_contract-modules_2026-08-29.md` — **landed 2026-08-29**, in
   `planning/completed/`. `endpoints.ts` exists, owned by this track and empty but for its
   header. Phase 1 is unblocked
