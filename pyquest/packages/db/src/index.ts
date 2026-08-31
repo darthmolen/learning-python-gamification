@@ -10,6 +10,11 @@
  * that can lose data and is therefore the smallest and the most attacked. And a repository layer
  * of thin readers that return the shapes `@pyquest/contract` declares — the API calls them, hands
  * the result to the engine, and the engine stays a pure function of content, progress and `now`.
+ *
+ * A third thing joined them: `seed.ts`, a known household for tests and for looking at the SPA
+ * against a live API. It is a fixture and says so — no passwords, nothing a person would type —
+ * and it is the only file here that reads content, because progress rows name quests and the ids
+ * have to come from the corpus rather than from strings somebody typed.
  */
 
 export {
@@ -19,6 +24,21 @@ export {
   migrationFiles,
   type Queryable,
 } from './migrate.ts';
+
+export {
+  CAMPAIGN_START_OFFSET_DAYS,
+  CLEARED_BY_RANK,
+  REPO_ROOT,
+  SEEDED_PLAYERS,
+  SeedContentError,
+  clearedByArea,
+  dmCleared,
+  householdItems,
+  resetHousehold,
+  seedHousehold,
+  type SeedOptions,
+  type SeedSummary,
+} from './seed.ts';
 
 export {
   RowShapeError,

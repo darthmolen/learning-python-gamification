@@ -14,9 +14,12 @@
   "scripts": {
     "build": "tsc -b",
     "migrate": "tsc -b && node dist/cli.js",
+    "seed": "tsc -b && node dist/seed.js",
+    "seed:reset": "tsc -b && node dist/seed.js --reset",
     "typecheck": "tsc -b && tsc -p tsconfig.test.json"
   },
   "dependencies": {
+    "@pyquest/content": "*",
     "@pyquest/contract": "*",
     "pg": "^8.16.3"
   },
