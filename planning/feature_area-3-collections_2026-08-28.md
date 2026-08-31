@@ -4,7 +4,9 @@
 **Track:** area-3
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
-**Lane:** B — **blocked by `feature_world-shim_2026-08-28.md`**
+**Lane:** B
+**Rewritten:** 2026-08-31 — the shim landed and the tree moved underneath this plan; see
+*Rewritten against the two-tree layout* below
 
 ## Objective
 
@@ -44,6 +46,12 @@ it.
 - [ ] The Area 3 VS Code rung ships: breakpoints and the Run and Debug view, as a
       `peer-signoff` quest tagged `breakpoints`
 - [ ] Area 3 reported to the `main` track for the `curriculum/README.md` status table
+- [ ] **`curriculum/area-3/lesson.md`** — the draft is published today; this plan is what
+      promotes it. Renaming `lesson.draft.md` to `lesson.md` is the act, and it may only
+      happen once the sessions exist to have tested the prose against a real evening
+- [ ] **Everything educational lands under `curriculum/area-3/`** — sessions, drills, briefs,
+      starters and hidden tests. `game/area-3/quests/` gets the quest YAML and nothing else.
+      `rm -rf game/` must still leave Area 3 valid and publishable
 
 ## Approach
 
@@ -318,12 +326,12 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 ## Dependencies / Prerequisites
 
-- **`feature_world-shim_2026-08-28.md` must be complete**, including its laptop measurement,
-  before any block is placed. **It creates `curriculum/lib/world.py`; this track assumes that
-  file exists and never writes it** — `curriculum/lib/` is not in Files Expected to Change
-  below, and if an exercise needs the shim changed, that is an edit to the shim plan. As of
-  2026-08-29 the shim is `Status: Planned` and `curriculum/lib/` does not exist, so the
-  stop/go rule in Phase 1 governs what may be written meanwhile.
+- [x] **`feature_world-shim_2026-08-28.md` is complete** — closed to `planning/completed/`,
+  and `curriculum/lib/world.py` exists with its laptop measurement taken. **This track uses
+  that file and never writes it**; `curriculum/lib/` is not in Files Expected to Change below,
+  and an exercise that needs the shim changed is an edit to the shim plan, argued there. The
+  stop/go rule in Phase 1 no longer governs anything and is left as the record of how this
+  plan expected to proceed while blocked.
 - **Copy `curriculum/lib/world.py` into his repository, at Area 3 start** — the shim plan
   completed 2026-08-31 and deliberately left this undone, so that one copy stays one copy
   while the shim's surface can still move; `curriculum/lib/README.md` carries the command and
@@ -337,21 +345,31 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
 
 ## Files Expected to Change
 
-- `curriculum/area-3/**` — new, the whole area
-- ~~`content/areas/area-3.yml` — new~~ — **transcribed on 2026-08-29** and no longer this
-  plan's to create. It carries the spec's title and §5.2's estimate of five, marked
-  `authoring: partial`. This plan flips that to `complete` when the five quests exist,
-  which is an edit to one word rather than a new file
-- `content/quests/a3-*.yml` — new, **seven**: five collections quests, the breakpoints rung,
-  and Boss 3
-- `content/briefs/a3-*.md` — new, **seven**: every item has a brief
-- `content/tests/a3-*_test.py` — new, **five**, the `local-repo` items only
-- `content/starters/a3-*.py` — **none**; starters are a `hidden-tests` artifact and §6.3
-  confines that to Areas 0–1
-**Owned by other tracks, not this one:** `curriculum/README.md` (`main`) and
-`planning/backlog/feature_vscode-profile-and-tool-quests_2026-08-28.md` (`area-2`). The Area 3
-rung ships here and is recorded in `curriculum/area-3/README.md`; the stub's status note is
-written once, by the track that owns it.
+**Rewritten 2026-08-31 for the two-tree layout.** `content/` no longer exists; everything
+educational is in `curriculum/` and the game's overlay is `game/`.
+
+- `curriculum/area-3/sessions/**` — new: thirteen session plans, each with its
+  `session-<n>/` directory of drills beside it
+- `curriculum/area-3/exercises/<slug>/**` — new, **seven**: `BRIEF.md` for every item, and
+  `hidden/test.py` for the five `local-repo` ones. **No `starter/`** — starters are a
+  `hidden-tests` artifact and §6.3 confines that to Areas 0–1
+- `curriculum/area-3/lesson.md` — **promoted from `lesson.draft.md`**, not written fresh.
+  The draft is live now; this plan earns the rename
+- `curriculum/area-3/reference/**`, `journal/**`, `dm-guide.md`, `README.md`, `verify.py` —
+  new, the Area 0 layout
+- `curriculum/area-3/area.yml` — **held, not created.** It exists and carries the spec's
+  title, weeks and blurb. This plan flips `authoring: partial` to `complete` when the five
+  quests exist, which is an edit to one word
+- `game/area-3/quests/a3-*.yml` — new, **seven**: five collections quests, the breakpoints
+  rung, and Boss 3
+
+Each quest's `brief:` and `verifier.tests:` are paths **into the curriculum root**, of the
+form `area-3/exercises/<slug>/BRIEF.md`. That cross-root reference is validated; a typo is a
+failed `validate:content` rather than a broken page.
+
+**Owned by other tracks, not this one:** `curriculum/README.md` (`main`). The Area 3 rung
+ships here and is recorded in `curriculum/area-3/README.md`; the status table is written once,
+by the track that owns it.
 
 ## Out of Scope
 
@@ -364,3 +382,39 @@ already did it.
 
 Making these playable in a browser. Ursina needs a real OpenGL context and Pyodide has none.
 Area 3 is `local-repo` and that is the design, not a limitation.
+
+---
+
+## Rewritten against the two-tree layout — 2026-08-31
+
+This plan was written on 2026-08-28 against a repository that no longer exists in that shape.
+Two things changed under it, and both were rewritten rather than annotated, because a queued
+plan whose file list names deleted directories is a plan that fails on its first command.
+
+**`content/` is gone.** `curriculum/` now holds every educational artifact — sessions, drills,
+briefs, starters and hidden tests — and `game/` holds the quest overlay and nothing that
+teaches. So the seven `a3-` briefs are no longer `content/briefs/a3-*.md`; they are
+`curriculum/area-3/exercises/<slug>/BRIEF.md`, beside the sessions that teach them, and the
+quest YAML points across the root boundary at them. `Files Expected to Change` is rewritten
+accordingly. Nothing about the *work* changed — thirteen sessions, sixteen concepts, seven
+items — only where it lands.
+
+**The shim landed.** `feature_world-shim_2026-08-28.md` is in `completed/` with its laptop
+measurement taken, so this plan is no longer blocked and Phase 1's stop/go rule no longer
+governs anything. It is left in place as the record of how the plan expected to proceed while
+it was blocked, which is worth more than a clean deletion.
+
+**A third thing appeared that this plan could not have anticipated: `lesson.md`.** The Field
+Manual now publishes a teaching body per area, and Area 3's is live today as
+`lesson.draft.md` — written ahead of the sessions, labelled a draft on the page and on the
+index. That changes this plan's job in a useful way: **the lesson is no longer something to
+write, it is something to earn.** The rename from `lesson.draft.md` to `lesson.md` is the
+plan's own sign-off that the prose survived contact with thirteen real evenings. A draft that
+gets promoted without a session behind it is exactly the "authored, plausible, never run"
+failure this repository keeps finding.
+
+**What was deliberately not touched.** The Approach and Phases sections are the argument for
+*how to teach Area 3* — where the mid-area slump lands, why Ursina behind a three-name shim,
+which concepts carry which sessions. None of that depends on directory names and none of it
+has been weakened by the move. Rewriting prose that is still correct would have buried the two
+changes that matter.

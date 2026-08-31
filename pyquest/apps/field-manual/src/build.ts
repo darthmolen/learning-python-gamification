@@ -89,9 +89,16 @@ ${formatIssues(issues, roots)}`,
       title: manifest.title,
       ...(manifest.weeks ? { weeks: manifest.weeks } : {}),
       ...(manifest.blurb ? { blurb: manifest.blurb } : {}),
+      /**
+       * `lesson.md` wins over `lesson.draft.md` when both exist, so promoting a lesson is a
+       * `git mv` and nothing else — a finished lesson that still apologised for itself would be
+       * the cost of requiring the old file to be deleted too.
+       */
       ...(() => {
-        const lesson = areaProse(roots.curriculum, manifest.area, 'lesson.md');
-        return lesson ? { lesson: briefBody(lesson) } : {};
+        const final = areaProse(roots.curriculum, manifest.area, 'lesson.md');
+        if (final) return { lesson: briefBody(final) };
+        const draft = areaProse(roots.curriculum, manifest.area, 'lesson.draft.md');
+        return draft ? { lesson: briefBody(draft), lessonIsDraft: true } : {};
       })(),
       /**
        * The guide is read only for the DM build. Reading it and letting the renderer decide

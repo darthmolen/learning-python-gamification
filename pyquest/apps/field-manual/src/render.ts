@@ -17,6 +17,8 @@ export interface AreaView {
   readonly blurb?: string;
   /** The teaching itself, already markdown-rendered. Absent means unwritten, and it shows. */
   readonly lesson?: string;
+  /** True when the lesson came from `lesson.draft.md`. Says so on the page and on the index. */
+  readonly lessonIsDraft?: boolean;
   /** The DM's guide, rendered. Present only in the `dm` build — never emitted then hidden. */
   readonly teachingAid?: string;
   readonly concepts: readonly { readonly id: string; readonly label: string }[];
@@ -58,6 +60,9 @@ const STYLE = `
   .ex code{font-family:'IBM Plex Mono',monospace;font-size:13.5px}
   .gap{border:1px dashed var(--line);padding:16px 18px;color:var(--muted);background:transparent}
   .lesson{border-left:2px solid var(--soft);padding-left:18px;margin:0 0 8px}
+  .draft{border:1px dashed var(--line);padding:10px 14px;margin:0 0 14px;color:var(--muted);
+         font-size:14px}
+  .draft b{color:var(--ink)}
   .lesson h3{margin-top:22px}
   .lesson pre{background:#0e1116;border:1px solid var(--soft);padding:12px 14px;overflow-x:auto;
               font-family:'IBM Plex Mono',monospace;font-size:13px}
@@ -128,7 +133,7 @@ export function renderIndex(areas: readonly AreaView[], noindex = false): string
     <p class="b">${a.blurb ? escape(a.blurb) : 'No summary written yet.'}</p>
     <div class="n" style="margin-top:8px">${a.concepts.length} ideas · ${
       a.exercises.length > 0 ? `${a.exercises.length} exercises` : 'exercises not yet written'
-    }</div>
+    }${a.lessonIsDraft ? ' · lesson in draft' : ''}</div>
   </a>`,
     )
     .join('\n');
@@ -172,7 +177,14 @@ ${a.teachingAid}
 export function renderArea(a: AreaView, noindex = false): string {
   const lesson =
     a.lesson !== undefined
-      ? `<h2>The lesson</h2>
+      ? `<h2>The lesson${a.lessonIsDraft ? ' <span class="n">(draft)</span>' : ''}</h2>
+  ${
+    a.lessonIsDraft
+      ? `<p class="draft"><b>This is a draft.</b> It was written ahead of the sessions that
+  will test it, so it has not yet survived a single evening with a learner in front of it.
+  Expect it to change.</p>`
+      : ''
+  }
   <div class="lesson">
 ${a.lesson}
   </div>`
