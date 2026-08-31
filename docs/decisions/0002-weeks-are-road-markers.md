@@ -13,10 +13,14 @@ artboard renders it as prose:
 
 and the Map and crumb bar both show `week 10 of 48`.
 
-That string is two different things glued together: a schedule and a blurb. Nothing in
-`curriculum/area-<n>/area.yml` holds either — the manifest is four fields, none of them a week range.
-So the SPA had no source for a line the artboard requires, and the first thing built there was
-a hardcoded table of area names, which also invented titles for five areas nobody has authored.
+That string is two different things glued together: a schedule and a blurb. **At the time of
+this decision the area manifest held neither** — no week range, no blurb. So the SPA had no
+source for a line the artboard requires, and the first thing built there was a hardcoded table
+of area names, which also invented titles for five areas nobody has authored.
+
+*(The manifest carries `weeks` and `blurb` today, and lives at `curriculum/area-<n>/area.yml`
+rather than `content/areas/*.yml`. Both are consequences of this decision and the layout change
+that followed it; the paragraph above describes the state that prompted it.)*
 
 The question behind the field is what weeks are *for*. Two readings:
 

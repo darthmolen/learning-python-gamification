@@ -14,7 +14,8 @@
 
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { checkContent, validateContent } from '../src/validate.ts';
+import { existsSync } from 'node:fs';
+import { checkContent, formatIssues, validateContent } from '../src/validate.ts';
 import type { ContentIssue } from '../src/validate.ts';
 
 const fixture = (name: string): string =>
@@ -86,5 +87,33 @@ describe('a single root stays valid', () => {
   it('accepts a bare string and treats it as both roots', () => {
     const legacy = fileURLToPath(new URL('../../../../content', import.meta.url));
     expect(validateContent(legacy)).toEqual([]);
+  });
+});
+
+describe('the report points at files that actually exist', () => {
+  /**
+   * Every path `formatIssues` prints is meant to be clickable — §6.10 budgets two minutes to
+   * fix an authoring mistake, and a path that does not open spends most of it.
+   *
+   * With two roots that stops being free. The report has to resolve each file against the tree
+   * it was *read* from, so a caller that hands it the base directory instead silently drops the
+   * `curriculum/` or `game/` segment. It still prints a plausible absolute path; it just points
+   * at nothing. Caught in review on two call sites, which is why the assertion is `existsSync`
+   * on what was printed rather than a string comparison — the only property that matters is
+   * that the path opens.
+   */
+  it('prints absolute paths that resolve, for a file in either tree', () => {
+    const source = roots('broken/cross-root-missing');
+    const report = formatIssues(validateContent(source), source);
+
+    const printed = report
+      .split(String.fromCharCode(10))
+      .filter((line) => line.endsWith('.yml'))
+      .map((line) => line.trim());
+
+    expect(printed.length, 'the report names no file at all').toBeGreaterThan(0);
+    for (const path of printed) {
+      expect(existsSync(path), `the report points at ${path}, which does not exist`).toBe(true);
+    }
   });
 });

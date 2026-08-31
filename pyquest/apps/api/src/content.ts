@@ -158,7 +158,9 @@ export function loadContentRoot(base: string): ContentRoot {
   const { items, manifests, issues } = checkContent(roots);
 
   if (issues.length > 0) {
-    throw new ContentRootError(absolute, issues, formatIssues(issues, absolute));
+    // `roots`, not `absolute`: the report resolves each file against the tree it was read
+    // from, and the base directory is neither of them.
+    throw new ContentRootError(absolute, issues, formatIssues(issues, roots));
   }
 
   const byId = new Map(items.map((item) => [item.id, item]));

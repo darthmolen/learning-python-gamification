@@ -67,15 +67,23 @@ function main(argv: readonly string[]): number {
     return 1;
   }
 
-  const { items, manifests, issues } = checkContent(contentRootsFrom(root));
+  /**
+   * Resolved once and passed to both. `formatIssues` prints the absolute path of every file it
+   * complains about, and it can only do that against the roots the files were actually read
+   * from — handing it the base directory instead drops the `curriculum/` or `game/` segment and
+   * the report's one clickable affordance stops working. §6.10 promises this costs two minutes;
+   * a path that does not open is most of that budget.
+   */
+  const roots = contentRootsFrom(root);
+  const { items, manifests, issues } = checkContent(roots);
 
   if (issues.length === 0) {
-    console.log(formatIssues(issues, root));
+    console.log(formatIssues(issues, roots));
     console.log(`    ${plural(items.length, 'item')} across ${plural(manifests.length, 'area')}`);
     return 0;
   }
 
-  console.error(formatIssues(issues, root));
+  console.error(formatIssues(issues, roots));
   return 1;
 }
 
