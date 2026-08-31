@@ -1,6 +1,6 @@
 # The Journal Has Nowhere to Put the Journal
 
-**Status:** Backlog
+**Status:** Promoted 2026-08-31 to planning/in-progress/feature_journal-reads-from-git_2026-08-31.md
 **Date Discovered:** 2026-08-29
 **Discovered During:** `planning/completed/feature_progress-schema_2026-08-28.md`, Wave 3
 
