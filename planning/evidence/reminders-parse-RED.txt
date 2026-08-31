@@ -1,0 +1,255 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/tools/vscode/reminders
+
+ ❯ src/parse.test.ts (18 tests | 17 failed) 10ms
+     × takes the title from the H1, not the filename 4ms
+     × reads every bold label in the metadata block 0ms
+     × strips the backticks the real files wrap the plan glob in 0ms
+     × summary is the first paragraph of What to do, not the whole section 0ms
+     × keeps labels it does not know about, so write-back cannot lose them 0ms
+     × a file with no Status is malformed, and says which label is missing 1ms
+     × a file with no H1 is malformed rather than silently titleless 0ms
+     × follow-up_gitea-reachable-from-his-laptop_2026-08-30.md parses, with every documented field present 1ms
+     × follow-up_turtle-and-dragon-easter-egg_2026-08-30.md parses, with every documented field present 0ms
+     × follow-up_vscode-profile-on-his-laptop_2026-08-30.md parses, with every documented field present 0ms
+     × follow-up_laptop-screen-check_2026-08-30.md parses, with every documented field present 0ms
+     × verify_ursina-framerate-on-his-laptop_2026-08-30.md parses, with every documented field present 0ms
+     × follow-up_gitea-reachable-from-his-laptop_2026-08-30.md has a plan glob with no backticks left on it 0ms
+     × follow-up_turtle-and-dragon-easter-egg_2026-08-30.md has a plan glob with no backticks left on it 1ms
+     × follow-up_vscode-profile-on-his-laptop_2026-08-30.md has a plan glob with no backticks left on it 0ms
+     × follow-up_laptop-screen-check_2026-08-30.md has a plan glob with no backticks left on it 0ms
+     × verify_ursina-framerate-on-his-laptop_2026-08-30.md has a plan glob with no backticks left on it 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 17 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/parse.test.ts > parseReminder > takes the title from the H1, not the filename
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/parse.test.ts:39:32
+     37|     const result = parseReminder(WELL_FORMED)
+     38|
+     39|     expect(isReminder(result)).toBe(true)
+       |                                ^
+     40|     expect(isReminder(result) && result.title).toBe(
+     41|       "Make Gitea reachable from the son's laptop",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯
+
+ FAIL  src/parse.test.ts > parseReminder > reads every bold label in the metadata block
+Error: expected a reminder, got: not implemented
+ ❯ src/parse.test.ts:47:36
+     45|   test('reads every bold label in the metadata block', () => {
+     46|     const result = parseReminder(WELL_FORMED)
+     47|     if (!isReminder(result)) throw new Error(`expected a reminder, got…
+       |                                    ^
+     48|
+     49|     expect(result.category).toBe('follow-up')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯
+
+ FAIL  src/parse.test.ts > parseReminder > strips the backticks the real files wrap the plan glob in
+Error: expected a reminder, got: not implemented
+ ❯ src/parse.test.ts:58:36
+     56|   test('strips the backticks the real files wrap the plan glob in', ()…
+     57|     const result = parseReminder(WELL_FORMED)
+     58|     if (!isReminder(result)) throw new Error(`expected a reminder, got…
+       |                                    ^
+     59|
+     60|     expect(result.plan).toBe('planning/**/feature_gitea_2026-08-27.md')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯
+
+ FAIL  src/parse.test.ts > parseReminder > summary is the first paragraph of What to do, not the whole section
+Error: expected a reminder, got: not implemented
+ ❯ src/parse.test.ts:65:36
+     63|   test('summary is the first paragraph of What to do, not the whole se…
+     64|     const result = parseReminder(WELL_FORMED)
+     65|     if (!isReminder(result)) throw new Error(`expected a reminder, got…
+       |                                    ^
+     66|
+     67|     expect(result.summary).toBe(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯
+
+ FAIL  src/parse.test.ts > parseReminder > keeps labels it does not know about, so write-back cannot lose them
+Error: expected a reminder, got: not implemented
+ ❯ src/parse.test.ts:79:36
+     77|
+     78|     const result = parseReminder(withExtra)
+     79|     if (!isReminder(result)) throw new Error(`expected a reminder, got…
+       |                                    ^
+     80|
+     81|     expect(result.fields.get('Wave')).toBe('3')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯
+
+ FAIL  src/parse.test.ts > parseReminder > a file with no Status is malformed, and says which label is missing
+AssertionError: expected 'not implemented' to match /Status/
+
+- Expected:
+/Status/
+
++ Received:
+"not implemented"
+
+ ❯ src/parse.test.ts:90:53
+     88|
+     89|     expect(isReminder(result)).toBe(false)
+     90|     expect(isReminder(result) ? '' : result.reason).toMatch(/Status/)
+       |                                                     ^
+     91|   })
+     92|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯
+
+ FAIL  src/parse.test.ts > parseReminder > a file with no H1 is malformed rather than silently titleless
+AssertionError: expected 'not implemented' to match /title|H1/i
+
+- Expected:
+/title|H1/i
+
++ Received:
+"not implemented"
+
+ ❯ src/parse.test.ts:99:53
+     97|
+     98|     expect(isReminder(result)).toBe(false)
+     99|     expect(isReminder(result) ? '' : result.reason).toMatch(/title|H1/…
+       |                                                     ^
+    100|   })
+    101| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_gitea-reachable-from-his-laptop_2026-08-30.md parses, with every documented field present
+Error: follow-up_gitea-reachable-from-his-laptop_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:112:36
+    110|   test.each(names)('%s parses, with every documented field present', (…
+    111|     const result = parseReminder(readFixture(name))
+    112|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    113|
+    114|     expect(result.title.length).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_turtle-and-dragon-easter-egg_2026-08-30.md parses, with every documented field present
+Error: follow-up_turtle-and-dragon-easter-egg_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:112:36
+    110|   test.each(names)('%s parses, with every documented field present', (…
+    111|     const result = parseReminder(readFixture(name))
+    112|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    113|
+    114|     expect(result.title.length).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_vscode-profile-on-his-laptop_2026-08-30.md parses, with every documented field present
+Error: follow-up_vscode-profile-on-his-laptop_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:112:36
+    110|   test.each(names)('%s parses, with every documented field present', (…
+    111|     const result = parseReminder(readFixture(name))
+    112|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    113|
+    114|     expect(result.title.length).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_laptop-screen-check_2026-08-30.md parses, with every documented field present
+Error: follow-up_laptop-screen-check_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:112:36
+    110|   test.each(names)('%s parses, with every documented field present', (…
+    111|     const result = parseReminder(readFixture(name))
+    112|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    113|
+    114|     expect(result.title.length).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > verify_ursina-framerate-on-his-laptop_2026-08-30.md parses, with every documented field present
+Error: verify_ursina-framerate-on-his-laptop_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:112:36
+    110|   test.each(names)('%s parses, with every documented field present', (…
+    111|     const result = parseReminder(readFixture(name))
+    112|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    113|
+    114|     expect(result.title.length).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_gitea-reachable-from-his-laptop_2026-08-30.md has a plan glob with no backticks left on it
+Error: follow-up_gitea-reachable-from-his-laptop_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:125:36
+    123|   test.each(names)('%s has a plan glob with no backticks left on it', …
+    124|     const result = parseReminder(readFixture(name))
+    125|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    126|
+    127|     expect(result.plan).toBeDefined()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_turtle-and-dragon-easter-egg_2026-08-30.md has a plan glob with no backticks left on it
+Error: follow-up_turtle-and-dragon-easter-egg_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:125:36
+    123|   test.each(names)('%s has a plan glob with no backticks left on it', …
+    124|     const result = parseReminder(readFixture(name))
+    125|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    126|
+    127|     expect(result.plan).toBeDefined()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_vscode-profile-on-his-laptop_2026-08-30.md has a plan glob with no backticks left on it
+Error: follow-up_vscode-profile-on-his-laptop_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:125:36
+    123|   test.each(names)('%s has a plan glob with no backticks left on it', …
+    124|     const result = parseReminder(readFixture(name))
+    125|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    126|
+    127|     expect(result.plan).toBeDefined()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_laptop-screen-check_2026-08-30.md has a plan glob with no backticks left on it
+Error: follow-up_laptop-screen-check_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:125:36
+    123|   test.each(names)('%s has a plan glob with no backticks left on it', …
+    124|     const result = parseReminder(readFixture(name))
+    125|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    126|
+    127|     expect(result.plan).toBeDefined()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/17]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > verify_ursina-framerate-on-his-laptop_2026-08-30.md has a plan glob with no backticks left on it
+Error: verify_ursina-framerate-on-his-laptop_2026-08-30.md did not parse: not implemented
+ ❯ src/parse.test.ts:125:36
+    123|   test.each(names)('%s has a plan glob with no backticks left on it', …
+    124|     const result = parseReminder(readFixture(name))
+    125|     if (!isReminder(result)) throw new Error(`${name} did not parse: $…
+       |                                    ^
+    126|
+    127|     expect(result.plan).toBeDefined()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/17]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  17 failed | 1 passed (18)
+   Start at  08:17:39
+   Duration  175ms (transform 18ms, setup 0ms, import 30ms, tests 10ms, environment 0ms)
+

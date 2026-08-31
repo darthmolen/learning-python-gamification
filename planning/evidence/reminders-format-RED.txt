@@ -1,0 +1,164 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/.claude/worktrees/reminders-ext/tools/vscode/reminders
+
+ ❯ src/format.test.ts (10 tests | 10 failed) 7ms
+     × sets the status to done 2ms
+     × writes the Closed line directly beneath Status, as SKILL.md specifies 0ms
+     × changes exactly one line and adds exactly one 0ms
+     × leaves the prose completely alone 0ms
+     × the result parses, and parses as closed 0ms
+     × refuses an empty note, because the note is the point of keeping the file 2ms
+     × drops take the same path and record the reason 0ms
+     × re-closing replaces the existing Closed line rather than stacking a second 0ms
+     × refuses a file it cannot find a Status line in 1ms
+     × preserves CRLF files, because this runs on Windows 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/format.test.ts > closeReminder > sets the status to done
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:31:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > writes the Closed line directly beneath Status, as SKILL.md specifies
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:38:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > changes exactly one line and adds exactly one
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:50:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > leaves the prose completely alone
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:62:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > the result parses, and parses as closed
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:70:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > refuses an empty note, because the note is the point of keeping the file
+AssertionError: expected 'not implemented' to match /note/i
+
+- Expected:
+/note/i
+
++ Received:
+"not implemented"
+
+ ❯ src/format.test.ts:85:62
+     83|
+     84|     expect(typeof result).not.toBe('string')
+     85|     expect(typeof result === 'string' ? '' : result.refused).toMatch(/…
+       |                                                              ^
+     86|   })
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > drops take the same path and record the reason
+Error: refused: not implemented
+ ❯ src/format.test.ts:94:43
+     92|       note: 'The laptop was replaced; this no longer applies.',
+     93|     })
+     94|     if (typeof result !== 'string') throw new Error(`refused: ${result…
+       |                                           ^
+     95|
+     96|     expect(result).toContain('**Status:** dropped')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > re-closing replaces the existing Closed line rather than stacking a second
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:103:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > refuses a file it cannot find a Status line in
+AssertionError: expected 'not implemented' to match /Status/
+
+- Expected:
+/Status/
+
++ Received:
+"not implemented"
+
+ ❯ src/format.test.ts:119:62
+    117|
+    118|     expect(typeof result).not.toBe('string')
+    119|     expect(typeof result === 'string' ? '' : result.refused).toMatch(/…
+       |                                                              ^
+    120|   })
+    121|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  src/format.test.ts > closeReminder > preserves CRLF files, because this runs on Windows
+Error: refused: not implemented
+ ❯ closed src/format.test.ts:25:41
+     23| const closed = (text: string, note = 'Pushed from his laptop over the …
+     24|   const result = closeReminder(text, { status: 'done', date: '2026-09-…
+     25|   if (typeof result !== 'string') throw new Error(`refused: ${result.r…
+       |                                         ^
+     26|   return result
+     27| }
+ ❯ src/format.test.ts:124:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  09:32:28
+   Duration  184ms (transform 25ms, setup 0ms, import 38ms, tests 7ms, environment 0ms)
+

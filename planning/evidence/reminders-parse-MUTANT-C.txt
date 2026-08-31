@@ -1,0 +1,58 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/tools/vscode/reminders
+
+ ❯ src/parse.test.ts (24 tests | 3 failed) 11ms
+     × bold leads in the body are prose, not metadata 3ms
+     × follow-up_gitea-reachable-from-his-laptop_2026-08-30.md carries no body prose in its metadata block 1ms
+     × follow-up_vscode-profile-on-his-laptop_2026-08-30.md carries no body prose in its metadata block 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/parse.test.ts > parseReminder > bold leads in the body are prose, not metadata
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/parse.test.ts:98:40
+     96|     if (!isReminder(result)) throw new Error(`expected a reminder, got…
+     97|
+     98|     expect(result.fields.has('Works')).toBe(false)
+       |                                        ^
+     99|     expect(result.fields.has('Does not work')).toBe(false)
+    100|     expect(result.status).toBe('open')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_gitea-reachable-from-his-laptop_2026-08-30.md carries no body prose in its metadata block
+ FAIL  src/parse.test.ts > the reminders this repository actually has > follow-up_vscode-profile-on-his-laptop_2026-08-30.md carries no body prose in its metadata block
+AssertionError: expected [ 'Works', 'Does not work' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Works",
++   "Does not work",
++ ]
+
+ ❯ src/parse.test.ts:149:78
+    147|     // `**Does not work:**`. They read exactly like metadata and must …
+    148|     const documented = ['Category', 'Audience', 'Subject', 'Raised', '…
+    149|     expect([...result.fields.keys()].filter((k) => !documented.include…
+       |                                                                              ^
+    150|   })
+    151|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 21 passed (24)
+   Start at  08:20:18
+   Duration  158ms (transform 20ms, setup 0ms, import 32ms, tests 11ms, environment 0ms)
+
