@@ -340,8 +340,8 @@ area-1/
     session-9/mandala-brief.md  the boss rehearsal
     session-10/sigil-brief.md   Boss 1
   journal/
-    TEMPLATE.md            copied once per session. Four prompts
+    TEMPLATE.md            the entry to paste into his journal.md. Four prompts
     entry-07-prompt.md     what changes at entry 07, and how to score it
-    entries/               theirs, empty
+    entries/               gone — one journal.md now; the README says where it went
   reference/               Datamine payloads (spec 5.5). The DM's copy, not the learner's.
 ```

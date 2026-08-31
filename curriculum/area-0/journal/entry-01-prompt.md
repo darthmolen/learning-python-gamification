@@ -32,7 +32,8 @@ shoulder while they type.
 
 ## The first entry's prompts
 
-Copy `TEMPLATE.md` to `journal/entries/session-01.md` and let them work through it.
+Make a `journal.md`, copy the entry out of `TEMPLATE.md` into it, and let them work through
+it. Every session after this one appends to the bottom of that same file.
 
 If they are stuck on **what I built**, these are legal nudges — questions about the
 session, not about what to write:
@@ -75,17 +76,35 @@ that already exists rather than the other way round.
 
 ## Where the entries live
 
-```
-journal/
-  TEMPLATE.md          copy this each time
-  entry-01-prompt.md   this file
-  entries/
-    session-01.md
-    session-02.md
-    ...
+```text
+journal.md             everything he writes, all year, one file
 ```
 
-In Area 0 this is a folder on the learner's machine and nothing more. In Area 2a it becomes a git
-repository, and these first six entries become its first real commit — which is a much
-better first commit than an empty README, and is the reason the Journal starts here
-rather than waiting for the tooling the spec schedules for week 3.
+That is the whole of it on his side. One file, newest entry at the bottom. **"Which file do I
+write in tonight?" has one answer and it never changes** — which is the reason it is one file
+rather than one per session.
+
+Each entry opens with a dated heading, copied out of the template:
+
+```markdown
+## 2026-08-31 — Session 01
+```
+
+**The date format is not cosmetic.** The game reads those headings to tell one entry from the
+next, and pays against that same date, so it wants `2026-08-31` and not `Aug 31`. It is in the
+template to be copied rather than typed, which is worth saying to him once: *copy the line,
+change the numbers.*
+
+The teaching material stays in the curriculum and he never needs to open it:
+
+```text
+curriculum/area-0/journal/
+  TEMPLATE.md          the entry to copy, each session
+  entry-01-prompt.md   this file
+```
+
+In Area 0 `journal.md` is a file on the learner's machine and nothing more. In Area 2a it moves
+into a git repository and becomes its first real commit — which is a much better first commit
+than an empty README, and is the reason the Journal starts here rather than waiting for the
+tooling the spec schedules for week 3. **One file makes that move trivially**: it is one `git
+add`, and the six entries already in it come along as history he can read.

@@ -119,8 +119,9 @@ anything else before you cut that.
 
 ## Beat 4 — Journal (5 minutes)
 
-Copy `journal/TEMPLATE.md` to `journal/entries/session-01.md`. Read them
-`journal/entry-01-prompt.md`.
+Make a `journal.md` and copy the entry out of `journal/TEMPLATE.md` into it. Read them
+`journal/entry-01-prompt.md`. Every session after this one appends to the bottom of that
+same file — there is never a second one to name.
 
 Before they write a word, say the scoring rule once: **ten XP, paid for substance, not
 for existence.** "Did turtle, was fine" is worth zero and you will say zero.

@@ -25,11 +25,13 @@ shoulder.
 
 Everything else. One entry per session, four prompts, ten XP paid for **substance rather
 than existence** (§5.6), your reply written underneath the same evening. The template is
-`TEMPLATE.md`, copied to `entries/session-07.md` and so on, and the scoring rubric is
+`TEMPLATE.md`, appended to the bottom of his one `journal.md`, and the scoring rubric is
 `../../area-0/dm-guide.md` §6.
 
 **The numbering continues rather than restarting.** There is one Journal, it runs for the
-whole year, and session 07 is session 07.
+whole year, and session 07 is session 07. Since 2026-08-31 that is one *file* as well as one
+Journal, so it is now visible rather than asserted — he scrolls back through Area 0 without
+opening anything, which is exactly what the pre-boss re-read asks him to do.
 
 **Still plain markdown, still not in git.** That arrives at Area 2a on schedule, week 6.
 Area 0's six entries plus these ten become the first real commit in their repository,

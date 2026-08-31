@@ -1,12 +1,19 @@
-# Journal — Session NN
+# The entry to copy
 
-**Date:**
-**Area:** 0 — First Light
-**What I was working on:**
+Copy everything below the line into the **bottom** of `journal.md`, then fill it in.
+
+One entry per session, newest at the bottom, all of it in the one file. The date on the
+heading is what the game reads to know an entry is yours, so it goes in as
+`YYYY-MM-DD` — `2026-08-31`, not `Aug 31`. Copy it, do not retype it from memory.
 
 ---
 
-## What I built
+## YYYY-MM-DD — Session NN
+
+**Area:** 0 — First Light
+**What I was working on:**
+
+### What I built
 
 <!--
 Specific. A stranger reading this should be able to tell which session it was
@@ -16,7 +23,7 @@ what number you chose and why.
 
 
 
-## What broke
+### What broke
 
 <!--
 Errors count. So do things that ran perfectly and produced the wrong picture.
@@ -28,10 +35,10 @@ surprised you instead, and say that nothing broke, which is itself worth knowing
 
 
 
-## What I would do differently
+### What I would do differently
 
 <!--
-Next time, or in this same file if you went back to it. This is the hardest of
+Next time, or in this same entry if you come back to it. This is the hardest of
 the three and it is the one worth the most.
 
 Also the place for things you could not fix yet. Write those down properly --
@@ -42,9 +49,7 @@ day.
 
 
 
----
-
-## What will break next time
+### What will break next time
 
 *And can you get ahead of it before then?*
 
@@ -54,8 +59,8 @@ you could deal with it now instead of then.
 
 <!-- Next session opens with this line. If you were right, say so out loud. -->
 
----
 
-## DM reply
+
+### DM reply
 
 <!-- Dad writes here. Reply to what was written, not to how it was written. -->

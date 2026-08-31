@@ -225,8 +225,8 @@ area-0/
     session-3/error-log.md   the table they fill in while breaking things
     session-6/commission-brief.md
   journal/
-    TEMPLATE.md          copied once per session
+    TEMPLATE.md          the entry to paste into his journal.md, once per session
     entry-01-prompt.md   what to say the first time, and how to score it
-    entries/             theirs, empty
+    entries/             gone — one journal.md now; the README says where it went
   reference/             Datamine payloads (spec 5.5). The DM's copy, not the learner's.
 ```

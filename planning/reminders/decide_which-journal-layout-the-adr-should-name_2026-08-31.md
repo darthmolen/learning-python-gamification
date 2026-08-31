@@ -5,7 +5,10 @@
 **Subject:** curriculum
 **Raised:** 2026-08-31
 **Plan:** `planning/**/feature_journal-reads-from-git_2026-08-31.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — Ruled for one `journal.md` with a dated heading per entry, and the
+curriculum moved rather than the code. Neither of the two layouts on the table won: the DM's
+answer was a third one. ADR 0004 needs no correction after all.
 
 ## What to do
 

@@ -9,11 +9,10 @@
 ruled on 2026-08-31 and stopped being a schema question
 **Blocks:** `planning/feature_accounts-and-auth_2026-08-30.md` — the auth gate claims
 `endpoints.ts` and `apps/api/src/**` and runs alone, so this lands first or not for a while
-**Blocked on:** **Phase 1 only**, and by a decision rather than by work —
-`planning/reminders/decide_which-journal-layout-the-adr-should-name_2026-08-31.md`. ADR 0004 and
-the curriculum name two different layouts, and which one moves is the DM's call. **Phases 2 and 3
-do not wait**: the contract correction and the read path are indifferent to how many files the
-Journal is kept in
+**Blocked on:** nothing. The layout decision that blocked Phase 1 was ruled on 2026-08-31 —
+`planning/reminders/decide_which-journal-layout-the-adr-should-name_2026-08-31.md`, closed — and
+Phase 1 landed with it. The ordering constraint against the `flakes` track went with it: Phase 1
+turned out to be a curriculum change, so it never touched their files
 
 ## Objective
 
@@ -63,24 +62,13 @@ journal.md`. A commit touching `journal/entries/session-07.md` does not match it
 Journal reads "`journal.md`, his repo". So this is three documents and two layouts, not the API
 drifting from the curriculum on its own.
 
-**The ADR's decision is unaffected, and only a detail in it is wrong.** Its argument is markdown
-in his repository versus columns in Postgres; `journal.md` appears as shorthand for the artifact,
-and every line of the reasoning holds identically for a directory of session files. Nothing about
-"if we strand it in the db, it dies with the game" depends on the file count.
-
-**The curriculum's layout is the one to keep**, and not only because CLAUDE.md makes the
-curriculum the real work:
-
-- §5.6 has him **re-read his Journal from the start of an area before every boss fight**. Six
-  files named for their sessions are re-readable; one long file scrolled to the right offset is
-  not.
-- The Area 0 prompt sheet has the DM reply written **under the line in the same file**, which
-  needs a file per entry to be a place rather than an append.
-- `TEMPLATE.md` exists to be copied. Copying it into one accumulating file is not a thing the
-  instruction describes.
-
-So the string that moves is the API's, and the ADR needs a factual correction rather than a
-reversal — **the DM's call, not this plan's.** Recorded as a reminder rather than edited here.
+**Ruled 2026-08-31: the curriculum moves, and the ADR was right.** This section originally argued
+the opposite — that the API's string should become `journal/entries` — on the grounds that named
+per-session files are easier to re-read before a boss. **That argument was wrong**, and the DM
+said so: one continuous document is *better* for reading a stretch of weeks, not worse, and
+opening six files is the harder thing. See Phase 1 for what was decided and why. The two
+paragraphs of reasoning that stood here are preserved in the closed reminder, which is where a
+rejected case belongs.
 
 **So the Journal signal cannot fire, the 10 XP of §5.6 can never be paid, and every test on both
 sides is green.** The API's suite asserts the filter is passed; the curriculum's validator
@@ -119,8 +107,11 @@ returns nothing for the first eight weeks of the campaign.
 
 ## Success Criteria
 
-- [ ] A commit touching `journal/entries/session-07.md` fires `git-signal: journal-entry`; a
-      commit touching only `README.md` does not. **Both asserted, the second one especially**
+- [x] The path the api watches is the file the curriculum tells him to write, **asserted by a
+      test that spans the seam** — `apps/api/tests/journal-path.test.ts`, RED at
+      `expected 'journal.md' to be 'journal/'`, and the case mutant caught
+- [ ] A commit touching `journal.md` fires `git-signal: journal-entry`; a commit touching only
+      `README.md` does not. **Both asserted, the second one especially**
 - [ ] `GET /api/players/:playerId/journal` returns entries assembled from git, one per row of
       the `journal_entries` ledger
 - [ ] `JournalEntrySchema` describes what the API can actually serve. `— blocked` comes off the
@@ -136,23 +127,58 @@ returns nothing for the first eight weeks of the campaign.
 
 ## Phases
 
-### Phase 1 — the path, and the test that proves the signal was dead
+### Phase 1 — the path — ✅ **done 2026-08-31, and it went the other way**
 
-The smallest change and the only one that fixes a live bug. It goes first because it is
-independently valuable: it pays the Journal's XP whether or not the read path ever lands.
+**The DM ruled for one `journal.md` with a dated heading per entry, so the curriculum moved and
+the code did not.** Neither of the two layouts this plan weighed won; the answer was a third one,
+and it is better than both. `DEFAULT_JOURNAL_PATH = 'journal.md'` was correct all along, and ADR
+0004 needs no correction.
 
-- **RED first, and captured.** A test that commits `journal/entries/session-01.md` and asserts
-  the signal fires. It must fail against today's `journal.md`, and the failure output goes in the
-  commit message — per `test-filter-development`, a check nobody has watched fail is worth
-  nothing, and this plan exists because two such checks were green.
-- `DEFAULT_JOURNAL_PATH` becomes `journal/entries`. Gitea's `?path=` is `git log -- <path>` and
-  takes a directory, so the prefix matches every session file and nothing else.
-- **`journal/entries`, not `journal`.** Editing `TEMPLATE.md` is not writing an entry, and a
-  filter that paid XP for it would pay for copying a file.
-- `JOURNAL_PATH` stays the override it already is. Only the default is wrong.
+**Why one file, in the DM's reasoning:** *"which one is the journal for that session?"* — a
+learner opening his folder on a Saturday night should not have to work out which file tonight's
+entry goes in, or what number the session is. One file, always the same name, newest entry at the
+bottom. Predictability for an 11–14-year-old beat every technical argument on the table, and the
+technical objection it raised turned out to be answerable.
 
-**Done when** a commit under `journal/entries/` pays 10 XP and a commit outside it pays nothing,
-both proved, and the mutant — reverting the constant — is caught.
+**The objection, and its answer.** With one accumulating file, reading it at a commit gives the
+whole journal rather than one entry, so extraction becomes either diff-parsing (fragile — the
+template invites revisiting old entries) or splitting on a hand-typed date (drifts silently to
+`Aug 31`, `8/31`, `31st`). The answer is that the delimiter is **copied from the template rather
+than composed**, and it is a real markdown heading:
+
+```markdown
+## 2026-08-31 — Session 01
+```
+
+`^##\s+(\d{4}-\d{2}-\d{2})\b` parses it, and the heading buys a clickable session index in VS
+Code and Gitea for free — which serves §5.6's pre-boss re-read better than either file layout
+would have.
+
+**Landed:**
+
+- Both `TEMPLATE.md` files are now an entry to paste rather than a file to copy, leading with the
+  dated heading, with every coaching comment preserved verbatim
+- Both `entries/` READMEs say where the entries went and why, and keep Area 1's
+  *"session 07 is session 07"* — now visibly true rather than asserted
+- The two prompt sheets, `session-1-first-light.md`, and the Area 0/1/2 READMEs follow
+- `validate:content` is clean: 23 items across 8 areas
+
+**And the guard that stops it recurring** — `apps/api/tests/journal-path.test.ts`, the one test
+that spans the seam. It reads the curriculum as the learner is told to read it and requires the
+api to be filtering on the file the learner is actually told to write. Full cycle, per
+`test-filter-development`:
+
+```text
+RED     AssertionError: expected 'journal.md' to be 'journal/'
+GREEN   3 passed
+MUTANT  'journal.md' -> 'Journal.md'  ->  2 failed, caught
+```
+
+The mutant is the case flip on purpose: Gitea runs on Linux and its `?path=` is case-sensitive,
+so `Journal.md` pays nothing with no error anywhere. **Getting to that RED took two wrong
+failures** — a fence-language mismatch, then CRLF line endings — both of which made the test go
+red for a reason that was not the bug. Both are written into the test's comments, because a check
+that fails for the wrong reason is how the next person fixes the wrong thing.
 
 ### Phase 2 — the contract says what git can serve
 
@@ -194,6 +220,9 @@ both proved, and the mutant — reverting the constant — is caught.
 - `pyquest/apps/api/src/server.ts` — the `GET /journal` handler, and the `POST` route's removal
 - `pyquest/apps/api/tests/journal.test.ts` — **new.** The read path *and* the two new Gitea
   methods, for the reason below
+- `pyquest/apps/api/tests/journal-path.test.ts` — **new, landed.** The seam guard
+- `curriculum/area-0/**`, `curriculum/area-1/**`, `curriculum/area-2/README.md` — **Lane B,
+  landed.** Phase 1 turned out to live here rather than in `apps/api/src`
 - `pyquest/packages/contract/src/endpoints.ts` — `JournalEntrySchema`, the route table, and the
   deletion of `JournalEntryRequestSchema`
 - `pyquest/packages/db/**` — **nothing.** The ruling's whole point

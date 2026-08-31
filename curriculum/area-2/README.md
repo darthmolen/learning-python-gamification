@@ -304,10 +304,10 @@ Area 0 started the Journal in week 1 rather than week 3, recorded the deviation 
 and said the git half would arrive here. **It does, in session 2**, and it is that
 session's hook rather than a footnote at the end of it.
 
-His entries are **copied** into a `journal/` directory in *his* repository and become its
-first commit. Nothing in this repository moves, and there is no `journal/` directory in
-`curriculum/area-2/` — the template and the first-entry script are Area 0's and are still
-the only copies. That is a deliberate departure from the per-area layout: duplicating
+His `journal.md` **moves** into *his* repository and becomes its first commit — one file,
+one `git add`, and the six entries already in it come along as history he can read. Nothing
+in this repository moves, and there is no `journal/` directory in `curriculum/area-2/` — the
+template and the first-entry script are Area 0's and are still the only copies. That is a deliberate departure from the per-area layout: duplicating
 `TEMPLATE.md` into every area directory would produce eight copies of one file that must
 never disagree.
 
