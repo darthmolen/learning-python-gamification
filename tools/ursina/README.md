@@ -52,3 +52,24 @@ blocks, fuses them and renders. Exit 0 or the pin goes back.
 
 **It needs a real display** — it opens a window on purpose. It needs nothing but Python and
 ursina, so it runs on any learner's machine exactly as it stands.
+
+## Measuring the machine, once smoke passes
+
+```
+py -3.14 tools/ursina/stress.py
+```
+
+Steady-state fps at 1,000 / 2,500 / 5,000 and 8,000 blocks, fused through the shim and naive,
+one process per measurement. `smoke.py` says the engine is the right one; this says what the
+machine can do with it.
+
+The timing method is the spike's `_timed_runner.py` — vsync off, 30 warm-up frames discarded,
+60 timed — so the numbers are comparable with the table in `spikes/ursina-tier3/README.md`.
+Those figures came off an RTX 5090 and are useful here mainly as the thing a laptop is not.
+
+**5,000 fused is the figure that decides something**, because it is the authoring cap Area 3
+writes against. At or above 60 fps the cap stands; below it, the cap comes down and Area 3 is
+told the new number before its exercises exist.
+
+A run that reports fused and naive close together is a run to distrust: `combine()` is not
+happening, and the 95× gap between the two columns is the whole reason the shim exists.

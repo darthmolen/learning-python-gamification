@@ -64,9 +64,20 @@ after the commands are muscle memory, so the GUI is a convenience and never a cr
 
 On the learner's machine, with VS Code already installed:
 
-1. `Ctrl+Shift+P` → **Profiles: Import Profile**
-2. Choose **Select File**, and pick `pyquest-area2.code-profile`
-3. Name it `PyQuest` when asked, and switch to it
+1. `Ctrl+Shift+P` → **Profiles: New Profile...** — or the ⚙ at the bottom left → **Profiles**
+2. In the Profiles editor, name it `PyQuest`
+3. **Copy from** → **Import Profile...** → **Select File...**, and pick
+   `pyquest-area2.code-profile`
+4. Switch to it
+
+**There is no `Profiles: Import Profile` command**, and this page said there was until
+2026-08-30, when somebody typed it into a real palette and found nothing. Import is not a
+command in its own right; it is an option inside the profile-creation flow, so the way in is
+**New Profile** even though nothing is being created from scratch. Checked against the
+command table in VS Code **1.135** — `createProfile`, `createFromCurrentProfile`,
+`exportProfile`, `switchProfile`, `manageProfiles`, `deleteProfile`, and no import among
+them. If a later version moves it again, §5 is the fallback that cannot move: the settings
+are readable there and paste into a new profile's `settings.json`.
 
 To go back to a normal VS Code at any time: `Ctrl+Shift+P` → **Profiles: Switch
 Profile** → *Default*. **Say this out loud in session 6.** A stripped editor a learner
@@ -107,8 +118,9 @@ of this file and record the date.
 
 **Then:**
 
-- [ ] Re-export with **Profiles: Export Profile → Save to file**, and overwrite
-      `pyquest-area2.code-profile` with the result
+- [ ] Re-export with **Profiles: Export Profile...** — or the **Export...** button in the
+      Profiles editor — then name it and, in the **Save Profile** dialog, overwrite
+      `pyquest-area2.code-profile`
 - [ ] Copy the settings back into §5 below if the export changed any of them
 - [ ] Delete the banner at the top of this file and write the date it was verified
 

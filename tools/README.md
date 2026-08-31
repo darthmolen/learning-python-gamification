@@ -43,6 +43,11 @@ and the two copies would drift.
 
 Directories are per tool. The checklists below are per role.
 
+**Putting a new machine into service:** [`learner-setup/`](learner-setup/) carries this
+directory and the files each install is verified against onto that machine, on a branch of
+its own repository, and carries the results back the same way. It is packaging rather than a
+tool, so it has no row below — nothing in it gets installed on anything.
+
 ---
 
 ## Every learner's machine
@@ -72,7 +77,8 @@ toolchain.
 | Python 3.14, git, ursina | as above | Same versions everywhere. `smoke.py` must pass here too before any ursina upgrade |
 | `pytest`, `ruff`, `pyright` | [python/](python/) | For `curriculum/lib/`'s suite. Not needed on a non-DM machine — the test suite is the DM's |
 | Docker, compose, Gitea, Postgres | [`infra/`](../infra/) | The stack. Not covered here |
-| Reachable on the LAN | [`infra/`](../infra/) | Other learners must be able to clone and push. A host bound to `localhost` fails Area 2a |
+| Reachable on the LAN | [git/local-lan-learner.md](git/local-lan-learner.md) | Other learners must be able to clone and push. A host bound to `localhost` fails Area 2a |
+| The learner's remote repository | [git/local-lan-learner.md](git/local-lan-learner.md) | Ports 3080/3022, and the four steps from empty to pushed. Needed week 6 |
 
 ---
 
