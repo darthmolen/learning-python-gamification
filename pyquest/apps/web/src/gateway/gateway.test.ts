@@ -98,3 +98,38 @@ describe('a payload that breaks a rule never reaches a screen', () => {
     expect(() => CampaignViewSchema.parse(lying)).toThrow();
   });
 });
+
+
+/**
+ * The Console's queue, answered from fixtures. §6.3's rules sit on the entry — a title the row
+ * is read by, a seat the lexicon knows — and a fixture that drifted from either would render a
+ * blank row rather than fail here.
+ */
+describe('the sign-off queue, with nothing behind it', () => {
+  it('parses what it answers with, and keeps a row the caller may not sign', async () => {
+    const queue = await gateway.getSignoffs();
+
+    expect(queue).toHaveLength(2);
+    // Household-wide and deliberately unfiltered: one of these is the caller's own submission.
+    expect(queue.some((row) => row.playerId === gateway.PLAYER_ID)).toBe(true);
+    expect(queue.every((row) => row.by === 'peer' || row.by === 'dm')).toBe(true);
+  });
+
+  it('parses the award a granted sign-off pays', async () => {
+    const outcome = await gateway.postSignoff('att-8f21c0', { by: gateway.PLAYER_ID, granted: true });
+
+    expect(outcome.granted).toBe(true);
+    // `server.ts` writes `cleared` and an XP number the engine returned; the stub says the same.
+    if (outcome.granted) expect(outcome.award.medal).toBe('cleared');
+  });
+
+  it('carries the note back as the reason a sign-off was refused', async () => {
+    const outcome = await gateway.postSignoff('att-8f21c0', {
+      by: gateway.PLAYER_ID,
+      granted: false,
+      note: 'go one level deeper',
+    });
+
+    expect(outcome).toEqual({ granted: false, reason: 'go one level deeper' });
+  });
+});

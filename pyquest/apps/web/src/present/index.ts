@@ -58,3 +58,23 @@ export const medalSlots = (held: readonly string[]): MedalSlot[] =>
  * required, and the word has to carry that.
  */
 export const formatPayout = (xp: number): string => (xp === 0 ? 'brag' : `${xp} xp`);
+
+
+/**
+ * §6.3's queue says how long each sign-off has been waiting, and the artboard writes it as
+ * "asked 2 days ago". The contract carries an instant; the phrase is a presentation decision,
+ * and the decision worth naming is the rounding.
+ *
+ * A submission made this morning has not been waiting "0 days" — it is waiting today, and a
+ * queue that says "0 days ago" reads as a broken clock rather than as a fresh request. The
+ * future is folded into today for the same reason: the parent's machine and the son's keep
+ * their own time, neither is authoritative, and "-1 days ago" is what a few minutes of drift
+ * would otherwise put on screen.
+ */
+const DAY_MS = 86_400_000;
+
+export const sinceSubmitted = (submittedAt: string, now: number = Date.now()): string => {
+  const days = Math.floor((now - Date.parse(submittedAt)) / DAY_MS);
+  if (days <= 0) return 'today';
+  return days === 1 ? '1 day ago' : `${days} days ago`;
+};

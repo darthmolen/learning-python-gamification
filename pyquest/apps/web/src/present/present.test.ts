@@ -1,6 +1,6 @@
 import { DEFAULT_MEDALS } from '@pyquest/content/browser';
 import { describe, expect, it } from 'vitest';
-import { formatPayout, formatTotal, isRisky, medalSlots } from './index.ts';
+import { formatPayout, formatTotal, isRisky, medalSlots, sinceSubmitted } from './index.ts';
 
 /**
  * The decisions §5.1 says the engine deliberately does not make.
@@ -89,5 +89,36 @@ describe('a zero payout', () => {
 
   it('leaves a real payout as a number', () => {
     expect(formatPayout(40)).toBe('40 xp');
+  });
+});
+
+
+/**
+ * The artboard's `s.when` — "asked 2 days ago", "passed 8 days ago · unsigned". The contract
+ * carries an instant; how long ago that reads as is a presentation decision, and the interesting
+ * part is the rounding. A sign-off made this morning has not been waiting "0 days" — it is
+ * waiting today, and a queue that says "0 days ago" reads like a bug in the clock.
+ */
+describe('how long a sign-off has been waiting', () => {
+  const at = (iso: string) => Date.parse(iso);
+
+  it('reads as today until a whole day has passed', () => {
+    expect(sinceSubmitted('2026-08-30T08:00:00.000Z', at('2026-08-30T22:00:00.000Z'))).toBe('today');
+  });
+
+  it('says one day in the singular', () => {
+    expect(sinceSubmitted('2026-08-29T08:00:00.000Z', at('2026-08-30T22:00:00.000Z'))).toBe('1 day ago');
+  });
+
+  it('counts whole days after that', () => {
+    expect(sinceSubmitted('2026-08-22T08:00:00.000Z', at('2026-08-30T22:00:00.000Z'))).toBe('8 days ago');
+  });
+
+  /**
+   * The two machines keep their own clocks and neither is authoritative, so a submission can
+   * arrive stamped a few minutes in the future. "-1 days ago" would be the visible symptom.
+   */
+  it('does not run backwards when the clocks disagree', () => {
+    expect(sinceSubmitted('2026-08-31T08:00:00.000Z', at('2026-08-30T22:00:00.000Z'))).toBe('today');
   });
 });

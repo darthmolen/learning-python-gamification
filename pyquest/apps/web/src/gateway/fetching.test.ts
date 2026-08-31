@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { PLAYER_ID, getCampaign, getDefend } from './index.ts';
+import { PLAYER_ID, getCampaign, getDefend, getSignoffs, postSignoff } from './index.ts';
 
 /**
  * The path Phase 5 exists to build, and the one nothing was testing.
@@ -105,5 +105,119 @@ describe('when an API is configured', () => {
 
     expect(fetch).not.toHaveBeenCalled();
     expect(campaign.areas).toHaveLength(8);
+  });
+});
+
+
+/* -----------------------------------------------------------------------------------------
+ * Sign-offs. The Console's half of §6.3, and the first gateway call that writes.
+ * --------------------------------------------------------------------------------------- */
+
+const pending = (over: Record<string, unknown> = {}) => ({
+  attemptId: 'att-8f21c0',
+  playerId: 'dm',
+  questId: 'a3-the-enchanter',
+  questTitle: 'The Enchanter',
+  by: 'peer',
+  submittedAt: '2026-08-29T18:04:00.000Z',
+  ...over,
+});
+
+describe('the sign-off queue', () => {
+  it('asks the path the contract names', async () => {
+    withApi();
+    answers([]);
+
+    await getSignoffs();
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/signoffs',
+      expect.objectContaining({ headers: { accept: 'application/json' } }),
+    );
+  });
+
+  /**
+   * The lexicon is not decoration. `by` is `peer` or `dm`, and a server that sent `parent`
+   * would be reintroducing a word the whole system spent a spec removing — so the queue must
+   * refuse it rather than render a role that does not exist.
+   */
+  it('rejects a role the lexicon does not have', async () => {
+    withApi();
+    answers([pending({ by: 'parent' })]);
+
+    await expect(getSignoffs()).rejects.toThrow();
+  });
+
+  it('rejects a row missing the title the queue is read by', async () => {
+    withApi();
+    const { questTitle, ...untitled } = pending();
+    void questTitle;
+    answers([untitled]);
+
+    await expect(getSignoffs()).rejects.toThrow();
+  });
+});
+
+describe('resolving a sign-off', () => {
+  it('posts the decision to the attempt, as a player id rather than a role', async () => {
+    withApi();
+    answers({ attemptId: 'att-8f21c0', questId: 'a3-the-enchanter', medal: 'cleared', xpAwarded: 36 });
+
+    await postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true });
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/signoffs/att-8f21c0',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ by: 'peer', granted: true }),
+      }),
+    );
+  });
+
+  it('parses the award rather than handing the response back', async () => {
+    withApi();
+    // Correctly shaped and still wrong: `xpAwarded` is a count, and a count is not negative.
+    answers({ attemptId: 'att-8f21c0', questId: 'a3-the-enchanter', medal: 'cleared', xpAwarded: -5 });
+
+    await expect(postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true })).rejects.toThrow();
+  });
+
+  /**
+   * A refusal is the API's *normal* answer to `granted: false` — `server.ts` records the
+   * denial and then throws `signoff-denied`, which is a 403. A client that treated that as a
+   * failure would report the one action that certainly worked as a lost connection.
+   */
+  it('reads a 403 on a refusal as the refusal landing, not as a failure', async () => {
+    withApi();
+    answers(
+      { code: 'signoff-denied', message: 'the sign-off was not granted', retryable: false },
+      { ok: false, status: 403 },
+    );
+
+    const outcome = await postSignoff('att-8f21c0', { by: PLAYER_ID, granted: false, note: 'go deeper' });
+
+    expect(outcome).toEqual({ granted: false, reason: 'the sign-off was not granted' });
+  });
+
+  /**
+   * The same code, the same status, and the opposite meaning. Asked to *grant*, `signoff-denied`
+   * means the API refused the caller — they are the submitter, or they do not hold the seat —
+   * and swallowing that would show a sign-off as recorded when nothing was written.
+   */
+  it('throws when a grant is refused, because that is the API saying no to the caller', async () => {
+    withApi();
+    answers(
+      { code: 'signoff-denied', message: 'a player cannot sign off their own submission', retryable: false },
+      { ok: false, status: 403 },
+    );
+
+    await expect(postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true })).rejects.toThrow(/403/);
+  });
+
+  it('reports a server failure by status, whatever was asked of it', async () => {
+    withApi();
+    answers({ code: 'internal', message: 'something went wrong on the server', retryable: true }, { ok: false, status: 500 });
+
+    await expect(postSignoff('att-8f21c0', { by: PLAYER_ID, granted: false })).rejects.toThrow(/500/);
   });
 });

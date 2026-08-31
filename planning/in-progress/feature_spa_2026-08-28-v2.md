@@ -3,7 +3,7 @@
 **Status:** In Progress
 **Version:** v2 — revised 2026-08-29 after two reviews; admitted to the `spa` track 2026-08-29
 **Track:** spa
-**Blocked on:** the API, for Journal and Console content at Phase 5. The laptop check cleared 2026-08-31 — and his screen is 1920×1080, not 1366×768
+**Blocked on:** the Journal's text, which is a `JournalEntrySchema` correction and a Gitea read path. The Console came off this line 2026-08-31 — its queue was served all along and is now built. The laptop check cleared 2026-08-31 — and his screen is 1920×1080, not 1366×768
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **not blocked by the API**
@@ -133,9 +133,61 @@ Five criteria are met and asserted. The other five are honestly not, and each is
 kind of not:
 
 - **Nine screens matching the artboards** — Map and Tome are lifted faithfully, geometry and
-  all. Area, Boss, Quest, Defend and Party render every shape the contract carries. **Journal
-  and Console are frames**: their content is Postgres rows the API owes and `endpoints.ts` does
-  not yet declare, so there was nothing honest to render.
+  all. Area, Boss, Quest, Defend, Party and — since 2026-08-31 — Console render every shape the
+  contract carries. **The Journal is still a frame**: its content is text `JournalEntrySchema`
+  requires and no column holds, so there is nothing honest to render.
+
+  **Corrected 2026-08-31: pairing those two was wrong, and it hid startable work.** They are
+  twin placeholders in `OverlandScreens.tsx`, which is where the grouping came from, but their
+  causes are unrelated.
+
+  **The Console was not blocked, and its sign-off queue is built — 2026-08-31.** §6.8 gives it
+  three jobs; sign-off was fully served the whole time (`GET /api/signoffs` and
+  `POST /api/signoffs/:attemptId` in `apps/api/src/server.ts`, typed at `endpoints.ts:471-522`,
+  with no `blocked` annotation anywhere near them) and only the client half was missing. It is
+  now `apps/web/src/screens/ConsoleScreen.tsx`, reading `getSignoffs` and `postSignoff` from the
+  gateway. The Console left `OverlandScreens.tsx`; only the Journal is a frame now.
+
+  Three things the estimate did not see, all of them in the client half rather than the schema:
+
+  - **`postSignoff` cannot return an award.** `server.ts` records the denial and *then* throws
+    `signoff-denied`, so a refused sign-off and a crashed server arrive on the same wire in the
+    same shape. What separates them is what was asked — a 403 answering `granted: false` is the
+    refusal landing; a 403 answering `granted: true` is the API refusing the caller. The gateway
+    returns a `SignoffOutcome` for exactly that reason, and it is the one place in the app that
+    reads an error body rather than the status.
+  - **The queue carries rows the caller may not act on**, by design: `PendingSignoffsSchema` is
+    household-wide so the parent's own pending teach-back cannot be hidden from the screen whose
+    job is to show it. So §6.3's "a player cannot sign off their own submission" is a rendering
+    rule here, not a filter — the row is drawn and the buttons are not.
+  - **"asked 2 days ago" is a presentation decision**, so it is `sinceSubmitted` in
+    `present/index.ts` with the rest of them. Today rather than "0 days ago", and the future
+    folded into today, because the two machines keep their own clocks.
+
+  Authoring stays out (§6.10 makes it a CLI, and the SPA plan already puts a browser content
+  editor out of scope). Streak forgiveness stays out: the artboard draws it and none of the
+  thirteen routes serves it, so a panel would be a picture of a feature. The artboard's whole
+  right-hand column — attendance, the challenge run, the backup report — is in the same
+  position and was left undrawn for the same reason.
+
+  **The Journal was blocked on a decision, and the decision is made.** Ruled 2026-08-31:
+  **markdown in his repository is the system of record; Postgres is not.** No migration. The
+  screen reads through to Gitea for the entry text and to Gitea comments for the reply, which
+  is what §5.6 specified all along. `JournalEntrySchema` in `endpoints.ts:541-551` is what
+  needs correcting — it requires `prompt` and `body` as non-empty strings, which is why
+  `GET /journal` carries `— blocked`. Full ruling and the work it implies:
+  `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md`.
+
+  **This screen is in `apps/web/**`, which this plan owns.** The read path and the contract
+  correction are `api` work and clear of this track; the screen half is not. Coordinate before
+  either side starts.
+  **There is no root `build` script.** The hand-run stand-in for the missing CI gate is
+  `npm run build --workspace @pyquest/web` from `pyquest/`; `npm run build` there fails with
+  "Missing script". Worth knowing before
+  `planning/reminders/decide_vite-build-goes-in-a-gate_2026-08-31.md` is answered, because the
+  gate that lands has to name the workspace or add the root script. It passed on 2026-08-31
+  with the Console in place, which matters on a track that has had `--project web` green over a
+  broken production build twice.
 - **Run records nothing; Submit posts to the API** — Run is done. Submit cannot exist before the
   API does. What it already does is refuse untouched code, which is the half that carries the
   mechanic.

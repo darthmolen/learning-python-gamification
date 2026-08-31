@@ -182,3 +182,54 @@ export const tome: unknown = {
     { area: 3, concepts: [{ id: 'list', label: 'list' }, { id: 'indexing', label: 'indexing' }] },
   ],
 };
+
+/**
+ * The Console's queue — §6.3, §5.11.
+ *
+ * `submittedAt` is computed from now rather than written down. A fixed date drifts: "asked 400
+ * days ago" is what a hardcoded ISO string reads as in a year, and the row whose whole job is to
+ * say how long something has been waiting would be the one lying.
+ *
+ * Two rows, and the second one is the important one. `PLAYER_ID` is `peer`, so `a3-the-smelter`
+ * is the caller's **own** submission — the queue is household-wide and deliberately unfiltered
+ * (`PendingSignoffsSchema`), which means the screen has to render a row it cannot act on. A
+ * fixture with only actionable rows would leave that path undrawn.
+ */
+const daysAgo = (days: number): string => new Date(Date.now() - days * 86_400_000).toISOString();
+
+export const pendingSignoffs: unknown = [
+  {
+    attemptId: 'att-8f21c0',
+    playerId: 'dm',
+    questId: 'a3-the-enchanter',
+    questTitle: 'The Enchanter',
+    by: 'peer',
+    submittedAt: daysAgo(2),
+  },
+  {
+    attemptId: 'att-4c07ab',
+    playerId: 'peer',
+    questId: 'a3-the-smelter',
+    questTitle: 'The Smelter',
+    by: 'dm',
+    submittedAt: daysAgo(8),
+  },
+];
+
+/**
+ * What a granted sign-off pays, per attempt.
+ *
+ * `medal` is `cleared` on both because that is what the endpoint awards — `server.ts` writes
+ * `medal: 'cleared'` and an XP number the engine returned. A fixture that paid a `teach-back`
+ * would be describing an API that does not exist.
+ */
+const AWARDS: Readonly<Record<string, { questId: string; xpAwarded: number }>> = {
+  'att-8f21c0': { questId: 'a3-the-enchanter', xpAwarded: 36 },
+  'att-4c07ab': { questId: 'a3-the-smelter', xpAwarded: 28 },
+};
+
+export const signoffAward = (attemptId: string): unknown => {
+  const award = AWARDS[attemptId];
+  if (award === undefined) throw new Error(`no pending sign-off ${attemptId}`);
+  return { attemptId, questId: award.questId, medal: 'cleared', xpAwarded: award.xpAwarded };
+};
