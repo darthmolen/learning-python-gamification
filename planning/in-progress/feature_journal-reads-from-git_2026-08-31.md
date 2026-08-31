@@ -192,16 +192,28 @@ both proved, and the mutant — reverting the constant — is caught.
 - `pyquest/apps/api/src/gitea.ts` — the default path, and two read methods
 - `pyquest/apps/api/src/gitsignal.ts` — only if the path change reaches it
 - `pyquest/apps/api/src/server.ts` — the `GET /journal` handler, and the `POST` route's removal
-- `pyquest/apps/api/tests/journal.test.ts` — **new**
-- `pyquest/apps/api/tests/gitea.test.ts` — the new methods
+- `pyquest/apps/api/tests/journal.test.ts` — **new.** The read path *and* the two new Gitea
+  methods, for the reason below
 - `pyquest/packages/contract/src/endpoints.ts` — `JournalEntrySchema`, the route table, and the
   deletion of `JournalEntryRequestSchema`
 - `pyquest/packages/db/**` — **nothing.** The ruling's whole point
 
-**Disjoint from `spa`**, which owns `pyquest/apps/web/**` and `pyquest/vitest.config.ts`, and
-from the session working the test flakes, which owns `checkout.test.ts`,
-`server.localrepo.test.ts` and `server.gitsignal.test.ts`. This plan adds a new test file and
-touches `gitea.test.ts`, neither of which is on that list.
+**Disjoint from `spa`**, which owns `pyquest/apps/web/**` and `pyquest/vitest.config.ts`.
+
+**Disjoint from `flakes`** (`feature_the-git-tests-stop-flaking_2026-08-31.md`), but only after a
+correction made here on 2026-08-31. That plan claims five test files including
+`apps/api/tests/gitea.test.ts`, and this one originally claimed it too for the new read methods —
+a genuine single-file overlap, which under `plan-workflow`'s rule 2 means the plans were not
+independent. **Resolved on this side**, because it is the cheaper one to move: the new methods
+are covered in this plan's own new file, and `gitea.test.ts` is left entirely to `flakes`. Its
+own note calls this session "the `journal` session, which owns the curriculum tree" — that is not
+what this plan owns, and the overlap it missed is the one that mattered.
+
+**One ordering constraint between the two, and it runs this way round.** Phase 1 changes
+`DEFAULT_JOURNAL_PATH`, which `flakes` has `gitsignal.test.ts` and `server.gitsignal.test.ts`
+open on. Phase 1 is blocked on the DM's ruling anyway, so the sequence resolves itself: `flakes`
+lands first, Phases 2 and 3 run beside it in files it does not touch, and Phase 1 goes last.
+**Do not start Phase 1 while `flakes` is in-progress**, ruling or no ruling.
 
 ## Out of Scope
 
