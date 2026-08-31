@@ -1,6 +1,6 @@
 # Curriculum Foundation — educational first, game second, in the tree itself
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** curriculum-foundation
 **Branch:** `curriculum-foundation`, off `main` at `359683d`
 **Date:** 2026-08-31
@@ -253,3 +253,81 @@ What survives from it and should be salvaged rather than re-derived:
   moves. If the prose stalls, Phase 3 ships the stubs and the lessons follow — the slot is
   the foundation, the prose is the fill.
 - **The site must not regress mid-branch.** It is live and the parent reads it.
+
+---
+
+## Status
+
+**Final Status:** Completed — all six phases, on branch, not merged
+**Track:** curriculum-foundation
+**Branch:** `curriculum-foundation`, 8 commits ahead of `main` at `359683d`
+**Completed:** 2026-08-31
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+- **`content/` no longer exists.** `curriculum/` holds every educational artifact —
+  manifests, lessons, sessions, drills, briefs, starters and hidden tests. `game/` holds 23
+  quest YAML files and nothing that teaches.
+- **The site has a teaching body.** Areas 0–2 have an authored `lesson.md`; 3–7 say "No lesson
+  yet" rather than rendering nothing.
+- **Two published sites from one tree.** `dist/` is the Tome, `dist/dm/` is the same pages
+  plus teaching aids behind a `<details>` control that expands in place.
+- **The deletion test is real, twice.** `rm -rf game/` leaves a tree that validates
+  (`packages/content/tests/two-roots.test.ts`) and still publishes
+  (`apps/field-manual/tests/published.test.ts`).
+- 726 tests across 45 files, typecheck clean, `validate:content` clean at 23 items across 8
+  areas, ruff unchanged at 29 pre-existing findings.
+
+### Deviations
+
+- **Phase 2 landed as one commit, not one per concern.** The concerns are not separable
+  without a red intermediate — moving a brief without rewriting the quest path that names it
+  fails `validate:content`. A bisectable history beat a narrower diff; git recorded 117
+  renames, so it still reads as moves.
+- **Areas 3–7 have no `lesson.md` file.** The criterion asked for a stub; the renderer already
+  says "No lesson yet" when the file is absent, and five files whose only content is "this is
+  not written" would be a second place for the same statement to go stale. The behaviour the
+  criterion wanted is met; the artifact it named is not.
+- **The `curriculum/exercises` ambiguity was resolved rather than deferred.** Session drills
+  moved to `sessions/session-N/`, beside the plan that assigns them.
+
+### Lessons Learned
+
+- **Three gates in this repository were looking at the wrong object, and this branch found a
+  fourth and fifth.** A mutant survived `lesson.test.ts` because the assertion
+  `/not written yet|no lesson/i` matched the *exercises* gap, not the lesson's — it would have
+  passed forever with the feature deleted. Then the no-game gate broke for real: it counted
+  every `<h3>` as an exercise title, which was true until authored prose started writing
+  subheadings. **A proxy assertion holds only until something else starts producing the thing
+  it stood in for**, and that is now the most common defect shape in this codebase.
+- **A test can be wrong in the site's favour.** `published.test.ts` first asserted that neither
+  build may name `reference/`, and failed — correctly reporting that the DM guide points the
+  teacher at `session-6-answers.md`, which is exactly what that document is for. The rule was
+  wrong, not the site. It is now learner-only, with a separate assertion on what actually
+  spoils an exercise: no substantial line of a worked solution in either site.
+- **The validator was already nearly layout-agnostic**, which is what made a 117-file move
+  affordable. It walked recursively and existence-checked explicit paths; only two hard-coded
+  conventions broke.
+- **Publishing changes the stakes of authored prose.** A sentence that was fine in a markdown
+  file became a sentence on a public website the moment phase 5 shipped — see the backlog item
+  below.
+
+### Backlog Items Created
+
+- `planning/backlog/feature_dm-guide-says-father_2026-08-31.md` — `area-2/dm-guide.md` says
+  "his father" where the lexicon says `peer`/`dm`, and phase 5 now publishes it.
+- `planning/backlog/feature_area-card-without-a-manifest_2026-08-31.md` — created earlier on
+  this branch; the api test whose premise authored content outgrew.
+
+### Not done, by explicit direction
+
+**The blast radius.** This does not merge, and the merge is its own conversation:
+
+- `area-2` is live and owns `curriculum/area-2/**`; phase 4 moved its drill directories and
+  phase 3 added its lesson. That collision is real and known.
+- `spa` is live; it does not touch these paths.
+- `planning/feature_area-3-collections_2026-08-28.md` is queued against the old layout and
+  needs rewriting before it starts.
+- The api tests read the real tree, so the manifest-fixture backlog item above should be taken
+  at merge time rather than separately.
