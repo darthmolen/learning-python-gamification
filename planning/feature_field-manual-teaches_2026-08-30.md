@@ -159,9 +159,9 @@ Areas 0 and 1 only — twenty session files. **Area 2 is out of scope**, see bel
 
 ## Dependencies / Prerequisites
 
-- **The `field-manual` track must free up.** `planning/in-progress/feature_field-manual_2026-08-30.md`
-  is live on it now, and session `learning-python-gamification-cc` was editing both that
-  document and `.github/workflows/field-manual.yml` while this plan was being written.
+- ~~The `field-manual` track must free up.~~ **Cleared 2026-08-31.** The predecessor closed
+  to `planning/completed/feature_field-manual_2026-08-30.md` once the site was live and
+  verified. The track is free and this plan may be admitted to `in-progress/`.
 - No dependency on the API, the SPA, or Postgres. Everything read here is committed.
 
 ## Files Expected to Change
@@ -177,15 +177,15 @@ Areas 0 and 1 only — twenty session files. **Area 2 is out of scope**, see bel
 
 ## Track discipline
 
-**Track `field-manual`, queued in `planning/` rather than started.** Admission needs the
-track free *and* a disjoint file set, and neither holds right now: the in-progress plan
-claims `pyquest/apps/field-manual/**`, which is most of the list above.
+**Track `field-manual`, free as of 2026-08-31.** Both admission tests now pass: the
+predecessor has closed, so no other in-progress plan declares this track, and the file set
+below collides with nothing running.
 
-Against the other running tracks the file set is clean, with one exception worth naming:
-`area-2` claims `curriculum/area-2/**`, so **Area 2's sessions are deliberately excluded**
-from Phase 5 and pick up after that track lands. `area-0` claims
-`content/quests|briefs|starters|tests|areas` — it does not claim `content/concepts/`,
-which is new ground.
+`area-0` also closed, releasing `content/`. The one live collision left is `area-2`, which
+claims `curriculum/area-2/**` — so **Area 2's sessions are deliberately excluded** from
+Phase 5 and pick up after that track lands. Note that `content/concepts/` was new ground
+even while `area-0` held `content/quests|briefs|starters|tests|areas`; it is uncontested
+either way.
 
 `pyquest/packages/content/src/validate.ts` is shared with no in-progress plan today, but it
 is the file every content track depends on. One additive read path, no restructuring.

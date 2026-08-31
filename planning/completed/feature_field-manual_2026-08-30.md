@@ -1,6 +1,6 @@
 # The Field Manual — the curriculum, published without the game
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** field-manual
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
@@ -242,3 +242,70 @@ the author's own brief prose, which is the exclusion this gate is deliberately s
 
 The font request stands as the page's one call to a third party. Worth a decision some day, not
 today.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** field-manual — released
+**Completed:** 2026-08-31
+**Completed By:** Claude (Opus 5)
+
+The two dated sections above are the working record and hold the detail. This block is the
+close.
+
+### Outcomes
+
+- **Live at `https://darthmolen.github.io/learning-python-gamification/`.** Nine static
+  pages — an index and one per area — 95 ideas, 14 exercises, no client JavaScript.
+  Verified against the deployed site rather than the build: `/` and `/area-3.html` both
+  200, `<title>The Field Manual</title>`, all eight area links present.
+- **CI is real and green.** Run `33348507577`: build 16s, deploy 8s. `validate:content` and
+  the no-game gate both run before anything publishes.
+- **The deploy job's permissions are now proven** rather than assumed. They were the thing
+  this plan worried about most, and they had never executed once.
+- Areas 3–7 publish their gap honestly instead of appearing finished.
+
+### Deviations
+
+- **The predicted failure did not happen, and the real one was worse.** This plan expected
+  "a green-looking run and no site" — a deploy failing on permissions. Pages was configured
+  correctly all along. What failed was one step earlier: `npm ci` does not build workspace
+  packages, `@pyquest/content` exports point at a gitignored `dist/`, and the build died on
+  ERR_MODULE_NOT_FOUND in 14 seconds. It worked on the authoring machine only because
+  `dist/` survived there from an earlier `tsc -b`, which is a build that had never been
+  tested.
+- **One success criterion is met by inference, not by test.** "A one-word content edit
+  reaches the live page with no code change" — the full push → build → deploy → live round
+  trip is proven, and the `paths` filter demonstrably fired on its own entry. What has not
+  literally run is a *content-only* commit. The mechanism is the same one that worked; the
+  specific path is untested, and saying so is cheaper than pretending otherwise.
+
+### Lessons Learned
+
+- **The suite structurally cannot catch a packaging break.** `vitest.config.ts` aliases
+  `@pyquest/content` to `src/`, so both gates passed while the production build was broken.
+  This is the second instance — the SPA's `vite build` sits in no gate either. Carried
+  forward in `planning/reminders/decide_vite-build-goes-in-a-gate_2026-08-31.md`.
+- **`tsc -b` believes `tsconfig.tsbuildinfo` over the filesystem.** With the buildinfo
+  present and `dist/` deleted it skips the emit and exits 0 — a build step that reports
+  success and produces nothing. Both files are gitignored, so CI never sees it and anyone
+  debugging locally will. `--force` is the escape.
+- **The gate was vacuous on its first three mutants** and only became load-bearing after
+  being seen to fail. Written up above; it is the reason `test-filter-development` asks for
+  a mutant rather than a green run.
+
+### Next — queued, not backlogged
+
+`planning/feature_field-manual-teaches_2026-08-30.md` — **this plan shipped an index, not a
+body.** The parent's reading of the published page: *"a vocabulary blurb, one sentence, and
+then a bunch of exercises. No teachable body."* That is accurate and structural. `AreaView`
+has no field for teaching, a concept is `{ id, label, area }` with no definition text
+anywhere in the repository, and `curriculum/` — where the actual explanations and code
+examples live, ~22,700 words for Area 1 alone — is a tree this generator never reads.
+
+This plan's own Out of Scope named that: *"`curriculum/` — a larger body of prose written
+for a DM rather than a reader, worth its own pass."* The successor is that pass. It is
+queued in `planning/` rather than `planning/backlog/`, because it is a written plan waiting
+on this track to free — which, as of this block, it has.
