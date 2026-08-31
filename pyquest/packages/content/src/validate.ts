@@ -63,6 +63,33 @@ export interface ContentIssue {
   readonly fix: string;
 }
 
+/**
+ * Where content is read from.
+ *
+ * `curriculum` holds every educational artifact — manifests, briefs, starters, hidden tests.
+ * `game` holds the overlay: quests, bosses, transcripts. They are separate trees so that
+ * "the curriculum stands without the game" is a deletion test rather than a claim, and
+ * `tests/two-roots.test.ts` performs that deletion.
+ *
+ * A bare string means both roots are the same directory, which is the pre-split layout and
+ * still what the API, the CLI and the live site pass today.
+ */
+export interface ContentRoots {
+  readonly curriculum: string;
+  readonly game: string;
+}
+
+export type ContentSource = string | ContentRoots;
+
+/** One resolved pair. A bare string collapses to the same absolute path twice. */
+function resolveRoots(source: ContentSource): { curriculum: string; game: string } {
+  if (typeof source === 'string') {
+    const abs = resolve(source);
+    return { curriculum: abs, game: abs };
+  }
+  return { curriculum: resolve(source.curriculum), game: resolve(source.game) };
+}
+
 /** What a content root holds, once read. */
 export interface ContentSet {
   readonly root: string;
@@ -94,6 +121,37 @@ function yamlFilesUnder(root: string): string[] {
     .filter((entry) => entry.isFile() && isYaml(entry.name))
     .map((entry) => toPosix(join(entry.parentPath, entry.name).slice(root.length + 1)))
     .sort();
+}
+
+/**
+ * A YAML file and the tree it came from, so a path can be resolved and an issue reported
+ * against the right root. `file` stays relative to its own root — that is what an author sees
+ * in the report and what they can act on.
+ */
+interface SourceFile {
+  readonly file: string;
+  readonly root: string;
+}
+
+/**
+ * Both trees, deduplicated. A bare string resolves the two roots to the same directory, and
+ * reading it twice would report every issue twice — so identical roots are read once.
+ */
+function yamlFilesAcross(roots: { curriculum: string; game: string }): SourceFile[] {
+  const trees =
+    roots.curriculum === roots.game ? [roots.curriculum] : [roots.curriculum, roots.game];
+  return trees.flatMap((root) => yamlFilesUnder(root).map((file) => ({ file, root })));
+}
+
+/**
+ * Is this file an area manifest?
+ *
+ * The new layout puts it at `area-N/area.yml`, inside the area it describes. The old one put
+ * every manifest under `areas/`, and that form is still accepted because the authored tree has
+ * not moved yet — Phase 2 moves it and this second clause goes with it.
+ */
+function isManifestPath(file: string): boolean {
+  return file.endsWith('/area.yml') || file === 'area.yml' || file.startsWith('areas/');
 }
 
 /**
@@ -249,17 +307,18 @@ function allCycles(requires: ReadonlyMap<string, readonly string[]>): string[][]
  * Read and check a content root. Never throws for content reasons — a malformed file is an
  * issue in the list, not an exception out of the run.
  */
-export function checkContent(root: string): ContentSet {
-  const abs = resolve(root);
+export function checkContent(source: ContentSource): ContentSet {
+  const roots = resolveRoots(source);
+  const abs = roots.curriculum;
   const issues: ContentIssue[] = [];
   const items: ContentItem[] = [];
   const manifests: AreaManifest[] = [];
   const records: RawRecord[] = [];
   const sources = new Map<string, { doc: Document; counter: LineCounter }>();
 
-  for (const file of yamlFilesUnder(abs)) {
+  for (const { file, root } of yamlFilesAcross(roots)) {
     const counter = new LineCounter();
-    const doc = parseDocument(readFileSync(join(abs, file), 'utf8'), { lineCounter: counter });
+    const doc = parseDocument(readFileSync(join(root, file), 'utf8'), { lineCounter: counter });
     sources.set(file, { doc, counter });
 
     if (doc.errors.length > 0) {
@@ -277,7 +336,7 @@ export function checkContent(root: string): ContentSet {
     }
 
     const raw: unknown = doc.toJS();
-    const isManifest = file.startsWith('areas/');
+    const isManifest = isManifestPath(file);
     const id =
       typeof (raw as { id?: unknown })?.id === 'string'
         ? ((raw as { id: string }).id)
@@ -308,7 +367,7 @@ export function checkContent(root: string): ContentSet {
 
   issues.push(...identityIssues(records, locate));
   issues.push(...graphIssues(records, locate));
-  issues.push(...referenceIssues(abs, items, byId(records), locate));
+  issues.push(...referenceIssues(roots, items, byId(records), locate));
   issues.push(...conceptAreaIssues(items, byId(records), locate));
   issues.push(...manifestIssues(items, manifests, byId(records), locate));
 
@@ -388,7 +447,7 @@ function graphIssues(records: readonly RawRecord[], locate: Locator): ContentIss
 
 /** Every path an item points at must exist. A missing brief is a quest with nothing to read. */
 function referenceIssues(
-  root: string,
+  roots: { curriculum: string; game: string },
   items: readonly ContentItem[],
   files: ReadonlyMap<string, RawRecord>,
   locate: Locator,
@@ -396,30 +455,38 @@ function referenceIssues(
   const issues: ContentIssue[] = [];
 
   for (const item of items) {
-    const referenced: Array<[PropertyKey[], string]> = [[['brief'], item.brief]];
+    /**
+     * Which tree each reference resolves against, and it is not uniform. A brief, a starter and
+     * a hidden test are educational artifacts and live in `curriculum/`; a transcript is the
+     * game's record of a run and lives in `game/`. An item in `game/` therefore points *out* of
+     * its own tree for almost everything it names, which is the rule this whole split rests on.
+     */
+    const referenced: Array<[PropertyKey[], string, 'curriculum' | 'game']> = [
+      [['brief'], item.brief, 'curriculum'],
+    ];
     if (item.verifier.type === 'hidden-tests') {
-      referenced.push([['verifier', 'starter'], item.verifier.starter]);
-      referenced.push([['verifier', 'tests'], item.verifier.tests]);
+      referenced.push([['verifier', 'starter'], item.verifier.starter, 'curriculum']);
+      referenced.push([['verifier', 'tests'], item.verifier.tests, 'curriculum']);
     }
     // A `local-repo` verifier's `path` names a directory in *his* repository, which this
     // machine cannot see; only the pytest specification lives here.
     if (item.verifier.type === 'local-repo') {
-      referenced.push([['verifier', 'tests'], item.verifier.tests]);
+      referenced.push([['verifier', 'tests'], item.verifier.tests, 'curriculum']);
     }
     for (const [index, transcript] of (item.transcripts ?? []).entries()) {
-      referenced.push([['transcripts', index], transcript]);
+      referenced.push([['transcripts', index], transcript, 'game']);
     }
 
-    for (const [path, relative] of referenced) {
-      if (existsSync(join(root, relative))) continue;
+    for (const [path, relative, tree] of referenced) {
+      if (existsSync(join(roots[tree], relative))) continue;
       const file = files.get(item.id)?.file ?? item.id;
       issues.push({
         file,
         id: item.id,
         ...locate(file, path),
         rule: 'missing-file',
-        message: `${pathLabel(path)} points at "${relative}", which does not exist in the content root`,
-        fix: `create the file, or correct the path — it is relative to the content root, not to the YAML file`,
+        message: `${pathLabel(path)} points at "${relative}", which does not exist in the ${tree} root`,
+        fix: `create the file, or correct the path — it is relative to the ${tree} root, not to the YAML file`,
       });
     }
   }
@@ -476,8 +543,8 @@ function manifestIssues(
       id: item.id,
       ...locate(files.get(item.id)?.file ?? item.id, ['area']),
       rule: 'missing-area-manifest' as const,
-      message: `area ${area} has authored content but no manifest at areas/area-${area}.yml`,
-      fix: `add areas/area-${area}.yml with a title and an authoring status — §5.1a needs a denominator to show "1 of ~5"`,
+      message: `area ${area} has authored content but no manifest at area-${area}/area.yml`,
+      fix: `add area-${area}/area.yml with a title and an authoring status — §5.1a needs a denominator to show "1 of ~5"`,
     }));
 }
 
@@ -486,8 +553,8 @@ function manifestIssues(
  * ----------------------------------------------------------------------------------------- */
 
 /** Everything wrong with a content root, in file order. Empty means it is good to load. */
-export function validateContent(root: string): ContentIssue[] {
-  return [...checkContent(root).issues];
+export function validateContent(source: ContentSource): ContentIssue[] {
+  return [...checkContent(source).issues];
 }
 
 /**
