@@ -2,7 +2,7 @@
 
 **Concepts:** `if`, `else` · `comparison-operators`, `bool`, `for`, `range`, `input`,
 `f-strings` resurfacing
-**Files:** `exercises/session-4/`
+**Files:** `sessions/session-4/`
 **Journal:** entry 10
 
 Tonight the program stops doing the same thing every time.

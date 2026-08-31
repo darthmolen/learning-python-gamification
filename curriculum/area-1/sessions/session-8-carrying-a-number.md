@@ -2,7 +2,7 @@
 
 **Concepts:** `accumulator-pattern` · `for`, `while`, `range`, `variables`, `int`,
 `float`, `comparison-operators` resurfacing
-**Files:** `exercises/session-8/`
+**Files:** `sessions/session-8/`
 **Journal:** entry 14
 
 Tonight the loop starts answering questions the picture cannot.

@@ -1,7 +1,7 @@
 # Session 1 — What A Repository Is
 
 **Concepts:** `repository` · `git-init`
-**Files:** `exercises/session-1/`
+**Files:** `sessions/session-1/`
 **Journal:** the first Area 2 entry
 
 Git is normally taught as a list of commands, and the list works right up until the
@@ -95,7 +95,7 @@ Spec §7 reason 2: ownership is the cheapest large dose of autonomy available. *
 the name, you do not improve it, and you do not visibly react to it.** It will be a
 Minecraft reference. Good.
 
-### `exercises/session-1/w1_the_folder_that_remembers.md`
+### `sessions/session-1/w1_the_folder_that_remembers.md`
 
 Copy `still_works.py` into his folder first, so there is something in there to run.
 

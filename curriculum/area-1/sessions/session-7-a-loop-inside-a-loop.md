@@ -2,7 +2,7 @@
 
 **Concepts:** `nesting` · `for`, `range`, `if`, `else`, `comparison-operators`,
 `variables` resurfacing
-**Files:** `exercises/session-7/`
+**Files:** `sessions/session-7/`
 **Journal:** entry 13
 
 Tonight a shape becomes a pattern, and it costs three lines.

@@ -1,7 +1,7 @@
 # Session 1 — The Loop That Draws
 
 **Concepts:** `for`, `range` · `print`, `variables`, `int` resurfacing
-**Files:** `exercises/session-1/`
+**Files:** `sessions/session-1/`
 **Journal:** entry 07
 
 Tonight they delete typing they have already done, and get a machine out of it.

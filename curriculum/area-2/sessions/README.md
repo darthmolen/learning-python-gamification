@@ -1,4 +1,11 @@
-# Exercises
+# The session drills
+
+Each `session-<n>/` directory here holds the files for the session plan beside it. They
+are the work of the evening, and they live with the session that teaches them.
+
+**The brief-bearing exercises are next door in `../exercises/`** — those are the ones with
+a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
+different directory.
 
 **The first half of this directory is mostly not Python, and that is the area.** Sessions
 1–4 are git, typed at a terminal: four walkthroughs, a `.gitignore` waiting to be renamed,

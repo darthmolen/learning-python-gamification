@@ -1,7 +1,7 @@
 # Session 2 — Names For Things
 
 **Concepts:** `variables` · `int` · `print`
-**Files:** `exercises/session-2/`
+**Files:** `sessions/session-2/`
 **Journal:** entry 2
 
 Variables are usually taught as "a box that holds a value". That metaphor breaks by

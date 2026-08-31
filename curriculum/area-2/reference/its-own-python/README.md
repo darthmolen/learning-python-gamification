@@ -56,7 +56,7 @@ venv, and `pip install` under the wrong one of those is the most common way sess
 goes wrong.
 
 There is one way to be sure and it is the same one every time:
-`py -3.14 exercises/session-7/which_python.py`, or the shorter version he should learn by
+`py -3.14 sessions/session-7/which_python.py`, or the shorter version he should learn by
 heart —
 
 ```

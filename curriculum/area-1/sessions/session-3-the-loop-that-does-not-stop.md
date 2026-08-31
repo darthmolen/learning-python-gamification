@@ -2,7 +2,7 @@
 
 **Concepts:** `while`, `comparison-operators` · `for`, `variables`, `bool`,
 `reading-errors` resurfacing
-**Files:** `exercises/session-3/`
+**Files:** `sessions/session-3/`
 **Journal:** entry 09
 
 **Tonight a program hangs on purpose, and they learn the way out.**

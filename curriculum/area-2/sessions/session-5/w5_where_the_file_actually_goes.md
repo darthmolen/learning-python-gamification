@@ -85,7 +85,7 @@ Read the last line. You have moved. You are in a different folder from the one y
 in ninety seconds ago, and nothing on the screen would have told you if you had not
 asked.
 
-Copy `where_am_i.py` from `exercises/session-5/` into this new folder.
+Copy `where_am_i.py` from `sessions/session-5/` into this new folder.
 
 ---
 

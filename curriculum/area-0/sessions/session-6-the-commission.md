@@ -2,7 +2,7 @@
 
 **Concepts:** all nine — `print`, `variables`, `int`, `float`, `str`, `bool`, `input`,
 `f-strings`, `reading-errors`
-**Files:** `exercises/session-6/` — `commission-brief.md` and `s6_starter.py`
+**Files:** `sessions/session-6/` — `commission-brief.md` and `s6_starter.py`
 **Journal:** entry 6, plus the Area 0 closing entry
 
 No teaching tonight. Nothing new. They build one thing, of their choosing, to a

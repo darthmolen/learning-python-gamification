@@ -4,7 +4,7 @@ Where is this file? And where were you standing when you ran it? Until
 tonight those have always been the same answer, because something else was
 choosing both for you.
 
-    cd exercises/session-5
+    cd sessions/session-5
     py -3.14 where_am_i.py
 """
 

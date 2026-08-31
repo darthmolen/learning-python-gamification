@@ -1,7 +1,7 @@
 # Session 3 — The Broken Sigil
 
 **Concepts:** `reading-errors` · `print`, `variables`, `int`, `str` resurfacing
-**Files:** `exercises/session-3/`
+**Files:** `sessions/session-3/`
 **Journal:** entry 3
 
 Tonight they break things on purpose, seven times, and read what falls out.

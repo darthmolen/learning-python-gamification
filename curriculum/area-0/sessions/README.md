@@ -1,4 +1,11 @@
-# Exercises
+# The session drills
+
+Each `session-<n>/` directory here holds the files for the session plan beside it. They
+are the work of the evening, and they live with the session that teaches them.
+
+**The brief-bearing exercises are next door in `../exercises/`** — those are the ones with
+a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
+different directory.
 
 Copy this whole directory somewhere you own — `Documents/code/` or similar. You need a
 folder that is yours. Area 2a turns it into a git repository; until then it is just a

@@ -1,7 +1,7 @@
 # Session 1 — First Light
 
 **Concepts:** `print` · first contact with `reading-errors`
-**Files:** `exercises/session-1/`
+**Files:** `sessions/session-1/`
 **Journal:** entry 1, prompt in `journal/entry-01-prompt.md`
 
 The whole session earns one sentence: **the first line they type draws something.**

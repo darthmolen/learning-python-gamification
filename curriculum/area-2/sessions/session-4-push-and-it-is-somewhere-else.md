@@ -1,7 +1,7 @@
 # Session 4 — Push, And It Is Somewhere Else
 
 **Concepts:** `git-push` · resurfaces `git-log`, `git-commit`, `repository`
-**Files:** `exercises/session-4/`
+**Files:** `sessions/session-4/`
 **Journal:** the entry names the remote, and what appeared where
 
 **Decide the remote before you sit down.** `dm-guide.md` §3 gives three options in
@@ -57,7 +57,7 @@ will not be impressed. The impressive part is beat 3 step 5 and it is worth savi
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-4/w4_push_and_prove_it.md`
+### `sessions/session-4/w4_push_and_prove_it.md`
 
 Check first that `git status` says **working tree clean**. Push sends commits; an
 uncommitted change does not exist as far as push is concerned, and starting dirty causes

@@ -2,7 +2,7 @@
 
 **Concepts:** `range` (three-arg), `variables` · `for`, `int`, `float`, `input`,
 `f-strings` resurfacing
-**Files:** `exercises/session-2/`
+**Files:** `sessions/session-2/`
 **Journal:** entry 08
 
 Tonight `range` grows two more numbers, and the machine gets a person on the other end of

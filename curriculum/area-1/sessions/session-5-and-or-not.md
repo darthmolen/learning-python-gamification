@@ -2,7 +2,7 @@
 
 **Concepts:** `boolean-operators`, `elif` · `if`, `else`, `bool`,
 `comparison-operators`, `input`, `f-strings` resurfacing
-**Files:** `exercises/session-5/`
+**Files:** `sessions/session-5/`
 **Journal:** entry 11
 
 Tonight one question becomes several, and they fix a bug they wrote down in week two.
