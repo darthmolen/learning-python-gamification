@@ -123,9 +123,14 @@ ${formatIssues(issues, roots)}`,
 
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
-  writeFileSync(join(outDir, 'index.html'), renderIndex(areas), 'utf8');
+  /**
+   * The DM site asks not to be indexed. It is unlisted rather than secret — nothing links to
+   * it — and this is what keeps "unlisted" true once a link exists somewhere it should not.
+   */
+  const noindex = audience === 'dm';
+  writeFileSync(join(outDir, 'index.html'), renderIndex(areas, noindex), 'utf8');
   for (const area of areas) {
-    writeFileSync(join(outDir, `area-${area.area}.html`), renderArea(area), 'utf8');
+    writeFileSync(join(outDir, `area-${area.area}.html`), renderArea(area, noindex), 'utf8');
   }
   // GitHub Pages runs Jekyll over the artifact unless told not to; a leading-underscore file
   // would silently vanish. Nothing here starts with one today, and this costs a byte.

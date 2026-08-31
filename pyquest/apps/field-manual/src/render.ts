@@ -75,12 +75,27 @@ const STYLE = `
 const escape = (s: string): string =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-function page(title: string, body: string): string {
+/**
+ * Keep this page out of search results.
+ *
+ * `noindex` is the instruction that actually works, and **it only works if the crawler is
+ * allowed to fetch the page and read it.** Disallowing `/dm/` in `robots.txt` would be the
+ * obvious move and it is the wrong one twice over: a blocked crawler never sees this tag, so
+ * the URL can still be indexed from any link that appears anywhere — and `robots.txt` is
+ * itself public, so the disallow line would advertise the exact path it is trying to keep
+ * quiet. Hence a meta tag on the pages, and no mention of `dm/` anywhere in the site.
+ *
+ * `nofollow` is here because the DM pages link only to each other: a crawler that reaches one
+ * is told not to walk to its siblings.
+ */
+const NOINDEX = '<meta name="robots" content="noindex, nofollow">';
+
+function page(title: string, body: string, noindex = false): string {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">${noindex ? NOINDEX : ''}
 <title>${escape(title)}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>${STYLE}</style>
@@ -100,7 +115,7 @@ const weeksLabel = (a: AreaView): string =>
   a.weeks ? `Weeks ${a.weeks.from}–${a.weeks.to}` : 'Weeks not yet set';
 
 /** The index: the whole curriculum as a syllabus. */
-export function renderIndex(areas: readonly AreaView[]): string {
+export function renderIndex(areas: readonly AreaView[], noindex = false): string {
   const ends = areas.flatMap((a) => (a.weeks ? [a.weeks.to] : []));
   const horizon = ends.length > 0 ? Math.max(...ends) : undefined;
   const concepts = areas.reduce((n, a) => n + a.concepts.length, 0);
@@ -132,6 +147,7 @@ export function renderIndex(areas: readonly AreaView[]): string {
 ${rows}
   </div>
 </div>`,
+    noindex,
   );
 }
 
@@ -153,7 +169,7 @@ ${a.teachingAid}
 }
 
 /** One area: what it teaches, and the exercises that teach it. */
-export function renderArea(a: AreaView): string {
+export function renderArea(a: AreaView, noindex = false): string {
   const lesson =
     a.lesson !== undefined
       ? `<h2>The lesson</h2>
@@ -203,5 +219,6 @@ ${e.body}
   ${teachingAid(a)}
   ${exercises}
 </div>`,
+    noindex,
   );
 }

@@ -146,6 +146,36 @@ describe('what the dm artifact adds', () => {
     expect(dm.map((p) => p.file).sort()).toEqual(learner.map((p) => p.file).sort());
   });
 
+  /**
+   * Unlisted is a property of the site, not a hope. Nothing links to the DM pages, and they
+   * also ask not to be indexed — because "nothing links to it" holds only until something
+   * does, and a search result is a link nobody chose to make.
+   *
+   * Note what is deliberately *not* done: `robots.txt` does not disallow `/dm/`. A blocked
+   * crawler never fetches the page and so never reads the noindex, which leaves the URL
+   * indexable from any stray link — and `robots.txt` is public, so the disallow line would
+   * publish the very path it was meant to keep quiet.
+   */
+  it('asks not to be indexed, on every dm page', () => {
+    for (const p of dm) {
+      expect(p.html, `${p.file} may be indexed`).toContain('name="robots"');
+      expect(p.html, `${p.file} is missing noindex`).toMatch(/content="noindex/);
+    }
+  });
+
+  it('leaves the learner site indexable, which is the point of publishing it', () => {
+    for (const p of learner) {
+      expect(p.html, `${p.file} tells crawlers to skip the Tome`).not.toMatch(/noindex/);
+    }
+  });
+
+  /** Nothing may name the dm path anywhere in the learner site, robots.txt included. */
+  it('never names the dm path in anything the learner site serves', () => {
+    for (const p of learner) {
+      expect(p.html, `${p.file} names the dm path`).not.toMatch(/dm\//);
+    }
+  });
+
   /** Unlisted, and it stays unlisted: nothing in the Tome may point at it. */
   it('is not linked from the learner site', () => {
     for (const p of learner) {
