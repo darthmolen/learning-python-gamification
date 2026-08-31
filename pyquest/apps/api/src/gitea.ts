@@ -123,6 +123,15 @@ export interface Gitea {
   /** The log, newest first. An empty repository is `[]`, not a throw. */
   commits(repo: GiteaRepo, options?: { path?: string; limit?: number }): Promise<GiteaCommit[]>;
   tags(repo: GiteaRepo): Promise<GiteaTag[]>;
+  /**
+   * One file's text at the default branch's tip, or `undefined` when it is not there.
+   *
+   * **`undefined` rather than a throw, because "he has not written one yet" is the normal state
+   * of week 1** — §5.6 starts the Journal in week 1 and only commits it at Area 2a, so for the
+   * first eight weeks this correctly finds nothing. A screen that said "error" there would be
+   * telling a learner something is broken when the truth is that he has not got there yet.
+   */
+  readFile(repo: GiteaRepo, path: string): Promise<string | undefined>;
 }
 
 /** Gitea's own shapes, named so the parsing below reads as parsing rather than as casting. */
@@ -134,6 +143,13 @@ interface RawCommit {
 interface RawTag {
   name?: unknown;
   commit?: { sha?: unknown; created?: unknown };
+}
+
+/** A `contents/` entry. `type` is `file` or `dir`, and asking for a directory is a caller bug. */
+interface RawFile {
+  type?: unknown;
+  encoding?: unknown;
+  content?: unknown;
 }
 
 const asString = (value: unknown, fallback = ''): string =>
@@ -226,6 +242,50 @@ export function gitea(settings: GiteaSettings): Gitea {
         sha: asString(raw.commit?.sha),
         committedAt: asString(raw.commit?.created),
       }));
+    },
+
+    /**
+     * **Read at the tip, not at the commit that was paid for.** The Journal is a living document:
+     * the template invites him to revisit an old entry — *"next time, or in this same entry if
+     * you come back to it"* — and an improvement he makes in week 12 to what he wrote in week 3
+     * should show. Reading each entry at its own stored sha would freeze every entry as it was
+     * the night it was paid and silently discard every later edit.
+     *
+     * That leaves `commitSha` doing the job a ledger's sha is for: provenance for the **payment**,
+     * not a pointer for the read. §6.4 makes push the verification mechanism, and what it verifies
+     * is that the writing happened — not what it has said ever since.
+     *
+     * `content` arrives base64 whatever the file is; Gitea sends `encoding` alongside and this
+     * trusts the field rather than the extension, because a journal that happened to be valid
+     * base64 is not the interesting case but a journal that is not is.
+     */
+    readFile: async (repo, path) => {
+      const encoded = path.split('/').map(encodeURIComponent).join('/');
+      const { status, body } = await request(
+        `/repos/${repo.owner}/${repo.name}/contents/${encoded}`,
+      );
+      if (status === 409) return undefined;
+      if (status === 404) {
+        const { status: repoStatus } = await request(`/repos/${repo.owner}/${repo.name}`);
+        if (repoStatus === 200) return undefined;
+        throw new GiteaError(`gitea has no repository ${repo.owner}/${repo.name}`, status);
+      }
+      if (status !== 200 || body === null || typeof body !== 'object') {
+        throw new GiteaError(`gitea refused ${path} in ${repo.owner}/${repo.name}`, status);
+      }
+      const file = body as RawFile;
+      if (asString(file.type) === 'dir' || Array.isArray(body)) {
+        throw new GiteaError(`${path} in ${repo.owner}/${repo.name} is a directory`, status);
+      }
+      const content = asString(file.content);
+      if (content === '') return '';
+      if (asString(file.encoding, 'base64') !== 'base64') {
+        throw new GiteaError(
+          `gitea sent ${path} as ${asString(file.encoding)}, which this does not decode`,
+          status,
+        );
+      }
+      return Buffer.from(content, 'base64').toString('utf8');
     },
   };
 }

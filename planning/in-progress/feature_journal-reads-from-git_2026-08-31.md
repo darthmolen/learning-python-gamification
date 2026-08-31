@@ -116,20 +116,24 @@ returns nothing for the first eight weeks of the campaign.
 - [x] The path the api watches is the file the curriculum tells him to write, **asserted by a
       test that spans the seam** — `apps/api/tests/journal-path.test.ts`, RED at
       `expected 'journal.md' to be 'journal/'`, and the case mutant caught
-- [ ] A commit touching `journal.md` fires `git-signal: journal-entry`; a commit touching only
-      `README.md` does not. **Both asserted, the second one especially**
-- [ ] `GET /api/players/:playerId/journal` returns entries assembled from git, one per row of
+- [x] A commit touching `journal.md` fires `git-signal: journal-entry`; a commit somewhere else
+      does not. **Both were already asserted** — `gitsignal.test.ts:112` and `:117`, the latter
+      against the literal string `journal.md`. What was missing was never this test; it was
+      anything checking that the string those tests use is the one the curriculum teaches
+- [x] `GET /api/players/:playerId/journal` returns entries assembled from git, one per row of
       the `journal_entries` ledger
 - [x] `JournalEntrySchema` describes what the API can actually serve. `— blocked` comes off the
       route table
 - [x] `POST /api/players/:playerId/journal` and `JournalEntryRequestSchema` are **gone**, and the
       route table is twelve routes rather than thirteen
-- [ ] An entry whose reply is `## DM reply` in the file, and an entry whose reply is a Gitea
-      comment, both render a reply
-- [ ] An entry with an empty `## DM reply` section renders **no** reply, rather than a reply
+- [~] An entry whose reply is `### DM reply` in the file renders one. **The Gitea-comment source
+      is deferred** to `planning/backlog/feature_journal-reply-from-gitea-comments_2026-08-31.md`,
+      for the reason in Phase 3 — it is not needed until Area 2a, week 6
+- [x] An entry with an empty `### DM reply` section renders **no** reply, rather than a reply
       containing an HTML comment
-- [ ] No migration. `git diff packages/db/migrations/` is empty
-- [ ] `npm test` and `npm run typecheck` clean
+- [x] No migration. `git diff packages/db/migrations/` is empty
+- [x] `npm test` and `npm run typecheck` clean — 779 passing; the one full-run failure is the
+      `flakes` track's documented gitsignal flake, 7/7 in isolation
 
 ## Phases
 
@@ -226,7 +230,50 @@ routes". Two lines, both wrong now, both somebody else's to change.
   smaller, which is the rarest and best kind of contract change.
 - The route table's `— blocked` annotation comes off `GET`, and the `POST` row goes.
 
-### Phase 3 — the read path
+### Phase 3 — the read path — ✅ **done 2026-08-31, with one piece deferred**
+
+`GET /api/players/:playerId/journal` is served. All twelve routes now exist.
+
+- **`gitea.readFile`** — one file at the default branch's tip. **HEAD, not the row's sha**, ruled
+  by the DM: the Journal is a living document and the template invites revisiting an old entry, so
+  an improvement made in week 12 to what he wrote in week 3 should show. That leaves `commitSha`
+  doing a ledger sha's real job — provenance for the *payment*, not a pointer for the read
+- **`journal.ts`** — splits one `journal.md` into dated sections, lifts the reply out, and strips
+  the template's coaching comments. No I/O, so every rule is testable against a string
+- **The route** — iterates the **ledger**, not the file. A `## <date>` nobody paid for is not
+  rendered: it was never verified by a push (§6.4), and showing XP he did not earn beside writing
+  he did is the one thing this screen must not do
+- **Absent Gitea, absent repo, absent file, absent section → an empty list.** Never a 404, never a
+  failure. §5.6 starts the Journal in week 1 and commits it at Area 2a, so "nothing to read" is
+  the correct answer for the campaign's first eight weeks
+
+```text
+13 parsing tests, 4 route tests, 3 mutants seeded:
+  \b dropped from the date match       ->  1 failed, caught
+  reply emptiness without comment strip ->  2 failed, caught
+  entry runs to end of file             ->  SURVIVED
+```
+
+**The third mutant survived, and finding that was the point.** An entry running to end-of-file
+does not leak into the next entry's `body` — `sectionOf` stops at that entry's own `### DM reply`
+— so it leaks into the **reply**, and an unanswered entry comes back answered with the whole rest
+of the year. The test checked `body` and not `reply`. Strengthened, re-run against the mutant,
+caught. This is the case for seeding mutants rather than trusting a green suite, made by a suite
+that was green and wrong.
+
+Typecheck clean, content gate clean, **779 passing**. The one failure in the full run is
+`server.gitsignal.test.ts`, which passes 7/7 in isolation and is the documented flake the `flakes`
+track owns — its file is that session's uncommitted work, so it is doubly not this plan's.
+
+**Deferred, and filed rather than guessed:** the reply source for Area 2a onward, where §5.6 moves
+the DM's answer into a Gitea commit comment. Gitea's endpoint for that could not be confirmed from
+here, and a wrong one 404s — which this route already reads as "he has not written one yet", so a
+mistyped path would render every Area 2a entry unanswered and look entirely normal. That is the
+exact failure shape this plan exists to stop, so it goes to
+`planning/backlog/feature_journal-reply-from-gitea-comments_2026-08-31.md`, to be done against a
+running Gitea where the endpoint can be observed. **Trigger: before Area 2a is taught, week 6.**
+
+### Phase 3 — as originally planned
 
 - **Two new methods on `Gitea`**, which today has `commits()` and `tags()` and no way to read
   content: the file at a ref (`/repos/{owner}/{repo}/contents/{path}?ref={sha}`) and a commit's

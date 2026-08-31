@@ -1,11 +1,10 @@
 /**
- * The Fastify app: eleven of `API_ROUTES`' twelve, plus health.
+ * The Fastify app: all twelve of `API_ROUTES`, plus health.
  *
- * **One is absent, and it is being built.** `GET /journal` is not registered yet;
- * `planning/in-progress/feature_journal-reads-from-git_2026-08-31.md` Phase 3 is the read path
- * that serves it. Until then the 404 is the honest answer, and serving an entry with empty text
- * would be worse: the Journal is §5.6's record of what a child thought, and a screen of blanks
- * reads as "you wrote nothing" rather than as "this is not built".
+ * **`GET /journal` completed the set on 2026-08-31** and it is the one route that reads outside
+ * this database: ADR 0004 put the Journal's prose in his own repository, so the handler joins the
+ * `journal_entries` ledger to the markdown Gitea serves. See `journal.ts` for the split, which is
+ * where the rules live.
  *
  * **`POST /journal` is not absent — it is gone**, removed from the contract on 2026-08-31. He
  * writes `journal.md` and commits it, and that *is* the post: §6.4 makes push the verification
@@ -38,6 +37,7 @@ import {
   DrillOutcomeSchema,
   JobAcceptedSchema,
   JobViewSchema,
+  JournalEntrySchema,
   PartyViewSchema,
   PendingSignoffsSchema,
   QuestViewSchema,
@@ -51,7 +51,7 @@ import {
   type PlayerProgress,
   type RunnerJobStatus,
 } from '@pyquest/contract';
-import { bounties, playerProgress, players } from '@pyquest/db';
+import { bounties, journalEntries, playerProgress, players } from '@pyquest/db';
 import {
   dueInvasions,
   intervalDays,
@@ -70,6 +70,7 @@ import { exportTree, syncCheckout } from './checkout.ts';
 import type { Spool } from './dispatcher.ts';
 import type { Gitea, GiteaRepo } from './gitea.ts';
 import { readSignal } from './gitsignal.ts';
+import { splitEntries } from './journal.ts';
 import {
   awardMedal,
   clearForcedReviews,
@@ -651,6 +652,64 @@ export function buildServer(options: ServerOptions): FastifyInstance {
           claimedBy: bounty.claimedBy,
           postedAt: bounty.postedAt,
         })),
+      });
+    },
+  );
+
+  /* ---------------------------------------------------------------------------------------
+   * The Journal — §5.6, ADR 0004
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * The ledger joined to the markdown, and **the ledger is what decides which entries exist.**
+   *
+   * A row in `journal_entries` is a session that was paid for; a `## <date>` section is what he
+   * wrote. Iterating the rows rather than the file is what stops this route inventing entries: a
+   * dated heading with no row behind it was never verified by a push (§6.4) and never paid, and
+   * rendering it would show a learner XP he did not earn beside writing he did.
+   *
+   * **A row whose section is missing is dropped rather than served empty.** It means he rewrote or
+   * removed that heading after being paid, which is his prerogative — the file is his. An entry
+   * with a date and no words reads as "you wrote nothing" on §5.6's own screen, which is the one
+   * thing this screen must never say to somebody who did write.
+   *
+   * **No Gitea, no repository, no journal: an empty list, not an error.** §5.6 starts the Journal
+   * in week 1 as plain markdown and only commits it at Area 2a, so for the first eight weeks there
+   * is genuinely nothing to read — and `Awaiting`'s failed state would call that a fault.
+   */
+  app.get<{ Params: { playerId: string } }>(
+    '/api/players/:playerId/journal',
+    async (request) => {
+      const player = await playerFor(db, request.params.playerId);
+      const paid = await journalEntries(db, player.id);
+      if (paid.length === 0) return [];
+
+      /*
+       * `options.gitea` directly rather than `requireGitea`, which throws. An unconfigured token
+       * is a fault for Submit — the learner pressed a button and deserves an answer — but for a
+       * read it is indistinguishable from a Journal not yet started, and both are "nothing here".
+       */
+      const client = options.gitea;
+      const repo = client?.repoFor(player.handle);
+      if (client === undefined || repo === undefined) return [];
+
+      const markdown = await client.readFile(repo, client.settings.journalPath);
+      if (markdown === undefined || markdown === '') return [];
+
+      const written = splitEntries(markdown);
+
+      return paid.flatMap((row) => {
+        const section = written.get(row.sessionDate);
+        if (section === undefined || section.body === '') return [];
+        return [
+          JournalEntrySchema.parse({
+            sessionDate: row.sessionDate,
+            body: section.body,
+            commitSha: row.commitSha,
+            xpAwarded: row.xpAwarded,
+            ...(section.reply === undefined ? {} : { reply: section.reply }),
+          }),
+        ];
       });
     },
   );

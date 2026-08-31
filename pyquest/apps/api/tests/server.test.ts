@@ -14,11 +14,18 @@
 
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { ApiErrorSchema, CampaignViewSchema, QuestViewSchema, TomeSchema } from '@pyquest/contract';
+import {
+  ApiErrorSchema,
+  CampaignViewSchema,
+  QuestViewSchema,
+  TomeSchema,
+  type JournalEntry,
+} from '@pyquest/contract';
 import { medalDelta, nextRung } from '@pyquest/engine';
 import type { FastifyInstance } from 'fastify';
 import { loadContentRoot } from '../src/content.ts';
 import { buildServer, jobStateFor } from '../src/server.ts';
+import type { Gitea } from '../src/gitea.ts';
 import { HAVE_DATABASE, useMigratedDatabase } from './support/database.ts';
 
 if (!HAVE_DATABASE) {
@@ -33,6 +40,29 @@ const NOBODY = '33333333-3333-3333-3333-333333333333';
 
 /** A Tuesday, pinned. Every date this suite asserts on is derived from it. */
 const NOW = new Date('2026-08-25T09:00:00.000Z');
+
+/**
+ * A Gitea that serves one file and refuses everything else.
+ *
+ * The only stub in this suite, and it earns the exception the header claims for nothing else:
+ * the alternative is a live Gitea in CI to prove that markdown reaches a payload. What is being
+ * tested here is the *join* — ledger rows against parsed sections — and that logic is entirely
+ * this side of the network. `journal.ts`'s own suite tests the parsing against strings, and
+ * `journal-path.test.ts` checks the one string this could get wrong against the curriculum.
+ */
+const stubGitea = (journal: string): Gitea => ({
+  settings: {
+    baseUrl: 'http://gitea.invalid',
+    token: 'stub',
+    repos: new Map([['grace', { owner: 'grace', name: 'quests' }]]),
+    journalPath: 'journal.md',
+  },
+  repoFor: (handle) => (handle.toLowerCase() === 'grace' ? { owner: 'grace', name: 'quests' } : undefined),
+  cloneUrl: () => 'http://gitea.invalid/grace/quests.git',
+  commits: async () => [],
+  tags: async () => [],
+  readFile: async (_repo, path) => (path === 'journal.md' ? journal : undefined),
+});
 
 const scratch = useMigratedDatabase('server');
 let app: FastifyInstance;
@@ -198,15 +228,135 @@ describe('the reads', () => {
 });
 
 /* -------------------------------------------------------------------------------------------
- * The Journal, which is blocked
+ * The Journal — §5.6, ADR 0004
  * ----------------------------------------------------------------------------------------- */
 
 describe('the Journal routes', () => {
-  it('is not served, because journal_entries has no column for its text', async () => {
-    for (const method of ['GET', 'POST'] as const) {
-      const response = await app.inject({ method, url: `/api/players/${ADA}/journal` });
-      expect(response.statusCode).toBe(404);
-      expect(ApiErrorSchema.safeParse(response.json()).success).toBe(true);
+  /**
+   * There is no writing route, and its absence is the design rather than a gap.
+   *
+   * He writes `journal.md` and commits it, and that *is* the post (§6.4). This asserts the 404 at
+   * the wire, where `endpoints.test.ts` asserts the route is not in the table — two halves of one
+   * claim, because a route table without a server is a document and a server without a table is
+   * an accident.
+   */
+  it('has no POST, because committing an entry is how one is written', async () => {
+    const response = await app.inject({ method: 'POST', url: `/api/players/${ADA}/journal` });
+    expect(response.statusCode).toBe(404);
+    expect(ApiErrorSchema.safeParse(response.json()).success).toBe(true);
+  });
+
+  /**
+   * **An empty list, not a 404, and not an error.** §5.6 starts the Journal in week 1 as plain
+   * markdown and only commits it at Area 2a, so for the first eight weeks of the campaign there
+   * is genuinely nothing to read. This suite builds the server with no Gitea at all, which is the
+   * same shape as "no repository yet" and the state the app spends its first two months in.
+   *
+   * The distinction matters on the screen: `Awaiting`'s failed state says something is broken,
+   * and nothing is. He simply has not got there yet.
+   */
+  it('answers an empty journal with an empty list rather than a failure', async () => {
+    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/journal` });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual([]);
+  });
+
+  it('404s for a player who does not exist, like every other player-scoped read', async () => {
+    const response = await app.inject({ method: 'GET', url: `/api/players/${NOBODY}/journal` });
+    expect(response.statusCode).toBe(404);
+  });
+
+  /**
+   * The ledger decides which entries exist, and this is the assertion that says so.
+   *
+   * A paid row with no Gitea behind it yields nothing — not a row with empty text. An entry with
+   * a date and no words reads as "you wrote nothing" on the one screen §5.6 says must never say
+   * that to somebody who did write.
+   */
+  it('does not invent an entry for a paid row it cannot read the text of', async () => {
+    const { client } = scratch();
+    await client.query(
+      `INSERT INTO journal_entries (player_id, session_date, commit_sha, xp_awarded)
+       VALUES ($1, '2026-08-22', 'a1b2c3d', 10)`,
+      [ADA],
+    );
+
+    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/journal` });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual([]);
+  });
+
+  /**
+   * The whole path, end to end: two paid rows, one file, and a third heading nobody paid for.
+   *
+   * The unpaid heading is the assertion that carries the design. `journal.md` is his and he may
+   * write in it whenever he likes; a `## <date>` with no ledger row behind it was never verified
+   * by a push (§6.4) and never paid, so rendering it would show him XP he did not earn beside
+   * writing he did. **The ledger decides which entries exist; the file only decides what they
+   * say.**
+   */
+  it('joins each paid row to its own section, and ignores writing nobody paid for', async () => {
+    const { client } = scratch();
+    await client.query(
+      `INSERT INTO journal_entries (player_id, session_date, commit_sha, xp_awarded)
+       VALUES ($1, '2026-08-10', 'aaaaaaa', 10), ($1, '2026-08-17', 'bbbbbbb', 10)`,
+      [GRACE],
+    );
+
+    const journal = [
+      '# Journal',
+      '',
+      '## 2026-08-10 — Session 01',
+      '',
+      '### What I built',
+      '<!-- Specific. Names of files. -->',
+      'A hexagon, with a loop instead of six lines.',
+      '',
+      '### DM reply',
+      'Which side did you count first?',
+      '',
+      '## 2026-08-17 — Session 02',
+      '',
+      '### What I built',
+      'A spiral.',
+      '',
+      '### DM reply',
+      '<!-- Dad writes here. -->',
+      '',
+      '## 2026-08-24 — Session 03',
+      '',
+      'Written tonight, not yet paid for.',
+    ].join('\n');
+
+    const withGitea = buildServer({
+      content: CONTENT,
+      db: client,
+      clock: () => NOW,
+      gitea: stubGitea(journal),
+    });
+    await withGitea.ready();
+
+    try {
+      const response = await withGitea.inject({
+        method: 'GET',
+        url: `/api/players/${GRACE}/journal`,
+      });
+      expect(response.statusCode).toBe(200);
+
+      const entries = response.json() as JournalEntry[];
+      expect(entries.map((e) => e.sessionDate)).toEqual(['2026-08-10', '2026-08-17']);
+
+      const [first, second] = entries;
+      expect(first?.body).toContain('A hexagon');
+      expect(first?.body).not.toContain('<!--');
+      expect(first?.reply).toBe('Which side did you count first?');
+      expect(first?.commitSha).toBe('aaaaaaa');
+
+      /* The template's coaching is not an answer, so this entry is unanswered. */
+      expect(second?.body).toContain('A spiral.');
+      expect(second?.reply).toBeUndefined();
+    } finally {
+      await withGitea.close();
     }
   });
 });

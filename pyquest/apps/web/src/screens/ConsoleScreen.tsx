@@ -13,7 +13,7 @@ import { Eyebrow, Mono } from '../shell/ui';
  * §6.8 gives the Console three jobs and this is one of them. **Authoring is deliberately not
  * here**: §6.10 makes `new:quest` and `validate:content` a CLI on purpose, and the SPA plan puts
  * a content editor in the browser out of scope in as many words. **Streak forgiveness is not
- * here either** — the artboard draws it, and nothing in the thirteen routes serves it, so a
+ * here either** — the artboard draws it, and nothing in the twelve routes serves it, so a
  * panel would be a picture of a feature. The artboard's right-hand column goes the same way:
  * attendance, the challenge run and the backup report all have artwork and no endpoint.
  *
