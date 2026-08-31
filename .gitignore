@@ -16,3 +16,7 @@ dist-broken-out/
 # full copy of the repository (154MB for three) and none of it belongs in history.
 # The branches are the durable artifact -- the checkouts are scratch.
 .claude/worktrees/
+
+# Scratch space for reading other people's repositories -- a learner's clone lands here
+# so it can be read without its history becoming part of THIS repository's history.
+research/
