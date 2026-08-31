@@ -10,7 +10,7 @@ nobody helping. Tonight, somebody is helping.
 
 ## What a mandala is, here
 
-Rings. Each ring is a pattern repeated all the way round a centre. The rings do not
+Rings. Each ring is a pattern repeated all the way round a center. The rings do not
 have to match; the good ones usually do not.
 
 That is a nested loop and nothing else:
@@ -18,7 +18,7 @@ That is a nested loop and nothing else:
 - the **outer** loop makes the rings, or the copies within a ring
 - the **inner** loop draws one element
 - an **accumulator** makes each ring different from the last
-- an **`if` ladder** decides the colours
+- an **`if` ladder** decides the colors
 
 Every one of those is a file you already have. Open them. Copying from your own
 earlier files is not cheating and it is what everybody does.

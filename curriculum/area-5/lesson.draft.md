@@ -93,7 +93,7 @@ Look at what disappeared: no `player_health` variable, no function that could be
 wrong one. **The data and the work that uses it are in the same place**, which is the entire
 argument for objects.
 
-## `__repr__`, so printing tells you something
+## `__repr__` — what printing shows
 
 ```python
 sam = Player("Sam")
@@ -178,7 +178,7 @@ goes wrong.
 
 When you are unsure, use composition. It is almost always the better answer.
 
-## When things go wrong: try / except
+## try / except — catching a failure
 
 Some failures you can see coming and cannot prevent — a missing file, a number that was
 supposed to be a number.

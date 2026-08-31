@@ -30,7 +30,7 @@ session's boss, and it does not work without tonight.
 ## Beat 2 — The hook (8 minutes)
 
 **Do not open with the word "environment".** Open with the argument, because he has
-already had it with a computer and will recognise it instantly.
+already had it with a computer and will recognize it instantly.
 
 > "Suppose you installed something on your laptop months ago and forgot. Then you send me
 > your program and it does not work on mine. We are running exactly the same code. What

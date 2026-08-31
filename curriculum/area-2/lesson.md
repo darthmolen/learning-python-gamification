@@ -182,7 +182,7 @@ pip list
 `.venv` should never go into git. It is large, it is machine-specific, and it can be
 rebuilt from a list of names in seconds. That is what `requirements.txt` is for.
 
-## Reading a traceback, second pass
+## Reading a traceback again
 
 Area 0 taught the shape of a traceback. Now that files import other files, the middle
 section starts to matter:

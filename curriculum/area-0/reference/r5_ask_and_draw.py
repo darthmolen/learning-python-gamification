@@ -13,7 +13,7 @@ Run:  py -3.14 r5_ask_and_draw.py
 import turtle
 
 size = int(input("How long should each side be? "))
-shade = input("What colour? ")
+shade = input("What color? ")
 sides = int(input("How many sides? "))
 
 turn = 360 / sides

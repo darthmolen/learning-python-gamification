@@ -154,7 +154,7 @@ def _validation_cases() -> list[tuple[str, Callable[[], None], type[Exception], 
     def bad_coordinate() -> None:
         world.place(0, "up", 0, "grass")
 
-    def broken_colour() -> None:
+    def broken_color() -> None:
         # Deliberately the wrong type -- that is the whole point of the check.
         world.BLOCKS["glass"] = "green"  # pyright: ignore[reportArgumentType]
         try:
@@ -165,7 +165,7 @@ def _validation_cases() -> list[tuple[str, Callable[[], None], type[Exception], 
     return [
         ("an unknown block kind is refused", unknown_kind, ValueError, "'stnoe'"),
         ("a non-numeric coordinate is refused", bad_coordinate, TypeError, "y"),
-        ("an overwritten colour is refused", broken_colour, TypeError, "BLOCKS"),
+        ("an overwritten color is refused", broken_color, TypeError, "BLOCKS"),
     ]
 
 

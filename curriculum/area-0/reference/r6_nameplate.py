@@ -19,17 +19,17 @@ import turtle
 owner = input("Whose nameplate is this? ")
 title = input("And their title? ")
 width = int(input("How wide, in pixels? "))
-frame_colour = input("What colour should the frame be? ")
+frame_color = input("What color should the frame be? ")
 
 height = width / 3
 edging = width * 2 + height * 2
 
 print(f"Plate for {owner}, {title}.")
-print(f"{width} wide by {height} tall, so {edging} pixels of {frame_colour} edging.")
+print(f"{width} wide by {height} tall, so {edging} pixels of {frame_color} edging.")
 
 turtle.speed(0)
 turtle.pensize(8)
-turtle.color(frame_colour)
+turtle.color(frame_color)
 
 turtle.penup()
 turtle.goto(0 - width / 2, 0 - height / 2)

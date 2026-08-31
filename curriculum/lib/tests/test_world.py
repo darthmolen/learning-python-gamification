@@ -149,7 +149,7 @@ def test_it_exports_exactly_three_names(world: types.ModuleType) -> None:
     assert world.__all__ == ["BLOCKS", "place", "start"]
 
 
-def test_blocks_knows_seven_kinds_with_their_colours(
+def test_blocks_knows_seven_kinds_with_their_colors(
     world: types.ModuleType,
 ) -> None:
     from ursina import color
@@ -233,7 +233,7 @@ def test_place_rejects_a_non_numeric_coordinate(
     assert world.placed == []
 
 
-def test_place_rejects_a_kind_whose_colour_was_overwritten(
+def test_place_rejects_a_kind_whose_color_was_overwritten(
     world: types.ModuleType,
 ) -> None:
     """`BLOCKS` is a plain dict he can read -- and therefore a plain dict he can
@@ -249,7 +249,7 @@ def test_place_rejects_a_kind_whose_colour_was_overwritten(
     assert "BLOCKS" in message
     assert "'grass'" in message
     assert "'green'" in message
-    assert "colour" in message
+    assert "color" in message
 
 
 def test_place_after_start_says_why(engine: types.ModuleType) -> None:

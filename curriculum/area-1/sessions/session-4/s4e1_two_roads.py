@@ -51,14 +51,14 @@ print("the square is drawn. Only one of the two roads printed.")
 
 # --- YOUR MOVE ---------------------------------------------------------------
 # 1. Change `size` to 40 and run it. Which road printed this time? Was the
-#    square a different colour? Say why, using the word "False".
+#    square a different color? Say why, using the word "False".
 #
 # 2. Change `size` to exactly 100 and predict which road runs BEFORE you run
 #    it. Then change `>` to `>=` and predict again. This is the boundary and
 #    it is where nearly every `if` bug in the world lives.
 #
 # 3. Delete the `else:` and its indented line. Run it. Does it still work?
-#    What colour is the square when size is 40, and where did that colour come
+#    What color is the square when size is 40, and where did that color come
 #    from? An `if` with no `else` is legal and often right.
 #
 # 4. Type `if size = 100:` on purpose and run it. Read the error. Python is

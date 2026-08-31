@@ -51,7 +51,7 @@ for side in range(sides):
 #
 # 4. CHOICE BOARD. Pick one:
 #      a. draw the shape twice, the second one turned 30 degrees from the first
-#      b. make the pen a different colour when the shape has more than 6 sides
+#      b. make the pen a different color when the shape has more than 6 sides
 #         (you cannot say that properly until session 4 -- try anyway, and write
 #          in the Journal what you wanted to say and could not)
 #      c. draw the shape, then a smaller one inside it

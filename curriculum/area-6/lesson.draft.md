@@ -33,7 +33,7 @@ file bug.
 That **replaces** the whole file. There is no undo, and no warning. Writing to the wrong
 path is how people lose work.
 
-## Context managers, and why `with`
+## Context managers — the `with` block
 
 ```python
 with open(here / "scores.txt", "a", encoding="utf-8") as f:

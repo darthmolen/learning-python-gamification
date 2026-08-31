@@ -63,7 +63,7 @@ print("done -- and notice that it printed 'done' even when it refused.")
 #
 # 4. Two blocks of this file draw the same square with different settings.
 #    That repetition is ugly and you can feel it. Get rid of it: set the pen
-#    and colour in the ladder, and draw the square ONCE, after it.
+#    and color in the ladder, and draw the square ONCE, after it.
 #    (This is the real task in the file. Do this one.)
 #
 # 5. CHOICE BOARD:

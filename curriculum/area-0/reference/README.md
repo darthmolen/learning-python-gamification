@@ -24,7 +24,7 @@ These are the payloads for the Area 0 exercises most likely to need one.
 
 | File | Unlocks | Notes |
 |---|---|---|
-| `r5_ask_and_draw.py` | `s5e1` tasks 3 and 4 | Colour input, side count, computed total turn |
+| `r5_ask_and_draw.py` | `s5e1` tasks 3 and 4 | Color input, side count, computed total turn |
 | `r6_nameplate.py` | Commission A | A complete, honest Area 0 nameplate |
 | `session-3-answers.md` | The seven broken sigils | Read before session 3, not during |
 

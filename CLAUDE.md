@@ -95,4 +95,12 @@ both the player and DM seats (§5.11). Roles are not people.
   separator and a `\b` that JavaScript read as a backspace both shipped gates that passed
   while measuring nothing, twice in one day. Long heredocs also die outright on
   "unexpected EOF" for no reason anyone has reproduced. Heredocs are for commit messages.
+- **US spelling in everything a learner reads.** Not nationality — **Python's standard
+  library is American**, and prose that says `colour` beside code that says `turtle.color`
+  teaches a child to typo. That collision was real: 96 instances, and Area 0 session 1 had a
+  file called `s1e3_pen_and_colour.py`. `color`, `behavior`, `recognize`, `practice`,
+  `center` — and check identifiers too: a regex word boundary skips `frame_colour`,
+  because the underscore beside it is a word character.
+- **Headings name what follows them** (ADR 0005): no comma joining a clause, no colon doing
+  the same job, one em dash only to define the term. Curriculum only; plans and ADRs are free.
 - Do not commit or push unless asked.

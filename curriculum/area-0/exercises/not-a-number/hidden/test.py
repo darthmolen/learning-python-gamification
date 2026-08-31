@@ -6,7 +6,7 @@ fails — because this error is about a VALUE rather than a name or a kind.
 
 **Two halves, or the quest teaches the wrong lesson.** `curriculum/area-0/README.md` says it
 outright: a fix-it quest that accepted any passing run would accept *"delete the broken
-line"*. So these check both — that the ValueError is gone, and that the behaviour the broken line
+line"*. So these check both — that the ValueError is gone, and that the behavior the broken line
 carried is still there. The traceback assertion proves the first; the turtle spy proves the
 second.
 

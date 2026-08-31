@@ -17,7 +17,7 @@ The measurements behind every number here: `spikes/ursina-tier3/README.md`.
 ## The surface
 
 ```text
-BLOCKS                  a dict of block kind -> colour, seven kinds
+BLOCKS                  a dict of block kind -> color, seven kinds
 place(x, y, z, kind)    remember one block; nothing is drawn until start()
 start()                 build, fuse, frame the camera, open the window
 ```
@@ -109,12 +109,12 @@ doing its job; a bare `KeyError` would be the shim being a wrapper.
 |---|---|---|
 | `place(0, 0, 0, "stnoe")` | one warning in the noise, draws nothing | `ValueError: place() does not know the block kind 'stnoe'. The kinds it knows are ['dirt', 'glass', 'grass', 'sand', 'stone', 'water', 'wood'].` |
 | `place(0, "up", 0, "grass")` | no diagnostic at all | `TypeError: place() needs numbers for x, y and z. The y it got was 'up', which is a str.` |
-| `BLOCKS["grass"] = "green"` | eight frames, ending in hexadecimal | `TypeError: BLOCKS['grass'] is 'green', which is not a colour. The colours in BLOCKS come from ursina's color module -- color.green, color.brown, and so on. A name in quotes is not one of them.` |
+| `BLOCKS["grass"] = "green"` | eight frames, ending in hexadecimal | `TypeError: BLOCKS['grass'] is 'green', which is not a color. The colors in BLOCKS come from ursina's color module -- color.green, color.brown, and so on. A name in quotes is not one of them.` |
 | `place()` after `start()` | silent no-op | `RuntimeError: place() cannot add blocks once start() has run. start() builds the world and opens the window, so every place() call has to come before it.` |
 | `place(0, 0, "grass")` | — | Python's own: `TypeError: place() missing 1 required positional argument: 'kind'` |
 
 Two of the raw failure modes are not merely improved but **unreachable**: he never types a
-model name, a colour or a position tuple, so he cannot get them wrong.
+model name, a color or a position tuple, so he cannot get them wrong.
 
 ## `start()` fuses, and that is not optional
 
@@ -170,7 +170,7 @@ And then, at Area 7: delete `ground.combine()` and watch it happen. See
 
 ## Can he read it?
 
-The constraint the shim is held to: he opens `world.py` at Area 4 and recognises most of it.
+The constraint the shim is held to: he opens `world.py` at Area 4 and recognizes most of it.
 Audited by statement rather than by physical line, because the formatter breaks long calls
 across lines and that should not flatter the count. 43 statements:
 
@@ -244,4 +244,4 @@ changed:
 - **`Tier` is gone.** The lexicon is Area, and at Boss 7 he opens this repository and reads
   it.
 - **Three of the four guards are new.** The unknown-kind `ValueError` came from the spike;
-  the coordinate check, the overwritten-colour check and the after-`start()` check did not.
+  the coordinate check, the overwritten-color check and the after-`start()` check did not.

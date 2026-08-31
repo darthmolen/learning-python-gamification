@@ -62,7 +62,7 @@ write it properly. **Do this one.**
 
 ### `s5e2_the_ladder.py` — order decides everything
 
-Four colour bands round a sixteen-sided shape, then a deliberately broken ladder with a
+Four color bands round a sixteen-sided shape, then a deliberately broken ladder with a
 wide rung above a narrow one, so the narrow rung can never be reached.
 
 It prints, plainly, `THIS CAN NEVER HAPPEN` next to nothing at all — because it never

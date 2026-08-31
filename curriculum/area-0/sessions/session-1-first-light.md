@@ -106,12 +106,12 @@ The four questions at the bottom are the real content. Question 3 — is
 `turtle.forward(-50)` legal — is worth making them commit to an answer out loud before
 they try it.
 
-### `s1e3_pen_and_colour.py`
+### `s1e3_pen_and_color.py`
 
-Pen up, pen down, thickness, colour. This is the file they will want to keep playing
+Pen up, pen down, thickness, color. This is the file they will want to keep playing
 with, so leave time for the choice board rather than rushing them to the end.
 
-The last line of its comment block asks them to use a colour name Python does not know,
+The last line of its comment block asks them to use a color name Python does not know,
 on purpose, and read the error. That is the seed for session 3. If time is short, cut
 anything else before you cut that.
 

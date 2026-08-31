@@ -36,7 +36,7 @@ vocabulary for "what should happen when this runs".
 **`# timeout-seconds: N`, default 10.** Only a file that needs something other
 than the default carries it, so thirty files do not each repeat boilerplate.
 
-**`# min-strokes: N`, default 1** -- which is exactly Area 0's behaviour, so
+**`# min-strokes: N`, default 1** -- which is exactly Area 0's behavior, so
 nothing changes for a file that does not carry it. Non-zero is not enough in an
 area whose signature bug is an off-by-one: `b1_five_of_six.py` draws five sides of
 a hexagon, and a check for "did it draw anything" passes it happily. Any file
@@ -87,7 +87,7 @@ ALLOWED_CONCEPTS = AREA_0_CONCEPTS | AREA_1_CONCEPTS
 # this number decides how much damage it does on the way there.
 DEFAULT_TIMEOUT_SECONDS = 10
 
-# The floor when a file does not carry `# min-strokes:`. One is Area 0's behaviour:
+# The floor when a file does not carry `# min-strokes:`. One is Area 0's behavior:
 # a file tagged `ok` had to put the pen down at least once.
 DEFAULT_MIN_STROKES = 1
 

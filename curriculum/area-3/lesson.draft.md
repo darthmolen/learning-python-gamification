@@ -38,7 +38,7 @@ print(inventory[1:])     # ['stone', 'torch'] — to the end
 things, not three. This is the same rule in a third place, and by now it should stop
 surprising you.
 
-### Lists change, and that is the point
+### Lists change
 
 ```python
 inventory.append("plank")     # add to the end
@@ -97,7 +97,7 @@ for item, count in recipe.items():
 `.items()` hands you both halves at once. `.keys()` and `.values()` give you one each,
 when only one is what you need.
 
-## A set is things, once
+## A set is things without duplicates
 
 ```python
 palette = {"stone", "stone", "dirt"}

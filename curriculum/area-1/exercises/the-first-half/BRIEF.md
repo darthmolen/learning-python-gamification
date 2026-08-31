@@ -9,11 +9,11 @@ takes over and over, and that is what makes a picture look designed instead of r
 
 1. Draw a shape with **12 sides**, each one **60** long, turning the same amount after
    every side and working that amount out from the 12.
-2. **Before drawing each side**, set the pen colour:
+2. **Before drawing each side**, set the pen color:
    - the **first six** sides are `"red"`
    - the **other six** are `"black"`
 
-So the colours come out `red red red red red red black black black black black black`, in
+So the colors come out `red red red red red red black black black black black black`, in
 that order, and the shape closes.
 
 ## The counter is the thing you ask about

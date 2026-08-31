@@ -13,18 +13,18 @@ Somebody wants a nameplate they can hang on a door.
 
 It asks who it is for, asks how big, and draws a framed plate with the name in it.
 
-*Extra credit if you feel like it:* a second line of smaller text, a chosen colour,
+*Extra credit if you feel like it:* a second line of smaller text, a chosen color,
 a border that is not a rectangle.
 
 ## B — The Banner
 
 Somebody wants a banner in the Minecraft sense: a tall rectangle with a pattern
-on it, in colours they choose.
+on it, in colors they choose.
 
-It asks for two colours and a size, and draws the banner with at least two bands
+It asks for two colors and a size, and draws the banner with at least two bands
 or stripes on it.
 
-*Extra credit if you feel like it:* a third colour, a chevron instead of a stripe,
+*Extra credit if you feel like it:* a third color, a chevron instead of a stripe,
 a pole to hang it from.
 
 ## C — The Blueprint

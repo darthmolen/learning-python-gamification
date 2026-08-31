@@ -63,7 +63,7 @@ print("two accumulators in one loop: one draws the picture, one measures it.")
 #
 # 5. CHOICE BOARD:
 #      a. make the pen get thicker as the spiral grows
-#      b. change the colour every ten steps using a ladder
+#      b. change the color every ten steps using a ladder
 #      c. make it grow for the first half and shrink for the second, so it
 #         comes back to the middle (one `if`, one sign change)
 #      d. run it with steps = 400 and turn = 89.5, and turn the throttle down

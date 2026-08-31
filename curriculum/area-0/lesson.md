@@ -23,9 +23,12 @@ and leave the window open* — without it the window closes before you can look 
 
 The dot matters. `turtle.forward` means "the `forward` that belongs to `turtle`". You
 will see that dot everywhere in Python and it always means the same thing: the thing on
-the right belongs to the thing on the left.
+the right belongs to the thing on the left. The parentheses after the word after the dot
+say "DO AN ACTION", and they call that a `method`. Forget the parentheses — `turtle.done` —
+and he just dives away and does nothing. But tell him to act, `turtle.done()`, and he looks
+at you and waits until you are done.
 
-## A square, and why repetition is a smell
+## A square through repetition
 
 ```python
 turtle.forward(100)
@@ -38,14 +41,14 @@ turtle.forward(100)
 turtle.right(90)
 ```
 
-That draws a square. It also contains the same two lines four times, and that is worth
+The above lines draw a square. They also contain the same two lines four times, and that is worth
 noticing now even though you cannot fix it yet — Area 1 is largely about fixing exactly
 this.
 
 `right(90)` turns ninety degrees clockwise. Four turns of ninety is three hundred and
 sixty, which is the whole way round, which is why the shape closes.
 
-## print, and why you need it
+## The need for `print`
 
 ```python
 print("hello")
@@ -108,10 +111,13 @@ print(type("7"))      # <class 'str'>
 
 **`7` and `"7"` are not the same thing**, and this catches everyone. The quotes make it
 text. `7 + 7` is `14`. `"7" + "7"` is `"77"`, because `+` on text means *stick these
-together*. And `7 + "7"` is an error, because Python will not guess which one you meant.
+together*. And `7 + "7"` is an error, because Python expects the things to match and
+will not guess which one you meant.
 
-That error is not Python being unhelpful. It is Python refusing to silently do the wrong
-thing, which is a kindness you will come to appreciate.
+Nobody likes one slice of wheat bread and one slice of white bread when making a sandwich,
+neither does Python when trying to add things together. Python isn't being unhelpful, it's
+trying to protect your program from being wrong when it starts to get complicated, which is
+a kindness you will come to appreciate.
 
 ## Asking a question
 
@@ -145,19 +151,21 @@ print(f"{name} drew a shape with {sides} sides")
 The `f` before the quote turns the string into a fill-in-the-blanks template. Anything
 inside `{}` gets worked out and dropped in.
 
-Without it you would be gluing pieces together by hand and converting types as you go:
+Without it you would be gluing pieces together by hand and converting them to strings as you go:
 
 ```python
 print(name + " drew a shape with " + str(sides) + " sides")
 ```
 
-Both work. The first one you can still read in a month.
+Both work, but the first one reads more easily, which is a huge plus once the code you write
+gets complicated.
 
 ## Reading an error
 
-This is a skill, not a personality trait, and it is the most valuable thing in Area 0.
+This is a skill, not a personality trait, and it is the most valuable thing you could learn
+right now.
 
-```
+```text
 Traceback (most recent call last):
   File "shape.py", line 4, in <module>
     print(sides + 1)
@@ -167,12 +175,12 @@ TypeError: can only concatenate str (not "int") to str
 Read it **bottom to top**.
 
 1. **The last line is what went wrong.** `TypeError` — something was the wrong type.
-   Then the detail: it tried to join text to text, and got given a number instead.
+   Then the detail: it can only join text to text, and it was handed a number instead.
 2. **The line above is where.** `line 4`, and it shows you the line.
 3. Everything above that is the path Python took to get there. Early on, ignore it.
 
 The word before the colon is the error's family name, and there are only a handful you
-will meet this month:
+will meet early on in these lessons:
 
 - `SyntaxError` — Python could not read your line at all. Usually a missing bracket or
   quote, and usually on the line *above* the one it names.
@@ -194,4 +202,9 @@ helpful than one that silently draws the wrong shape.
 - Read a traceback bottom-to-top and name the file, the line and the family of error
 
 If any of those is shaky, the fix is not to read this again — it is to open the editor
-and type something small that uses it.
+and type something small that uses it, save the file, then on the command line type:
+
+`py -3.14 filename.py`
+
+from the same folder you saved it in, and see what happens. In the immortal words of Bob
+Ross: "There are no mistakes, just happy accidents."

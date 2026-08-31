@@ -74,8 +74,8 @@ for n in range(16):
 #
 # 5. CHOICE BOARD:
 #      a. five bands instead of four
-#      b. make the pen get thinner with each band as well as changing colour
-#      c. make the LAST side of the shape a different colour from all the
+#      b. make the pen get thinner with each band as well as changing color
+#      c. make the LAST side of the shape a different color from all the
 #         others, using one extra rung placed in the right position
 # -----------------------------------------------------------------------------
 

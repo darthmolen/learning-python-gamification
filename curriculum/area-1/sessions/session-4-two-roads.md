@@ -97,7 +97,7 @@ way it goes in the Journal in their own words.
 Task 3 is the one to protect the time for. Answering 0 crashes the program, and they can
 now stop that — an `if` that refuses a number below 3. **Getting the drawing to not happen
 is the tricky part**, and if it defeats them tonight, session 5 gives them the cleaner way
-and they will recognise it when it arrives.
+and they will recognize it when it arrives.
 
 ---
 
@@ -118,7 +118,7 @@ write it, do not correct it. *"That ran and did the wrong thing. What is `or 1` 
 Print `1 == 0 or 1` on its own."* This is Area 1's `b7` arriving early and it is worth
 more than anything you could tell them.
 
-**The colour changes and never changes back.** `color` is a setting, not a one-off order.
+**The color changes and never changes back.** `color` is a setting, not a one-off order.
 *"When did you tell it red? When did you tell it anything else?"*
 
 ## Compression note

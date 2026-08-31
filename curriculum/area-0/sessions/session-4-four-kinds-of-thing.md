@@ -118,7 +118,7 @@ argument for Area 1 and it is better made by their own hands than by you.
 
 ## Beat 4 — Choice board (in the work time)
 
-- **The Colour Wheel** — dashes round a circle, each one a different colour
+- **The Color Wheel** — dashes round a circle, each one a different color
 - **The Sundial** — twelve marks round a circle, longer at 12, 3, 6 and 9
 - **The Ruler** — a straight line with a tick every 20 pixels and a longer tick every 100
 - **Something else** — anything where a number gets divided and the answer is not whole

@@ -46,8 +46,8 @@ print(f"Done. A square of side {side} has a perimeter of {side * 4}.")
 # 2. Run it again and type "big" instead of a number. Which error is that?
 #    You have met it before. Which broken sigil was it?
 #
-# 3. Ask a second question: what colour? Use it. Remember what kind of thing
-#    a colour name is, and whether it needs converting.
+# 3. Ask a second question: what color? Use it. Remember what kind of thing
+#    a color name is, and whether it needs converting.
 #
 # 4. Ask for the number of sides too, then print the total turn the turtle
 #    would have to make. You cannot draw it yet. Printing it is enough.

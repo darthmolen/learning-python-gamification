@@ -75,7 +75,7 @@ against the Area 0 entries of `packages/content/src/concepts.ts`.
 |---|---|---|---|
 | `s1e1_first_light.py` | 1 | 5 | `print` |
 | `s1e2_where_am_i.py` | 1 | 8 | `print` |
-| `s1e3_pen_and_colour.py` | 1 | 8 | `print`, `str`, `bool` |
+| `s1e3_pen_and_color.py` | 1 | 8 | `print`, `str`, `bool` |
 | `s2e1_square_by_name.py` | 2 | 8 | `variables`, `int`, `print` |
 | `s2e2_the_staircase.py` | 2 | 10 | `variables`, `int`, `print` |
 | `b1_the_typo.py` | 3 | 5 | `reading-errors`, `print` |

@@ -57,7 +57,7 @@ print("done")
 #    person answers, and if it is not then something is wrong.
 #
 # 5. CHOICE BOARD:
-#      a. ask for a colour as well, and use it
+#      a. ask for a color as well, and use it
 #      b. ask how many shapes, and draw that many, each turned a little from
 #         the last (this is session 7 arriving early -- have a go)
 #      c. print a receipt at the end with an f-string: shape name if you know

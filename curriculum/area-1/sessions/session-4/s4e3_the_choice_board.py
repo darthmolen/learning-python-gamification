@@ -64,8 +64,8 @@ print(f"Total ink: {sides * length} pixels.")
 #
 # 4. CHOICE BOARD:
 #      a. a third size, "huge", using a second if after the first
-#      b. ask for a colour and use it, but fall back to black if they type
-#         something that is not a colour you offered
+#      b. ask for a color and use it, but fall back to black if they type
+#         something that is not a color you offered
 #      c. draw a small shape inside the big one when they answer "big"
 # -----------------------------------------------------------------------------
 

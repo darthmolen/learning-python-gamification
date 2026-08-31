@@ -175,7 +175,7 @@ exercise.
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| Types `forward(100)`, gets NameError | The module name is part of the order | "Read the error. What word did it not recognise? Where does that word come from?" |
+| Types `forward(100)`, gets NameError | The module name is part of the order | "Read the error. What word did it not recognize? Where does that word come from?" |
 | Types shell commands at the Python prompt, or Python at the shell | Two prompts, two languages, both black rectangles | "Which prompt are you at? What does that one speak?" |
 | The drawing runs off the edge | The window is about 950 by 700 and they started in the middle | "How big is the window? Where did the turtle start? Where would it be now?" |
 | "Did it work?" on a blank-looking window | They drew in white, drew a zero-length line, or the window is behind | "What did you order it to do? What would that look like if it worked perfectly?" |
@@ -235,7 +235,7 @@ advance taught nobody anything.
 | `forward(answer)` raises TypeError | input always returns str. Always | "You have met this exact error before. Which broken sigil was it? What was wrong there?" |
 | Missing the `f`, so the braces print literally | One character | "Read that line out loud, character by character, and compare it to the one above." |
 | Puts quotes inside the braces | A reasonable guess about what braces hold | "What's inside the braces — the name, or text? What is Python being asked to work out?" |
-| Crashes when they type "big" | Correct behaviour, and they cannot fix it yet | "Is that your bug or the user's? What would you *want* to happen? Hold that thought until Area 1." |
+| Crashes when they type "big" | Correct behavior, and they cannot fix it yet | "Is that your bug or the user's? What would you *want* to happen? Hold that thought until Area 1." |
 
 **Let them get wrong:** the crash on bad input. They cannot fix it — the fix needs `if`
 and `try`, which are Areas 1 and 5. Let it stand as an open wound. Write it into the

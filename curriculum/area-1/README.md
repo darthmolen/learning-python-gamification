@@ -7,7 +7,7 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Area 1.
 nesting · the accumulator pattern
 
 **Vehicle: turtle into generative art.** Spirals, polygons, mandalas, parameterized
-colour. Same import as Area 0, so nothing new to install stands between week 2 and week 3.
+color. Same import as Area 0, so nothing new to install stands between week 2 and week 3.
 
 **BOSS 1 — The Sigil:** an art generator that takes input and produces something worth
 hanging on a wall.
@@ -162,7 +162,7 @@ The reason here is different from Area 0's, and worth stating rather than glossi
 decide. `elif` and `and`/`or` are the shape you reach for when the *rule* gets
 complicated, and Area 1's rules are mostly simple: which half of the shape is this, is
 this size allowed. **They are not padded out with make-work**; they appear where a rule
-genuinely needs them — the colour ladder, the gatekeeper's three bands — and Area 3's
+genuinely needs them — the color ladder, the gatekeeper's three bands — and Area 3's
 collections work is where they get busy, because a rule about a list is where "either of
 these, but not that one" starts happening for real.
 

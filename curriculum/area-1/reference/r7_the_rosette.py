@@ -1,4 +1,4 @@
-"""Datamine payload — s7e3 choice board a and b: growing copies, own colour each.
+"""Datamine payload — s7e3 choice board a and b: growing copies, own color each.
 
 Unlocks: s7e3_the_rosette.py, choices (a) and (b) together.
 
@@ -9,7 +9,7 @@ showing it:
 `length = 30 + copy * 6` is the whole answer, and the question that gets them
 there is *"what number is different on every copy, and where is it already?"*
 
-**(b) a colour per copy.** They reach for a ladder of `elif`s, which works and
+**(b) a color per copy.** They reach for a ladder of `elif`s, which works and
 is long. The ladder here is deliberately short and uses bands rather than one
 rung per copy, because one rung per copy is the version that teaches nothing
 and takes twenty minutes to type.

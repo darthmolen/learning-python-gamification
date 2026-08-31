@@ -33,7 +33,7 @@ ValueError: invalid literal for int() with base 10: 'four'
 
 **Broken:** `int("four")`. Four is a number in English, not in digits.
 **Teaches:** the shape he already knows, on purpose, as the baseline for the next two.
-This is Area 0's b6 exactly, one area later, so he should recognise it — and if he does
+This is Area 0's b6 exactly, one area later, so he should recognize it — and if he does
 not, that is worth knowing before the boss.
 
 ### `middle_frame.py` — two frames

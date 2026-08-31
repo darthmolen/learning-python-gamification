@@ -182,7 +182,7 @@ before you run it.
 | `if` body not indented, or indented under the wrong loop | Nesting arrives before it has a name | "Which lines belong to the `if`? Read me only those, and then read me the next line after them." |
 | Writes `if i == 0 or 1 or 2:` | It runs. It is always true. It is a **silent** bug | "That ran and it did the wrong thing. What is `or 1` asking? Print `1 == 0 or 1` on its own." |
 | Wants `else if` | Every other language they have seen | "Try it. What does Python call it? Read the error — it is telling you the word." |
-| The colour changes and never changes back | `color` is a setting, not a one-off order | "When did you tell it red? When did you tell it anything else? What is it still holding?" |
+| The color changes and never changes back | `color` is a setting, not a one-off order | "When did you tell it red? When did you tell it anything else? What is it still holding?" |
 
 **Let them get wrong:** the `or 1 or 2` one, if they write it. It is Area 1's `b7` — no
 error, wrong answer — and it is worth more than anything you could tell them.
@@ -249,7 +249,7 @@ silent, and it is the reason session 8 sits after session 6 rather than before i
 | Blank page | Scope, exactly as in Area 0 session 6 | "One ring. Just one. Don't design the rest yet." |
 | Something enormous and unfinishable | Good instinct, wrong session | "Which single ring of that would you be most annoyed to lose? Build that." |
 | It takes ninety seconds to draw | Real, and the fix is now earned | "You have a throttle. Want the next one up?" — then `tracer(0)` and `update()` |
-| Colours all come out the same | The colour is being set outside the loop that changes it | "Which loop is the colour line in? Which one did you want it in?" |
+| Colors all come out the same | The color is being set outside the loop that changes it | "Which loop is the color line in? Which one did you want it in?" |
 | Wants to keep going past time | Stop anyway | "Write down the next thing you were going to do. It will still be there on Thursday." |
 
 **Let them get wrong:** nothing in particular. This session is a rehearsal, and the
@@ -261,7 +261,7 @@ things that go wrong in it are the list of what to watch for in session 10.
 |---|---|---|
 | Rebuilds session 9's mandala exactly | Safe, and it is not the brief | "That one already exists. What does the person who asked for this get to choose?" |
 | No `input` anywhere | The brief requires it and they forgot, not refused | "Read the specification back to me. Which line have you not done?" |
-| Crashes on an input they did not expect | Correct behaviour, correctly discovered | "Is that your bug, or the person's? What would you *want* to happen? Can you do that now?" — **they can. This is the first boss where the answer is yes.** |
+| Crashes on an input they did not expect | Correct behavior, correctly discovered | "Is that your bug, or the person's? What would you *want* to happen? Can you do that now?" — **they can. This is the first boss where the answer is yes.** |
 | It runs on the learner's machine and not on yours | **The best outcome available** | "Excellent. This is the real thing. What is different between our two machines?" |
 | Declares it finished in twenty minutes | Possible, and probably true | "Show me. Now change one number at the top and show me again." |
 
@@ -291,7 +291,7 @@ and worth more when they do. Running the list as written is close enough to corr
 correct enough to work.
 
 **Do not let `reading-errors` slide.** Session 6 depends on it, and Area 1 gives far
-fewer chances to practise it by accident than Area 0 did.
+fewer chances to practice it by accident than Area 0 did.
 
 ### The drills
 

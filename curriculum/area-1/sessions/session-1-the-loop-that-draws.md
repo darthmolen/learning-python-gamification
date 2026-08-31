@@ -101,7 +101,7 @@ ends on something that works.
 ## Beat 4 — The choice (included above)
 
 Every file ends in a choice board. One choice minimum. `s1e3`'s option (b) — a different
-colour for shapes with more than six sides — is deliberately impossible tonight. If they
+color for shapes with more than six sides — is deliberately impossible tonight. If they
 pick it, let them try, then have them write in the Journal what they wanted to say and
 could not. Session 4 gives them the word.
 

@@ -100,7 +100,7 @@ The four tasks in it are all deliberate re-breakings:
    **They cannot fix this tonight and should not try.** The fix needs `if` (Area 1) or
    `try` (Area 5). Say so plainly, and get it written into the Journal under *what I
    would do differently*. It becomes a real thing to come back to.
-3. Ask for a colour as well. Ask them first whether a colour needs converting, and why
+3. Ask for a color as well. Ask them first whether a color needs converting, and why
    not.
 4. Ask for the number of sides and print the total turn. They cannot draw it yet — Area 1
    again. Printing it is a complete answer.
@@ -113,7 +113,7 @@ This is the file they will want to show someone, so protect time for it.
 
 Two things worth naming when they come up:
 
-**`turtle.goto(-width / 2, -height / 2)`** centres the plate. Nobody has told them how
+**`turtle.goto(-width / 2, -height / 2)`** centers the plate. Nobody has told them how
 that works. Ask what would happen if it were not there, and let them delete it and
 find out. Deleting a line to discover its job is a legitimate technique and worth naming
 as one.
@@ -131,7 +131,7 @@ depend on.** That sentence is design, and they cannot implement it yet, which is
 
 ## Beat 4 — Choice board (in the work time)
 
-- **The Banner** — ask for two colours and draw a striped banner
+- **The Banner** — ask for two colors and draw a striped banner
 - **The Badge** — ask for a name and a number, draw both, with the number big
 - **The Sign** — ask for a message and draw it framed, with the frame sized to the
   message as best they can manage

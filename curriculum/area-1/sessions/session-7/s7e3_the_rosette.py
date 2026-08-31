@@ -2,7 +2,7 @@
 
 Everything from the last six sessions is in this file and none of it is new.
 A shape drawn by a loop, drawn many times by another loop, with a question
-asked inside to decide the colour.
+asked inside to decide the color.
 
 This file is deliberately plain. It draws something correct and dull. The whole
 value of the evening is in the CHOICE BOARD at the bottom, and there is a
@@ -59,7 +59,7 @@ print("finished")
 #
 # 3. CHOICE BOARD -- pick at least one, and this is the actual work tonight:
 #      a. make each copy slightly bigger than the last, so it spirals outward
-#      b. give every copy its own colour from a ladder of `elif` branches
+#      b. give every copy its own color from a ladder of `elif` branches
 #      c. draw the rosette twice, the second one smaller and turned, so it
 #         sits inside the first
 #      d. move the turtle a little between copies instead of only turning

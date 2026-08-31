@@ -51,7 +51,7 @@ print("six red, six black, one loop, one question asked twelve times")
 # 2. Change `side < 6` to `side < 3`. Then `side < 11`. Then `side < 0`.
 #    That last one draws an all-black shape and no error appears anywhere.
 #
-# 3. Change 12 to 20 sides and run it. The colours no longer split evenly,
+# 3. Change 12 to 20 sides and run it. The colors no longer split evenly,
 #    because the 6 is now a lie. Fix it so the split stays even whatever
 #    `sides` is set to. One number becomes a small sum.
 #
@@ -61,7 +61,7 @@ print("six red, six black, one loop, one question asked twelve times")
 #
 # 5. CHOICE BOARD:
 #      a. make the first half thick and the second half thin as well as
-#         coloured
+#         colored
 #      b. make only the very first side red and everything else black
 #      c. make the length of each side depend on which half it is in
 # -----------------------------------------------------------------------------

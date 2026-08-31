@@ -63,7 +63,7 @@ print(f"Plate finished: {width} by {height}, {width * 2 + height * 2} of edging.
 # 2. Add a second line of smaller text underneath: a title, a rank, a clan name.
 #    Ask for it.
 #
-# 3. Make the frame colour something the person chooses.
+# 3. Make the frame color something the person chooses.
 #
 # 4. Print a receipt at the end using ONE f-string, on one line, that names
 #    the person, the width, the height, and the area of the plate.

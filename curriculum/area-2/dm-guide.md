@@ -229,7 +229,7 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
-| Runs the file and gets the *old* behaviour | He did not save. The number one VS Code stall | "Look at the tab — is there a dot on it? What does the dot mean?" |
+| Runs the file and gets the *old* behavior | He did not save. The number one VS Code stall | "Look at the tab — is there a dot on it? What does the dot mean?" |
 | Opens a *file* rather than a *folder* | VS Code with no folder open is a worse Notepad | "Close it. Open the folder instead. What appeared on the left that was not there before?" |
 | The terminal opens in the wrong directory | It opens where the folder is, not where the file is | "What does the terminal think the current folder is? Does that match the file you are looking at?" |
 | Wants back the parts the profile removed | Good. That is the ladder, and it starts in Area 3 | "Which one, and what would you use it for? Write that down — you unlock them by needing them." *(See `tools/vscode/README.md`.)* |

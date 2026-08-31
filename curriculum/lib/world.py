@@ -1,6 +1,6 @@
 """Blocks in a world, in three names.
 
-    BLOCKS                 a dict of block kind -> colour
+    BLOCKS                 a dict of block kind -> color
     place(x, y, z, kind)   put one block in the world
     start()                open the window and show what was placed
 
@@ -75,8 +75,8 @@ def place(x: object, y: object, z: object, kind: object) -> None:
     # ending in a complaint about hexadecimal, which is worse than useless.
     if not isinstance(BLOCKS[kind], Color):
         raise TypeError(
-            f"BLOCKS[{kind!r}] is {BLOCKS[kind]!r}, which is not a colour. "
-            f"The colours in BLOCKS come from ursina's color module -- "
+            f"BLOCKS[{kind!r}] is {BLOCKS[kind]!r}, which is not a color. "
+            f"The colors in BLOCKS come from ursina's color module -- "
             f"color.green, color.brown, and so on. A name in quotes is not "
             f"one of them."
         )

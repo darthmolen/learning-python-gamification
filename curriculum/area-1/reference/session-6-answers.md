@@ -74,7 +74,7 @@ caret is under `turtle.forward` on **line 23**.
 
 Two things to draw out, both of them Area 0 material coming round on schedule:
 
-- **No window opened.** Not for a moment. This is the `SyntaxError`-family behaviour from
+- **No window opened.** Not for a moment. This is the `SyntaxError`-family behavior from
   Area 0 session 3: Python reads the whole file before running any of it, so it never got
   as far as line one.
 - **The message names line 22 and the caret is on line 23.** Line 22 is where the promise

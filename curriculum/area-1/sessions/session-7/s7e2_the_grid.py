@@ -55,7 +55,7 @@ print("that was three loops deep. Count the indents on the forward line.")
 # 2. Change `rows` to 2 and `cols` to 6. Predict the picture before running.
 #    Which number moved which way?
 #
-# 3. Make every cell in the top row a different colour from the rest. You know
+# 3. Make every cell in the top row a different color from the rest. You know
 #    how to ask a question about `row` -- that was session 4.
 #
 # 4. The two lines `col * cell - 100` and `row * cell - 100` are what turn two
@@ -63,7 +63,7 @@ print("that was three loops deep. Count the indents on the forward line.")
 #    grid go, and why is the middle of the screen not where you expected?
 #
 # 5. CHOICE BOARD:
-#      a. draw a chessboard: fill alternate cells with a colour
+#      a. draw a chessboard: fill alternate cells with a color
 #         (alternating is genuinely hard without an operator you have not met.
 #          Try. Write down in the Journal what you needed and did not have.)
 #      b. make the cells get bigger towards the right

@@ -1,15 +1,15 @@
 # Control
 
-Four weeks. Area 0 gave you lines that run once each, top to bottom. This area gives
+Area 0, the last lesson, gave you lines that run once each, top to bottom. This area gives
 you the two things that change that: **repeating** and **choosing**.
 
 The vehicle is still the turtle, but it stops drawing shapes and starts generating art —
 which is what happens to drawing once a computer can repeat it a thousand times without
-getting bored.
+getting bored. Whether it is any good is still up to you.
 
 ## The loop that counts
 
-The square from Area 0 had the same two lines four times. Here it is once:
+The square from Area 0 had the same two lines four times. Here it is in a loop:
 
 ```python
 for step in range(4):
@@ -21,8 +21,9 @@ Read it as: *four times over, do the indented lines.*
 
 **The indentation is not decoration — it is the syntax.** The indented lines are the
 body of the loop. The moment a line stops being indented, it stops being part of the
-loop. Python has no `{` and `}`; the shape of the text on the page *is* the structure of
-the program. Four spaces, consistently.
+loop. Other languages use `{` and `}` to mark where a loop starts and stops. Python has
+neither: the shape of the text on the page *is* the structure of the program. Four spaces,
+consistently.
 
 `range(4)` produces `0, 1, 2, 3`. Four numbers, starting at zero, stopping *before* four.
 
@@ -34,12 +35,12 @@ for n in range(4):
 Starting at zero and stopping before the end is a Python habit you will meet again and
 again. `range(4)` gives you four things; it does not give you a 4.
 
-`range` takes up to three arguments:
+`range` takes up to three numbers, which we call **arguments**. The last two are optional:
 
 ```python
 range(6)          # 0 1 2 3 4 5
 range(2, 6)       # 2 3 4 5          — start, then stop-before
-range(0, 10, 2)   # 0 2 4 6 8        — start, stop-before, step
+range(0, 10, 2)   # 0 2 4 6 8        — start, stop-before, how big a step
 ```
 
 ### Any shape you like
@@ -71,27 +72,45 @@ while length > 20:
     length = length - 20
 ```
 
-That draws a square spiral winding inward until the lines get too short to bother with.
-**Nowhere in it did you write down how many lines there are.** The condition decides.
-That is the one job a `for` loop cannot do honestly.
+The code above draws a square spiral winding inward until the lines get too short to bother
+with. **Nowhere in it did you write down how many lines there are.** The condition decides.
+That is the one job a `for` loop cannot do well.
 
 ### The three rules
 
-A `while` loop needs all three of these, or it never stops — and a loop that never stops
-does not crash. It just sits there.
+A `while` loop needs all three of these, or it never stops.
 
-1. **The variable exists before the loop.**
-2. **The condition can be False.**
-3. **Something inside the body changes the variable the condition asks about.**
+Think of it as a race on an oval track. The cars go round and round, and what ends the race
+is not the cars — it is somebody waving the checkered flag. The condition at the top of a
+`while` loop is that flag, and it is checked at the start of every lap.
 
-Miss the third and the program hangs. There is no error message and no traceback; the
-window simply stops answering. The way out is **Ctrl-C in the terminal** — the window
-with the text, not the drawing.
+1. **The variable exists before the loop.** There is a car on the track before the start.
+2. **The condition can be False.** Somebody is able to wave the flag.
+3. **Something inside the body changes the variable the condition asks about.** Something
+   changes each lap, or the flag never comes.
+
+Miss the third and the race never ends. The cars do not crash and nothing catches fire —
+they just keep going round while everyone sits in the stands, waiting. That is exactly what
+a hung program looks like: there is no error message and no traceback, and the window simply
+stops answering. The way out is **Ctrl-C in the terminal** — the window with the text, not
+the drawing.
 
 This will happen to you. It is worth making it happen on purpose once, so that the first
-time it happens by accident you recognise it instead of assuming you broke the computer.
+time it happens by accident you recognize it instead of assuming you broke the computer.
 
-### The question is a comparison
+### Which loop to reach for
+
+Most of the time you know how many. A shape has sides, a row has squares, a spiral has
+however many turns you decided on. That is a `for` loop, and it cannot run away from you:
+`range` has already settled when it ends before the first lap.
+
+Reach for `while` only when the answer itself decides when to stop, and not before. It is
+the one loop that can run forever, which makes it the one worth being suspicious of. People
+who have written a lot of Python reach for `for` first and `while` last — and that habit is
+not caution they were taught. It is caution they earned, by hanging a program at least once
+and sitting there wondering why nothing was happening.
+
+### Comparison
 
 There are six ways to compare:
 

@@ -1,12 +1,12 @@
-"""Pen and Colour — the turtle drags a pen. The pen can be lifted.
+"""Pen and Color — the turtle drags a pen. The pen can be lifted.
 
 Four new orders:
   turtle.penup()        stop drawing, but keep moving
   turtle.pendown()      start drawing again
   turtle.pensize(8)     thickness, in pixels
-  turtle.color("red")   colour of the line
+  turtle.color("red")   color of the line
 
-Run:  py -3.14 s1e3_pen_and_colour.py
+Run:  py -3.14 s1e3_pen_and_color.py
 """
 # concepts: print, str, bool
 # dc: 8
@@ -45,9 +45,9 @@ print("pen size is:", turtle.pensize())
 #   (c) turn 90 degrees between stripes instead of going straight
 #   (d) draw a dashed line that goes all the way round a square
 #
-# Colours that work: any of "red" "orange" "gold" "green" "blue" "purple"
+# Colors that work: any of "red" "orange" "gold" "green" "blue" "purple"
 # "black" "white" "cyan" "magenta" "brown" "pink" "gray".
-# A colour name Python does not know is an error. Try one on purpose, once,
+# A color name Python does not know is an error. Try one on purpose, once,
 # and read what it says. That is the whole of session 3 in advance.
 # -----------------------------------------------------------------------------
 

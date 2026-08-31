@@ -2,8 +2,8 @@
 
 Every Area 1 quest draws, and §6.3's rule is that a test asserts on a **computed value,
 never on a picture**. So `turtle` is replaced by a stand-in that records the orders it is
-given. The colour assertions below are about the *sequence of decisions the branch made*,
-which is a computed value; nothing here inspects a rendered colour.
+given. The color assertions below are about the *sequence of decisions the branch made*,
+which is a computed value; nothing here inspects a rendered color.
 """
 
 import io
@@ -91,7 +91,7 @@ def test_six_red_then_six_black_in_that_order() -> None:
 
 
 def test_the_branch_is_inside_the_loop_not_before_it() -> None:
-    # One colour order per side. A solution that decides once, before the loop, gives
-    # one or two -- and draws a shape that is entirely one colour, with no error.
+    # One color order per side. A solution that decides once, before the loop, gives
+    # one or two -- and draws a shape that is entirely one color, with no error.
     spy, _ = run()
     assert len(spy.words(*PEN)) == 12

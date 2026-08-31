@@ -127,7 +127,7 @@ Say that out loud — it lands better as a promise than as a restriction.
 
 - **The Tour** — find three things this editor does that Notepad cannot, and show them to
   the DM.
-- **The Colours** — change the theme and the font size. It is his editor and this is the
+- **The Colors** — change the theme and the font size. It is his editor and this is the
   cheapest possible dose of that.
 - **The Comparison** — switch to the Default profile, list five things that appeared, and
   switch back.
@@ -149,7 +149,7 @@ coming out of his journal in week seven than being asked for cold in week nine.
 
 See `dm-guide.md` §4. The predicted five:
 
-1. **Runs the file and gets the old behaviour.** The number one VS Code stall in the
+1. **Runs the file and gets the old behavior.** The number one VS Code stall in the
    world. The mark on the tab is the answer and he should find it.
 2. **Opens a file rather than a folder.** Close it, open the folder, ask what appeared.
 3. **The terminal is in the wrong directory.** Last week's lesson in a new place: what

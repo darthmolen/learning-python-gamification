@@ -40,7 +40,7 @@ def draw_shape(sides, size):
         right(360 / sides)
 ```
 
-### Defaults, so the common case is short
+### Defaults
 
 ```python
 def draw_shape(sides, size=100):
@@ -53,7 +53,7 @@ draw_shape(6, 40)        # size is 40
 A default makes the parameter optional. **Parameters with defaults come last** — Python
 refuses otherwise, because otherwise it could not tell which argument you meant.
 
-### Keyword arguments, so the call reads
+### Keyword arguments
 
 ```python
 draw_shape(sides=6, size=40)
@@ -91,7 +91,7 @@ total = add(2, 3)       # total is None, because add returned nothing
 Printing and returning are different. Printing shows a human. Returning hands it to the
 program.
 
-## Scope: what a function can see
+## Scope — what a function can see
 
 ```python
 def counter():
@@ -121,7 +121,7 @@ def bigger(size):
 Possible, but be careful. A function that reads things you did not pass it is a function
 you cannot understand from its own call.
 
-## Pure, or side-effecting
+## Pure and side-effecting
 
 Two kinds of function, and knowing which you are writing is most of the skill.
 
@@ -173,7 +173,7 @@ This is the real work of the area, and it has a method:
 5. **Run it. It must do exactly what it did before.**
 
 Step 5 is the whole discipline. Refactoring means *changing the shape without changing the
-behaviour*. If the output changed, you did not refactor — you rewrote, and you now have two
+behavior*. If the output changed, you did not refactor — you rewrote, and you now have two
 problems.
 
 ## Borrowing other people's functions

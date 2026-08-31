@@ -7,7 +7,7 @@ what programming actually is once you are not alone.
 At the end of it you open the repository that runs all of this, read it, and change
 something in it.
 
-## pytest — proving it, instead of hoping
+## pytest
 
 You have been checking your programs by running them and looking. That does not scale, and
 it does not survive you changing something later.
@@ -47,7 +47,7 @@ The stronger move: once it passes, **break the code on purpose** and confirm the
 notices. Then put it back. If the suite stays green while the code is wrong, the suite is
 decoration.
 
-## The debugger, properly
+## The debugger
 
 Area 3 gave you `breakpoint()`. Now use it as the first move rather than the last.
 
@@ -121,7 +121,7 @@ The point is memory. A list of a million blocks holds a million blocks. A genera
 one at a time and the position it is at. When you are walking something once and only need
 one item at a time, that difference is the difference between running and not.
 
-## Refactoring, with a net
+## Refactoring under test
 
 Area 4 taught the moves. Now you have tests, which changes what refactoring is.
 

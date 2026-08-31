@@ -63,7 +63,7 @@ Then, ten minutes later, when the first thing is on screen, they will not need y
 If they want to copy chunks out of session 5's files, let them. That is what everybody
 does and it is not cheating. Follow up with: **"which lines in there are doing nothing
 for this? Delete those first."** Reading code to decide what to remove is a real skill
-and this is a good cheap place to practise it.
+and this is a good cheap place to practice it.
 
 ---
 
