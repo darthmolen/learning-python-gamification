@@ -2,7 +2,7 @@
 
 **Concepts:** none introduced — `reading-errors`, second pass ·
 `while`, `for`, `range`, `if`, `int`, `float`, `variables` resurfacing
-**Files:** `exercises/session-6/`
+**Files:** `sessions/session-6/`
 **Journal:** entry 12
 
 **Six broken loops, and only three of them say anything at all.**

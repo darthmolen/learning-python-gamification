@@ -1,0 +1,18 @@
+# Session 3's broken sigils, promoted to fix-it quests. b1 — NameError, one misspelled name.
+#
+# The verifier has two halves and needs both (curriculum/area-0/README.md): the hidden
+# test proves the error is gone, and the turtle spy proves the behaviour is still there.
+# A quest that only checked "did it run" would accept deleting the broken line, which is
+# the one answer session 3 exists to rule out.
+id: a0-the-typo
+title: "The Typo"
+kind: quest
+area: 0
+concepts: [reading-errors]
+dc: 5                # XP and the risk label both derive from this (§5.1)
+brief: area-0/exercises/the-typo/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-0/exercises/the-typo/starter/unfinished.py
+  tests: area-0/exercises/the-typo/hidden/test.py

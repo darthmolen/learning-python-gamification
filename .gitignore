@@ -4,9 +4,9 @@ __pycache__/
 node_modules/
 dist/
 # Generator scratch output. `dist/` alone does not match these, and a test that writes
-# beside its own source will otherwise commit its output.
-dist-test/
-dist-broken-out/
+# beside its own source will otherwise commit its output. The glob rather than a list,
+# because every new gate adds another one and the list was already three behind.
+dist-*/
 *.tsbuildinfo
 
 .env

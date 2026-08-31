@@ -63,9 +63,15 @@ services:
     volumes:
       - ../../pyquest:/workspace
       # Content is read from git on boot and validated on load (§6.10), so the api needs the
-      # content root as well as the workspace. Read-only: §6.10 makes authoring a CLI, and an
+      # content roots as well as the workspace. Read-only: §6.10 makes authoring a CLI, and an
       # api that cannot write content cannot grow an authoring endpoint by accident.
-      - ../../content:/content:ro
+      #
+      # Two mounts, because there are two trees. CONTENT_ROOT names the directory holding them
+      # both, and the api resolves curriculum/ and game/ underneath it. Mounting them separately
+      # rather than mounting the repository keeps everything else — planning/, docs/, .git — out
+      # of a container that has no business reading it.
+      - ../../curriculum:/content/curriculum:ro
+      - ../../game:/content/game:ro
       # The job handoff. The api writes here and the runner reads; neither can reach the other by
       # any other route, which is the point.
       - runner_spool:/spool

@@ -2,7 +2,7 @@
 
 **Concepts:** none introduced — `nesting` and `accumulator-pattern` under load,
 plus everything else in the area
-**Files:** `exercises/session-9/`
+**Files:** `sessions/session-9/`
 **Journal:** entry 15
 
 **This is the whole session.** No teaching, no worked example, no new orders. Somebody

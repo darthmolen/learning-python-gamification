@@ -1,7 +1,7 @@
 # Session 5 — Where A File Actually Goes
 
 **Concepts:** `files-on-disk` · `running-scripts` · resurfaces `print`, `git-add`
-**Files:** `exercises/session-5/`
+**Files:** `sessions/session-5/`
 **Journal:** the first entry of the second half — what a program turned out to be
 
 **This is the first session of 2b and it changes what an evening looks like.** Sessions
@@ -60,7 +60,7 @@ attached to something that hurt.
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-5/w5_where_the_file_actually_goes.md`
+### `sessions/session-5/w5_where_the_file_actually_goes.md`
 
 Steps 1 and 2 are quick — `pwd`, `ls`, and thirty seconds in the REPL to watch it forget
 everything the moment it closes. That REPL demonstration is worth doing even though he

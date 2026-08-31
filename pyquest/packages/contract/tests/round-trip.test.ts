@@ -3,7 +3,7 @@
  *
  * Every other test in this package parses an object literal written beside the schema, which
  * only ever proves that the literal agrees with whatever its author believed. This suite reads
- * the actual `content/areas/*.yml` through `@pyquest/content`'s own reader — the one
+ * the actual `curriculum/area-<n>/area.yml` through `@pyquest/content`'s own reader — the one
  * `validate:content` runs — and asserts the result satisfies the contract. It is the only place
  * the two halves meet, so it is the only test that can catch them drifting apart.
  *
@@ -15,10 +15,15 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { checkContent, parseAreaManifest, type AreaManifest } from '@pyquest/content';
+import {
+  checkContent,
+  contentRootsFrom,
+  parseAreaManifest,
+  type AreaManifest,
+} from '@pyquest/content';
 import { AreaIdentitiesSchema, AreaIdentitySchema } from '@pyquest/contract';
 
-const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const CONTENT_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
 
 /**
  * Areas whose manifest carries its week range and blurb as of this suite.
@@ -51,13 +56,13 @@ const toIdentity = (manifest: AreaManifest): unknown => ({
 
 /** The `title:` line as it is written in the file, read without the content package's parser. */
 function titleInFile(area: number): string {
-  const text = readFileSync(`${CONTENT_ROOT}/areas/area-${area}.yml`, 'utf8');
+  const text = readFileSync(`${CONTENT_ROOT}/curriculum/area-${area}/area.yml`, 'utf8');
   const match = /^title:[ \t]*(.+?)[ \t]*$/m.exec(text);
   if (match === null) throw new Error(`areas/area-${area}.yml has no title line`);
   return match[1]!.replace(/^["'](.*)["']$/, '$1');
 }
 
-const content = checkContent(CONTENT_ROOT);
+const content = checkContent(contentRootsFrom(CONTENT_ROOT));
 const manifests = new Map<number, AreaManifest>(content.manifests.map((m) => [m.area, m]));
 
 describe('the content root, as validate:content reads it', () => {

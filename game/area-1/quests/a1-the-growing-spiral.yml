@@ -1,0 +1,12 @@
+id: a1-the-growing-spiral
+title: "The Growing Spiral"
+kind: quest
+area: 1
+concepts: [accumulator-pattern, nesting, for, range, variables, int, print]
+dc: 16                # XP and the risk label both derive from this (§5.1)
+brief: area-1/exercises/the-growing-spiral/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-1/exercises/the-growing-spiral/starter/unfinished.py
+  tests: area-1/exercises/the-growing-spiral/hidden/test.py

@@ -15,6 +15,10 @@ export interface AreaView {
   readonly title: string;
   readonly weeks?: { readonly from: number; readonly to: number };
   readonly blurb?: string;
+  /** The teaching itself, already markdown-rendered. Absent means unwritten, and it shows. */
+  readonly lesson?: string;
+  /** The DM's guide, rendered. Present only in the `dm` build — never emitted then hidden. */
+  readonly teachingAid?: string;
   readonly concepts: readonly { readonly id: string; readonly label: string }[];
   readonly exercises: readonly { readonly title: string; readonly body: string; readonly concepts: readonly string[] }[];
 }
@@ -53,18 +57,45 @@ const STYLE = `
           font-family:'IBM Plex Mono',monospace;font-size:13px}
   .ex code{font-family:'IBM Plex Mono',monospace;font-size:13.5px}
   .gap{border:1px dashed var(--line);padding:16px 18px;color:var(--muted);background:transparent}
+  .lesson{border-left:2px solid var(--soft);padding-left:18px;margin:0 0 8px}
+  .lesson h3{margin-top:22px}
+  .lesson pre{background:#0e1116;border:1px solid var(--soft);padding:12px 14px;overflow-x:auto;
+              font-family:'IBM Plex Mono',monospace;font-size:13px}
+  .lesson code{font-family:'IBM Plex Mono',monospace;font-size:13.5px}
+  /* The aid pushes the page down rather than covering it: no pop-overs, nothing lost. */
+  .aid{border:1px solid var(--accent);background:var(--panel);margin:20px 0}
+  .aid>summary{cursor:pointer;padding:11px 16px;font-weight:600;color:var(--accent);
+               font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em}
+  .aid>summary::marker{color:var(--dim)}
+  .aid .aid-in{padding:2px 18px 14px;border-top:1px solid var(--line)}
+  .aid pre{background:#0e1116;border:1px solid var(--soft);padding:12px 14px;overflow-x:auto}
   footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
 `;
 
 const escape = (s: string): string =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-function page(title: string, body: string): string {
+/**
+ * Keep this page out of search results.
+ *
+ * `noindex` is the instruction that actually works, and **it only works if the crawler is
+ * allowed to fetch the page and read it.** Disallowing `/dm/` in `robots.txt` would be the
+ * obvious move and it is the wrong one twice over: a blocked crawler never sees this tag, so
+ * the URL can still be indexed from any link that appears anywhere — and `robots.txt` is
+ * itself public, so the disallow line would advertise the exact path it is trying to keep
+ * quiet. Hence a meta tag on the pages, and no mention of `dm/` anywhere in the site.
+ *
+ * `nofollow` is here because the DM pages link only to each other: a crawler that reaches one
+ * is told not to walk to its siblings.
+ */
+const NOINDEX = '<meta name="robots" content="noindex, nofollow">';
+
+function page(title: string, body: string, noindex = false): string {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">${noindex ? NOINDEX : ''}
 <title>${escape(title)}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>${STYLE}</style>
@@ -84,7 +115,7 @@ const weeksLabel = (a: AreaView): string =>
   a.weeks ? `Weeks ${a.weeks.from}–${a.weeks.to}` : 'Weeks not yet set';
 
 /** The index: the whole curriculum as a syllabus. */
-export function renderIndex(areas: readonly AreaView[]): string {
+export function renderIndex(areas: readonly AreaView[], noindex = false): string {
   const ends = areas.flatMap((a) => (a.weeks ? [a.weeks.to] : []));
   const horizon = ends.length > 0 ? Math.max(...ends) : undefined;
   const concepts = areas.reduce((n, a) => n + a.concepts.length, 0);
@@ -116,11 +147,40 @@ export function renderIndex(areas: readonly AreaView[]): string {
 ${rows}
   </div>
 </div>`,
+    noindex,
   );
 }
 
+/**
+ * The teaching aid, or nothing.
+ *
+ * A `<details>` element, so the expand-in-place behaviour is the browser's and the page needs
+ * no script: it opens downward and pushes the content below it further down, which is
+ * CLAUDE.md's standing rule — no pop-overs, nothing covered, nothing lost.
+ */
+function teachingAid(a: AreaView): string {
+  if (a.teachingAid === undefined) return '';
+  return `<details class="aid">
+    <summary>Teaching aid</summary>
+    <div class="aid-in">
+${a.teachingAid}
+    </div>
+  </details>`;
+}
+
 /** One area: what it teaches, and the exercises that teach it. */
-export function renderArea(a: AreaView): string {
+export function renderArea(a: AreaView, noindex = false): string {
+  const lesson =
+    a.lesson !== undefined
+      ? `<h2>The lesson</h2>
+  <div class="lesson">
+${a.lesson}
+  </div>`
+      : `<h2>The lesson</h2>
+  <div class="gap"><p style="margin:0">No lesson yet. This area has its shape and its
+  vocabulary, and nobody has written the teaching down. Saying so is more useful than a page
+  that looks finished.</p></div>`;
+
   const concepts =
     a.concepts.length > 0
       ? `<h2>What this area teaches</h2>
@@ -155,7 +215,10 @@ ${e.body}
 </div></header>
 <div class="wrap">
   ${concepts}
+  ${lesson}
+  ${teachingAid(a)}
   ${exercises}
 </div>`,
+    noindex,
   );
 }

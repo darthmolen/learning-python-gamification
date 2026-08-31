@@ -1,7 +1,7 @@
 # Session 4 — Four Kinds Of Thing
 
 **Concepts:** `int` · `float` · `str` · `bool` · `variables`, `print` resurfacing
-**Files:** `exercises/session-4/`
+**Files:** `sessions/session-4/`
 **Journal:** entry 4
 
 This is the least visual session in the area, and the one most likely to lose a learner.

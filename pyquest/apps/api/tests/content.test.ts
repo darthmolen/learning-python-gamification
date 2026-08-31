@@ -15,7 +15,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { ContentRootError, loadContentRoot } from '../src/content.ts';
 
 /** The repository's own content, which is the thing the api actually boots against. */
-const REAL_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const REAL_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
 
 const scratchRoots: string[] = [];
 
@@ -46,19 +46,19 @@ kind: quest
 area: 0
 concepts: [print]
 dc: 5
-brief: briefs/a0-name-tag.md
+brief: area-0/exercises/name-tag/BRIEF.md
 verifier:
   type: hidden-tests
-  starter: starters/a0-name-tag.py
-  tests: tests/a0-name-tag_test.py
+  starter: area-0/exercises/name-tag/starter/unfinished.py
+  tests: area-0/exercises/name-tag/hidden/test.py
 `;
 
 const GOOD_ROOT: Record<string, string> = {
-  'areas/area-0.yml': AREA_0,
-  'quests/a0-name-tag.yml': QUEST,
-  'briefs/a0-name-tag.md': '# The Name Tag\n',
-  'starters/a0-name-tag.py': 'def main() -> None: ...\n',
-  'tests/a0-name-tag_test.py': 'def test_it() -> None: assert True\n',
+  'curriculum/area-0/area.yml': AREA_0,
+  'game/area-0/quests/a0-name-tag.yml': QUEST,
+  'curriculum/area-0/exercises/name-tag/BRIEF.md': '# The Name Tag\n',
+  'curriculum/area-0/exercises/name-tag/starter/unfinished.py': 'def main() -> None: ...\n',
+  'curriculum/area-0/exercises/name-tag/hidden/test.py': 'def test_it() -> None: assert True\n',
 };
 
 describe('loading the content root', () => {
@@ -81,7 +81,7 @@ describe('loading the content root', () => {
 
   it('reads a brief from disk as text', () => {
     const content = loadContentRoot(scratchRoot(GOOD_ROOT));
-    expect(content.read('briefs/a0-name-tag.md')).toContain('The Name Tag');
+    expect(content.read('area-0/exercises/name-tag/BRIEF.md')).toContain('The Name Tag');
   });
 
   it('refuses to read outside the content root, whatever the caller passes', () => {
@@ -91,7 +91,7 @@ describe('loading the content root', () => {
   });
 
   it('refuses the boot when one file will not parse, and names it', () => {
-    const root = scratchRoot({ ...GOOD_ROOT, 'quests/broken.yml': 'id: [unclosed\n' });
+    const root = scratchRoot({ ...GOOD_ROOT, 'game/area-0/quests/broken.yml': 'id: [unclosed\n' });
     let error: unknown;
     try {
       loadContentRoot(root);
@@ -106,13 +106,13 @@ describe('loading the content root', () => {
   it('refuses the boot when a prerequisite graph has a cycle', () => {
     const a = QUEST.replace('id: a0-name-tag', 'id: a0-one').concat('requires: [a0-two]\n');
     const b = QUEST.replace('id: a0-name-tag', 'id: a0-two').concat('requires: [a0-one]\n');
-    const root = scratchRoot({ ...GOOD_ROOT, 'quests/one.yml': a, 'quests/two.yml': b });
+    const root = scratchRoot({ ...GOOD_ROOT, 'game/area-0/quests/one.yml': a, 'game/area-0/quests/two.yml': b });
     expect(() => loadContentRoot(root)).toThrow(ContentRootError);
   });
 
   it('refuses the boot when a brief names a file that is not there', () => {
     const root = scratchRoot({ ...GOOD_ROOT });
-    rmSync(join(root, 'briefs/a0-name-tag.md'));
+    rmSync(join(root, 'curriculum/area-0/exercises/name-tag/BRIEF.md'));
     expect(() => loadContentRoot(root)).toThrow(ContentRootError);
   });
 

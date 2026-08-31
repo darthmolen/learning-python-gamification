@@ -16,15 +16,20 @@ code a learner *depends on* rather than code they write. The constraint still bi
 everything they touch: `lib/smoke.py` needs nothing but Python and ursina, so the check that
 matters on the learner's machine runs there as it stands. The test suite is the DM's.
 
-Content for the game engine — quest YAML, briefs, hidden tests — lives in
-`content/` and is authored separately. Each area's README records which of its
-exercises should later become quests, and of what kind.
+**Everything educational lives here, including the briefs, starters and hidden tests the
+game scores.** They sit under `area-<n>/exercises/<slug>/` — `BRIEF.md`, `starter/` and
+`hidden/` — beside the sessions that teach them. The game's own overlay is
+[`../game/`](../game/): which exercises are scored and what they are worth, and nothing else.
+Deleting it leaves this tree intact, which is the arrangement the split exists to guarantee.
+
+Each area's README records which of its exercises should later become quests, and of what
+kind.
 
 | Area | Weeks | Subject | Status |
 |---|---|---|---|
 | [area-0](area-0/) | 1–2 | First Light — `print`, variables, the four types, `input`, f-strings, reading errors | **authored** |
 | [area-1](area-1/) | 3–6 | Control — `if`/`while`/`for`, nesting, the accumulator pattern | **authored** |
-| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **2a authored**; 2b blocked on hardware verification |
+| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **authored** |
 | area-3 | 9–14 | Collections — `list`, `dict`, `set`, iteration, nested structures | planned, blocked on the shim's measurement |
 
 Area 2's remaining half needs one sitting at the machine the profile is for: the VS Code profile has to be
@@ -65,11 +70,11 @@ Established by Area 0 and worth keeping.
 
   | Audience | Files | Voice |
   |---|---|---|
-  | The learner | `exercises/`, `journal/`, `content/briefs/` | **Second person.** "You will type this and it will fail" |
+  | The learner | `exercises/`, `journal/`, `area-<n>/exercises/*/BRIEF.md` | **Second person.** "You will type this and it will fail" |
   | The DM | `dm-guide.md`, `sessions/`, `reference/`, area `README.md` | **Singular *they*** for the learner — "you" is already the DM |
   | Either, when ambiguous | anywhere | `the learner`, which is stiff enough to earn its place only where *they* could mean the DM |
 
-  This convention is not invented here. `content/briefs/` already addresses the learner
+  This convention is not invented here. The briefs already address the learner
   directly and has never needed a pronoun; the rest of the corpus is catching up to the
   half that got it right. *"He or she"* is rejected — it is dated, it doubles the word
   count in a document read at 7pm on a Tuesday, and it still leaves people out.

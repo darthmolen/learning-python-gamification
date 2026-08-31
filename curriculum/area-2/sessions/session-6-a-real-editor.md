@@ -1,7 +1,7 @@
 # Session 6 — A Real Editor
 
 **Concepts:** `vscode` · resurfaces `files-on-disk`, `running-scripts`
-**Files:** `exercises/session-6/`
+**Files:** `sessions/session-6/`
 **Journal:** what the editor took away, and which one thing he wants back
 
 **There is no quest tonight.** Five quests plus a boss is the shape of an area (§5.2) and
@@ -72,7 +72,7 @@ he knows how to leave is a tool.
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-6/w6_a_real_editor.md`
+### `sessions/session-6/w6_a_real_editor.md`
 
 - **Step 1 — open a folder, not a file.** The single most common wrong start, and worth
   getting right in the first thirty seconds. VS Code with one file open is a worse

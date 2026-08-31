@@ -1,7 +1,7 @@
 # Session 3 — The Log As A Story
 
 **Concepts:** `git-log` · `git-branch` · resurfaces `git-commit`
-**Files:** `exercises/session-3/`
+**Files:** `sessions/session-3/`
 **Journal:** entry as normal, committed
 
 Session 2 planted a trap. This session springs it, and then uses the resulting motivation
@@ -68,7 +68,7 @@ it rather than reciting it at him.
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-3/w3_the_log_as_a_story.md`
+### `sessions/session-3/w3_the_log_as_a_story.md`
 
 **Steps 2 to 6 are the session, and the order is load-bearing.** He will want to race
 ahead to the merge. Do not let him skip step 5.

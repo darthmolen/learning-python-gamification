@@ -12,14 +12,20 @@
 
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { findPrerequisiteCycle, formatIssues, validateContent } from '../src/validate.ts';
+import {
+  contentRootsFrom,
+  findPrerequisiteCycle,
+  formatIssues,
+  validateContent,
+} from '../src/validate.ts';
 import type { ContentIssue } from '../src/validate.ts';
 
 /** The authored content root, three levels up from `packages/content/src/`. */
-const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const CONTENT_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
 
-const broken = (name: string): string =>
-  fileURLToPath(new URL(`../fixtures/broken/${name}`, import.meta.url));
+/** A broken fixture, addressed the way production is: a directory holding curriculum/ and game/. */
+const broken = (name: string) =>
+  contentRootsFrom(fileURLToPath(new URL(`../fixtures/broken/${name}`, import.meta.url)));
 
 /** Every issue of one rule, so a test can assert on the rule it is about and ignore the rest. */
 const byRule = (issues: readonly ContentIssue[], rule: string): ContentIssue[] =>
@@ -27,7 +33,7 @@ const byRule = (issues: readonly ContentIssue[], rule: string): ContentIssue[] =
 
 describe('the authored content root', () => {
   it('validates clean, so a failure here means the fixtures are the content', () => {
-    expect(validateContent(CONTENT_ROOT)).toEqual([]);
+    expect(validateContent(contentRootsFrom(CONTENT_ROOT))).toEqual([]);
   });
 });
 
@@ -102,7 +108,7 @@ describe('concept tags', () => {
 
   it('allows a tag from an area below the quest, which is what review looks like', () => {
     // The guard is one-directional on purpose: an Area 3 quest revisiting `print` is an invasion.
-    const issues = validateContent(CONTENT_ROOT);
+    const issues = validateContent(contentRootsFrom(CONTENT_ROOT));
     expect(byRule(issues, 'concept-above-area')).toEqual([]);
   });
 });

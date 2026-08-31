@@ -1,0 +1,20 @@
+# Area 2a. **Deliberately not a `git-signal`.** A signal can prove commits exist; it cannot
+# prove the log reads as a story, which is the entire concept. That needs a person, and the
+# dm reads it back to him.
+#
+# `git-branch` is tagged here because a log with a branch in it is a better story than a
+# linear one -- that is the quest's whole point. Spec §4 says "branches, lightly" and
+# `concepts.ts` labels it exactly that, so it stays light: one branch, one merge, read the
+# log, done. It is not inflated into a quest of its own.
+id: a2-the-log-as-a-story
+title: "The Log As A Story"
+kind: quest
+area: 2
+concepts: [git-log, git-branch, git-commit]
+requires: [a2-the-first-commit]
+dc: 8                # XP and the risk label both derive from this (§5.1)
+brief: area-2/exercises/the-log-as-a-story/BRIEF.md
+
+verifier:
+  type: peer-signoff
+  by: dm

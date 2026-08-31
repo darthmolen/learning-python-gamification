@@ -1,7 +1,7 @@
 # Session 8 — Read The Stack
 
 **Concepts:** `tracebacks` · `main-guard` · resurfaces `reading-errors`, `venv`
-**Files:** `exercises/session-8/`, and `reference/session-8-answers.md` — **yours, read
+**Files:** `sessions/session-8/`, and `reference/session-8-answers.md` — **yours, read
 before the session**
 **Journal:** the entry that goes in front of the boss
 
@@ -62,7 +62,7 @@ adult swear this week is worth more than a manufactured one.
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-8/w8_read_the_stack.md`
+### `sessions/session-8/w8_read_the_stack.md`
 
 Six files. Do not let him open them before running them.
 

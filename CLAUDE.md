@@ -16,9 +16,12 @@ API, SPA), `infra/`. Dependency order: the engine's query layer and the Postgres
 both block the API; the SPA does not wait for the API — it builds against the shared
 contract with stubs.
 
-**Lane B — content and curriculum.** `content/` (quest YAML, briefs, hidden tests) and
-`curriculum/` (session plans, exercises, DM guide). No code dependency, ever. Lane B is
-what actually teaches a child Python, so it is never the thing that gets postponed.
+**Lane B — content and curriculum.** `curriculum/` is every educational artifact — session
+plans, exercises, DM guide, and the briefs, starters and hidden tests under
+`area-<n>/exercises/<slug>/`. `game/` is the overlay: quest YAML and transcripts, and nothing
+that teaches. **Deleting `game/` must leave a curriculum that still validates and still
+publishes**, and a test performs that deletion. No code dependency, ever. Lane B is what
+actually teaches a child Python, so it is never the thing that gets postponed.
 
 Lane B depends on Lane A in exactly one direction: authored content is validated against
 `pyquest/packages/content/src/concepts.ts`. If a concept id changes, content breaks —

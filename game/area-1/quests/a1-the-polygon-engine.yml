@@ -1,0 +1,12 @@
+id: a1-the-polygon-engine
+title: "The Polygon Engine"
+kind: quest
+area: 1
+concepts: [for, range, variables, int, float, input, print]
+dc: 10                # XP and the risk label both derive from this (§5.1)
+brief: area-1/exercises/the-polygon-engine/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-1/exercises/the-polygon-engine/starter/unfinished.py
+  tests: area-1/exercises/the-polygon-engine/hidden/test.py

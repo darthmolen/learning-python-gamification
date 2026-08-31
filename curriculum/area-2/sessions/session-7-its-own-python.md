@@ -1,7 +1,7 @@
 # Session 7 — Its Own Python
 
 **Concepts:** `venv` · `pip` · resurfaces `running-scripts`
-**Files:** `exercises/session-7/`
+**Files:** `sessions/session-7/`
 **Journal:** the entry names the three Pythons and where each one lives
 
 **This is the session with a real trap in it, and the trap is on this machine rather than
@@ -53,7 +53,7 @@ one true sentence — *a Python that belongs to this folder* — and four comman
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-7/w7_its_own_python.md`
+### `sessions/session-7/w7_its_own_python.md`
 
 - **Step 1 — the two answers.** `py -3.14 which_python.py`, then `python
   which_python.py`. On this machine those can print different paths and different

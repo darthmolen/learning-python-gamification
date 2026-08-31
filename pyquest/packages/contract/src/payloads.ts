@@ -52,7 +52,7 @@ export type WeekRange = z.infer<typeof WeekRangeSchema>;
  * `Area 3 · Collections` — and until this existed the SPA had no source, so it shipped a table
  * of names inside a React component and invented five it could only have made up.
  *
- * The source is `content/areas/*.yml`. Editing a title there changes the app with no
+ * The source is `curriculum/area-<n>/area.yml`. Editing a title there changes the app with no
  * TypeScript touched, which is the whole point and is what `tests/round-trip.test.ts` proves.
  *
  * **This is identity only, and it is deliberately not `AreaManifestSchema`.** That schema

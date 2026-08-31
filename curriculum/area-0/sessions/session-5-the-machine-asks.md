@@ -1,7 +1,7 @@
 # Session 5 — The Machine Asks
 
 **Concepts:** `input` · `f-strings` · `str`, `int`, `variables`, `print` resurfacing
-**Files:** `exercises/session-5/`
+**Files:** `sessions/session-5/`
 **Journal:** entry 5
 
 Tonight their program stops being a drawing and starts being a **tool**, because someone

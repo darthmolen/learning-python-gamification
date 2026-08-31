@@ -1,0 +1,11 @@
+id: a1-ghost
+title: Ghost
+kind: quest
+area: 1
+concepts: [while]
+dc: 12
+brief: area-1/exercises/ghost/BRIEF.md
+verifier:
+  type: hidden-tests
+  starter: area-1/exercises/ghost/starter/unfinished.py
+  tests: area-1/exercises/ghost/hidden/test.py

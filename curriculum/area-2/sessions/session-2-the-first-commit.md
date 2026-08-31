@@ -1,7 +1,7 @@
 # Session 2 — The First Commit
 
 **Concepts:** `git-add` · `git-commit` · resurfaces `repository`
-**Files:** `exercises/session-2/`
+**Files:** `sessions/session-2/`
 **Journal:** the migration, and then the entry
 
 **This is the session the Journal has been waiting for since week one.** Spec §5.6
@@ -68,7 +68,7 @@ stay where they are.
 
 ## Beat 3 — The work (30 minutes)
 
-### `exercises/session-2/w2_the_first_commit.md`
+### `sessions/session-2/w2_the_first_commit.md`
 
 He works it from step 3 onward, since the hook covered steps 1 and 2.
 

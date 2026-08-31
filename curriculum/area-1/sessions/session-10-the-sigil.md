@@ -1,7 +1,7 @@
 # Session 10 — BOSS 1: The Sigil
 
 **Concepts:** all nineteen — Area 0's nine and Area 1's ten
-**Files:** `exercises/session-10/`
+**Files:** `sessions/session-10/`
 **Journal:** entry 16
 
 **No scaffolding. No hints. A blank file, a specification, and one session** (§5.3).

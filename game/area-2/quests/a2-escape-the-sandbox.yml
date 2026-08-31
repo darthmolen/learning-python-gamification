@@ -1,0 +1,43 @@
+# BOSS 2. Spec §4: rebuild an in-app program as a real project, push it, and the parent
+# clones it cold and runs it. **The win condition is not passing tests. The win condition is
+# that his code ran on someone else's computer**, and no softer phrasing is accepted.
+#
+# So the verifier is `peer-signoff: dm`, not `local-repo`, and the two are not combinable --
+# `VerifierSchema` is a discriminated union on `type` and an item carries exactly one.
+# `local-repo` would be the API pulling his repository and running a pytest specification:
+# automated, and it proves the tests pass. The cold clone is not automated and does not care
+# whether tests pass. A person clones into a directory that has never seen his code, builds
+# a venv from scratch, types the command out of his README, and judges whether it ran. §5.3's
+# "it must run from a clean clone on the other person's machine" is a human judgement or it
+# is nothing.
+#
+# **The checklist is in `curriculum/area-2/dm-guide.md` §7**, five steps, and it IS the
+# sign-off rather than documentation beside one. A failure records which step failed,
+# because the step is the lesson (§3 principle 5: never hide failure; §5.3: scars).
+#
+# `requires: []` on purpose. The 3-of-5 rule lives in the engine as
+# `bossUnlocked(clearedQuestCount)` and nothing reads `requires` -- §5.2 lets him choose
+# which three, and a prerequisite list here would quietly take that choice back.
+#
+# DC 22 is the campaign's first item over 20, and §5.1 renders that with a warning. Here the
+# warning is correct and wanted: this is the first task whose failure mode is invisible from
+# where he is standing. It works on his machine, and that tells him nothing.
+id: a2-escape-the-sandbox
+title: "Escape the Sandbox"
+kind: boss
+area: 2
+concepts: [repository, git-init, git-add, git-commit, git-log, git-branch, git-push, files-on-disk, running-scripts, vscode, venv, pip, tracebacks, main-guard]
+dc: 22                # XP and the risk label both derive from this (§5.1)
+brief: area-2/exercises/escape-the-sandbox/BRIEF.md
+
+# Spec §5.2 - he chooses the framing. All three rebuild something he already made in Areas
+# 0-1, because §4 says *rebuild an in-app program as a real project* -- the new thing is the
+# project, not the program.
+themes:
+  - "The Sigil, Rebuilt"
+  - "The Character Sheet"
+  - "The Dungeon Map"
+
+verifier:
+  type: peer-signoff
+  by: dm

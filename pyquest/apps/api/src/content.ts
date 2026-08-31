@@ -26,6 +26,7 @@ import {
   type AreaManifest,
   type ContentIssue,
   type ContentItem,
+  contentRootsFrom,
 } from '@pyquest/content';
 import type { ScaledXpKind } from '@pyquest/engine';
 
@@ -135,22 +136,31 @@ function resolveInside(root: string, relativePath: string): string {
  * Called once, from `main.ts`, before the server listens. There is no reload endpoint and no
  * watcher: content is immutable at runtime, so a change to a quest is a restart, which is also
  * what makes "what the API served" answerable from a commit sha.
+ *
+ * `base` is the directory holding `curriculum/` and `game/` as siblings — the repository root in
+ * a checkout, and whatever `CONTENT_ROOT` names in the container. The existence check is on
+ * `curriculum/` rather than on `base`, because a base with no curriculum is the
+ * misconfiguration worth naming while a missing `game/` is a supported state: a curriculum
+ * without the overlay is the thing this split exists to make possible.
  */
-export function loadContentRoot(root: string): ContentRoot {
-  const absolute = resolve(root);
+export function loadContentRoot(base: string): ContentRoot {
+  const absolute = resolve(base);
+  const roots = contentRootsFrom(absolute);
 
-  if (!existsSync(absolute)) {
+  if (!existsSync(roots.curriculum)) {
     throw new ContentRootError(
       absolute,
       [],
-      'there is no directory there. Set CONTENT_ROOT, or mount content/ into the container.',
+      `there is no curriculum/ directory there. Set CONTENT_ROOT to the directory holding curriculum/ and game/, or mount them into the container.`,
     );
   }
 
-  const { items, manifests, issues } = checkContent(absolute);
+  const { items, manifests, issues } = checkContent(roots);
 
   if (issues.length > 0) {
-    throw new ContentRootError(absolute, issues, formatIssues(issues, absolute));
+    // `roots`, not `absolute`: the report resolves each file against the tree it was read
+    // from, and the base directory is neither of them.
+    throw new ContentRootError(absolute, issues, formatIssues(issues, roots));
   }
 
   const byId = new Map(items.map((item) => [item.id, item]));
@@ -162,6 +172,12 @@ export function loadContentRoot(root: string): ContentRoot {
     manifests,
     item: (id) => byId.get(id),
     manifest: (area) => byArea.get(area),
-    read: (relativePath) => readFileSync(resolveInside(absolute, relativePath), 'utf8'),
+    /**
+     * Item paths are relative to the *curriculum* root, not to `base` — a brief reads
+     * `area-1/exercises/the-countdown/BRIEF.md`. Resolving against `base` would look one
+     * directory too high and, worse, would put the whole repository inside the escape check's
+     * idea of "inside".
+     */
+    read: (relativePath) => readFileSync(resolveInside(roots.curriculum, relativePath), 'utf8'),
   };
 }

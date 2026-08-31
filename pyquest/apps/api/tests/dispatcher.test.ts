@@ -25,7 +25,7 @@ import { HAVE_DATABASE, useMigratedDatabase } from './support/database.ts';
 
 if (!HAVE_DATABASE) throw new Error('no database: start the stack, or set TEST_DATABASE_URL');
 
-const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../../content', import.meta.url)));
+const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../..', import.meta.url)));
 const ADA = '11111111-1111-1111-1111-111111111111';
 const NOW = new Date('2026-08-25T09:00:00.000Z');
 

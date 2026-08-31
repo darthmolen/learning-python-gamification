@@ -35,7 +35,7 @@ if (!HAVE_DATABASE) {
   throw new Error('no database: start the stack, or set TEST_DATABASE_URL');
 }
 
-const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../../content', import.meta.url)));
+const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../..', import.meta.url)));
 
 const ADA = '11111111-1111-1111-1111-111111111111';
 const NOW = new Date('2026-08-25T09:00:00.000Z');
@@ -189,8 +189,8 @@ describe.skipIf(!HAVE_GITEA)('submitting a local-repo quest', () => {
     await submit();
 
     const row = await queued();
-    expect(row.payload.tests).toBe('tests/a2-where-the-file-lives_test.py');
-    const source = CONTENT.read('tests/a2-where-the-file-lives_test.py');
+    expect(row.payload.tests).toBe('area-2/exercises/where-the-file-lives/hidden/test.py');
+    const source = CONTENT.read('area-2/exercises/where-the-file-lives/hidden/test.py');
     expect(JSON.stringify(row.payload)).not.toContain('MIN_NOTES_CHARACTERS');
     expect(JSON.stringify(row.payload)).not.toContain(source.slice(0, 60));
   });

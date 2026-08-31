@@ -15,12 +15,12 @@ the database, which §6.7 forbids, and it would also be stale the moment somebod
 in git — which is where the tests actually live.
 
 The submission is written as ``solution.py``, which is the name the authored tests already import:
-``content/tests/a0-name-tag_test.py`` calls ``runpy.run_path("solution.py")``. That convention is
+``curriculum/area-0/exercises/name-tag/hidden/test.py`` calls ``runpy.run_path("solution.py")``. That convention is
 the content's and this file follows it rather than inventing a second one.
 
 **``local-repo`` hands over a repository instead of a file, and it arrives as one tar.** §6.4's
 evidence is what he pushed, and the authored specification for it reads the filesystem —
-``content/tests/a2-where-the-file-lives_test.py`` looks for a directory, runs a script out of it,
+``curriculum/area-2/exercises/where-the-file-lives/hidden/test.py`` looks for a directory, runs a script out of it,
 and checks that the same command fails one directory up. None of that is expressible as a
 ``solution.py``. So the api exports ``git archive`` of the commit it reset to, drops the tar in the
 spool, and this module unpacks it into the per-job workspace: the learner's files land on the
