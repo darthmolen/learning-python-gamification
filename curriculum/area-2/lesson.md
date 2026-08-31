@@ -1,6 +1,6 @@
-# The Scribe's Rite, and Escape the Sandbox
+# Escape the sandbox with the scribe role
 
-Two weeks, and nothing gets drawn.
+No drawings or turtles in this lesson.
 
 This area is about the difference between *writing code* and *shipping code* — knowing
 where a file actually lives, keeping a history of what you changed, and getting your
@@ -11,9 +11,9 @@ It is two halves. The first is git. The second is the toolchain.
 
 ---
 
-# Part one — the history
+## Part one — the history
 
-## What a repository is
+### What a repository is
 
 A repository is a folder that remembers.
 
@@ -30,7 +30,7 @@ That makes the current folder a repository. It creates a hidden folder called `.
 which is the memory itself. Delete `.git` and it goes back to being an ordinary folder
 with no past.
 
-## The three places a file can be
+### The three places a file can be
 
 This is the part everyone finds confusing, and it is confusing because there are three
 places rather than two.
@@ -58,7 +58,7 @@ git commit -m "Draw the spiral inward instead of outward"
 
 `git status` is the one to run constantly. It tells you where everything is.
 
-## The message is the point
+### The message is the point
 
 ```bash
 git commit -m "Fix bug"
@@ -77,7 +77,7 @@ git commit -m "Turn 91 degrees rather than 90 so the square spirals"
 Write it for the person who reads it later. That person is you, and they will have
 forgotten.
 
-## The log as a story
+### The log as a story
 
 ```bash
 git log --oneline
@@ -90,7 +90,7 @@ have been writing "fix bug" it reads as nothing at all.
 This is the payoff for the discipline, and it is the first moment git stops feeling like
 paperwork.
 
-## Branches
+### Branches
 
 A branch is a name for a line of history, so you can try something without disturbing
 what works.
@@ -104,7 +104,7 @@ Commits now go onto `experiment`. `git switch main` puts everything back exactly
 was. Nothing is lost either way — which is the whole point. **A branch makes an
 experiment cheap**, and cheap experiments are how you learn anything.
 
-## Push
+### Push
 
 ```bash
 git push
@@ -117,9 +117,9 @@ have made depends on one hard drive continuing to work.
 
 ---
 
-# Part two — escaping the sandbox
+## Part two — escaping the sandbox
 
-## Where the file actually lives
+### Where the file actually lives
 
 A file has a **path** — the list of folders you go through to reach it.
 
@@ -148,7 +148,7 @@ cd ..          # go up one
 **"It says the file doesn't exist" almost always means you are not where you think you
 are.** Run `pwd` and `ls` before you believe anything else.
 
-## Running a script
+### Running a script
 
 ```bash
 py -3.14 spiral.py
@@ -159,7 +159,7 @@ website. This is what running a program has always been.
 
 If it says the file cannot be found, you are in the wrong directory. See above.
 
-## A virtual environment
+### A virtual environment
 
 Different projects need different libraries, and sometimes different versions of the
 same one. A virtual environment gives each project its own private set so they cannot
@@ -182,7 +182,7 @@ pip list
 `.venv` should never go into git. It is large, it is machine-specific, and it can be
 rebuilt from a list of names in seconds. That is what `requirements.txt` is for.
 
-## Reading a traceback again
+### Reading a traceback again
 
 Area 0 taught the shape of a traceback. Now that files import other files, the middle
 section starts to matter:
@@ -206,7 +206,7 @@ was called by `draw_all`, which was called from line 12 of `main.py`.
 from somewhere further up. The traceback shows you the whole path so you can find where
 the bad value was born.
 
-## The main guard
+### The main guard
 
 ```python
 def main() -> None:
@@ -241,4 +241,4 @@ it anyway; it costs two lines.
 - Explain what `if __name__ == "__main__":` protects against
 
 None of this draws anything. All of it is the difference between code that exists on
-your machine and code that exists.
+your machine only and code that exists and runs elsewhere.
