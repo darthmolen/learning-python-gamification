@@ -49,7 +49,7 @@ print("last length :", round(length / 0.8, 1))
 #
 # The follow-up question, which is the whole of session 8:
 #
-#   "What else could you total up in there? How far it travelled? How many
+#   "What else could you total up in there? How far it traveled? How many
 #    lines were longer than 100? How much of the ink went on the first half?"
 
 

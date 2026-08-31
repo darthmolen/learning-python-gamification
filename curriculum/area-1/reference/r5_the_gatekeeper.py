@@ -9,7 +9,7 @@ it.** A branch sets values; it does not have to do the work.
 
 There is one wrinkle and it is the interesting part. When the gate refuses, the
 drawing must not happen at all -- so the refusal needs a way to say "nothing to
-draw". Here it sets `draw = False` and one `if` after the ladder honours it.
+draw". Here it sets `draw = False` and one `if` after the ladder honors it.
 That is a bool doing the job Area 0 had no job for.
 
 The question to ask first:

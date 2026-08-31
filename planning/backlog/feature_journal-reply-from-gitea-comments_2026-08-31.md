@@ -1,6 +1,11 @@
 # The DM's reply, when it becomes a Gitea comment
 
-**Status:** Backlog — **blocked on a decision, not on work.** See *What the API actually has*
+**Status:** Dropped 2026-08-31 — ruled by the DM, and nothing needs building.
+**Closed:** The reply goes in **both** places from Area 2a: under `### DM reply` in `journal.md`,
+which is what the game reads and what outlives the game, and as a comment on the commit, which is
+where the code-review habit is actually practiced. Not a compromise between the two — they do
+different jobs. Justified for the DM in `curriculum/area-2/dm-guide.md` §6, and the two prompt
+sheets no longer say the reply *moves*.
 **Track:** unassigned — `api`, and the ruling is the DM's
 **Date Discovered:** 2026-08-31
 **Discovered During:** `planning/in-progress/feature_journal-reads-from-git_2026-08-31.md` Phase 3
@@ -46,19 +51,26 @@ route already reads a 404 as *"he has not written one yet"*, so every Area 2a en
 rendered unanswered and looked completely normal. **That is the failure this deferral avoided**,
 and it is the fourth instance of that shape in three days.
 
-## The decision this now needs
+## The decision, taken 2026-08-31
 
-**Recommended: leave the reply in the file, and let the Gitea comment be for the humans.**
+**Ruled: the reply goes in both places, and they do different jobs.**
 
 §5.6's stated purpose is *"relatedness, plus code-review culture learned before he writes code
 worth reviewing"* — and a comment the DM leaves on a commit in the Gitea UI delivers all of that
 to the person it is for, whether or not the game reads it. Meanwhile `### DM reply` already works,
 already renders on the Journal screen, and needs nothing built. The two are complementary rather
 than competing: the file is what the game shows, the commit comment is where the code-review habit
-gets practised.
+gets practiced.
 
-Under this ruling the item closes as **dropped**, the curriculum's Area 2a line is reworded so the
-DM is not told the reply moves, and Phase 3 is complete as shipped.
+**The DM added the caveat that makes this a design rather than a shrug: the two-location practice
+has to be justified where the person doing it will read it.** It is, in
+`curriculum/area-2/dm-guide.md` §6 — the file feeds the game and is the copy that outlives it, the
+comment feeds a lifelong habit, and the artifact carrying both halves of the conversation is the
+thing of lasting value as authorship moves into the AI age. It closes with the instruction that
+matters on a tired Saturday: **if you can only do one, do the file.**
+
+So the item is dropped, the curriculum no longer says the reply *moves*, and Phase 3 is complete
+as shipped.
 
 The alternatives, for completeness:
 
@@ -73,9 +85,15 @@ The alternatives, for completeness:
   which we do not own and which changes on their release schedule, to read a field with a
   supported alternative sitting in a file we already parse.
 
-## Trigger for Promotion
+## What was changed when this closed
 
-**Before Area 2a is taught, week 6** — not to build anything, but because the curriculum currently
-tells the DM the reply moves to Gitea, and under the recommendation it does not. That is a
-sentence in `curriculum/area-0/journal/entry-01-prompt.md`, one in
-`curriculum/area-1/journal/entry-07-prompt.md`, and the §5.6 line in the spec.
+- `curriculum/area-2/dm-guide.md` §6 — the justification, and the migration beat corrected to one
+  `journal.md` rather than a `journal/` directory. **That second fix was a Phase 1 miss**: the
+  layout change swept nine files and did not reach this one
+- `curriculum/area-0/journal/entry-01-prompt.md` and `curriculum/area-1/journal/entry-07-prompt.md`
+  — the reply is joined by a commit comment rather than replaced by one
+
+**Left alone, and owed:** §5.6 in the spec still reads *"The parent replies, as comments in
+Gitea"* with no mention of the copy in the file. It is not wrong — that comment does happen — but
+it is now the smaller half of the practice, and the spec is the document of record. **A one-clause
+correction, and the DM's to make.**

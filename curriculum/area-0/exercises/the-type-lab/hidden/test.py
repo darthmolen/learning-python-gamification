@@ -60,7 +60,7 @@ def answer(out: str, label: str) -> str:
         head, sep, tail = line.partition(":")
         if sep and head.strip().lower() == label.lower():
             return tail.strip()
-    raise AssertionError(f"no line labelled {label!r} in output:\n{out}")
+    raise AssertionError(f"no line labeled {label!r} in output:\n{out}")
 
 
 def test_found_the_other_division_operator() -> None:

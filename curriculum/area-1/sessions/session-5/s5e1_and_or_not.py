@@ -66,7 +66,7 @@ for side in range(4):
 
 # --- YOUR MOVE ---------------------------------------------------------------
 # 1. Score your twelve predictions. Which of `and` and `or` did you get wrong
-#    more often? Almost everybody has a favourite mistake here.
+#    more often? Almost everybody has a favorite mistake here.
 #
 # 2. Set `size` to 10, then 60, then 400. The square is green for exactly one
 #    of those. Say the rule out loud as an English sentence containing the

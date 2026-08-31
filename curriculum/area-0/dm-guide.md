@@ -145,7 +145,7 @@ failure and not cheating.
 Area 0 has no app to press the button in, so you are the button:
 
 > "Alright. That's two goes. Tell me in one sentence what you tried, write it in the
-> Journal, and I'll show you. It costs you difficulty, not honour."
+> Journal, and I'll show you. It costs you difficulty, not honor."
 
 Then show them properly — the whole thing, no drip-feed — and ask them to explain it
 back.

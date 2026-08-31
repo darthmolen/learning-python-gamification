@@ -3,7 +3,7 @@
 Eight weeks. Area 4 gave you functions — work with a name. This area gives you objects:
 **data and the work that belongs to it, kept together.**
 
-The vehicle is modelling a world. A block has a position and a type. A player has an
+The vehicle is modeling a world. A block has a position and a type. A player has an
 inventory and a health. Those things travel together everywhere in your program, and this
 is the moment the language stops making you carry them by hand.
 

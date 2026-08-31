@@ -163,7 +163,7 @@ authoring status of everything else.*
 | "So it's like Dropbox" | A reasonable and wrong guess | "Dropbox keeps one copy of your file — the newest. How many copies do you think this keeps? Which one does it show you?" |
 | "So it's like Minecraft world backups" | A reasonable and nearly-right guess | "Close. What is the difference between a backup and a save you *chose* to make and named? Which one is this?" |
 
-**Let him get wrong:** where `git init` goes. Let him initialise the wrong folder once,
+**Let him get wrong:** where `git init` goes. Let him initialize the wrong folder once,
 find it with `git status`, and undo it himself. It is a free mistake tonight and an
 expensive one in week thirty.
 
@@ -298,9 +298,13 @@ Tonight it closes.
 
 The beat is simple and it should not be dressed up:
 
-1. He copies **his** journal entries into his repository, into a `journal/` directory.
-2. `git add journal/`
+1. He copies **his** `journal.md` into his repository, at the top level.
+2. `git add journal.md`
 3. `git commit -m "my journal so far"`
+
+**One file, so this is one `git add`.** Everything he has written since week 1 is already
+in it, newest entry at the bottom, and it arrives as history he can scroll rather than as
+a directory he has to open a file at a time.
 
 It works with whatever entries exist on the night — six if only Area 0 has run, sixteen
 if Area 1 has too. **Do not count them out loud and do not make the number the point.**
@@ -327,10 +331,45 @@ guide §6 still stands. Two additions for this area:
   §7. A failure is a scar (§3 principle 5, §5.3) and is written down with the same care
   as a pass — more, because the step that failed is the lesson.
 
-**Your replies move to Gitea when Gitea exists**, and become comments on his commits.
-Until then they stay as a line under his entry, exactly as in Area 0. The habit is the
-thing; the tooling arrives to a habit that already exists rather than the other way
-round.
+### Your reply goes in two places from here, and that is deliberate
+
+**Keep writing under `### DM reply` in his `journal.md`, exactly as in Area 0. From the
+session Gitea exists, also leave a comment on his commit.** Both. Every time.
+
+Writing the same thought twice looks like waste, so here is why it is not — and this is
+worth understanding rather than just complying with, because you are the one who has to
+keep it up for forty-eight weeks.
+
+**The file feeds the game.** The Journal screen reads `journal.md` and renders your reply
+beside his entry. It is what he sees when he opens the game, and it is what makes the
+Journal a conversation on screen rather than a wall he talks at. Nothing else can serve
+that: **Gitea has no API for reading comments on a commit** — checked, 2026-08-31, against
+the running instance — so a reply that exists only there is invisible to the game forever.
+
+**The commit comment feeds the habit.** Replying where the work landed, on the thing that
+changed, is what code review actually is. That is the transferable skill and it is the
+whole reason §5.6 wanted Gitea in the first place. He will do this for the rest of his
+working life, on other people's code and on his own, and it is learned by watching somebody
+do it to him first.
+
+**And the file is the copy that outlives all of this.** ADR 0004 is the rule —
+*a ceremony is justified by the habit it trains outside the game, and its artifact lives in
+the portable format that habit uses in the real world, owned by the learner* — and the test
+it sets is one question: *if PyQuest were deleted tonight, what would he still have?* A
+comment in Gitea is a row in a database belonging to a server on your machine, and it dies
+with that server. **His `journal.md` is a text file in a repository he owns**, and it holds
+both halves of the conversation: what he thought, and what you said back.
+
+That last part matters more now than it would have ten years ago. **The durable, portable,
+human-authored artifact is becoming the thing of value** — the record of what a person
+actually thought and how their thinking changed, in a format nothing needs permission to
+read. Tools come and go faster than they used to. A file he can still open in twenty years,
+carrying his own words and his father's answers to them, is not a by-product of this
+curriculum. It is the most valuable thing it produces, and the game is the scaffolding
+around it.
+
+So: the comment is for the habit, the file is for the game **and** for the twenty-year copy.
+If you are ever too tired to do both, **do the file.**
 
 ---
 
@@ -405,7 +444,7 @@ Also short. He will know.
 
 ## 8. The two places you will be tempted to take the keyboard
 
-Named, because knowing they are coming is most of the defence.
+Named, because knowing they are coming is most of the defense.
 
 **A detached HEAD.** It looks alarming, git prints a paragraph, and you can fix it in
 four seconds. Do not. Git's own message contains the instruction. Make him find the line.

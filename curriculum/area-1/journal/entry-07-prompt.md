@@ -144,5 +144,7 @@ Reply to the **content**. Ask one real question about something they wrote. Tell
 something true about your own week that connects to it; this area, "I wrote a loop that
 did not stop today" is almost always available and almost always true.
 
-From Area 2a this becomes a comment on a commit in Gitea, and from there it is code
-review. Never correct their spelling.
+From Area 2a you also leave it as a comment on his commit in Gitea — **also, not instead.** The
+reply stays in the file, because that is the copy the game reads and the copy that outlives the
+game; the comment is where the code-review habit is actually practiced. Area 2a's `dm-guide.md`
+§6 argues it properly. Never correct their spelling.

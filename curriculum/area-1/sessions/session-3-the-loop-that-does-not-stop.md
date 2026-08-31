@@ -94,7 +94,7 @@ means taking on all three rules for no reason, which is how an infinite loop get
 by accident.
 
 Task 4 is the question worth a Journal sentence: *"draw lines until the turtle has
-travelled more than 1000 pixels"* — which loop, and why can the other one not do it
+traveled more than 1000 pixels"* — which loop, and why can the other one not do it
 cleanly?
 
 ### `s3e4_the_hang.py` — the one the session is named after

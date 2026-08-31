@@ -8,7 +8,7 @@ This file is deliberately plain. It draws something correct and dull. The whole
 value of the evening is in the CHOICE BOARD at the bottom, and there is a
 reference solution for one of those in `../../reference/` if you get two real
 attempts in and need it (spec 5.5 -- it is a legal move with a name, and it
-costs difficulty, not honour).
+costs difficulty, not honor).
 
 Run:  py -3.14 s7e3_the_rosette.py
 """

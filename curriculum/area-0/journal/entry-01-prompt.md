@@ -68,9 +68,11 @@ Reply to the **content**. Ask one real question about something they wrote. Tell
 something true about your own week that connects to it — you got an error today too, and
 you can say which one.
 
-From Area 2a this becomes a comment on a commit in Gitea, and from there it is code
-review. Starting the habit now, in a plain file, means the tooling arrives to a habit
-that already exists rather than the other way round.
+From Area 2a you also leave it as a comment on his commit in Gitea, and from there it is code
+review. **Also, not instead** — the reply stays in the file too, because that is the copy the
+game reads and the copy that outlives the game. Area 2a's `dm-guide.md` §6 argues it properly.
+Starting the habit now, in a plain file, means the tooling arrives to a habit that already
+exists rather than the other way round.
 
 ---
 

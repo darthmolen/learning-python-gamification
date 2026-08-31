@@ -141,7 +141,7 @@ do_the_thing()
 print(f"{time.perf_counter() - start:.3f}s")
 ```
 
-**Measure before you optimise.** Every programmer's guess about what is slow is wrong at
+**Measure before you optimize.** Every programmer's guess about what is slow is wrong at
 least half the time, and time spent speeding up code that was never the problem is time
 spent making it harder to read for nothing.
 
@@ -169,7 +169,7 @@ and why, that somebody can read and comment on before it lands.
 what you were trying to do — reviewers who understand the intent give useful comments, and
 reviewers who have to guess give nitpicks.
 
-Comments on your code are about the code. That is a distinction worth practising, because it
+Comments on your code are about the code. That is a distinction worth practicing, because it
 never stops mattering.
 
 ## Reading unfamiliar code
@@ -201,6 +201,6 @@ safely, and to know when you have not.
 - Add type hints, and say what `Block | None` obliges a caller to do
 - Write a comprehension where it reads better, and a loop where it does not
 - Say when a generator beats a list, and why
-- Measure before optimising, and spot a loop inside a loop over the same data
+- Measure before optimizing, and spot a loop inside a loop over the same data
 - Open a pull request with a description somebody can review
 - Open a repository you have never seen and change one thing in it without breaking the rest

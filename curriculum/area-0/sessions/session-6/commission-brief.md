@@ -49,7 +49,7 @@ These are not suggestions. Check each one before you say you are finished.
 - [ ] It uses at least **three** variables with names that mean something
 - [ ] It prints at least one number it **worked out**, not one it was told
 - [ ] At least one `print` uses an **f-string**
-- [ ] It draws something that is recognisably the thing that was asked for
+- [ ] It draws something that is recognizably the thing that was asked for
 - [ ] It does not crash on a sensible answer
 - [ ] It runs from a fresh terminal with `py -3.14 <yourfile>.py`
 

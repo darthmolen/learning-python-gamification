@@ -8,7 +8,7 @@
 # automated, and it proves the tests pass. The cold clone is not automated and does not care
 # whether tests pass. A person clones into a directory that has never seen his code, builds
 # a venv from scratch, types the command out of his README, and judges whether it ran. §5.3's
-# "it must run from a clean clone on the other person's machine" is a human judgement or it
+# "it must run from a clean clone on the other person's machine" is a human judgment or it
 # is nothing.
 #
 # **The checklist is in `curriculum/area-2/dm-guide.md` §7**, five steps, and it IS the

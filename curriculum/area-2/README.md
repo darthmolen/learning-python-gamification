@@ -350,7 +350,7 @@ Four notes for whoever reads this later:
    cold clone does not care whether tests pass: a person clones into a directory that has
    never seen his code, builds a venv, types the command from his README, and judges
    whether it ran. §5.3's *it must run from a clean clone on the other person's machine* is
-   a human judgement or it is nothing. **`dm-guide.md` §7 is the sign-off checklist**, not
+   a human judgment or it is nothing. **`dm-guide.md` §7 is the sign-off checklist**, not
    documentation beside one.
 4. **The two `git-signal` quests are inert until Lane A Phase 1.5.** That is fine and
    planned: the teaching and the applause are separated. He still pushes; he just does not

@@ -8,7 +8,7 @@
 preference order — Gitea, a bare repository on a stick or a share, a second directory on
 his own laptop. Pick one, get the address written down, and do not spend session time on
 it. If Gitea authentication fails at 7:15pm, fall back to option B or C without
-apologising and keep the session.
+apologizing and keep the session.
 
 This is the last 2a session and the end of the half. Everything after it needs Python
 files in real directories.

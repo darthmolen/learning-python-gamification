@@ -123,14 +123,14 @@ not just whether he was right.
 
 ## Beat 4 — Choice board (in the work time)
 
-- **The Time Traveller** — `git switch --detach <a commit hash from the log>`, look at the
+- **The Time Traveler** — `git switch --detach <a commit hash from the log>`, look at the
   files, and get back. **He will land in a detached HEAD, which is the point.** Git prints
   a paragraph containing the instruction to escape. He finds the line, not you.
 - **The Abandoned Branch** — make a branch, commit something bad on it, switch back to
   `main` and never merge it. Prove with `git log --oneline --graph --all` that it is still
   there and is bothering nobody.
 - **The Better Log** — try `git log --stat`, `git log -p`, `git log --oneline -3`. Pick a
-  favourite and say why.
+  favorite and say why.
 - **Something else** — anything, as long as he can say what he expected first.
 
 ---
