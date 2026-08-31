@@ -36,12 +36,12 @@ afterEach(() => {
 describe('when an API is configured', () => {
   it('asks it, at the path the contract names', async () => {
     withApi();
-    answers({ playerId: 'peer', areas: [] });
+    answers({ playerId: PLAYER_ID, areas: [] });
 
     await getCampaign(PLAYER_ID);
 
     expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/players/peer/campaign',
+      `http://localhost:8080/api/players/${PLAYER_ID}/campaign`,
       expect.objectContaining({ headers: { accept: 'application/json' } }),
     );
   });
@@ -55,7 +55,7 @@ describe('when an API is configured', () => {
     withApi();
     // Correctly shaped and still wrong: §5.2 says `unlocked` must agree with the counts.
     answers({
-      playerId: 'peer',
+      playerId: PLAYER_ID,
       areas: [
         {
           area: 3,
@@ -118,7 +118,7 @@ const pending = (over: Record<string, unknown> = {}) => ({
   playerId: 'dm',
   questId: 'a3-the-enchanter',
   questTitle: 'The Enchanter',
-  by: 'peer',
+  by: 'peer', // the seat that must sign; SignoffRequest.by below is the player id
   submittedAt: '2026-08-29T18:04:00.000Z',
   ...over,
 });
@@ -169,7 +169,7 @@ describe('resolving a sign-off', () => {
       'http://localhost:8080/api/signoffs/att-8f21c0',
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ by: 'peer', granted: true }),
+        body: JSON.stringify({ by: PLAYER_ID, granted: true }),
       }),
     );
   });

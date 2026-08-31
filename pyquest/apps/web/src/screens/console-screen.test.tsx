@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PendingSignoff } from '@pyquest/contract';
 import { ConsoleScreen } from './ConsoleScreen';
 import { rgb } from '../test-support/rgb';
+import { PLAYER_ID } from '../household.ts';
 
 /**
  * The Console's sign-off queue - §6.3, §5.11, artboard `docs/design/pyquest/Console.dc.html`.
@@ -33,14 +34,14 @@ const fromDm: PendingSignoff = {
   playerId: 'dm',
   questId: 'a3-the-enchanter',
   questTitle: 'The Enchanter',
-  by: 'peer',
+  by: 'peer', // the seat awaiting signature, per PendingSignoffSchema
   submittedAt: daysAgo(2),
 };
 
 /** The signed-in player's *own* submission. §6.3 forbids signing it, and the queue still shows it. */
 const own: PendingSignoff = {
   attemptId: 'att-4c07ab',
-  playerId: 'peer',
+  playerId: PLAYER_ID,
   questId: 'a3-the-smelter',
   questTitle: 'The Smelter',
   by: 'dm',
@@ -135,7 +136,7 @@ describe('a sign-off is a check, not a formality', () => {
     await userEvent.click(within(rowFor('The Enchanter')).getByRole('button', { name: 'Sign it off' }));
 
     // `by` is a player id. A client-supplied role is an assertion anyone on the LAN can make.
-    expect(postSignoff).toHaveBeenCalledWith('att-8f21c0', { by: 'peer', granted: true });
+    expect(postSignoff).toHaveBeenCalledWith('att-8f21c0', { by: PLAYER_ID, granted: true });
   });
 
   it('reports what the sign-off paid, and to whom', async () => {
@@ -196,7 +197,7 @@ describe('not yet, said in place', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Send it back' }));
 
     expect(postSignoff).toHaveBeenCalledWith('att-8f21c0', {
-      by: 'peer',
+      by: PLAYER_ID,
       granted: false,
       note: 'go one level deeper',
     });

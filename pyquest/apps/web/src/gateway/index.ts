@@ -104,14 +104,10 @@ export const getParty = (playerId: string): Promise<PartyView> =>
 export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, () => fixtures.tome);
 
 /**
- * Kitchen Table mode is one household (§5.11), and the seats are roles rather than people. Until
- * the Console can name a player, every request is made as this one.
- *
- * There is nothing behind it yet: the database has thirteen tables and no rows, and nothing in
- * the repository creates a household. See
- * `planning/backlog/feature_seed-a-household_2026-08-30.md`.
+ * Who every request is made as. Defined in `../household.ts`, which the fixtures also import —
+ * see the note there for why it is not defined in this file, and for the 404 it used to cause.
  */
-export const PLAYER_ID = 'peer';
+export { PLAYER_ID, DM_ID } from '../household.ts';
 
 
 /* -------------------------------------------------------------------------------------------

@@ -16,6 +16,8 @@
  * unlabelled areas is the honest one, and it is also the one the API will actually send.
  */
 
+import { DM_ID, PLAYER_ID } from '../household.ts';
+
 const identity = (area: number, title: string, from: number, to: number, blurb: string) => ({
   area,
   title,
@@ -65,7 +67,7 @@ const AREA_CARDS = [
   },
 ];
 
-export const campaign: unknown = { playerId: 'peer', areas: AREA_CARDS };
+export const campaign: unknown = { playerId: PLAYER_ID, areas: AREA_CARDS };
 
 /** The Area screen's cards. Ids and concepts are real — they exist in `content/`. */
 const QUESTS: Readonly<Record<number, unknown[]>> = {
@@ -82,7 +84,7 @@ export const areaView = (area: number): unknown => {
   const card = AREA_CARDS.find((c) => c.area === area);
   if (card === undefined) throw new Error(`no area ${area} in this campaign`);
 
-  return { ...card, playerId: 'peer', quests: QUESTS[area] ?? [] };
+  return { ...card, playerId: PLAYER_ID, quests: QUESTS[area] ?? [] };
 };
 
 const STARTER = `import turtle
@@ -143,7 +145,7 @@ export const dueInvasions: unknown = [
 export const party: unknown = {
   standings: [
     {
-      playerId: 'peer',
+      playerId: PLAYER_ID,
       level: 9,
       toNext: 140,
       areaXp: 320,
@@ -200,15 +202,19 @@ const daysAgo = (days: number): string => new Date(Date.now() - days * 86_400_00
 export const pendingSignoffs: unknown = [
   {
     attemptId: 'att-8f21c0',
-    playerId: 'dm',
+    // The submitter, and a player id like any other. It was the string 'dm' — a seat name in a
+    // field that holds an id, which is the same confusion that left PLAYER_ID reading 'peer'.
+    playerId: DM_ID,
     questId: 'a3-the-enchanter',
     questTitle: 'The Enchanter',
+    // `by` on a pending row is the SEAT that must sign, not a player id — the contract has it
+    // as z.enum(['peer','dm']). The player id on this shape is `playerId`, the submitter.
     by: 'peer',
     submittedAt: daysAgo(2),
   },
   {
     attemptId: 'att-4c07ab',
-    playerId: 'peer',
+    playerId: PLAYER_ID,
     questId: 'a3-the-smelter',
     questTitle: 'The Smelter',
     by: 'dm',

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as gateway from './index.ts';
+import { PLAYER_ID } from '../household.ts';
 
 /**
  * The seam Phase 5 rests on, now that it is a seam over the network.
@@ -78,7 +79,7 @@ describe('a payload that breaks a rule never reaches a screen', () => {
     // Correctly shaped and still wrong: a duplicate card means two states for one area.
     const { CampaignViewSchema } = await import('@pyquest/contract');
     const twice = {
-      playerId: 'peer',
+      playerId: PLAYER_ID,
       areas: [
         { area: 3, progress: { cleared: 1, total: 5, estimated: true }, boss: { cleared: 1, required: 3, unlocked: false } },
         { area: 3, progress: { cleared: 2, total: 5, estimated: true }, boss: { cleared: 2, required: 3, unlocked: false } },
@@ -91,7 +92,7 @@ describe('a payload that breaks a rule never reaches a screen', () => {
   it('rejects a boss whose unlocked flag disagrees with its counts', async () => {
     const { CampaignViewSchema } = await import('@pyquest/contract');
     const lying = {
-      playerId: 'peer',
+      playerId: PLAYER_ID,
       areas: [{ area: 3, progress: { cleared: 0, total: 5, estimated: true }, boss: { cleared: 0, required: 3, unlocked: true } }],
     };
 
@@ -112,6 +113,8 @@ describe('the sign-off queue, with nothing behind it', () => {
     expect(queue).toHaveLength(2);
     // Household-wide and deliberately unfiltered: one of these is the caller's own submission.
     expect(queue.some((row) => row.playerId === gateway.PLAYER_ID)).toBe(true);
+    // Seats, not ids: `by` names which chair owes the signature. The player ids on this shape
+    // are `playerId`, asserted above.
     expect(queue.every((row) => row.by === 'peer' || row.by === 'dm')).toBe(true);
   });
 
@@ -131,5 +134,25 @@ describe('the sign-off queue, with nothing behind it', () => {
     });
 
     expect(outcome).toEqual({ granted: false, reason: 'go one level deeper' });
+  });
+});
+
+describe('the player the app makes every request as', () => {
+  /**
+   * `PLAYER_ID` was the string `'peer'`, which is a role and not an id. The api rejects any
+   * non-UUID *before* it looks in the database (`apps/api/src/server.ts`, `playerFor`), so every
+   * player-scoped screen answered 404 against a live api — the map, the area, the quest, defend
+   * and party, all of them, for the whole life of the gateway.
+   *
+   * Nothing caught it because nothing had ever run the two together: the fixtures answer to any
+   * string at all, and until the household was seeded there was no live api to disagree with.
+   *
+   * The assertion is the api's own regular expression rather than "is it a uuid", so the two
+   * cannot drift apart on what counts.
+   */
+  it('is a uuid, which is what the api will accept', () => {
+    expect(gateway.PLAYER_ID).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+    );
   });
 });
