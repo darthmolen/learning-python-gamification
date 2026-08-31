@@ -1,6 +1,6 @@
 # The Field Manual Teaches — a body, not a table of contents
 
-**Status:** Planned
+**Status:** Superseded
 **Track:** field-manual — **queued**, see Track discipline
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
@@ -210,3 +210,48 @@ is the file every content track depends on. One additive read path, no restructu
   of being readable.
 - **`# dc:` and friends sit two lines below every docstring.** The docstring boundary is the
   whole safety argument for Phase 4's gate, and it is one parser bug away from failing.
+
+---
+
+## Status
+
+**Final Status:** Superseded — never started
+**Track:** field-manual (never admitted to `in-progress/`)
+**Closed:** 2026-08-31
+**Closed By:** Claude (Opus 5)
+
+**Superseded by `planning/in-progress/feature_curriculum-foundation_2026-08-31.md`**, on the
+parent's call: *"I think it's a rewrite, not a refactor on that plan from last night."*
+
+### Why it did not survive contact
+
+This plan accepted the tree it found. It proposed `content/concepts/*.md` and marked-up
+session prose as the teaching slot, and taught the generator to read a second directory —
+all of it bolted onto a layout that is game-first, with `content/` holding the game's
+assessed slice and `curriculum/` holding the teaching that nothing read.
+
+The diagnosis in this document was right and is carried forward verbatim. The remedy was
+pitched one level too low. *"Educational first, game second, and we've been running the
+opposite"* — the fix is the tree, not another reader taught to compensate for it.
+`lesson.md` in an area folder answers the same need at the level where the gap actually is.
+Two competing homes for the same prose is the drift this plan was itself written to avoid.
+
+### What was salvaged into the successor
+
+- The **docstring boundary** — publish the module docstring, never the `# dc:` /
+  `# min-strokes:` metadata two lines below it.
+- **`reference/` excluded by path and by test**, because it holds worked answers.
+- The **learner/DM split**: session plans carry beat timings and Socratic phrasings that
+  must not reach a learner-facing page.
+- The **privacy scan run against the live page** rather than the local build.
+- The finding that **`AreaView` has no field for teaching** and a concept is
+  `{ id, label, area }` with no definition text anywhere in the repository. That is the
+  observation the successor is built on.
+
+### What was dropped, and why
+
+- `content/concepts/*.md` — the area-level `lesson.md` is tried first. Whether all 95
+  concepts also want a paragraph each is a question three authored lessons will answer
+  better than speculation.
+- The `<!-- learner:start -->` markers. Still a good idea; deferred until the sessions have
+  settled into their new home.
