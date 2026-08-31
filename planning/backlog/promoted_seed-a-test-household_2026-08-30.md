@@ -1,6 +1,6 @@
 # A Seeded Household For End-To-End Testing
 
-**Status:** Backlog
+**Status:** Promoted 2026-08-31 to planning/in-progress/feature_seed-a-test-household_2026-08-31.md
 **Track:** unassigned — `db`, and it pairs with the integration suite
 **Date Discovered:** 2026-08-30
 **Discovered During:** SPA Phase 5 — `planning/**/feature_spa_2026-08-28-v2.md`

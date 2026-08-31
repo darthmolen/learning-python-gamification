@@ -410,8 +410,12 @@ something implements it.
 - `pyquest/apps/web/**` — new
 - `pyquest/vitest.config.ts` — the `projects` entry that gives `apps/web` a DOM. This is the
   one root file this track touches; it is additive, and no other track has a projects entry
-- `infra/compose/web.yml` — the `web` service, development only; this track owns the
-  file, and the root `docker-compose.yml` is not the place
+- ~~`infra/compose/web.yml` — the `web` service, development only; this track owns the
+  file~~ — **ownership transferred to the `infra` track, 2026-08-31.** This track created the
+  service and is done with it; what remains to be done to that file is wiring `VITE_API_URL` so
+  the browser reaches the API, which is an infrastructure concern rather than an SPA one. Held
+  by `planning/in-progress/feature_the-stack-runs-end-to-end_2026-08-31.md`. **This track must
+  not edit it** while that plan runs. The root `docker-compose.yml` is still not the place
 
 ## Track discipline
 
