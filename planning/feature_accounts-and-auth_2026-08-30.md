@@ -1,8 +1,9 @@
 # Accounts, And Who Is Allowed To Ask
 
 **Status:** Planned
-**Version:** v2 — checked against `main` at `36ab69c` on 2026-08-31. Seven of v1's claims had gone
-stale in the day since it was written; see *What changed in v2*
+**Version:** v2 — checked against `main` on 2026-08-31, at `36ab69c` and again at `dedd255` after
+one of its own findings was fixed mid-revision. Seven of v1's claims had gone stale in the day
+since it was written; see *What changed in v2*
 **Track:** `auth` — **a gate. It runs alone.** See *Track discipline*
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
@@ -18,10 +19,10 @@ the SPA and every request the API answers is one it knows the asker for.
 Between v1 and this revision, `main` took two plans to `completed/` — the seeded household and
 the end-to-end wiring — and the ground under three of v1's sections moved.
 
-- **`PLAYER_ID = 'peer'` was v1's evidence and is now half fixed.** It is still that on `main`
-  (`gateway/index.ts:114`), but the `spa` track has an uncommitted answer in the working tree:
-  `apps/web/src/household.ts`, holding the two seeded uuids. That module names this plan as the
-  thing that deletes it. v1 described a bug; this describes a stopgap to retire.
+- **`PLAYER_ID = 'peer'` was v1's evidence and is now fixed.** `dedd255` landed on `main` while
+  this revision was being written: the gateway re-exports `PLAYER_ID` and `DM_ID` from
+  `apps/web/src/household.ts`, which holds the two seeded uuids and names this plan, in its own
+  header, as the thing that deletes it. v1 described a bug; this describes a stopgap to retire.
 - **The Console is not a frame any more.** `ConsoleScreen.tsx` is 303 lines and serves the
   sign-off queue. Phase 3 gives it a *second panel*, not a body.
 - **The API does not return tracebacks.** v1's password criterion said it did.
@@ -244,6 +245,15 @@ guarded route from an open one. `fixtures-agree.test.ts` is the one to watch. It
 compares the SPA's fixtures against what the API actually returns, and it is worth exactly
 nothing the moment it starts comparing two 401s.
 
+**And two of those files already fail at random.**
+`planning/backlog/feature_git-tests-time-out-under-load_2026-08-31.md` was filed on 2026-08-31:
+`checkout.test.ts` and `server.localrepo.test.ts` shell out to real git and run five and a half
+to six and a half seconds against a 5000ms default, so they fail under full-suite load and pass
+in isolation. **Fix that first, or do not start Phase 2.** Adding a guard to a suite that is
+already red at random destroys the only signal this phase has: a refusal test that fails becomes
+indistinguishable from the flake, and the reflex it trains — re-run, move on — is exactly how a
+route ships unguarded.
+
 ### Phase 3 — the Console gains its second panel
 
 The Console is **not** a frame — its sign-off queue landed 2026-08-31 and is 303 lines of
@@ -304,8 +314,13 @@ survive `resetHousehold`.
   same constraint from both ends: the Journal needs `packages/db/**`, `endpoints.ts` and
   `apps/api/src/**`, it is clear of everything in `in-progress/` today, and it stops being clear
   the moment this gate opens. It is half a day to a day of work. **Let it go first**
-- `planning/backlog/feature_spa-player-id-is-not-a-uuid_2026-08-31.md` closes when Phase 1 lands
-  `GET /api/me` and deletes `household.ts`
+- `planning/backlog/feature_spa-player-id-is-not-a-uuid_2026-08-31.md` is **still open, correctly**.
+  `dedd255` met three of its four criteria — the screens render against a live seeded API, "who am
+  I" is one place, and the fixture path still works. The fourth says the SPA "does not hardcode a
+  UUID either", and `household.ts` hardcodes two. That criterion closes when Phase 1 lands
+  `GET /api/me` and deletes the module, and this plan is what closes it
+- `planning/backlog/feature_git-tests-time-out-under-load_2026-08-31.md` should land before
+  Phase 2, for the reason given there
 
 ## Files Expected to Change
 
@@ -339,9 +354,11 @@ Two things to settle before it starts:
   and a Gitea read path. It is no longer the API and no longer the laptop: the laptop check
   cleared 2026-08-31, and the Console came off that line the same day. That plan either closes or
   explicitly yields those paths before this starts.
-- **The working tree is not `main`.** `household.ts` and four modified files are the `spa` track's
-  uncommitted player-id fix. They land, or they are abandoned, before this gate opens. A gate that
-  starts on top of somebody else's uncommitted work cannot afterwards say what it changed.
+- **The working tree was not `main`, and now it is.** The `spa` track's player-id fix landed as
+  `dedd255` on 2026-08-31 and the tree is clean. This condition is **met**; it is left written
+  down because it is the one that will recur. A gate that starts on top of somebody else's
+  uncommitted work cannot afterwards say what it changed, and this gate touches three tracks'
+  files — so check the tree is clean again on the morning it opens, not once in a plan.
 
 ## Out of Scope
 
