@@ -1,6 +1,6 @@
 # The Journal Reads From Git
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** `api`
 **Date:** 2026-08-31
 **Author:** Claude (Opus 5)
@@ -345,3 +345,62 @@ lands first, Phases 2 and 3 run beside it in files it does not touch, and Phase 
   `curriculum/area-0/journal/`'s layout are written down in two places and checked against each
   other nowhere. The test that would have caught this is the one that reads the curriculum's own
   documented layout and asserts the API's default matches it
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** `api`
+**Completed:** 2026-08-31
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+All three phases landed, and the plan closed a live bug it did not set out to find.
+
+- **Phase 1** — one `journal.md`, dated heading per entry. The curriculum moved and the code
+  did not, which is the opposite of what this plan proposed
+- **Phase 2** — the contract got smaller: `POST /journal` and `JournalEntryRequestSchema`
+  deleted, `prompt` removed, thirteen routes down to twelve
+- **Phase 3** — `GET /journal` serves, reading at HEAD and joining the ledger to the markdown
+
+Eight of nine criteria are met; the ninth is deferred with a ruling and a filed item.
+
+### Deviations
+
+**Phase 1 inverted.** The plan argued the api's path should become `journal/entries` because
+per-session files are easier to re-read before a boss. The DM ruled the other way and was
+right: one continuous document is better for reading a stretch of weeks, and "which file do I
+write in tonight?" should have one answer. `DEFAULT_JOURNAL_PATH` was correct all along.
+
+**The Gitea reply source was dropped rather than built.** Deferred in Phase 3 because the
+endpoint could not be confirmed; then checked against the running instance and found not to
+exist. Gitea 1.27.2 has no commit-comment API at all. Ruled: the reply goes in both places, and
+`curriculum/area-2/dm-guide.md` §6 argues why.
+
+### Lessons Learned
+
+**The seam is where the bugs live, and nothing was watching it.** The api watched `journal.md`
+while the curriculum taught `journal/entries/session-NN.md`, so §5.6's ten XP an entry could
+never have been paid — and both suites were green, because each asserted its own half.
+`apps/api/tests/journal-path.test.ts` is the only test in the repository that spans a Lane A /
+Lane B boundary, and it exists because that gap cost this feature two days.
+
+**A green suite proves nothing until a mutant has been through it.** Three were seeded at
+Phase 3 and the third survived: an entry running to end-of-file leaks into the *reply* rather
+than the body, so an unanswered entry came back answered with the rest of the year. The test
+checked `body` and not `reply`. Nothing else would have found that.
+
+**Deferring beat guessing, measurably.** Had Phase 3 invented a plausible commit-comment URL,
+it would have 404'd forever — and this route reads 404 as "he has not written one yet", so
+every Area 2a entry would have rendered unanswered and looked entirely normal.
+
+**Two wrong REDs before the right one.** A fence-language mismatch, then CRLF line endings. A
+check that fails for the wrong reason is how the next person fixes the wrong thing; both are
+written into the test.
+
+### Backlog Items Created
+
+- `planning/backlog/feature_journal-reply-from-gitea-comments_2026-08-31.md` — **dropped
+  2026-08-31**, ruled rather than built. Carries the swagger evidence
