@@ -15,7 +15,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'content/**'
+      - 'curriculum/**'
+      - 'game/**'
       - 'pyquest/packages/content/**'
       - 'pyquest/apps/field-manual/**'
       - '.github/workflows/field-manual.yml'
@@ -70,6 +71,10 @@ jobs:
       - name: Build
         run: npm run build --workspace @pyquest/field-manual
 
+      # One artifact, two sites. The build emits the Tome into dist/ and the same pages plus
+      # teaching aids into dist/dm/, so uploading dist/ publishes both in a single deploy.
+      # dist/dm/ is unlisted rather than secret: nothing links to it and the index does not
+      # mention it, which `tests/published.test.ts` asserts rather than assumes.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: pyquest/apps/field-manual/dist

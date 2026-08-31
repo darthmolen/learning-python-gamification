@@ -134,15 +134,31 @@ ${formatIssues(issues, roots)}`,
   return areas;
 }
 
+/**
+ * Two sites from one tree.
+ *
+ * `dist/` is the Tome — what a learner reads. `dist/dm/` is the same pages plus the teaching
+ * aids. They are separate directories rather than one site with a toggle, because the only
+ * safe way to keep the guide from the learner is for the learner's HTML never to contain it.
+ *
+ * `dist/dm/` sits inside `dist/` so that one Pages artifact carries both, which keeps the
+ * publish a single deploy. It is unlisted rather than secret: nothing links to it, and the
+ * index does not mention it. That is the right level of protection for a document whose worst
+ * case is a learner reading the answers to their own exercises.
+ */
 if (import.meta.filename === process.argv[1]) {
   const here = dirname(fileURLToPath(import.meta.url));
-  const areas = buildSite({
-    contentRoot: resolve(here, '..', '..', '..', '..'),
-    outDir: resolve(here, '..', 'dist'),
-  });
+  const contentRoot = resolve(here, '..', '..', '..', '..');
+  const dist = resolve(here, '..', 'dist');
+
+  const areas = buildSite({ contentRoot, outDir: dist });
+  const dm = buildSite({ contentRoot, outDir: join(dist, 'dm'), audience: 'dm' });
+
   const exercises = areas.reduce((n, a) => n + a.exercises.length, 0);
   const concepts = areas.reduce((n, a) => n + a.concepts.length, 0);
+  const aids = dm.filter((a) => a.teachingAid !== undefined).length;
   console.log(
     `field-manual: ${areas.length} areas, ${concepts} ideas, ${exercises} exercises -> dist/`,
   );
+  console.log(`field-manual: the same, plus ${aids} teaching aids -> dist/dm/`);
 }
