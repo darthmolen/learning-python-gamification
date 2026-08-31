@@ -1,8 +1,8 @@
 # The `world.py` Shim — Promote the Spike to Shipping Code
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** world-shim
-**Blocked on:** the son's laptop. Phases 1, 2 and 4 are done; Phase 3 is a framerate measurement on that machine and cannot be faked on the parent's
+**Blocked on:** nothing. The laptop gate cleared 2026-08-31 — see the Status section at the end
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** B — **blocks Area 3**
@@ -37,12 +37,12 @@ and `len()` from week one. Measured: 0% ceremony beyond a one-line import floor.
 - [x] **It fails loudly on every input a learner will actually get wrong** — see the four
       cases below, each with a test that asserts on the message, not just on the raise
 - [x] `start()` fuses placed blocks into one mesh, and a test asserts the fusion happened
-- [ ] **≥ 60 fps at 5,000 blocks on the son's laptop**, measured and recorded with the
+- [x] **≥ 60 fps at 5,000 blocks on the son's laptop**, measured and recorded with the
       date and the ursina version. The spike's numbers are from an RTX 5090 and do not transfer
-      — **BLOCKED, Phase 3. The laptop was not available. No number has been invented.**
-- [ ] The ursina version is **pinned identically on both machines** and the pin is recorded
-      — pinned, recorded and asserted; the parent's machine matches. **The son's machine has
-      not been installed against `requirements.txt` and `smoke.py` has not run there.**
+      — **213.8 fps, 2026-08-31, ursina 8.3.0, Intel HD Graphics 630.** Passed by 3.5×
+- [x] The ursina version is **pinned identically on both machines** and the pin is recorded
+      — pinned, recorded and asserted. Both machines match: `smoke.py` passed all seven
+      checks on the son's laptop on 2026-08-31 against ursina 8.3.0, Python 3.14.7
 - [x] `ruff` and `pyright` clean, no `Any`, exception chaining — per `python-quality-developer`
 - [x] pytest suite runs headless in CI-shaped conditions (no window) and passes
 - [x] **No `Tier` anywhere in the file.** The spike comments say Tier 3, Tier 4, Tier 5. The
@@ -282,3 +282,151 @@ Only then does this move to `completed/`.
   the main track should fold in a line about `lib/` when it next touches that file.
 - **ruff 0.16 formats Python code blocks inside Markdown.** It silently reflowed a code fence
   in `curriculum/lib/README.md`. Worth knowing before it reformats someone's prose.
+
+---
+
+## Status — 2026-08-31, the hardware gate is cleared
+
+**Phase 3 is done. The cap stands, and it stands by a margin nobody predicted.**
+
+Measured on the son's laptop — a 2017 mobile workstation, Intel HD Graphics 630, GL 4.6,
+Python 3.14.7, ursina 8.3.0 — with `tools/ursina/stress.py`, which reports steady-state fps
+with vsync off, 30 warm-up frames discarded and 60 timed.
+
+| Blocks | Fused (shim) fps | Fused startup s | Naive fps | Naive startup s |
+|---|---|---|---|---|
+| 1,000 | 296.1 | 2.21 | 29.5 | 1.20 |
+| 2,500 | 239.2 | 2.95 | 15.0 | 1.59 |
+| 5,000 | **213.8** | 5.32 | 8.2 | 2.26 |
+| 8,000 | 178.3 | 8.68 | 5.9 | 3.37 |
+
+`py -3.14 curriculum/lib/smoke.py` on that machine: all seven checks pass, pin and installed
+version agree, a window opened and rendered.
+
+**The criterion was ≥ 60 fps at 5,000 and the reading is 213.8.** The ~5,000-block authoring
+cap stands. Area 3 can be written against it.
+
+### The finding that matters more than the number
+
+**Framerate was never the binding constraint, and the plan assumed it was.** 8,000 blocks
+still renders at 178 fps on the weakest machine in the household. What actually degrades is
+**startup**: 5.32 s at 5,000 blocks, 8.68 s at 8,000, because `combine()` costs roughly a
+millisecond per block on this GPU and is paid once before anything appears.
+
+So the cap is justified by **build-and-fuse cost**, not by rendering, and an Area 3 author who
+reads "the cap is about fps" will reason wrongly about what they can spend. The spike had
+this right by accident — it estimated "4–5 s on the son's i7-7820HQ" for 5,000 blocks and the
+measurement came in at 5.32 — but the plan carried the fps framing forward and the fps
+framing is the misleading half.
+
+**What that changes:** nothing about the cap, everything about why. If a future world wants
+more blocks, the question to ask is how long a learner will stare at a blank window, not
+whether it will be smooth once it arrives.
+
+### The adapter question, answered
+
+The plan asked which display adapter Panda3D bound to, on the suspicion that a discrete GPU
+might be sitting beside an integrated one and flattering the reading. It bound to the
+**Intel HD Graphics 630 iGPU** — so the measurement is the conservative case, not the
+flattering one, and the margin above holds on the worse of the two paths.
+
+### The shim earns its place, measurably, on the machine that matters
+
+At 5,000 blocks the fused path is **26× the naive path** on this hardware (213.8 against
+8.2), and 18 entities against 5,017. The spike measured 95× on an RTX 5090; the ratio is
+smaller here and the *consequence* is larger, because naive at 5,000 is 8.2 fps — a
+slideshow — where the desktop merely made it slow.
+
+That is the Area 7 lesson with a local number attached: delete `ground.combine()` on his own
+machine and 213.8 becomes 8.2.
+
+### What remains before this moves to `completed/`
+
+Two of the three items in the previous Status block are closed:
+
+1. ~~Phase 3 on the son's laptop~~ — done, above.
+2. ~~Finish the pin on his machine~~ — done; `smoke.py` passed there.
+3. **Copy `world.py` into his repository when Area 3 starts.** Still outstanding, and it is
+   an Area 3 trigger rather than shim work — `curriculum/lib/README.md` has the step and the
+   reason it is a copy.
+
+Feeding the numbers into `planning/backlog/feature_graphical-quest-performance-budget_2026-08-27.md`
+and the table in `curriculum/lib/area-7-exercise/README.md` is also still to do, and both are
+written to take a second half rather than a correction.
+
+### How the measurement was actually taken
+
+Not with `_stress_shim.py` and `_stress_naive.py` as the plan specified. Those are hard-coded
+at three nested `range(20)` loops — 8,000 blocks — and cannot produce the other three sizes
+without being edited between every run, which is a poor thing to ask of somebody with an hour.
+`tools/ursina/stress.py` takes a block count and a mode, borrows `_timed_runner.py`'s timing
+method so the numbers stay comparable with the spike's table, and runs one process per
+measurement because ursina 8.3.0's `@singleton` would otherwise hand every later size the
+first size's app. The throwaway originals are unchanged.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** world-shim
+**Completed:** 2026-08-31
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+All nine success criteria are ticked. The shim exists, fails loudly on the four inputs a
+learner actually gets wrong, fuses what it places, is pinned identically on both machines with
+`smoke.py` passing on each, is ruff and pyright clean, carries no `Tier`, and documents its own
+removal schedule with a runnable Area 7 lesson.
+
+The measurement that held this plan open for two days: **213.8 fps at 5,000 fused blocks** on
+the son's laptop, 2026-08-31, ursina 8.3.0, Intel HD Graphics 630. The criterion was 60.
+
+### Deviations
+
+- **The measurement was not taken with the tool the plan named.** `_stress_shim.py` and
+  `_stress_naive.py` are hard-coded at 8,000 blocks. `tools/ursina/stress.py` was written to
+  take a block count and a mode, borrowing `_timed_runner.py`'s timing method so the readings
+  stay comparable with the spike's table. The throwaway originals are unchanged.
+- **`tools/learner-setup/` exists because of this plan.** Getting `curriculum/lib/` and the
+  harness onto the other machine by hand was the thing that revealed it should be a command.
+
+### Deliberately not done, and it should stay that way for now
+
+**`world.py` has not been copied into his repository, and copying it now would be a mistake.**
+
+The copy is real work this plan named, and closing without it is a choice rather than an
+oversight. The reason is the one `curriculum/lib/README.md` already gives: *"Copy it again if
+it changes here. It is one file and the copy is the point."* A copy made today is a second
+version to chase every time the shim moves — and the shim is most likely to move in exactly
+the window before Area 3 is written, when its surface is still being argued about against real
+exercises.
+
+So the copy belongs at **Area 3 start**, when the shape is settled and one copy is one copy.
+`planning/feature_area-3-collections_2026-08-28.md` is the plan that inherits it; it already
+declares itself blocked by this one and already knows to take the laptop number from here.
+
+Feeding the figures into `planning/backlog/feature_graphical-quest-performance-budget_2026-08-27.md`
+and the table in `curriculum/lib/area-7-exercise/README.md` is likewise outstanding, and both
+were written to take a second half rather than a correction — so neither is a change, and
+neither is urgent.
+
+### Lessons Learned
+
+- **The criterion measured the wrong thing and still gave the right answer.** ≥ 60 fps at
+  5,000 blocks passed by 3.5×, and 8,000 blocks still renders at 178. What actually degrades
+  is startup — 5.3 s at 5,000, 8.7 s at 8,000 — because `combine()` is paid once, up front.
+  The cap is a **build-cost** cap wearing a framerate label. Anyone reasoning about a bigger
+  world should ask how long a learner stares at a blank window, not whether it will be smooth.
+- **The conservative adapter was the one that bound.** Panda3D took the Intel iGPU, so the
+  margin holds on the worse of the two paths rather than on a discrete GPU nobody would have
+  noticed was doing the work.
+- **The spike's estimate was good and its ratio was not.** It predicted 4–5 s of startup for
+  5,000 blocks on this machine and got 5.32. Its 95× fused-versus-naive ratio became 26× —
+  and the *consequence* grew rather than shrank, because naive at 5,000 is 8.2 fps on the
+  laptop, which is a slideshow, where on the desktop it was merely slow.
+
+### Backlog Items Created
+
+None. The two feeds named above land in backlog items that already exist.

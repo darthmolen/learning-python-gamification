@@ -3,7 +3,7 @@
 **Status:** In Progress
 **Version:** v2 — revised 2026-08-29 after two reviews; admitted to the `spa` track 2026-08-29
 **Track:** spa
-**Blocked on:** his laptop for the 1366x768 check, the API for Journal and Console content, and a browser that boots Pyodide for the turtle proof
+**Blocked on:** the API, for Journal and Console content at Phase 5. The laptop check cleared 2026-08-31 — and his screen is 1920×1080, not 1366×768
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **not blocked by the API**
@@ -146,9 +146,17 @@ kind of not:
 - **Keyboard and accessible names** — every control has a name and the interactive ones are
   reachable, asserted per screen by querying role and name. A deliberate sweep of all nine with
   the mouse unplugged has not been done, and that is the honest state of it.
-- **The son's laptop at 1366×768** — not done, and it needs his machine. Carried as
-  `planning/reminders/follow-up_laptop-screen-check_2026-08-30.md` so it cannot quietly become
-  "probably fine".
+- **The son's laptop** — **done 2026-08-31, and the premise was wrong.** His screen is
+  **1920×1080** on a ~15.6" panel, not the 1366×768 this plan assumed throughout. The screens
+  were opened on his machine, in his browser, and read fine. The reminder is closed at
+  `planning/reminders/completed/follow-up_laptop-screen-check_2026-08-30.md`.
+
+  The assumption was never measured — it was carried from "an old laptop" to a specific
+  number, and the number then shaped a success criterion, the Map's panel budget and a
+  worry about the type ramp. At 1920 the Map's fixed 420px panel leaves ~1500px for a
+  1000×700 SVG rather than ~870px, so the tightest layout in the app is not tight. **Nothing
+  needs redesigning; the fear does need retiring**, and any future criterion about his screen
+  should say 1920×1080.
 
 ## Approach
 

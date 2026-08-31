@@ -324,6 +324,10 @@ continue — committed and pushed now, since Area 2a shipped that. Report the st
   below, and if an exercise needs the shim changed, that is an edit to the shim plan. As of
   2026-08-29 the shim is `Status: Planned` and `curriculum/lib/` does not exist, so the
   stop/go rule in Phase 1 governs what may be written meanwhile.
+- **Copy `curriculum/lib/world.py` into his repository, at Area 3 start** — the shim plan
+  completed 2026-08-31 and deliberately left this undone, so that one copy stays one copy
+  while the shim's surface can still move; `curriculum/lib/README.md` carries the command and
+  the rule that it is copied again whenever it changes.
 - [x] **The `breakpoints` concept id is landed** — `main` did it on 2026-08-29 (`c90202e`),
   recorded in `planning/completed/feature_shared-index-and-concepts_2026-08-29.md`. Without
   it the VS Code rung quest would fail `validate:content` on `concept-above-area`. **This

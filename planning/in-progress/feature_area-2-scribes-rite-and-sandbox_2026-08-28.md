@@ -2,7 +2,7 @@
 
 **Status:** In Progress
 **Track:** area-2
-**Blocked on:** the son's laptop. The VS Code profile must be imported and confirmed on the machine it is for, and Phase 4 is gated on that
+**Blocked on:** nothing. The laptop gate cleared 2026-08-31 — the profile imported and the strip holds. Phase 3's re-export is outstanding but is work, not a blocker
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** B — **the plan that argues the `concepts.ts` edit; `main` lands it**
@@ -609,3 +609,58 @@ Then Phase 4: sessions 5–8, their exercises, and `reference/` payloads for 2b 
   `| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | 2a authored; 2b blocked on the son's laptop |`
 - `content/areas/area-2.yml` stays `authoring: partial`. It flips to `complete` when Phase 4
   lands, and the file says why in a comment.
+
+---
+
+## Status — 2026-08-31, the laptop gate is cleared and Phase 3 is nearly closed
+
+**The profile imported on the son's laptop and the strip holds.** Reported from the machine:
+no widgets down the side, a terminal along the bottom, files showing — *"much simpler"*, which
+is the entire design intent of §2 in one word from the person who has to look at it.
+
+`follow-up_vscode-profile-on-his-laptop_2026-08-30.md` is closed and moved to
+`planning/reminders/completed/`.
+
+### The instructions were the defect, not the profile
+
+**There is no `Profiles: Import Profile` command in VS Code 1.135.** `tools/vscode/README.md`
+§3 sent the reader to one, and it does not exist — found by typing it into a real palette.
+Import is not a command in its own right; it is an option inside profile *creation*:
+
+> `Profiles: New Profile...` → name it → **Copy from** → **Import Profile...** → **Select File...**
+
+§4's `Save to file` was stale the same way — the export flow now names the profile and opens a
+**Save Profile** dialog. Both were corrected against the command table in the installed build
+(`createProfile`, `createFromCurrentProfile`, `exportProfile`, `switchProfile`,
+`manageProfiles`, `deleteProfile` — no import among them), not from memory.
+
+**This is the same class of defect the Phase 3 gate exists to catch, one step earlier than
+expected.** The plan's argument was that *an exported profile is a JSON blob and reading one
+proves nothing*. It turns out the instructions for importing it were the same kind of claim:
+authored, plausible, never run. The gate caught it before the checklist even started.
+
+### What remains in Phase 3
+
+The import is proved. **The verification half is not finished**, and it is work rather than a
+blocker now — the machine is no longer the constraint.
+
+1. **Work §4's checklist line by line.** What came back is an impression, not the twenty-odd
+   assertions the checklist asks for. The five that need looking at rather than reasoning
+   about are Outline, Problems, Source Control, Testing and Extensions — hiding the activity
+   bar removes their icons, which is not the same as those views being hidden.
+2. **Re-export over `pyquest-area2.code-profile`.** Still the non-optional step, and the one
+   most likely to have been skipped: those five views live in `globalState`, the hand-authored
+   file's `globalState` is empty, and **only an export captures them**. Until this lands, the
+   profile in the repository is still the hand-authored one and the next machine gets the same
+   partial strip.
+3. **Delete the ⚠ banner** at the top of `tools/vscode/README.md` and record the date.
+
+Phase 4 (2b sessions 5–8) is gated on 3 and therefore still not started — but the gate is now
+an afternoon's work rather than a wait for hardware.
+
+### Where the plan turned out to be right
+
+*"The win condition is not passing tests, the win condition is that it works on the other
+person's machine."* Two of the three things learned in that hour — the missing import command
+and the stale export wording — were invisible from this side and cost nothing to find from
+that side.
