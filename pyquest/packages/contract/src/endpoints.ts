@@ -525,23 +525,29 @@ export type SignoffAward = z.infer<typeof SignoffAwardSchema>;
  * ----------------------------------------------------------------------------------------- */
 
 /**
- * §5.6's entry: the prompt the DM set, the learner's answer, the commit that proves the session
- * happened, what it paid, and the DM's reply if one exists.
+ * §5.6's entry: what he wrote that session, the commit that proves it happened, what it paid,
+ * and the DM's reply if one exists.
  *
  * `reply` is optional because a reply lands later than the entry, and a Journal that cannot
  * render an unanswered entry cannot render the common case.
  *
- * **The two Journal routes are not implemented, and this shape is why.**
- * `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md`: `journal_entries` has
- * columns for `session_date`, `commit_sha` and `xp_awarded` and none for `prompt`, `body` or
- * `reply`, so three of the five required fields have nowhere to come from. The shape is typed
- * ahead of the migration on purpose — the SPA can build the screen, and whoever writes the
- * migration writes it against a shape that already exists rather than inventing a second one.
+ * **`prompt` was removed on 2026-08-31 and the four-prompt problem went with it.** §5.6 wants
+ * four prompts where this modelled one `prompt: string`, which under a Postgres store was schema
+ * churn — four columns, a JSON blob, or a child table. ADR 0004 put the text in his repository
+ * instead, and **in markdown four prompts are four headings**: visible to the person writing them
+ * rather than encoded in a migration. `body` is the entry as he wrote it, `###` headings and all.
+ *
+ * The three fields this shape was accused of not being able to fill were never missing. They were
+ * in the wrong store — `journal_entries` is the *ledger of paid journal commits*, and `commitSha`
+ * is the join between a paid row and the prose it paid for.
+ *
+ * **The reply is not part of `body`.** In Areas 0–1 the DM writes under `## DM reply` in the same
+ * file; from Area 2a it is a Gitea comment (§5.6). Two sources, sequential rather than
+ * alternative, and one field — so a screen never has to know which era an entry came from.
  */
 export const JournalEntrySchema = z
   .object({
     sessionDate: z.string().date(),
-    prompt: z.string().min(1),
     body: z.string().min(1),
     commitSha: z.string().regex(/^[0-9a-f]{7,40}$/, 'must be a git sha, 7 to 40 hex characters'),
     xpAwarded: CountSchema,
@@ -550,17 +556,6 @@ export const JournalEntrySchema = z
   .strict();
 
 export type JournalEntry = z.infer<typeof JournalEntrySchema>;
-
-/** What `POST /journal` would take. The API supplies the sha's session date and the XP. */
-export const JournalEntryRequestSchema = z
-  .object({
-    prompt: z.string().min(1),
-    body: z.string().min(1),
-    commitSha: z.string().regex(/^[0-9a-f]{7,40}$/, 'must be a git sha, 7 to 40 hex characters'),
-  })
-  .strict();
-
-export type JournalEntryRequest = z.infer<typeof JournalEntryRequestSchema>;
 
 /* -------------------------------------------------------------------------------------------
  * The route table
@@ -628,11 +623,15 @@ export const API_ROUTES: readonly ApiRoute[] = [
     path: '/api/players/:playerId/party',
     returns: 'Standings, XpSources, bounties',
   },
-  { method: 'GET', path: '/api/players/:playerId/journal', returns: 'JournalEntry[] — blocked' },
+  /*
+   * Read only, and there is no write. He writes `journal.md` and commits it, and that *is* the
+   * post — §6.4 already makes push the verification mechanism, so a second way to author one
+   * artifact would only give the two ways something to disagree about. Removed 2026-08-31.
+   */
   {
-    method: 'POST',
+    method: 'GET',
     path: '/api/players/:playerId/journal',
-    returns: 'the entry, with XP awarded — blocked',
+    returns: 'JournalEntry[] — the ledger, joined to the markdown at each commit',
   },
   { method: 'GET', path: '/api/tome', returns: 'the syllabus: concepts by area. Content only' },
   {

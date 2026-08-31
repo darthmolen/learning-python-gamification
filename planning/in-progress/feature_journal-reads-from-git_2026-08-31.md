@@ -32,9 +32,14 @@ So: **no migration, no schema change at all.** `journal_entries` keeps the four 
 designed with and is exactly what it was designed to be — the ledger of paid journal commits,
 not the journal. The three "missing" columns were never missing; they were in the wrong store.
 
-## What reading the code found, and it is worse than a missing route
+## What reading the code found, and it was worse than a missing route
 
-### The API watches a file the curriculum never tells him to write
+**Everything in this section is history as of 2026-08-31 — it is kept because the *shape* of the
+failure is the reusable part, and because a plan that quietly deletes what it found leaves nobody
+able to check whether the fix matched the diagnosis.** What was true when it was written is in
+the present tense; what closed it is marked.
+
+### The API watched a file the curriculum never told him to write — **fixed, Phase 1**
 
 `apps/api/src/gitea.ts:29`:
 
@@ -70,9 +75,10 @@ opening six files is the harder thing. See Phase 1 for what was decided and why.
 paragraphs of reasoning that stood here are preserved in the closed reminder, which is where a
 rejected case belongs.
 
-**So the Journal signal cannot fire, the 10 XP of §5.6 can never be paid, and every test on both
-sides is green.** The API's suite asserts the filter is passed; the curriculum's validator
-asserts the template exists. Neither knows the other's string.
+**So the Journal signal could not fire, §5.6's 10 XP could never have been paid, and every test on
+both sides was green.** The API's suite asserted the filter was passed; the curriculum's validator
+asserted the template existed. Neither knew the other's string — and `apps/api/tests/journal-path.test.ts`
+now does, which is the only reason this cannot come back.
 
 This is the shape the auth plan calls the repository's characteristic failure, and it is the
 third instance in two days: `PLAYER_ID = 'peer'` against a uuid column, the SPA fixtures against
@@ -114,9 +120,9 @@ returns nothing for the first eight weeks of the campaign.
       `README.md` does not. **Both asserted, the second one especially**
 - [ ] `GET /api/players/:playerId/journal` returns entries assembled from git, one per row of
       the `journal_entries` ledger
-- [ ] `JournalEntrySchema` describes what the API can actually serve. `— blocked` comes off the
+- [x] `JournalEntrySchema` describes what the API can actually serve. `— blocked` comes off the
       route table
-- [ ] `POST /api/players/:playerId/journal` and `JournalEntryRequestSchema` are **gone**, and the
+- [x] `POST /api/players/:playerId/journal` and `JournalEntryRequestSchema` are **gone**, and the
       route table is twelve routes rather than thirteen
 - [ ] An entry whose reply is `## DM reply` in the file, and an entry whose reply is a Gitea
       comment, both render a reply
@@ -180,7 +186,35 @@ failures** — a fence-language mismatch, then CRLF line endings — both of whi
 red for a reason that was not the bug. Both are written into the test's comments, because a check
 that fails for the wrong reason is how the next person fixes the wrong thing.
 
-### Phase 2 — the contract says what git can serve
+### Phase 2 — the contract says what git can serve — ✅ **done 2026-08-31**
+
+**The contract got smaller, which is the rarest and best kind of contract change.** Thirteen
+routes are now twelve.
+
+- `prompt` is gone from `JournalEntrySchema`, and the four-prompt problem went with it. `body` is
+  the entry as he wrote it, `###` headings and all — four prompts are four headings, visible to
+  the writer rather than encoded in a migration
+- `POST /journal` and `JournalEntryRequestSchema` are **deleted**, not deferred. He writes
+  `journal.md` and commits it, and that *is* the post
+- `— blocked` is off the journal read, because the reason for it dissolved
+- `server.ts` and `main.ts` say twelve where they said thirteen
+
+```text
+RED     5 failed — 13 routes, a POST that existed, 'blocked', and a schema taking a prompt
+GREEN   36 passed
+MUTANT  POST /journal restored  ->  2 failed, caught
+```
+
+Typecheck clean; **763 passed across 49 files**, so nothing downstream relied on the deleted
+shape.
+
+**One correction is owed and this plan may not make it.**
+`apps/web/src/screens/OverlandScreens.tsx` explains the Journal frame as "required by
+`JournalEntrySchema` and held by no column", and its own comment asks whoever takes this plan to
+fix that copy. **The file is the `spa` track's**, and `ConsoleScreen.tsx` still says "the thirteen
+routes". Two lines, both wrong now, both somebody else's to change.
+
+### Phase 2 — as originally planned
 
 - `JournalEntrySchema`: `prompt` and `body` as they stand cannot be filled from a markdown file
   with four headings. Replace them with the entry's markdown and let the headings be headings.

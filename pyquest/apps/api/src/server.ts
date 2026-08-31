@@ -1,13 +1,20 @@
 /**
- * The Fastify app: eleven of `API_ROUTES`' thirteen, plus health.
+ * The Fastify app: eleven of `API_ROUTES`' twelve, plus health.
  *
- * **Two are deliberately absent.** `GET` and `POST /journal` are blocked by
- * `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md`: `journal_entries` has
- * columns for a session date, a commit sha and an XP figure, and none for `prompt`, `body` or
- * `reply`. Three of `JournalEntry`'s five required fields have nowhere to come from, so the
- * routes are not registered and the 404 they produce is the honest answer. Serving an entry with
- * empty text would be worse: the Journal is §5.6's record of what a child thought, and a screen
- * of blanks reads as "you wrote nothing" rather than as "this is not built".
+ * **One is absent, and it is being built.** `GET /journal` is not registered yet;
+ * `planning/in-progress/feature_journal-reads-from-git_2026-08-31.md` Phase 3 is the read path
+ * that serves it. Until then the 404 is the honest answer, and serving an entry with empty text
+ * would be worse: the Journal is §5.6's record of what a child thought, and a screen of blanks
+ * reads as "you wrote nothing" rather than as "this is not built".
+ *
+ * **`POST /journal` is not absent — it is gone**, removed from the contract on 2026-08-31. He
+ * writes `journal.md` and commits it, and that *is* the post: §6.4 makes push the verification
+ * mechanism, so a route that also wrote journal text would be a second way to author one artifact
+ * and the two would diverge the first time he fixed a typo by hand.
+ *
+ * The three fields this route was once blocked on were never missing. ADR 0004 found them in the
+ * wrong store: the prose lives in his repository, and `journal_entries` is the ledger of what was
+ * paid for it.
  *
  * **The clock is injected and it is not a query parameter.** §5.4's schedule is not negotiable by
  * the person it is scheduling, so no route accepts a date; the api reads its own clock and hands

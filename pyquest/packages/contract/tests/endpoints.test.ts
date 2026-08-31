@@ -33,8 +33,38 @@ import {
  * ----------------------------------------------------------------------------------------- */
 
 describe('the route table', () => {
-  it('carries the thirteen routes the plan names', () => {
-    expect(API_ROUTES).toHaveLength(13);
+  it('carries the twelve routes the plan names', () => {
+    expect(API_ROUTES).toHaveLength(12);
+  });
+
+  /**
+   * `POST /journal` was removed on 2026-08-31 rather than implemented, and this is the assertion
+   * that keeps it removed.
+   *
+   * ADR 0004 made markdown in his repository the system of record. He writes the file and commits
+   * it, and **that is the post** — §6.4 already makes push the verification mechanism. A route
+   * that also writes journal text would be a second way to author one artifact, and the second
+   * way is the one that goes stale: the file he edits by hand and the rows the API wrote diverge
+   * the first time he fixes a typo, with nothing to say which is the journal.
+   */
+  it('has no way to write a journal entry, because committing one is how it is written', () => {
+    const writes = API_ROUTES.filter(
+      (route) => route.method === 'POST' && route.path.endsWith('/journal'),
+    );
+    expect(writes).toEqual([]);
+  });
+
+  /**
+   * `GET /journal` carried `— blocked` from the day it was written, because three of
+   * `JournalEntry`'s five required fields had no column. The ruling dissolved that: they were
+   * never missing, they were in the wrong store. The annotation goes with the reason for it.
+   */
+  it('no longer annotates the journal read as blocked', () => {
+    const read = API_ROUTES.find(
+      (route) => route.method === 'GET' && route.path.endsWith('/journal'),
+    );
+    expect(read).toBeDefined();
+    expect(read?.returns).not.toMatch(/blocked/i);
   });
 
   it('names every path once per method', () => {
@@ -358,15 +388,45 @@ describe('the request bodies', () => {
     expect(PendingSignoffsSchema.safeParse(pending).success).toBe(true);
   });
 
-  it('types a journal entry with the text 5.6 asks for, ahead of a column to store it in', () => {
+  /**
+   * The entry is markdown, and the four prompts are headings inside it rather than fields.
+   *
+   * §5.6 wants four prompts where this schema modelled one `prompt: string`. Under a Postgres
+   * store that was schema churn — four columns, a JSON blob, or a child table. ADR 0004 put the
+   * text in his repository instead, and **in markdown four prompts are four headings**, visible
+   * to the person writing them rather than encoded in a migration. So `prompt` is gone, and
+   * `body` is the entry as he wrote it.
+   */
+  it('types a journal entry as the markdown he actually wrote', () => {
     const entry = {
+      sessionDate: '2026-08-29',
+      body: [
+        '### What I built',
+        'A hexagon, with a loop instead of six lines.',
+        '',
+        '### What broke',
+        'It had five sides and nothing said so.',
+      ].join('\n'),
+      commitSha: 'a1b2c3d',
+      xpAwarded: 10,
+    };
+    expect(JournalEntrySchema.safeParse(entry).success).toBe(true);
+    expect(JournalEntrySchema.safeParse({ ...entry, reply: 'Good catch.' }).success).toBe(true);
+  });
+
+  /**
+   * `.strict()` is what makes this a removal rather than a rename. A schema that merely stopped
+   * *requiring* `prompt` would keep accepting payloads that carry one, and the four-prompt
+   * confusion would survive in whatever produced them.
+   */
+  it('refuses a separate prompt field, because the prompts are headings now', () => {
+    const withPrompt = {
       sessionDate: '2026-08-29',
       prompt: 'What broke, and how did you find it?',
       body: 'A typo in a variable name.',
       commitSha: 'a1b2c3d',
       xpAwarded: 10,
     };
-    expect(JournalEntrySchema.safeParse(entry).success).toBe(true);
-    expect(JournalEntrySchema.safeParse({ ...entry, reply: 'Good catch.' }).success).toBe(true);
+    expect(JournalEntrySchema.safeParse(withPrompt).success).toBe(false);
   });
 });

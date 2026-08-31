@@ -41,7 +41,7 @@ async function main(): Promise<void> {
   /**
    * Gitea is optional, and the api boots without it.
    *
-   * Eleven of the thirteen routes have nothing to do with git; refusing to start over a missing
+   * Ten of the twelve routes have nothing to do with git; refusing to start over a missing
    * token would take the whole campaign down for the sake of two quests in Area 2. What the api
    * must not do is pretend — without this, `local-repo` and `git-signal` refuse with a stated
    * reason and record nothing, because a scar for a verifier that never ran is a lie in the one
