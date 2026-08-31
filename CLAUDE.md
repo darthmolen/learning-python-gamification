@@ -87,4 +87,9 @@ both the player and DM seats (§5.11). Roles are not people.
 - **Run every npm command from `pyquest/`.** Use `py -3.14`, never `python` — it is 3.12
   in PowerShell and 3.14 in Git Bash on this machine.
 - Prefer the Bash tool over PowerShell here; PowerShell is slow in this environment.
+- **Write file content with the Write tool, never `cat <<EOF`.** ⚠️ Choking hazard. A
+  heredoc escapes for two languages at once and the result still compiles: a regex path
+  separator and a `\b` that JavaScript read as a backspace both shipped gates that passed
+  while measuring nothing, twice in one day. Long heredocs also die outright on
+  "unexpected EOF" for no reason anyone has reproduced. Heredocs are for commit messages.
 - Do not commit or push unless asked.
