@@ -12,11 +12,12 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CONCEPTS, checkContent } from '@pyquest/content';
+import { CONCEPTS, checkContent, contentRootsFrom } from '@pyquest/content';
 import { marked } from 'marked';
 import { renderArea, renderIndex, type AreaView } from './render.ts';
 
 export interface BuildOptions {
+  /** The directory holding `curriculum/` and `game/`. Briefs resolve under the former. */
   readonly contentRoot: string;
   readonly outDir: string;
 }
@@ -30,8 +31,8 @@ export interface BuildOptions {
  * from the content is the one that goes stale — a mutant proved the branch unreachable rather
  * than merely untested.
  */
-function readBrief(contentRoot: string, relative: string): string {
-  return readFileSync(join(contentRoot, relative), 'utf8');
+function readBrief(curriculumRoot: string, relative: string): string {
+  return readFileSync(join(curriculumRoot, relative), 'utf8');
 }
 
 /**
@@ -44,7 +45,8 @@ function briefBody(markdown: string): string {
 }
 
 export function buildSite({ contentRoot, outDir }: BuildOptions): AreaView[] {
-  const { items, manifests, issues } = checkContent(contentRoot);
+  const roots = contentRootsFrom(contentRoot);
+  const { items, manifests, issues } = checkContent(roots);
 
   // The validator is the gate, not this. If content is broken, say so here rather than
   // publishing a site built from it.
@@ -75,7 +77,7 @@ export function buildSite({ contentRoot, outDir }: BuildOptions): AreaView[] {
         .filter((item) => item.area === manifest.area && item.kind === 'quest')
         .map((item) => ({
           title: item.title,
-          body: briefBody(readBrief(contentRoot, item.brief)),
+          body: briefBody(readBrief(roots.curriculum, item.brief)),
           concepts: [...item.concepts],
         })),
     }));
@@ -96,7 +98,7 @@ export function buildSite({ contentRoot, outDir }: BuildOptions): AreaView[] {
 if (import.meta.filename === process.argv[1]) {
   const here = dirname(fileURLToPath(import.meta.url));
   const areas = buildSite({
-    contentRoot: resolve(here, '..', '..', '..', '..', 'content'),
+    contentRoot: resolve(here, '..', '..', '..', '..'),
     outDir: resolve(here, '..', 'dist'),
   });
   const exercises = areas.reduce((n, a) => n + a.exercises.length, 0);

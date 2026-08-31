@@ -19,7 +19,7 @@
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
 import { conceptArea } from './concepts.ts';
@@ -80,6 +80,16 @@ export interface ContentRoots {
 }
 
 export type ContentSource = string | ContentRoots;
+
+/**
+ * The two roots as they sit in a checkout, or in the container: `curriculum/` and `game/` as
+ * siblings under one directory. Callers name that directory once rather than assembling two
+ * paths each, and the layout is stated here instead of in nine call sites.
+ */
+export function contentRootsFrom(base: string): ContentRoots {
+  const abs = resolve(base);
+  return { curriculum: join(abs, 'curriculum'), game: join(abs, 'game') };
+}
 
 /** One resolved pair. A bare string collapses to the same absolute path twice. */
 function resolveRoots(source: ContentSource): { curriculum: string; game: string } {
@@ -146,12 +156,13 @@ function yamlFilesAcross(roots: { curriculum: string; game: string }): SourceFil
 /**
  * Is this file an area manifest?
  *
- * The new layout puts it at `area-N/area.yml`, inside the area it describes. The old one put
- * every manifest under `areas/`, and that form is still accepted because the authored tree has
- * not moved yet — Phase 2 moves it and this second clause goes with it.
+ * `area-N/area.yml`, inside the area it describes. There is one convention and it does not
+ * depend on a directory name above it: the transitional `areas/` clause went out with the
+ * directory when the tree moved, and the fixtures moved with it so that no second form
+ * survives in test data either.
  */
 function isManifestPath(file: string): boolean {
-  return file.endsWith('/area.yml') || file === 'area.yml' || file.startsWith('areas/');
+  return file === 'area.yml' || file.endsWith('/area.yml');
 }
 
 /**
@@ -561,8 +572,24 @@ export function validateContent(source: ContentSource): ContentIssue[] {
  * The report. Grouped by file, because that is the order an author fixes things in, and every
  * line carries somewhere to go: the path, the id, what is wrong, and what to do.
  */
-export function formatIssues(issues: readonly ContentIssue[], root: string): string {
-  if (issues.length === 0) return `OK  no problems found in ${toPosix(resolve(root))}`;
+export function formatIssues(issues: readonly ContentIssue[], source: ContentSource): string {
+  const roots = resolveRoots(source);
+  const label = roots.curriculum === roots.game ? roots.curriculum : dirname(roots.curriculum);
+
+  if (issues.length === 0) return `OK  no problems found in ${toPosix(label)}`;
+
+  /**
+   * An issue's `file` is relative to whichever tree it was read from, and the report has to
+   * print a path a terminal will let you click. So the tree is recovered by asking which one
+   * actually holds the file, rather than by threading a root through every issue: the check is
+   * one `existsSync` on a path that was just read, and a wrong guess here costs a broken link
+   * in a report rather than a wrong verdict.
+   */
+  const absolute = (file: string): string => {
+    const inGame = join(roots.game, file);
+    if (roots.game !== roots.curriculum && existsSync(inGame)) return inGame;
+    return join(roots.curriculum, file);
+  };
 
   const byFile = new Map<string, ContentIssue[]>();
   for (const issue of issues) {
@@ -573,7 +600,7 @@ export function formatIssues(issues: readonly ContentIssue[], root: string): str
   for (const [file, fileIssues] of byFile) {
     // The absolute path first, on its own line, because that is the form a terminal will let
     // you click and an editor will let you jump to.
-    lines.push(toPosix(resolve(root, file)));
+    lines.push(toPosix(absolute(file)));
     for (const issue of fileIssues) {
       const where =
         issue.line === undefined ? '  ' : `  ${issue.line}:${issue.column ?? 1}  `;

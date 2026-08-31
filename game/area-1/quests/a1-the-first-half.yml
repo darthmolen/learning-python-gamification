@@ -1,0 +1,12 @@
+id: a1-the-first-half
+title: "The First Half"
+kind: quest
+area: 1
+concepts: [if, else, comparison-operators, for, range, bool]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: area-1/exercises/the-first-half/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-1/exercises/the-first-half/starter/unfinished.py
+  tests: area-1/exercises/the-first-half/hidden/test.py

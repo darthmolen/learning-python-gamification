@@ -58,7 +58,7 @@ after both are built it is expensive to reconcile.
 **The runner does not need a turtle module, and must not grow one.** Turtle graphics are Areas 0
 and 1 start to finish, but the hidden tests already solve this and solved it better: they inject
 a `TurtleSpy` that records the orders it is given and assert on computed values. From
-`content/tests/a1-the-polygon-engine_test.py`:
+`curriculum/area-1/exercises/the-polygon-engine/hidden/test.py`:
 
 > Every Area 1 quest draws, and §6.3's rule is that a test asserts on a **computed value, never
 > on a picture**. So `turtle` is replaced by a stand-in that records the orders it is given.

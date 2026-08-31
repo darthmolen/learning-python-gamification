@@ -58,7 +58,7 @@ const REPO_FILES: ReadonlyArray<readonly [string, string]> = [
   ],
 ];
 
-const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const CONTENT_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
 const ADMIN_URL = process.env['E2E_DATABASE_URL'];
 
 function say(step: string): void {

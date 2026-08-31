@@ -1,0 +1,12 @@
+id: a0-ask-and-draw
+title: "Ask And Draw"
+kind: quest
+area: 0
+concepts: [input, str, int, f-strings, variables, print]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: area-0/exercises/ask-and-draw/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-0/exercises/ask-and-draw/starter/unfinished.py
+  tests: area-0/exercises/ask-and-draw/hidden/test.py

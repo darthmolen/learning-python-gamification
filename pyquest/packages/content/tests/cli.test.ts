@@ -15,7 +15,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 
-const CONTENT_ROOT = fileURLToPath(new URL('../../../../content', import.meta.url));
+const CONTENT_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
 const VALIDATE_CLI = fileURLToPath(new URL('../src/cli/validate.ts', import.meta.url));
 const NEW_QUEST_CLI = fileURLToPath(new URL('../src/cli/new-quest.ts', import.meta.url));
 

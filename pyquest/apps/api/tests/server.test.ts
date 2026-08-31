@@ -25,7 +25,7 @@ if (!HAVE_DATABASE) {
   throw new Error('no database: start the stack, or set TEST_DATABASE_URL');
 }
 
-const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../../content', import.meta.url)));
+const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../..', import.meta.url)));
 
 const ADA = '11111111-1111-1111-1111-111111111111';
 const GRACE = '22222222-2222-2222-2222-222222222222';
@@ -240,7 +240,7 @@ describe('submit', () => {
     });
     const { rows } = await client.query('SELECT payload FROM runner_jobs');
     const payload = (rows[0] as { payload: Record<string, unknown> }).payload;
-    expect(payload['tests']).toBe('tests/a0-name-tag_test.py');
+    expect(payload['tests']).toBe('area-0/exercises/name-tag/hidden/test.py');
     expect(JSON.stringify(payload)).not.toContain('Welcome, Steve!');
   });
 

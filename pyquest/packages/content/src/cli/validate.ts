@@ -10,7 +10,7 @@ import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkContent, formatIssues } from '../validate.ts';
+import { checkContent, contentRootsFrom, formatIssues } from '../validate.ts';
 
 /** The authored content root, four levels up from `packages/content/src/cli/`. */
 /**
@@ -25,7 +25,7 @@ function resolveRoot(root: string): string {
   return isAbsolute(root) ? root : resolve(process.env['INIT_CWD'] ?? process.cwd(), root);
 }
 
-const DEFAULT_ROOT = fileURLToPath(new URL('../../../../../content', import.meta.url));
+const DEFAULT_ROOT = fileURLToPath(new URL('../../../../..', import.meta.url));
 
 const USAGE = `Usage: npm run validate:content [-- --root <dir>]
 
@@ -33,7 +33,7 @@ Proves that a content root will load: every YAML file parses against the schema,
 prerequisite graph is acyclic, every prerequisite and concept tag resolves, every referenced
 file exists, and no item tags vocabulary from an area above its own.
 
-  --root <dir>   content root to check (default: the repository's content/)
+  --root <dir>   directory holding curriculum/ and game/ (default: the repository)
   --help         this message
 
 Exits 0 when the root is clean, 1 when it is not.`;
@@ -67,7 +67,7 @@ function main(argv: readonly string[]): number {
     return 1;
   }
 
-  const { items, manifests, issues } = checkContent(root);
+  const { items, manifests, issues } = checkContent(contentRootsFrom(root));
 
   if (issues.length === 0) {
     console.log(formatIssues(issues, root));

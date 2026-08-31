@@ -1,0 +1,12 @@
+id: a0-the-type-lab
+title: "The Type Lab"
+kind: quest
+area: 0
+concepts: [int, float, str, bool, print, variables]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: area-0/exercises/the-type-lab/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-0/exercises/the-type-lab/starter/unfinished.py
+  tests: area-0/exercises/the-type-lab/hidden/test.py

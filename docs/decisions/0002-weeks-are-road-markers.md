@@ -14,7 +14,7 @@ artboard renders it as prose:
 and the Map and crumb bar both show `week 10 of 48`.
 
 That string is two different things glued together: a schedule and a blurb. Nothing in
-`content/areas/*.yml` holds either — the manifest is four fields, none of them a week range.
+`curriculum/area-<n>/area.yml` holds either — the manifest is four fields, none of them a week range.
 So the SPA had no source for a line the artboard requires, and the first thing built there was
 a hardcoded table of area names, which also invented titles for five areas nobody has authored.
 
@@ -105,7 +105,7 @@ corrected here rather than by a superseding record, because nothing about the de
 The struck sentence said "inventing manifests for unauthored areas is the same mistake as
 inventing their titles." It conflates two acts. The mistake this decision was written against
 was an `AREA_NAMES` table that **made up names the spec does not contain**. Writing
-`title: State and Objects` into `content/areas/area-5.yml` is a copy of §3's own heading — the
+`title: State and Objects` into `curriculum/area-5/area.yml` is a copy of §3's own heading — the
 opposite act. And a manifest asserts less than the sentence assumed: `authoring: partial` exists
 to say the area is unwritten and its total an estimate, which `area-2.yml` has said since it was
 authored.

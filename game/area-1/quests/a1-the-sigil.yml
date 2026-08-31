@@ -1,0 +1,26 @@
+# Area 1 boss. Spec §5.3: no scaffolding, a blank file and a specification. There is no
+# starter, so the verifier is peer-signoff (§6.3) and the other player presses the button.
+# Spec §5.2: a boss offers two or three theme framings and the player chooses.
+#
+# `requires` is absent, and that is deliberate. §5.2 gives an area five quests of which
+# ANY THREE unlock the boss, and that rule is not expressible here — it lives in the engine
+# as `bossUnlocked(clearedQuestCount)`, which counts and does not ask which. Listing the
+# five quest ids would mean all five; listing one would impose an order §5.2 exists to
+# protect against. Nothing reads this field for progression, so it stays empty.
+id: a1-the-sigil
+title: "The Sigil"
+kind: boss
+area: 1
+concepts: [for, while, range, if, elif, else, comparison-operators, boolean-operators, nesting, accumulator-pattern, input, f-strings, print, variables, int]
+dc: 20                # XP and the risk label both derive from this (§5.1)
+brief: area-1/exercises/the-sigil/BRIEF.md
+
+# Spec §5.2 - he chooses the framing. Two or three, and make them his.
+themes:
+  - "The Family Crest"
+  - "The Spell Circle"
+  - "The Star Chart"
+
+verifier:
+  type: peer-signoff
+  by: peer

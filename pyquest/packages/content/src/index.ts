@@ -35,11 +35,14 @@ export {
   checkContent,
   findPrerequisiteCycle,
   formatIssues,
+  contentRootsFrom,
   validateContent,
   type ContentIssue,
   type ContentSet,
   type Locator,
   type ValidationRule,
+  type ContentRoots,
+  type ContentSource,
 } from './validate.ts';
 
 export {

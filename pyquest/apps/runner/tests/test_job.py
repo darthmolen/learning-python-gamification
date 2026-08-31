@@ -212,7 +212,7 @@ def test_the_workspace_does_not_survive_the_job() -> None:
 # ---------------------------------------------------------------------------------------------
 #
 # `hidden-tests` hands over one file. `local-repo` hands over a whole repository, because §6.4's
-# evidence is the repository and the authored tests for it read the filesystem — `content/tests/
+# evidence is the repository and the authored tests for it read the filesystem — `curriculum/area-<n>/exercises/*/hidden/
 # a2-where-the-file-lives_test.py` looks for a directory, runs a script out of it, and checks that
 # the same command fails one directory up. None of that is expressible as a `solution.py`.
 #

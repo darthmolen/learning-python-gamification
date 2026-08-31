@@ -6,7 +6,7 @@
  * failed *suite* while the summary line still shows every other test passing, which is a very
  * quiet way for a guard to stop guarding. Hence the override, and hence the first test below.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -120,7 +120,7 @@ describe('the gateway is the only way to the data', () => {
    * Content lives in git and reaches the app through the contract. A title the SPA can produce
    * on its own is a title the SPA invented, and it goes stale silently the moment the
    * curriculum is edited — which is exactly what happened in Phase 1, where an `AREA_NAMES`
-   * table duplicated `content/areas/*.yml` for three areas and made up the other five.
+   * table duplicated `curriculum/area-<n>/area.yml` for three areas and made up the other five.
    *
    * Phase 1's guard checked rendered text, which stopped working the moment the gateway began
    * serving real titles: "Collections" on screen became correct. So the guard moved here, where
@@ -131,10 +131,12 @@ describe('the gateway is the only way to the data', () => {
    * cannot leave this test guarding a name nobody uses any more.
    */
   it('lets no screen contain an area title as a literal', () => {
-    const areasDir = join(srcDir, '..', '..', '..', '..', 'content', 'areas');
-    const titles = readdirSync(areasDir)
-      .filter((f) => f.endsWith('.yml'))
-      .map((f) => /^title:\s*(.+)$/m.exec(readFileSync(join(areasDir, f), 'utf8'))?.[1]?.trim())
+    const curriculum = join(srcDir, '..', '..', '..', '..', 'curriculum');
+    const titles = readdirSync(curriculum)
+      .filter((d) => d.startsWith('area-'))
+      .map((d) => join(curriculum, d, 'area.yml'))
+      .filter((f) => existsSync(f))
+      .map((f) => /^title:\s*(.+)$/m.exec(readFileSync(f, 'utf8'))?.[1]?.trim())
       .filter((t): t is string => t !== undefined && t.length > 0);
 
     // A guard that reads no titles forbids nothing and passes forever.

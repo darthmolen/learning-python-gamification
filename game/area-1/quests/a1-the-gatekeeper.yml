@@ -1,0 +1,12 @@
+id: a1-the-gatekeeper
+title: "The Gatekeeper"
+kind: quest
+area: 1
+concepts: [boolean-operators, elif, if, else, comparison-operators, input, int, for, range]
+dc: 14                # XP and the risk label both derive from this (§5.1)
+brief: area-1/exercises/the-gatekeeper/BRIEF.md
+
+verifier:
+  type: hidden-tests
+  starter: area-1/exercises/the-gatekeeper/starter/unfinished.py
+  tests: area-1/exercises/the-gatekeeper/hidden/test.py

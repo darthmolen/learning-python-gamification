@@ -14,11 +14,11 @@ import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'nod
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { checkContent } from '@pyquest/content';
+import { checkContent, contentRootsFrom } from '@pyquest/content';
 import { buildSite } from '../src/build.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const contentRoot = resolve(here, '..', '..', '..', '..', 'content');
+const contentRoot = resolve(here, '..', '..', '..', '..');
 
 /** Build once into a temp directory; every test reads the same output. */
 const out = resolve(here, '..', 'dist-test');
@@ -82,7 +82,7 @@ describe('the site publishes the work, not the assessments', () => {
      * That is exactly why this assertion exists separately. It was found by a mutant that
      * changed the filter and survived.
      */
-    const { items } = checkContent(contentRoot);
+    const { items } = checkContent(contentRootsFrom(contentRoot));
     const quests = items.filter((i) => i.kind === 'quest');
     const bosses = items.filter((i) => i.kind === 'boss');
     expect(bosses.length, 'fixture sanity: there are bosses to leave out').toBeGreaterThan(0);
@@ -105,11 +105,11 @@ describe('it refuses to publish content the validator would reject', () => {
      */
     const broken = resolve(here, '..', 'dist-broken-fixture');
     rmSync(broken, { recursive: true, force: true });
-    mkdirSync(join(broken, 'areas'), { recursive: true });
+    mkdirSync(join(broken, 'curriculum', 'area-9'), { recursive: true });
     const yaml = ['area: 9', 'title: Nowhere', 'authoring: complete', ''].join(
       String.fromCharCode(10),
     );
-    writeFileSync(join(broken, 'areas', 'area-9.yml'), yaml, 'utf8');
+    writeFileSync(join(broken, 'curriculum', 'area-9', 'area.yml'), yaml, 'utf8');
 
     expect(() => buildSite({ contentRoot: broken, outDir: resolve(here, '..', 'dist-broken-out') }))
       .toThrow(/validation issue/i);
