@@ -1,0 +1,49 @@
+# The payload: what gets carried onto a learner's machine.
+#
+# One repository-relative path per line. Directories are copied whole. `#` comments
+# and blank lines are ignored. `pack.sh` reads this file and nothing else decides
+# what ships, so adding a file here is the entire change.
+#
+# The rule for what belongs: a learner's machine needs the instructions for the
+# installs, and the files those installs are verified against. It does not need the
+# application, the host, the API, the SPA, or the content pipeline -- those live on
+# the DM's machine (spec 6.1) and shipping them would invite somebody to run them in
+# the wrong place.
+
+# ---------------------------------------------------------------------------
+# The instructions. tools/README.md is the index and the checklists.
+# ---------------------------------------------------------------------------
+tools/README.md
+tools/python/README.md
+tools/git/README.md
+tools/git/local-lan-learner.md
+tools/vscode/README.md
+tools/vscode/pyquest-area2.code-profile
+tools/ursina/README.md
+tools/ursina/stress.py
+
+# ---------------------------------------------------------------------------
+# What the ursina install is verified against.
+#
+# requirements.txt is the pin, world.py is the shim, smoke.py asserts the two
+# agree with what is installed. All three, or the check is not the check.
+# ---------------------------------------------------------------------------
+curriculum/lib/README.md
+curriculum/lib/requirements.txt
+curriculum/lib/world.py
+curriculum/lib/smoke.py
+
+# The spike's throwaway harness. Carried because tools/ursina/stress.py borrows its
+# timing method and the README holds the comparison figures -- which came off an
+# RTX 5090 and are useful precisely as the thing a laptop is not.
+spikes/ursina-tier3/README.md
+spikes/ursina-tier3/_stress_shim.py
+spikes/ursina-tier3/_stress_naive.py
+spikes/ursina-tier3/_timed_runner.py
+
+# ---------------------------------------------------------------------------
+# What the VS Code install is verified against: one real exercise, opened and run.
+# Session 2's, because tools/vscode/README.md's checklist names `motto.py`.
+# ---------------------------------------------------------------------------
+curriculum/area-2/exercises/README.md
+curriculum/area-2/exercises/session-2
