@@ -9,7 +9,7 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Areas 2a
 `main-guard`
 
 **Vehicle: the toolchain itself.** There is no drawing in this area. The thing being built
-is the ability to put code somewhere other than ttheir own machine.
+is the ability to put code somewhere other than the machine it was written on.
 
 **This area is load-bearing.** §2.3 diagnoses the failure every platform surveyed shares —
 graduates who "cannot ship an original project, having never left the browser sandbox or
@@ -23,29 +23,39 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 
 ---
 
-## ⚠ Authoring status
+## Authoring status
 
-**This area is not finished and must not be taught yet.** What exists:
+**Authored in full. One thing outstanding, and it holds delivery of session 6 rather than
+the area.**
 
 | Part | State |
 |---|---|
 | `dm-guide.md` | **complete**, covering all eight sessions |
 | Sessions 1–4 (2a) and their exercises | **complete** |
-| `verify.py` | **complete**, 4 of 4 |
+| Sessions 5–8 (2b) and their exercises | **complete** |
+| `reference/` payloads for 2b | **complete** — the worked venv project and the traceback answer key |
+| `verify.py` | **complete**, 13 of 13 |
 | `tools/vscode/README.md` — install, checklist, full ladder | **complete** |
-| `tools/vscode/pyquest-area2.code-profile` | **authored, NOT VERIFIED** |
-| Sessions 5–8 (2b) and their exercises | **not written** |
-| `reference/` payloads for 2b | **not written** |
+| `tools/vscode/pyquest-area2.code-profile` | **imported and confirmed; the re-export is outstanding** |
 | `content/` — five quests and Boss 2 | **complete**, `validate:content` exits 0 |
 
-**Two things gate the rest**, and the first gates the second:
+**What is outstanding.** The profile imported on the target machine on 2026-08-31 and the
+strip holds — *"much simpler"*, from the person who has to look at it. What has not
+happened is §4 of `tools/vscode/README.md` worked line by line, and the **re-export**:
+five of the hidden views are view visibility rather than settings, they live in the
+profile's `globalState`, and only an export from a configured running editor captures
+them. Until that lands, the file in `tools/vscode/` is still the hand-authored one and the
+next machine gets the same partial strip.
 
-1. **The VS Code profile has not been imported on the target machine.** Session 6 is the VS
-   Code session, and the entire argument for a stripped profile is that stock defaults are
-   what is being rejected. An exported profile is a JSON blob and reading one proves
-   nothing. Work the checklist in `tools/vscode/README.md` §4 on that machine.
-2. **Sessions 5–8 cannot be finalised against a profile that does not exist**, so they
-   wait on (1).
+It is carried as `planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md`.
+
+**It does not block session 6, and session 6 says what to do about it.** Hide the five by
+hand and run the session. What the session cannot survive is stock VS Code with every
+panel showing, which is the thing the profile exists to reject.
+
+**Authoring order and delivery order are different things**, and this area was written
+that way on purpose: sessions are authored against the design, and they are taught against
+a machine.
 
 ---
 
@@ -57,7 +67,9 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 2. **`tools/vscode/README.md`** — before session 6, and its checklist worked on his
    laptop well before that.
 3. **`sessions/session-1-what-a-repository-is.md`** — then one per session, on the night.
-4. **`exercises/README.md`** — how the walkthroughs and the four Python files fit together.
+4. **`exercises/README.md`** — how the walkthroughs and the Python files fit together.
+5. **`reference/session-8-answers.md`** — before session 8, and never in front of him. It
+   is the traceback answer key, and it exists so that you can stay quiet.
 
 ---
 
@@ -69,10 +81,10 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 | 2 | 2a | **The First Commit** | `git-add`, `git-commit` | `repository` | `w2`, `motto.py`, `gitignore.txt` |
 | 3 | 2a | **The Log As A Story** | `git-log`, `git-branch` | `git-commit` | `w3`, `streak.py` |
 | 4 | 2a | **Push, And It Is Somewhere Else** | `git-push` | `git-log`, `git-commit`, `repository` | `w4`, `receipt.py` |
-| 5 | 2b | Where A File Actually Goes | `files-on-disk`, `running-scripts` | `print`, `git-add` | *not written* |
-| 6 | 2b | A Real Editor | `vscode` | `files-on-disk`, `running-scripts` | *not written* |
-| 7 | 2b | Its Own Python | `venv`, `pip` | `running-scripts` | *not written* |
-| 8 | 2b | Read The Stack | `tracebacks`, `main-guard` | `reading-errors`, `venv` | *not written* |
+| 5 | 2b | **Where A File Actually Goes** | `files-on-disk`, `running-scripts` | `print`, `git-add` | `w5`, `where_am_i.py` |
+| 6 | 2b | **A Real Editor** | `vscode` | `files-on-disk`, `running-scripts` | `w6`, `the_dot_on_the_tab.py` |
+| 7 | 2b | **Its Own Python** | `venv`, `pip` | `running-scripts` | `w7`, `which_python.py` |
+| 8 | 2b | **Read The Stack** | `tracebacks`, `main-guard` | `reading-errors`, `venv` | `w8`, six `.py` |
 
 **The 2a/2b boundary sits between 4 and 5, and it is a real one.** Session 4 ends with his
 code on another machine; session 5 starts with the question of where a file lives. But it
@@ -105,6 +117,18 @@ rehearsal for Boss 2. It is the one step in the area that must not be cut for ti
 **Session 6 could be first and is sixth.** Installing VS Code in session 1 would cost an
 evening for nothing: sessions 1–4 have no Python to edit. Area 0's guide already says
 Notepad is sufficient and that VS Code is Area 2b vocabulary.
+
+**Session 6 is also the one session with no quest, and that is a decision.** Five quests
+plus a boss is the shape of an area (§5.2), and `vscode` is tagged by Boss 2, which tags
+all fourteen concepts. Inventing an assessment for "he opened a folder" would be a quest
+built to fill a row in a table. The editor is a tool he uses for six more areas; the
+proof that he can use it is every session after this one.
+
+**Session 8 is the boss rehearsal, and both halves of it are in the boss.** A traceback is
+what he will be reading when the cold clone fails on the dm's machine, and
+`if __name__ == "__main__"` is item 3 on the boss brief by name. That is why `main-guard`
+is taught one session before it pays rather than in Area 4 where importing becomes
+routine.
 
 ### Compressing to six sessions
 
@@ -168,24 +192,29 @@ Area 2's fourteen concepts, and where each one is actually taught.
 | `git-log` | 2a | 3 | `w3_the_log_as_a_story.md` | yes |
 | `git-branch` | 2a | 3 | `w3_the_log_as_a_story.md` | yes |
 | `git-push` | 2a | 4 | `w4_push_and_prove_it.md` | yes |
-| `files-on-disk` | 2b | 5 | — | **not yet** |
-| `running-scripts` | 2b | 5, 7 | — | **not yet** |
-| `vscode` | 2b | 6 | `tools/vscode/` (unverified) | **not yet** |
-| `venv` | 2b | 7 | — | **not yet** |
-| `pip` | 2b | 7 | — | **not yet** |
-| `tracebacks` | 2b | 8 | — | **not yet** |
-| `main-guard` | 2b | 8 | — | **not yet** |
+| `files-on-disk` | 2b | 5 | `w5_where_the_file_actually_goes.md`, `where_am_i.py` | yes |
+| `running-scripts` | 2b | 5, 7 | `w5`, `w7`, `where_am_i.py` | yes |
+| `vscode` | 2b | 6 | `w6_a_real_editor.md`, `tools/vscode/` | yes |
+| `venv` | 2b | 7 | `w7_its_own_python.md`, `which_python.py` | yes |
+| `pip` | 2b | 7 | `w7_its_own_python.md` | yes |
+| `tracebacks` | 2b | 8 | `w8_read_the_stack.md`, the four failing files | yes |
+| `main-guard` | 2b | 8 | `banner.py`, `show_the_banner.py` | yes |
 
-**Seven of fourteen taught.** All fourteen are tagged by the `content/` items, which are
-complete — a quest can be authored before the session that rehearses it, and Boss 2 tags
-all fourteen because it is the whole area at once.
+**Fourteen of fourteen taught.** All fourteen are also tagged by the `content/` items, and
+Boss 2 tags all of them at once because it is the whole area in one fight.
 
-### What the Python files carry
+### What the Python files carry, and why the two halves differ
 
-The four runnable exercises tag Area 0 and Area 1 vocabulary, not Area 2's. That is
-correct and worth saying: **`git-add` is not a thing a Python file can demonstrate.** The
+**2a's four runnable exercises tag Area 0 and Area 1 vocabulary, not Area 2's.** That is
+correct and worth saying: **`git-add` is not a thing a Python file can demonstrate.** Those
 files exist to be committed, branched, pushed and cloned; the git concepts live in the
 walkthroughs beside them.
+
+**2b's nine tag Area 2 vocabulary, and that is correct too.** `files-on-disk`,
+`running-scripts`, `venv`, `tracebacks` and `main-guard` are all things a Python file can
+do in front of you: print where it is, name the interpreter running it, import another file
+and produce a stack with three frames in it. The half of the area that a program can
+demonstrate is exactly the half a program demonstrates.
 
 | Exercise | Session | DC | Concepts |
 |---|---|---|---|
@@ -193,10 +222,26 @@ walkthroughs beside them.
 | `motto.py` | 2 | 5 | `print`, `variables`, `str`, `f-strings` |
 | `streak.py` | 3 | 8 | `for`, `range`, `accumulator-pattern`, `variables`, `int`, `print`, `f-strings` |
 | `receipt.py` | 4 | 8 | `input`, `str`, `variables`, `print`, `f-strings` |
+| `where_am_i.py` | 5 | 10 | `files-on-disk`, `running-scripts`, `print`, `f-strings` |
+| `the_dot_on_the_tab.py` | 6 | 10 | `vscode`, `running-scripts`, `variables`, `print`, `f-strings` |
+| `which_python.py` | 7 | 12 | `venv`, `running-scripts`, `if`, `else`, `print`, `f-strings` |
+| `bottom_frame.py` | 8 | 10 | `tracebacks`, `reading-errors`, `int`, `str`, `variables`, `print` |
+| `middle_frame.py` | 8 | 10 | `tracebacks`, `reading-errors`, `print`, `f-strings` |
+| `top_frame.py` | 8 | 12 | `tracebacks`, `reading-errors`, `print`, `f-strings` |
+| `the_library_floor.py` | 8 | 12 | `tracebacks`, `reading-errors`, `str`, `print` |
+| `banner.py` | 8 | 12 | `main-guard`, `running-scripts`, `variables`, `str`, `print`, `f-strings` |
+| `show_the_banner.py` | 8 | 12 | `main-guard`, `running-scripts`, `str`, `print`, `f-strings` |
 
 `receipt.py`'s YOUR MOVE step 2 is a deliberate Area 0 callback: `input` hands back a
 `str`, which cost him a `TypeError` in week two, and he is asked to **prove** it rather
 than remember it.
+
+**Session 8's chain is three files for one mistake.** `top_frame` imports `middle_frame`
+imports `bottom_frame`, and only the last of them is wrong. Run them in that order and the
+same error arrives at one frame, then two, then three, with an identical last line every
+time — **the error never moves, only the distance to it does.** `the_library_floor.py` is
+the other shape: four frames, of which he wrote one, which is the one that makes people
+give up.
 
 ---
 
@@ -206,13 +251,23 @@ than remember it.
 py -3.14 verify.py
 ```
 
-Last run: **4 of 4**, on Python 3.14, Windows 11. `ruff check curriculum/area-2/` passes.
+Last run: **13 of 13**, on Python 3.14.6, Windows 11. `ruff check curriculum/area-2/`
+passes.
 
-**Read the second number the harness prints as well as the first.** It covers the runnable
-`.py` exercises only, and four is small against Area 0's nineteen. That is honest rather
-than thin: there is nothing to execute in "make a commit, then read the log". The harness
-says out loud how many walkthroughs it is *not* covering, because a harness that silently
-counted zero and printed a reassuring `0 of 0` would be worse than useless.
+**Read all three numbers the harness prints, not just the first.** It covers the runnable
+`.py` exercises only — thirteen — and it then says what it is not running:
+
+- **one file it cannot run.** `reference/its-own-python/main.py` is the worked answer to
+  the venv quest, and a project that would run without its dependencies installed is not
+  an answer to that quest. The rule states itself rather than naming an exception: **a file
+  under a directory holding a `requirements.txt` has an environment of its own, and this
+  harness does not have it.** Delete that `requirements.txt` and the harness runs it and
+  fails with `ModuleNotFoundError`, which is how the rule was proved.
+- **eight walkthroughs it has nothing to execute in.** There is no code in "make a commit,
+  then read the log".
+
+A harness that silently counted zero and printed a reassuring `0 of 0` would be worse than
+useless, which is why this one prints what it declined to do.
 
 It checks each file against its own header tags: every `# concepts:` id must be real
 vocabulary from areas 0–2, `# dc:` must be a whole number on the 5–30 scale, and
@@ -223,7 +278,7 @@ prints nothing.
 
 ### The walkthrough completion checklist
 
-The four git walkthroughs are the other half of this area's verification, and they are
+The eight walkthroughs are the other half of this area's verification, and they are
 audited by a person following them. Each ends in its own **Done when** list; this is the
 one-line-per-walkthrough summary.
 
@@ -233,6 +288,10 @@ one-line-per-walkthrough summary.
 | `w2_the_first_commit.md` | ☐ | | |
 | `w3_the_log_as_a_story.md` | ☐ | | |
 | `w4_push_and_prove_it.md` | ☐ | | |
+| `w5_where_the_file_actually_goes.md` | ☐ | | |
+| `w6_a_real_editor.md` | ☐ | | |
+| `w7_its_own_python.md` | ☐ | | |
+| `w8_read_the_stack.md` | ☐ | | |
 
 **Unticked, deliberately.** They were authored against the commands they teach, and
 authoring is not following. Whoever first runs session 1 ticks the first line.
@@ -307,13 +366,20 @@ area-2/
   README.md              this file
   dm-guide.md            how to run a session; the remote decision; the cold clone
   verify.py              runs the runnable exercises; says what it does not cover
-  sessions/              one plan per session, in delivery order (1-4 written)
+  sessions/              one plan per session, in delivery order (all eight)
   exercises/
     session-1/  w1_the_folder_that_remembers.md, still_works.py
     session-2/  w2_the_first_commit.md, motto.py, gitignore.txt
     session-3/  w3_the_log_as_a_story.md, streak.py
     session-4/  w4_push_and_prove_it.md, receipt.py
-  reference/             Datamine payloads. Near-empty for 2a, and it says why
+    session-5/  w5_where_the_file_actually_goes.md, where_am_i.py
+    session-6/  w6_a_real_editor.md, the_dot_on_the_tab.py
+    session-7/  w7_its_own_python.md, which_python.py
+    session-8/  w8_read_the_stack.md, and six .py -- the three-file chain,
+                the library floor, and the main-guard pair
+  reference/             Datamine payloads. Nothing for 2a, and it says why
+    its-own-python/  the worked venv project: main.py, requirements.txt, README.md
+    session-8-answers.md   every traceback in session 8, captured verbatim
 ```
 
 No `journal/`. See **The Journal, and where it goes** above.

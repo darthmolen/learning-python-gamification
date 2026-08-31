@@ -1,0 +1,6 @@
+# One line is enough, and this is that line.
+#
+# No version pinned, deliberately: a pinned version that has been yanked turns a
+# lesson about environments into an afternoon of somebody else's problem. Pinning is
+# real and it is Area 6 vocabulary -- `dependencies` is registered there, not here.
+pyfiglet

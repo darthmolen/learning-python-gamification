@@ -3,15 +3,23 @@
     py -3.14 verify.py
 
 **Read this paragraph before reading the number at the bottom.** Area 2 is git
-and the toolchain, so most of what this area teaches is markdown walkthroughs
-typed at a terminal, and there is nothing in "make a commit, then read the log"
-for a harness to execute. So the count below is over the runnable `.py`
-exercises ONLY, and it is deliberately small -- four, against Area 0's nineteen.
-That is honest rather than thin: the walkthroughs are audited by the completion
-checklist in `README.md`, one line per walkthrough, checked by a person who
-followed it. A harness that silently counted zero files and printed a
-reassuring `0 of 0` would be worse than one that says out loud what it does not
-cover, so this one prints both numbers.
+and the toolchain, so a large part of what this area teaches is markdown
+walkthroughs typed at a terminal, and there is nothing in "make a commit, then
+read the log" for a harness to execute. So the count below is over the runnable
+`.py` exercises ONLY. That is honest rather than thin: the walkthroughs are
+audited by the completion checklist in `README.md`, one line per walkthrough,
+checked by a person who followed it. A harness that silently counted zero files
+and printed a reassuring `0 of 0` would be worse than one that says out loud
+what it does not cover, so this one prints all three numbers -- what it ran,
+what it cannot run, and what there was nothing to run in.
+
+The middle number is Area 2b's doing. `reference/its-own-python/` is the worked
+answer to the venv quest, and a project that would run without its dependencies
+installed is not an answer to that quest at all. So it is NOT RUN here, by a
+rule that states itself: **a file under a directory holding a
+`requirements.txt` has an environment of its own, and this harness does not
+have it.** Delete that one file and the harness will try, and fail loudly with
+`ModuleNotFoundError`, which is the correct answer to being asked.
 
 Every runnable exercise carries three header tags, exactly as in Area 0:
 
@@ -154,19 +162,47 @@ def check(path: pathlib.Path) -> tuple[bool, str]:
     return True, (headline[-1] if headline else expect) + failing_line(done.stderr, path.name)
 
 
+def has_own_environment(path: pathlib.Path) -> bool:
+    """True if this file sits in a project that declares its own dependencies.
+
+    `reference/its-own-python/` is the worked answer to the venv quest, and the
+    quest requires a program that CANNOT run without something installed. This
+    harness runs on the repository's own Python, which does not have it, so
+    running that file here would report a failure that is really a correct
+    design.
+
+    The rule is deliberately a fact about the tree rather than a list of
+    exceptions: a `requirements.txt` beside a file is that file saying it has
+    an environment, in the same words session 7 teaches. Take the
+    `requirements.txt` away and the file is run like any other -- and fails
+    with `ModuleNotFoundError`, loudly, which is what should happen.
+    """
+    for parent in path.parents:
+        if (parent / "requirements.txt").exists():
+            return True
+        if parent == ROOT:
+            break
+    return False
+
+
 def main() -> int:
-    files = sorted(f for directory in SEARCH for f in directory.rglob("*.py"))
+    found = sorted(f for directory in SEARCH for f in directory.rglob("*.py"))
     walkthroughs = sorted(f for directory in SEARCH for f in directory.rglob("w*.md"))
+    files = [f for f in found if not has_own_environment(f)]
+    skipped = [f for f in found if has_own_environment(f)]
     if not files:
         print("no runnable exercises found -- that is not a pass, it is a missing tree")
         return 1
 
     failures = 0
     session = None
-    for path in files:
+    for path in found:
         if path.parent.name != session:
             session = path.parent.name
             print(f"\n{session}")
+        if path in skipped:
+            print(f"  SKIP  {path.name:<24} needs its own venv -- requirements.txt beside it")
+            continue
         ok, note = check(path)
         if not ok:
             failures += 1
@@ -174,7 +210,12 @@ def main() -> int:
 
     print(f"\n{len(files) - failures} of {len(files)} runnable exercises behaved as tagged.")
     print(
-        f"{len(walkthroughs)} git walkthroughs are NOT covered here -- there is nothing to "
+        f"{len(skipped)} file(s) were NOT run: they belong to a project with its own "
+        "requirements.txt,\nand this harness does not have that environment. "
+        "reference/its-own-python/README.md\nhas the four commands that do."
+    )
+    print(
+        f"{len(walkthroughs)} walkthroughs are NOT covered here -- there is nothing to "
         "execute in\nthem. README.md carries their completion checklist."
     )
     return 1 if failures else 0

@@ -47,7 +47,7 @@ living with it for years without a name for it.
 
 Then say the sentence, once, plainly:
 
-> "Tonight your code folder becomes the only folder on ttheir own machine that can answer both
+> "Tonight your code folder becomes the only folder on this machine that can answer both
 > of those questions about itself, forever, for free."
 
 **Do not explain the object model.** Not blobs, not trees, not SHAs. He needs one true

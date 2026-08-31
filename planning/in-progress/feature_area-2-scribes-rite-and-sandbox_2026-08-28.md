@@ -372,7 +372,23 @@ curriculum artifact makes the ladder self-contained: a later area reads
 session 6 *is* the VS Code session and sessions 5–8 cannot be finalised against a profile
 that does not exist yet.
 
-### Phase 4 — 2b sessions and exercises [needs Phase 3]
+### Phase 4 — 2b sessions and exercises [~~needs Phase 3~~ — **ungated 2026-08-31**]
+
+> **The gate was overruled by the DM on 2026-08-31, and the plan agreed with them.**
+>
+> *"There's no reason the content can't be authored because I haven't performed an action on a
+> machine that isn't even started any of the training yet."*
+>
+> This plan's own **Dependencies** section already says *"authoring order and delivery order
+> are different things, and only the first one gates this plan"* — and then Phase 4 gated
+> authoring on a delivery concern anyway. The criterion that mattered was always *"Area 2 is
+> not ready to be **taught** until the profile passes"*, and writing sessions is not teaching
+> them.
+>
+> **Phase 3's remaining work still has to happen** — the §4 checklist and the re-export, which
+> only an editor on that machine can produce. It is carried as
+> `planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md` and it **holds
+> delivery of Area 2b, not its authoring.**
 
 Sessions 5–8: files on disk and where a file actually goes; `python thing.py`; VS Code; venv
 and `pip` and the two-interpreter trap this machine actually has; tracebacks with real
@@ -642,7 +658,12 @@ authored, plausible, never run. The gate caught it before the checklist even sta
 ### What remains in Phase 3
 
 The import is proved. **The verification half is not finished**, and it is work rather than a
-blocker now — the machine is no longer the constraint.
+blocker now — the machine is no longer the constraint. **As of 2026-08-31 it no longer blocks
+Phase 4 either**; see the note on that phase.
+
+Now carried as `planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md`, so it
+survives this plan reaching `completed/` — which it now can, with 2b authored and the profile
+still a draft.
 
 1. **Work §4's checklist line by line.** What came back is an impression, not the twenty-odd
    assertions the checklist asks for. The five that need looking at rather than reasoning
@@ -664,3 +685,143 @@ an afternoon's work rather than a wait for hardware.
 person's machine."* Two of the three things learned in that hour — the missing import command
 and the stale export wording — were invisible from this side and cost nothing to find from
 that side.
+
+---
+
+## Status — 2026-08-30, Phase 4 is authored and the area is complete on paper
+
+**Sessions 5–8 exist, with their exercises and their reference payloads.** The gate lifted
+that morning was the only thing holding them, and nothing in writing them needed the
+machine — which is what the overruling said, and it turned out to be true.
+
+### Done in this pass
+
+| Phase | State |
+|---|---|
+| **4 — 2b sessions 5–8** | **complete** |
+| **5 — content items** | was **already complete** before this pass started; only the manifest changed |
+| **6 — verify and README** | **complete**, and the README no longer carries a "not written" column |
+
+- `curriculum/area-2/sessions/` — sessions 5, 6, 7 and 8, in the five-beat shape sessions
+  1–4 use. Each one closes with the same predicted stalls `dm-guide.md` §4 already carried
+  for it, in the same words, plus a **What you may not say** section.
+- `curriculum/area-2/exercises/session-5..8/` — four walkthroughs (`w5`–`w8`, each ending
+  in a **Done when** list) and **nine** runnable `.py` files.
+- `curriculum/area-2/reference/its-own-python/` — the worked venv project: `main.py`
+  (which imports `pyfiglet`), `requirements.txt`, and a `README.md` carrying the four
+  commands, all of which were actually run in a scratch venv before being written down.
+- `curriculum/area-2/reference/session-8-answers.md` — every traceback in session 8,
+  captured verbatim from Python 3.14.6 rather than reconstructed, in the shape of Area 0's
+  `session-3-answers.md`.
+- `curriculum/area-2/verify.py` — a new rule and two new lines of output. See point 3.
+- `curriculum/area-2/README.md`, `exercises/README.md`, `reference/README.md`, and
+  `dm-guide.md` §4's preamble — updated to describe an area that exists.
+- `content/areas/area-2.yml` — the two wire fields this plan deferred, `weeks` and an
+  authored `blurb`. `authoring` did **not** flip. See point 2.
+
+### Verification actually performed
+
+```
+py -3.14 verify.py                        13 of 13 runnable exercises behaved as tagged.  exit 0
+                                          1 not run (its own venv), 8 walkthroughs not covered
+py -3.14 -m ruff check curriculum/area-2/ All checks passed!                              exit 0
+py -3.14 -m pyright ... curriculum/area-2  0 errors, 0 warnings, 0 informations
+cd pyquest && npm run validate:content    OK  23 items across 8 areas                     exit 0
+```
+
+**Four seeded mutants against the new files, all caught**, each restored afterwards:
+
+| Mutant | Caught by |
+|---|---|
+| `files-on-disc` for `files-on-disk` in `where_am_i.py` | `concepts not in the areas 0-2 registry` |
+| `breakpoints` — an area 3 id — tagged in `the_dot_on_the_tab.py` | the same rule |
+| `int("four")` "fixed" to `int("4")` in `bottom_frame.py` | `expected ValueError, but it ran without complaint` — and it caught all **three** files in the chain, which is the chain doing its job |
+| `# expect: JSONDecodeError` changed to `KeyError` | `expected KeyError, got: ...` |
+
+**A fifth, against the new harness rule:** `reference/its-own-python/requirements.txt`
+removed, which is the only thing keeping that project out of the run. The harness ran
+`main.py`, got `ModuleNotFoundError: No module named 'pyfiglet'`, and exited 1. Restored.
+
+The reference project was also run for real — `py -3.14 -m venv`, activate,
+`pip install pyfiglet`, `python main.py`, banner printed — and its README's four commands
+are transcribed from that run rather than remembered.
+
+### Where the plan turned out to be wrong, or incomplete
+
+1. **Phase 5 was already done, and the brief for this pass did not know that.** The
+   2026-08-29 status says so plainly — six YAML, six briefs, two tests, no starters. The
+   only content work left was the deferred manifest fields, which is fifteen minutes rather
+   than a phase. Nothing was re-authored, and no `a2-` content file was touched other than
+   `content/areas/area-2.yml`.
+
+2. **The plan contradicts itself about `authoring: complete`, and the more careful half
+   won.** Phase 5's paragraph says the manifest "flips to `complete` when Phase 4 lands";
+   the deferred-content section says `authoring` "stays `partial` until this plan's own
+   criteria say otherwise, **which is a decision a person makes** rather than a consequence
+   of the fifth quest landing." Those cannot both be followed.
+
+   It stays `partial`, for three reasons that agree with each other: `area-1.yml` is fully
+   authored and `partial` on exactly this rule, so flipping Area 2 would make two manifests
+   mean different things; two of this plan's own success criteria are unmet — the profile
+   re-export, and the walkthrough completion checklist, which is still unticked because
+   authoring is not following; and `complete` is a claim about a finished area rather than
+   about a finished phase. The file now carries that argument in a comment, so the next
+   person does not have to rediscover it.
+
+3. **A reference payload can be unrunnable, and the harness had no way to say so.**
+   `its-own-python/main.py` imports `pyfiglet` on purpose — a project that runs without its
+   dependencies is not an answer to the venv quest — and `verify.py` searches `reference/`.
+   The fix is a rule rather than an exception list: **a file under a directory holding a
+   `requirements.txt` has an environment of its own, and this harness does not have it.** It
+   is skipped, counted separately, and the reason is printed. Delete the `requirements.txt`
+   and it is run like anything else and fails loudly, which is how the rule was proved.
+
+4. **The standing `py -3.14` rule inverts inside an activated venv, and nothing in the
+   repository said so.** Measured on this machine, in one terminal, with `.venv` active:
+   `python` and bare `py` both resolve to the environment's interpreter, and **`py -3.14`
+   resolves to the machine's** — because it asks for a *version*, and an environment is not
+   a version.
+
+   So the habit that protects him for six weeks is the exact habit that breaks in session
+   7, which is the session about which Python is running — and `pip install` under the
+   wrong one of those is the stall `dm-guide.md` §4 already predicted. Session 7, its
+   walkthrough, `exercises/README.md` and the reference README all now say so.
+
+   **`tools/python/README.md` should carry it too, and this track did not edit it** —
+   `tools/` reverts to `main`. That file currently says "always `py -3.14`, never `python`.
+   Every command in this repository is written that way, **and where one is not, it is a
+   bug**", which now has one true exception. **Reported to `main`, not fixed here.**
+
+5. **"Most of this area's exercise directory is markdown" was true of 2a and not of 2b.**
+   Phase 2 predicted three or four runnable files for the whole area, and the README said
+   four was honest rather than thin. 2b brings nine more, and the reason is worth keeping:
+   **`git-add` is not a thing a Python file can demonstrate, and `files-on-disk` is.** A
+   file can print where it is, name the interpreter running it, and import another file to
+   produce a three-frame stack. The tags follow — 2b's exercises carry Area 2 concept ids
+   where 2a's carry Area 0's.
+
+6. **`dm-guide.md` §4's stalls for sessions 5–8 held up verbatim.** They were written
+   before the sessions and not one of them needed changing. Two were checked against the
+   tools rather than assumed: session 6's "the dot on the tab" survives
+   `workbench.editor.showTabs: "single"` — there is still one tab and it still shows the
+   mark — and session 7's two-interpreter trap is the one `tools/python/README.md`
+   documents rather than a hypothetical one.
+
+7. **Seven places in the 2a material said "ttheir own machine"** — a find-and-replace scar
+   from the pass that removed identifying detail, in `README.md`, `dm-guide.md`, two
+   walkthroughs and two session plans. Fixed to "this machine", which is what each sentence
+   meant. Cosmetic, inside this track's own files, and it would have been read aloud to a
+   child on the night.
+
+### What is still open, and who owns it
+
+- **The profile re-export**, carried by
+  `planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md`. It holds
+  *delivery* of session 6 and nothing else; session 6 tells the DM what to do if the five
+  view-visibility panels are still showing — hide them by hand, run the session, and say
+  out loud that it is not his fault.
+- **The walkthrough completion checklist**, eight rows, all unticked. Whoever first runs a
+  session ticks its row.
+- **`curriculum/README.md`'s status row.** Owned by `main`. **The line to add:**
+  `| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | authored in full; the VS Code profile re-export outstanding |`
+- **One line for `tools/python/README.md`**, per point 4. Owned by `main`.

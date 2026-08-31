@@ -1,12 +1,25 @@
 # Spec §5.1a - the manifest carries the denominator every progress display needs.
 # `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~5".
 #
-# Five quests is all of them (§5.2: five quests, any three unlock the boss), so this would
-# read `complete` were the area finished. It says `partial` because it is not: sessions 5-8
-# are unwritten and the VS Code profile has not been verified on the machine it is for.
-# An estimate presented as fact is dishonest, and so is a completion presented as fact.
-# Flip this to `complete` when curriculum/area-2/README.md's authoring status says so.
+# Five quests is all of them (§5.2: five quests, any three unlock the boss), and as of
+# 2026-08-30 all eight sessions and their exercises are authored too - so the reason for
+# `partial` has changed and is worth writing down rather than leaving as an unexplained
+# leftover.
+#
+# It stays `partial` for the reason area-1.yml gives: `complete` is a person deciding an
+# area is finished, not a consequence of the last quest landing. Two things are still open
+# here - the VS Code profile has been imported and confirmed but not re-exported (see
+# planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md), and no
+# walkthrough has been followed end to end by anybody. Until then a tilde is the honest
+# rendering. Flip it when curriculum/area-2/README.md's authoring status says so.
+#
+# Weeks come from spec §3's headings and are road markers, not a schedule (ADR 0002). The
+# range covers both halves - 2a is 6-7 and 2b is 7-8, one manifest for one area - and it
+# overlaps Area 1's 3-6 on purpose. The real curriculum overlaps; the validator must not
+# require otherwise.
 area: 2
 title: The Scribe's Rite, and Escape the Sandbox
+weeks: { from: 6, to: 8 }
+blurb: Git first, then the real toolchain. Code leaves the browser and lands on a disk.
 authoring: partial
 estimatedQuests: 5

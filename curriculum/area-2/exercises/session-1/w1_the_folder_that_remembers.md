@@ -12,7 +12,7 @@ There is no Python in this walkthrough. Type every command yourself; do not past
 
 Answer these out loud. You will check both answers in a minute.
 
-1. How many files on ttheir own machine are a copy of another file, saved because you were
+1. How many files on this machine are a copy of another file, saved because you were
    about to change something and did not want to lose the old one?
 2. Which of them is the newest? How do you know?
 

@@ -147,8 +147,10 @@ appears somewhere he did not put it.
 
 Written in the order you will hit them. Each is a real prediction.
 
-*Sessions 5–8 are 2b. Their stalls are here; their session plans are authored separately,
-and `README.md` records which of them exist yet.*
+*Sessions 5–8 are 2b. Their stalls were written here before their session plans were, and
+the session plans agree with them line for line — each one closes with the same predicted
+stalls, in the same words. All eight session plans now exist; `README.md` carries the
+authoring status of everything else.*
 
 ### Session 1 — What A Repository Is
 
@@ -218,7 +220,7 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | `py -3.14 thing.py` — file not found | He is not in the directory the file is in | "Where is the file? Where are you? Which of those two do you want to change?" |
-| Edits one copy and runs another | The same file is open in two places | "How many copies of this file exist on ttheir own machine? How could you prove it?" |
+| Edits one copy and runs another | The same file is open in two places | "How many copies of this file exist on this machine? How could you prove it?" |
 | Types a whole script into the REPL by habit | Areas 0–1 were mostly a prompt | "Which prompt are you at? What happens to everything you typed when you close it?" |
 | Uses `python` instead of `py -3.14` | Two interpreters, one machine | "Which Python did that use? What could you print that would tell you?" |
 | Wants to double-click the file | Entirely reasonable | "Try it. What happened to the window? Now run it the other way. Which one let you read the error?" |

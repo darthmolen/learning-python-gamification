@@ -23,19 +23,34 @@ location, not an answer. `dm-guide.md` §4 has the question for each of them.
 The one Datamine-shaped moment in 2a is a merge conflict, and the payload for that is the
 conflict markers themselves, which are already in his file.
 
-## What will be here
+## What is here, and it is all 2b
 
-Sessions 5–8 are a different matter, and their reference material arrives with them:
+Sessions 5–8 are a different matter, because from session 5 there are right answers that
+are not obvious from the walkthrough.
 
-- a worked `its-own-python/` project — `main.py`, `requirements.txt`, `README.md` — as the
-  payload for the venv quest, which is the first thing in this area with a right answer
-  that is not obvious
-- a traceback answer key for session 8, in the shape of Area 0's
-  `reference/session-3-answers.md`, quoting real multi-frame stacks with their line
-  numbers
+### `its-own-python/` — the worked venv project
 
-Both are Phase 4 of `planning/in-progress/feature_area-2-scribes-rite-and-sandbox_2026-08-28.md`
-and neither exists yet.
+`main.py`, `requirements.txt`, `README.md`: the smallest honest answer to
+`a2-its-own-python`. A program that cannot run without something installed, and four
+commands that build the environment it needs.
+
+**Unlock it only after he has built a venv of his own and failed at it**, which is the
+normal Datamine rule and matters more here than usual — the value of session 7 is entirely
+in the `ModuleNotFoundError` he causes himself.
+
+Its README also records the measured version of the two-interpreter trap, including the
+part that catches adults: **inside an activated environment, `py -3.14` is not the
+environment.**
+
+### `session-8-answers.md` — the traceback answer key
+
+In the shape of Area 0's `session-3-answers.md`, and used the same way: **read it before
+session 8, never in front of him.** Every traceback in it was captured by running the file
+on Python 3.14.6, and it carries the six written answers the walkthrough asks for.
+
+This is the one payload in the area that is for the DM rather than for unlocking. There is
+nothing in it he could be given that would help — the skill is reading a stack, and being
+handed a read one removes the exercise entirely.
 
 ## Verifying these still run
 
@@ -44,3 +59,9 @@ Anything `.py` that lands here is covered by the area harness along with the exe
 ```
 py -3.14 verify.py
 ```
+
+**With one stated exception, and the harness says it out loud.** Files under a directory
+holding a `requirements.txt` are **not run**: they have an environment of their own and the
+harness does not have it. That is `its-own-python/main.py`, and it is the only one. Delete
+that `requirements.txt` and the harness will try, and fail with `ModuleNotFoundError` —
+which is the correct answer to being asked, and is how the rule was proved.
