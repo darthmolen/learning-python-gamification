@@ -1,8 +1,8 @@
 # Area 2 — The Scribe's Rite, and Escape the Sandbox
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** area-2
-**Blocked on:** nothing. The laptop gate cleared 2026-08-31 — the profile imported and the strip holds. Phase 3's re-export is outstanding but is work, not a blocker
+**Blocked on:** nothing, and closed 2026-08-31. The laptop gate cleared 2026-08-31 — the profile imported and the strip holds. Phase 3's re-export is outstanding but is work, not a blocker
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** B — **the plan that argues the `concepts.ts` edit; `main` lands it**
@@ -676,8 +676,12 @@ still a draft.
    partial strip.
 3. **Delete the ⚠ banner** at the top of `tools/vscode/README.md` and record the date.
 
-Phase 4 (2b sessions 5–8) is gated on 3 and therefore still not started — but the gate is now
-an afternoon's work rather than a wait for hardware.
+~~Phase 4 (2b sessions 5–8) is gated on 3 and therefore still not started.~~ **Wrong when
+written, corrected 2026-08-31.** Phase 4 was authored the previous day — the status section
+immediately below this one says so, and the tree agrees: sessions 5 to 8 all exist with their
+drills and their reference payloads. This sentence described the gate as it stood before that
+pass and was carried forward without being re-read. It is the reason the board still showed
+2b as blocked after it had landed.
 
 ### Where the plan turned out to be right
 
@@ -825,3 +829,76 @@ are transcribed from that run rather than remembered.
 - **`curriculum/README.md`'s status row.** Owned by `main`. **The line to add:**
   `| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | authored in full; the VS Code profile re-export outstanding |`
 - **One line for `tools/python/README.md`**, per point 4. Owned by `main`.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** area-2 — released
+**Completed:** 2026-08-31
+**Completed By:** Claude (Opus 5)
+
+The three dated sections above are the working record. This block closes the plan.
+
+### Outcomes
+
+- **Both halves authored.** Eight sessions — 2a's four on git, 2b's four on the toolchain —
+  each with its drills, plus `dm-guide.md`, `reference/`, `verify.py` and Boss 2.
+- **All fourteen Area 2 concepts are covered in both a quest and a session**, checked
+  mechanically rather than by reading: `repository`, `git-init`, `git-add`, `git-commit`,
+  `git-log`, `git-branch`, `git-push`, `files-on-disk`, `running-scripts`, `vscode`, `venv`,
+  `pip`, `tracebacks`, `main-guard`.
+- **The profile imports and the strip holds** on the learner's machine — the gate this plan
+  spent longest blocked on.
+- Six quests plus Boss 2 in `game/area-2/quests/`, validating clean.
+
+### Deviations
+
+- **No `journal/` directory**, unlike areas 0 and 1, and that is correct rather than missing.
+  Area 2 adds no new Journal entries; session 2 *migrates* Areas 0 and 1's existing entries
+  into git, which is the point of the session. The criterion asks for the migration, not for a
+  directory.
+- **Closed with two items outstanding**, both carried as reminders and neither blocking. See
+  below — the alternative was a plan sitting in `in-progress/` for weeks while the board
+  reported work that was finished.
+
+### Lessons Learned
+
+- **This plan contradicted itself for a day and the board believed the wrong half.** The
+  2026-08-31 status said Phase 4 was "still not started"; the 2026-08-30 status directly below
+  it said sessions 5–8 were authored, and the tree agreed. The sentence was carried forward
+  from before the previous pass without being re-read. Corrected in place rather than deleted,
+  because the failure is the interesting part: **a status section is only worth what its most
+  recent line is worth**, and the newest entry is the one nobody re-checks.
+- **The instructions were the defect, not the artifact.** There is no `Profiles: Import
+  Profile` command in VS Code 1.135; import is an option inside profile creation. The plan's
+  own argument — that an exported profile is a JSON blob and reading one proves nothing —
+  turned out to apply one step earlier, to the instructions for importing it. Authored,
+  plausible, never run.
+- *"The win condition is not passing tests, it is that it works on the other person's
+  machine."* Two of the three things learned in that hour were invisible from this side.
+
+### Remaining, as reminders — neither blocks anything
+
+1. `planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md` — work
+   `tools/vscode/README.md` §4's checklist line by line, hide the five views that are not
+   settings, **re-export over `pyquest-area2.code-profile`**, delete the ⚠ banner. The
+   re-export is the one that matters: those views live in `globalState`, the hand-authored
+   file's `globalState` is empty, and only an export captures them.
+2. `planning/reminders/verify_boss-2-cold-clone_2026-09-01.md` — run the cold clone at the end
+   of the area and record which step it lands on. It cannot be a test: every suite here runs
+   on a machine that already has the code, which is exactly what makes them blind to it.
+
+**Nothing downstream waits on either.** `feature_area-3-collections` states plainly that it
+"never waited on Area 2 for it, and does not now."
+
+### Bookkeeping corrected on close
+
+- The Phase 4 sentence above, which said 2b had not started after it had.
+- `curriculum/README.md`'s status cell, which still read *"2a authored; 2b blocked on hardware
+  verification"* after the laptop gate cleared. Now **authored**.
+
+Both were done on the `curriculum-foundation` branch rather than on `main`, because that
+branch already owns `curriculum/README.md` for the two-tree layout and a second edit to the
+same table on `main` would have collided at merge for no benefit.

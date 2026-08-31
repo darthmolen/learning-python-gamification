@@ -29,7 +29,7 @@ kind.
 |---|---|---|---|
 | [area-0](area-0/) | 1–2 | First Light — `print`, variables, the four types, `input`, f-strings, reading errors | **authored** |
 | [area-1](area-1/) | 3–6 | Control — `if`/`while`/`for`, nesting, the accumulator pattern | **authored** |
-| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **2a authored**; 2b blocked on hardware verification |
+| [area-2](area-2/) | 6–8 | The Scribe's Rite, and Escape the Sandbox — git, then the real toolchain | **authored** |
 | area-3 | 9–14 | Collections — `list`, `dict`, `set`, iteration, nested structures | planned, blocked on the shim's measurement |
 
 Area 2's remaining half needs one sitting at the machine the profile is for: the VS Code profile has to be
