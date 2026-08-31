@@ -40,7 +40,7 @@ Two further things the current layout gets wrong:
 
 ## The target layout
 
-```
+```text
 curriculum/                          every educational artifact, and nothing else
   README.md
   lib/                               shared runtime for exercises (unchanged)
@@ -109,6 +109,10 @@ rest — see Phase 4. It is also the piece that collides with the live `area-2` 
 - [ ] Every hidden test lives under a `hidden/` directory; a test asserts no `hidden/` path
       reaches `dist/`
 - [ ] Full suite green, `typecheck` clean, `validate:content` clean
+- [ ] Two published pages from one source: a learner Tome, and a DM page whose extra content
+      is behind a **Teaching aid** control that expands in place
+- [ ] The learner build contains **no DM prose at all** — not hidden, absent — asserted over
+      the built HTML
 - [ ] The published site is not worse than it is today at any point on the branch
 
 ## Approach
@@ -131,27 +135,58 @@ That rule is the reason `buildSite` can skip its own existence checks; it must n
 
 ## Phases
 
-### Phase 1 — the readers learn the new shape, RED first
+### Phase 1 — the readers learn the new shape, RED first — **done, `92fd2d1`**
+
 Teach `validate.ts` the two conventions and the second root, against fixtures in the new
 layout, before a single real file moves. Per `test-filter-development`: capture the failure,
 then GREEN, then seed a mutant — a quest pointing at a brief that does not exist across the
 root boundary — and confirm the suite catches it.
 
-### Phase 2 — the move
-`git mv` in one commit per concern so the diff stays readable: manifests, briefs, starters,
-tests, then quests to `game/`. No content edits in these commits — a rename commit that also
+### Phase 2 — the move — **done, `5622547`**
+
+**Landed as one commit, not one per concern, and that was a deviation worth naming.** The
+concerns are not separable without a red intermediate: moving briefs without rewriting the
+quest paths that name them leaves a tree that fails `validate:content`, and a bisectable
+history is worth more than a narrower diff. Rename detection carried it anyway — git recorded
+117 renames — so the diff still reads as moves. No content edits ride along; a rename commit that also
 changes a word is a rename commit nobody can review.
 
 ### Phase 3 — `lesson.md`
+
 The slot, then the prose. Areas 0–2 authored from the session plans and DM guides that
 already exist; 3–7 get a stub that renders as an honest gap, the same way "Not written yet"
 already works for exercises. The Field Manual renders `lesson.md` above the exercises.
 
 ### Phase 4 — session drills beside their sessions
+
 `exercises/session-N/*.py` → `sessions/session-N/`. **Cuttable.** If this branch is getting
 long or the `area-2` collision bites, stop after Phase 3 and the foundation still stands.
 
-### Phase 5 — the gates the new shape demands
+### Phase 5 — two audiences, one build: the Tome and the teaching aid
+
+The DM guide is curriculum, not a separate body of work, and this phase says so in the
+output. **Two published pages from one source tree**: the Tome for the learner, and the same
+page plus a **Teaching aid** button for whoever holds the DM seat.
+
+The button expands in place and pushes the content down — CLAUDE.md's standing UI rule, *"no
+pop-overs; the Tome expands in place and pushes the work down; nothing is covered and nothing
+is lost."* The learner build simply never renders the control.
+
+**At area level first, exercise level second.** `dm-guide.md` is authored per area, so area
+level is where the material already is and costs no new prose. Exercise level is the better
+reading experience and can follow once the guide is sectioned per exercise; the renderer
+should take a list of aids keyed by anchor so both work without a second code path.
+
+**Two outputs, one generator.** A `dm` flag decides whether aids are rendered at all, not
+merely hidden — a `display:none` teaching aid is a teaching aid the learner can read with
+view-source, and this site is public. The no-aid build must contain no DM prose at all, and
+a test asserts that over the built HTML the way the no-game gate already does.
+
+Publishing is then two artifacts. **The DM page must not be linked from the learner page**,
+and neither may leak the other's URL.
+
+### Phase 6 — the gates the new shape demands
+
 The deletion test (`game/` removed, everything still valid), the `hidden/` exclusion test,
 and a check that no path string in `pyquest/` still says `content/`.
 
@@ -170,7 +205,9 @@ and a check that no path string in `pyquest/` still says `content/`.
 - `game/area-{0,1,2}/quests/*.yml` — new home, 23 items
 - `pyquest/packages/content/src/validate.ts` — two conventions, a second root
 - `pyquest/packages/content/src/scaffold.ts` — `new:quest` scaffolds the new shape
-- `pyquest/apps/field-manual/src/{build,render}.ts` — read `curriculum/`, render `lesson.md`
+- `pyquest/apps/field-manual/src/{build,render}.ts` — read `curriculum/`, render `lesson.md`,
+  and emit two builds: the Tome, and the Tome plus teaching aids
+- `.github/workflows/field-manual.yml` — publish the second artifact
 - `pyquest/apps/api/src/checkout.ts` — verifier paths, if they are rooted here
 - `CLAUDE.md` — the Lane B description and the lexicon table
 - `planning/feature_field-manual-teaches_2026-08-30.md` — superseded, see below
