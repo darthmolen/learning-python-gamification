@@ -64,8 +64,8 @@ git commit -m "Draw the spiral inward instead of outward"
 git commit -m "Fix bug"
 ```
 
-That is a wasted opportunity, and you will find out why in about three weeks when you
-are looking for when something broke.
+That is a wasted opportunity, and you will find out why the first time you go looking for
+when something broke.
 
 The message answers **why**, because the *what* is already in the change itself. Anyone
 can see that a line changed; nobody can see what you were trying to do.

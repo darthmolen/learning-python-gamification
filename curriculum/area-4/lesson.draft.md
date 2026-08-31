@@ -1,6 +1,6 @@
 # Functions and Decomposition
 
-Six weeks. By now you can write a long program. This area is about why you should stop.
+By now you can write a long program. This area is about why you should stop.
 
 The vehicle is a game loop, and a game loop is the perfect argument for functions: it runs
 sixty times a second, and everything it does has to be named, small, and findable.

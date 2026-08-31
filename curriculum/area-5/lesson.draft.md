@@ -1,6 +1,6 @@
 # State and Objects
 
-Eight weeks. Area 4 gave you functions — work with a name. This area gives you objects:
+Area 4 gave you functions — work with a name. This area gives you objects:
 **data and the work that belongs to it, kept together.**
 
 The vehicle is modeling a world. A block has a position and a type. A player has an

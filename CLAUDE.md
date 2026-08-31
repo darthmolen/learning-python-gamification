@@ -103,4 +103,13 @@ both the player and DM seats (§5.11). Roles are not people.
   because the underscore beside it is a word character.
 - **Headings name what follows them** (ADR 0005): no comma joining a clause, no colon doing
   the same job, one em dash only to define the term. Curriculum only; plans and ADRs are free.
+- **A lesson never opens by naming its timing.** Not "Two weeks.", not "Six weeks, and the
+  longest area in the year." **Teaching pace is per learner and always has been** — ADR 0002
+  already rules that weeks are road markers rather than a schedule — so a lesson that opens
+  with a duration is wrong for most readers on the day they read it, and it dates the one
+  artifact meant to outlive the campaign (ADR 0004). The lesson has to work outside the game
+  and still inside it: the *game* owns pace and knows the week, the *lesson* owns the
+  teaching. Open on what the reader will be able to do. Prefer an event to a clock anywhere
+  in the body too — "the first time you go looking for when something broke" beats "in about
+  three weeks". Week counts belong in `area.yml`, session plans and the DM guide.
 - Do not commit or push unless asked.

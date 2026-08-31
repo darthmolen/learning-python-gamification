@@ -1,7 +1,7 @@
 # Collections
 
-Six weeks, and the longest area in the year. Areas 0 and 1 drew pictures; Area 2 got you
-out of the sandbox. This is where the subject becomes something you actually care about,
+Areas 0 and 1 drew pictures; Area 2 got you out of the sandbox. This is where the subject
+becomes something you actually care about,
 because **an inventory is a list, a crafting recipe is a dict, and a block palette is a
 set.** The mapping is not a metaphor. It is what those things are.
 

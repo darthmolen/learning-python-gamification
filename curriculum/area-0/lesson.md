@@ -1,7 +1,7 @@
 # First Light
 
-Two weeks. By the end of them you will have typed a line that draws a square, given
-things names, asked the computer a question, and read an error message on purpose.
+By the end of this area you will have typed a line that draws a square, given things
+names, asked the computer a question, and read an error message on purpose.
 
 Everything here runs with a text editor, a terminal, and Python. No website, no account,
 no internet.

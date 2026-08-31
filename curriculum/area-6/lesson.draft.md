@@ -1,6 +1,6 @@
 # Data and the Outside World
 
-Eight weeks. Everything you have written so far forgets everything the moment it stops.
+Everything you have written so far forgets everything the moment it stops.
 
 This area is about **data that outlives the program** — saving a world so it is still there
 tomorrow, sharing a seed with somebody else, and asking a machine on the other side of the

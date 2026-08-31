@@ -1,7 +1,7 @@
 # Craft
 
-Twelve weeks, and the last area. Everything before this was about making a program work.
-This is about **making it good** — and about working on code you did not write, which is
+This is the last area. Everything before it was about making a program work; this is about
+**making it good** — and about working on code you did not write, which is
 what programming actually is once you are not alone.
 
 At the end of it you open the repository that runs all of this, read it, and change
