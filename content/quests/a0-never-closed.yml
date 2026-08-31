@@ -1,0 +1,18 @@
+# Session 3's broken sigils, promoted to fix-it quests. b3 — SyntaxError, a bracket that was never closed.
+#
+# The verifier has two halves and needs both (curriculum/area-0/README.md): the hidden
+# test proves the error is gone, and the turtle spy proves the behaviour is still there.
+# A quest that only checked "did it run" would accept deleting the broken line, which is
+# the one answer session 3 exists to rule out.
+id: a0-never-closed
+title: "Never Closed"
+kind: quest
+area: 0
+concepts: [reading-errors]
+dc: 8                # XP and the risk label both derive from this (§5.1)
+brief: briefs/a0-never-closed.md
+
+verifier:
+  type: hidden-tests
+  starter: starters/a0-never-closed.py
+  tests: tests/a0-never-closed_test.py

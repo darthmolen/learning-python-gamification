@@ -1,6 +1,23 @@
 # Spec §5.1a — the manifest carries the denominator every progress display needs.
-# `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~5".
+# `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~10".
+#
+# It stays `partial` with ten quests and a boss authored, and deliberately so. §5.2 sets five
+# as the SHAPE of an area, not as its ceiling, and `complete` asserts that nobody will add an
+# eleventh — a decision a person makes rather than a consequence of hitting a number.
+#
+# `estimatedQuests` moved 5 -> 10 on 2026-08-31, when session 3's six broken sigils were
+# promoted to fix-it quests. The number is a count of what is authored, not a target: an
+# estimate that says 5 while ten are playable is not an estimate, it is a wrong answer, and
+# §5.1a's whole argument is that the denominator has to be honest.
+#
+# Weeks come from spec §3's heading and are road markers, not a schedule (ADR 0002): they gate
+# nothing, and nothing derives ahead or behind from them. The blurb is the line under the title
+# on the Area screen, authored here — §3's Vehicle: lines are prose about the area rather than a
+# subtitle for it. Both fields were deferred here by `feature_content-surface_2026-08-29.md`,
+# which owns the schema widening and had already landed it.
 area: 0
 title: First Light
+weeks: { from: 1, to: 2 }
+blurb: The first line you type draws something. Then it breaks, and you learn to read why.
 authoring: partial
-estimatedQuests: 5
+estimatedQuests: 10
