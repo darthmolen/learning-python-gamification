@@ -1,7 +1,7 @@
 # The DM's reply, when it becomes a Gitea comment
 
-**Status:** Backlog
-**Track:** unassigned — `api`
+**Status:** Backlog — **blocked on a decision, not on work.** See *What the API actually has*
+**Track:** unassigned — `api`, and the ruling is the DM's
 **Date Discovered:** 2026-08-31
 **Discovered During:** `planning/in-progress/feature_journal-reads-from-git_2026-08-31.md` Phase 3
 
@@ -15,41 +15,67 @@
 - **From Area 2a** — *"this becomes a comment on a commit in Gitea, and from there it is code
   review."*
 
-**Phase 3 shipped the first and not the second.** `GET /journal` reads the reply out of the
-markdown, which is correct for weeks 1–10 and is where the campaign actually is. From Area 2a the
-DM starts replying in Gitea, and those replies will not appear.
+**Phase 3 shipped the first and deferred the second**, on the grounds that the endpoint could not
+be confirmed without a running Gitea and a wrong guess would fail silently.
 
-## Why it was deferred rather than guessed at
+## What the API actually has — checked 2026-08-31 against the running instance
 
-**Gitea's API for commit comments could not be confirmed from here, and a wrong endpoint fails
-silently in exactly the shape this plan exists to prevent.** A `readComments` that requests a path
-Gitea does not serve gets a 404, and 404 on this route already means "he has not written one yet"
-— so a mistyped endpoint would render every Area 2a entry as unanswered, look completely normal,
-and be indistinguishable from the DM not having replied.
+**Gitea 1.27.2 has no REST endpoint for commit comments. Not for reading them, not for writing
+them.** Taken from that instance's own `swagger.v1.json`, 308 paths, not from memory:
 
-That is the third time in two days this repository has been bitten by two halves that were each
-internally consistent, and it is not worth a fourth for a feature nobody needs for ten weeks.
-Implementing it against a running Gitea, where the endpoint can be *observed* rather than
-recalled, costs an hour and removes the guess entirely.
+Every path containing `comment` belongs to issues or pull requests —
+`/repos/{owner}/{repo}/issues/{index}/comments`, `/pulls/{index}/reviews/{id}/comments`, and their
+siblings. Every path containing `commit` is read-only history or status:
 
-## Known Scope
+```text
+/repos/{owner}/{repo}/commits
+/repos/{owner}/{repo}/commits/{ref}/status
+/repos/{owner}/{repo}/commits/{ref}/statuses
+/repos/{owner}/{repo}/commits/{sha}/pull
+/repos/{owner}/{repo}/git/commits/{sha}
+/repos/{owner}/{repo}/git/commits/{sha}.{diffType}
+/repos/{owner}/{repo}/pulls/{index}/commits
+```
 
-- Confirm the endpoint against a live Gitea — comments on a commit, by sha, for a repository the
-  token can read. Write down what it actually answered
-- A `readComments(repo, sha)` on the `Gitea` interface, parsed through a named raw shape the way
-  `commits()` and `readFile()` are
-- In `server.ts`, prefer a Gitea comment over the file's `### DM reply` section when one exists.
-  **Prefer, not replace** — an Area 0 entry keeps its in-file reply forever, and an entry could
-  legitimately carry both
-- A test with more than one comment on one commit: §5.6's reply is singular but Gitea's comments
-  are a list, and "the DM's reply" then needs a rule — most recent, or all of them joined
-- The `reply` field on `JournalEntrySchema` needs no change either way
+No operation in the whole document mentions both a commit and a comment.
+
+**So §5.6's mechanism cannot be read back by the API as written.** The DM can still comment on a
+commit in Gitea's web UI — that feature exists for people — but nothing the game can call will
+ever see it. An implementation that guessed the obvious path would have 404'd forever, and this
+route already reads a 404 as *"he has not written one yet"*, so every Area 2a entry would have
+rendered unanswered and looked completely normal. **That is the failure this deferral avoided**,
+and it is the fourth instance of that shape in three days.
+
+## The decision this now needs
+
+**Recommended: leave the reply in the file, and let the Gitea comment be for the humans.**
+
+§5.6's stated purpose is *"relatedness, plus code-review culture learned before he writes code
+worth reviewing"* — and a comment the DM leaves on a commit in the Gitea UI delivers all of that
+to the person it is for, whether or not the game reads it. Meanwhile `### DM reply` already works,
+already renders on the Journal screen, and needs nothing built. The two are complementary rather
+than competing: the file is what the game shows, the commit comment is where the code-review habit
+gets practised.
+
+Under this ruling the item closes as **dropped**, the curriculum's Area 2a line is reworded so the
+DM is not told the reply moves, and Phase 3 is complete as shipped.
+
+The alternatives, for completeness:
+
+- **An issue per entry.** The issue-comment API is complete and would work. It also puts a bug
+  tracker in the middle of a child's journal, and the artifact stops being one file he owns —
+  which is most of what ADR 0004 bought.
+- **A pull request per entry.** Real code review, and genuinely how the habit works in industry.
+  It is also a branch, a PR and a merge per journal entry, in week 6, from an 11–14-year-old who
+  has just learned `commit` and `push`. §7's rule applies: *a first `git commit` rejected by a
+  linter he did not install is a bad first day.*
+- **Read Gitea's database directly.** It is the same Postgres (§6.1). It is also Gitea's schema,
+  which we do not own and which changes on their release schedule, to read a field with a
+  supported alternative sitting in a file we already parse.
 
 ## Trigger for Promotion
 
-**Before Area 2a is taught**, which §4 puts at week 6. That is the session where the DM stops
-writing in the file and starts commenting on commits, and the first reply that lands in Gitea and
-does not appear on the Journal screen will be read as the game losing it.
-
-Sooner if a Gitea instance is up for another reason and somebody is already in `gitea.ts` — the
-confirmation step is the expensive half and it is cheap when the server is already running.
+**Before Area 2a is taught, week 6** — not to build anything, but because the curriculum currently
+tells the DM the reply moves to Gitea, and under the recommendation it does not. That is a
+sentence in `curriculum/area-0/journal/entry-01-prompt.md`, one in
+`curriculum/area-1/journal/entry-07-prompt.md`, and the §5.6 line in the spec.
