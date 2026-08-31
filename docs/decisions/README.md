@@ -48,3 +48,4 @@ as much as to `Area` over `Tier`.
 | [0001](0001-we-write-decisions-down.md) | We write decisions down, here, under these rules | Accepted |
 | [0002](0002-weeks-are-road-markers.md) | Area weeks are road markers, not a schedule to be judged against | Accepted |
 | [0003](0003-learner-python-runs-off-the-main-thread.md) | Learner Python runs off the main thread, in both places it runs | Accepted |
+| [0004](0004-ceremony-earns-its-place-by-outliving-the-game.md) | Ceremony earns its place by outliving the game; its artifact belongs to the learner | Accepted |

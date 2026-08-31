@@ -1,6 +1,6 @@
 # Wave 3 — The Application
 
-**Status:** Open — five plans landed, two running, one blocked on a laptop
+**Status:** Open — eight plans landed, three running, nothing blocked on hardware
 **Level:** Wave — coordinates plans, does not replace them
 **Date:** 2026-08-29
 **Author:** Claude (Opus 5)
@@ -100,10 +100,11 @@ one writes SQL and a repository layer, the other writes wire shapes and YAML. Gi
       owns it, and `api`, which needs one `projects` entry for `apps/api`'s node environment.
       That is one claimant at a time and not the queue this wave existed to break — the
       criterion was written too absolutely
-- [ ] Five queued plans running or complete — **three of five.** The progress schema, the
-      content surface and the curriculum's voice all landed 2026-08-29
-- [ ] The API's endpoint half exists — **not started.** The plan is approved (v4, "yes, with
-      one clarification") and unblocked; it is the next thing to run
+- [x] Five queued plans running or complete — **five of five**, 2026-08-30. The progress
+      schema, the content surface and the curriculum's voice landed 2026-08-29; the API
+      completed 2026-08-30 and area-3 is still correctly queued behind area-2
+- [x] The API's endpoint half exists — **done 2026-08-30.** All five phases, all four §6.3
+      verifiers, `local-repo` proven from a push to a medal
 
 ## What landed, 2026-08-29
 
@@ -198,3 +199,132 @@ large plan and should be split back up.
 It also does not schedule Lane B. `area-0`, `area-2` and `area-3` appear because they hold
 files Lane A wants, not because a wave decides when curriculum gets written. Lane B is never
 the thing that gets postponed.
+
+---
+
+## Where it stands, 2026-08-31 — the wave's own premise has expired
+
+**Wave 3 was written to break a queue caused by file ownership. That queue is gone**, and so is
+the hardware hold that replaced it. Every plan this wave sequenced has landed except the four
+still in `in-progress/`, and none of those four is waiting on another plan.
+
+| Track | Plan | State |
+|---|---|---|
+| `db` | Progress Schema | complete |
+| `content-wire` | Content Surface | complete |
+| `main` | Curriculum's Voice | complete |
+| `content-wire` | Content browser-safe entry | complete |
+| `api` | API and Runner | **complete 2026-08-30** — all five phases, all four §6.3 verifiers |
+| `world-shim` | The World Shim | **complete 2026-08-31** — 213.8 fps at 5,000 fused |
+| `reminders-ext` | Reminders extension | **complete 2026-08-30** — merged as PR #1 |
+| `spa` | The SPA v2 | in progress — all five phases done, three criteria outstanding |
+| `area-0` | Quest backfill | in progress — three quests done, six gated on one question |
+| `area-2` | Scribe's Rite | in progress — profile proved on the machine; re-export outstanding |
+| `field-manual` | The Field Manual | in progress — built and gated; the round trip unproven |
+| `area-3` | Collections | queued — **now behind area-2 alone**, world-shim having closed |
+
+### The laptop afternoon, and what it released
+
+One sitting on 2026-08-31 cleared four of the five things this wave named as blocking. It
+released `world-shim` to completed, freed `area-2` and `spa` from the blocked column, and left
+`area-3` waiting on one plan instead of two.
+
+**It also found two defects that had nothing to do with hardware.** `tools/vscode/README.md`
+sent the reader to a `Profiles: Import Profile` command that does not exist in VS Code 1.135,
+and its export step named a `Save to file` dialog that had been renamed. Both were authored
+instructions that had never been run — the same class of thing as the plan's own argument that
+*an exported profile is a JSON blob and reading one proves nothing*.
+
+**And it retired an assumption that had been shaping design.** The son's screen is 1920×1080,
+not the 1366×768 three documents asserted. That number was never measured; it was carried from
+"an old laptop" into a success criterion, the Map's panel budget, and a worry about the type
+ramp. Nothing needs redesigning.
+
+### What is actually blocking now — three questions and two errands
+
+Not one of these is a plan waiting on a plan. That is the state this wave was written to reach.
+
+| # | What | Holds | Who can clear it |
+|---|---|---|---|
+| 1 | ~~Can `hidden-tests` assert on a traceback?~~ **Answered 2026-08-31: yes, today, no change anywhere.** | ~~six Area 0 quests~~ — **now startable** | closed |
+| 2 | ~~Where does the Journal's text live?~~ **Ruled 2026-08-31: markdown in git, not Postgres.** No migration | ~~the Journal screen~~ — now ordinary work | closed |
+| 3 | ~~Did the Field Manual publish?~~ **It does now** — fixed and deployed 2026-08-31, `33348507577`, HTTP 200 | ~~the round trip~~ | closed |
+| 4 | **Re-export the VS Code profile** on the learner's machine | `area-2` Phase 4, and `area-3` behind it | the machine, briefly, again |
+| 5 | **`vite build` is in no gate** — unanswered from the previous section, and still true | nothing yet; it will | a decision about where the build runs |
+
+**Items 1 and 2 were the wave's own failure mode wearing new clothes.** Both were questions
+with no owner, sitting in prose inside plans, holding real work — exactly the shape of the five
+queued plans this wave opened to unstick. The lesson repeats: *a thing nobody owns is not
+scheduled, however clearly it is written down.*
+
+**All three were investigated on 2026-08-31, and the answers were not what the questions
+assumed.** That is the finding worth carrying forward more than any individual answer:
+
+- **Item 1 needed no work at all** — six quests sat gated for three days on a capability the
+  repository already had, in a pattern already shipping in `content/tests/a2-*`. Nobody had
+  read it. *Three days of block, zero days of work.*
+- **Item 2 was the wrong question.** "Which columns should we add" has an obvious answer and a
+  wrong premise; the real question is which of two already-built stores is the record, and the
+  spec's own partition rule does not reach it. It also turned up two mismatches nobody had
+  recorded — §5.6 wants four prompts where the contract models one, and `commit_sha NOT NULL`
+  makes the first eight weeks of entries unstorable.
+- **Item 3's failure was one step earlier than predicted**, and the prediction being wrong is
+  what makes it interesting: the plan feared a deploy-permissions failure and got a build that
+  never produced an artifact — **while both gates reported green**, because vitest aliases
+  `@pyquest/content` to `src/` and never touches `dist/`.
+
+**Item 3 and item 5 are the same bug.** "`vite build` is in no gate" was already written down in
+the previous section, and the Field Manual just proved it a second time in a second place. The
+pattern is not a missing test: **the suite runs against source and the artifact is built from
+`dist`, so a green suite is silent about whether the thing can be built at all.** Whatever
+answers item 5 should answer both.
+
+### Should there be a Wave 4?
+
+**Not yet, and possibly not at all.** A wave is written when the plans stop fitting in a head.
+Four in-progress plans on four tracks, with no plan-on-plan dependency between them, fits in a
+head — it needs a glance at `in-progress/`, which is this document's own test for when *not* to
+write one.
+
+What Wave 3 hands forward is a shorter list than the one it inherited: three questions, two
+errands, and `area-3` queued behind a single track. If `area-3`, the Journal and the API's
+Datamine table all start at once, that is the moment to write Wave 4 — not before.
+
+
+## 2026-08-31, later — the blocking list is down to one line
+
+Three of the five holds cleared the same day they were investigated, and the fourth was ruled.
+
+**The Field Manual is live** at `https://darthmolen.github.io/learning-python-gamification/`
+— HTTP 200, `<title>The Field Manual</title>`, build and deploy both green on run
+`33348507577`. The missing workspace build landed as `37d98f0`. **The deploy job's permissions
+are finally proven**, which this plan had listed as untested since the workflow was written.
+
+The privacy check is now the real one rather than its stand-in: the **live pages** were read and
+scanned. No name, machine, path, host or email; the only whole-word hit for anything relational
+was `family` inside the Google Fonts query string. The page's single third-party call is that
+font request, which hands Google each visitor's IP — removable by self-hosting if that ever
+matters.
+
+**The Journal is ruled**, and the ruling came with a reason better than either option the
+question offered: markdown is transportable and outlives the tool. *"If we strand it in the db,
+it dies with the game."* §6.9's *unregenerable* had been read as a backup problem; it is an
+obsolescence problem. Two mismatches that would have been schema churn — §5.6's four prompts,
+and `commit_sha NOT NULL` blocking the first eight weeks — **dissolve rather than get fixed**,
+which is usually the sign a design argument came out the right way.
+
+### What is left of item 5, and why it now matters more
+
+**`vite build` is in no gate — and neither was the Field Manual's build until it broke in
+public.** Both gates went green on the failing run because vitest aliases `@pyquest/content` to
+`src/` and never touches `dist/`. That alias is right and should stay; the gap is that **nothing
+runs the build**. It has now cost one silent runtime error in the dev server and one failed
+deploy. This is the last unanswered line on the board and the only one with a demonstrated
+failure rate.
+
+### The board, end of day
+
+Four plans in progress on four tracks, no plan-on-plan dependency, one queued plan (`area-3`)
+behind a single track. **Still not a Wave 4** — that fits in a head. Two open reminders, both
+genuinely waiting on a person rather than on work: the boss-medal query, and a thirty-second
+aside about a robot turtle.

@@ -1,6 +1,6 @@
 # Reminders as a First-Class Surface — a VS Code Extension for `set-reminders`
 
-**Status:** In Progress
+**Status:** Completed
 **Track:** reminders-ext
 **Date:** 2026-08-30
 **Author:** Claude (Opus 5)
@@ -342,3 +342,58 @@ installed extensions we do not control and cannot anticipate. That is the strong
 it is consistent with this plan's own Objective — the author's counterargument had quietly
 assumed a two-user machine. The lost precision is recovered as a setting rather than a promise:
 `reminders.statusBarPriority`, default 49.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** reminders-ext
+**Completed:** 2026-08-30
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+All five phases shipped, reviewed, and merged to `main` as **PR #1** — the first pull request
+this repository has had, and the first work here to travel by branch rather than by commit
+straight to trunk.
+
+`verify_reminders-status-bar-position_2026-08-30.md` is closed and moved to
+`planning/reminders/completed/`.
+
+### The proof no test could give
+
+**On 2026-08-31 the extension was used to close five reminders**, including the four that had
+been holding three plans in the blocked column — the Gitea LAN leg, the VS Code profile, the
+laptop screen check and the ursina framerate. The parent's words: *"I used my new vscode
+extension to mark them and set their status."*
+
+That is the objective met in the only way that counts. A reminders surface that is correct and
+unused is a surface that failed; this one was reached for on the first afternoon it existed,
+for the exact job it was built for, by somebody who had an hour and a laptop and no patience
+for opening five markdown files by hand.
+
+The `**Closed:**` notes it wrote are now the record of that afternoon, and two of them carry
+findings a checkbox could not have: *"import was only through ui but it worked, kinda"* and
+*"his screen is actually at 1920 x 1080 and looks fine"* — the first exposed two dead commands
+in `tools/vscode/README.md`, the second retired an unmeasured assumption that had shaped a
+success criterion, a layout budget and a worry about the type ramp.
+
+### Lessons Learned
+
+- **The review's one rejected finding was rejected correctly, and the one it got right was
+  right for the wrong number.** `StatusBarAlignment.Left` and `StatusbarAlignment.LEFT` are two
+  different enums, not one written twice. But `engines.vscode` genuinely was missing, and the
+  proposed `^1.79.0` floor would have permitted a host where ticking a checkbox silently does
+  nothing — `checkboxState` was finalised in 1.80. Accepting a finding in principle and
+  correcting it in fact is a different act from accepting or rejecting it.
+- **The parent's overrule was the stronger argument.** "Immediately right of Problems" quietly
+  assumed a two-user machine; this ships to strangers whose status bars we do not control. The
+  precision came back as `reminders.statusBarPriority` rather than as a promise.
+- **A non-recursive glob turned out to be a feature.** `planning/reminders/*.md` reads one
+  level, which is what made `planning/reminders/completed/` work the next day with no code
+  change and no setting — the status is the truth, the directory keeps the truth short.
+
+### Backlog Items Created
+
+None.
