@@ -51,6 +51,13 @@ jobs:
 
       - run: npm ci
 
+      # `npm ci` does not build workspace packages, and @pyquest/content's exports point at
+      # ./dist, which is gitignored. Without this the Field Manual's build dies on
+      # ERR_MODULE_NOT_FOUND -- and it did, on the first and only run, 2026-08-31. It works
+      # locally only because dist/ survives there from an earlier `tsc -b`.
+      - name: Build the workspace packages the site imports
+        run: npm run build --workspace @pyquest/content
+
       # The gate. Invalid content must not reach a published page, and until now nothing ran
       # this except a person remembering to.
       - name: Validate content
