@@ -331,3 +331,36 @@ What survives from it and should be salvaged rather than re-derived:
   needs rewriting before it starts.
 - The api tests read the real tree, so the manifest-fixture backlog item above should be taken
   at merge time rather than separately.
+
+## Review History
+
+**PR #2 reviewed 2026-08-31 by Copilot — "🟡 Changes recommended".** Three findings, all
+three taken, applied in `8aaba80`. Nothing rejected.
+
+**The two that mattered were the two it suppressed.** Copilot surfaced one inline comment
+and buried the other two under "Suppressed comments". The buried pair were genuine bugs:
+`formatIssues` was being handed the base directory instead of the resolved roots at two call
+sites — `packages/content/src/cli/validate.ts` and `apps/api/src/content.ts`. Neither errored.
+Both printed a plausible absolute path that pointed at nothing, dropping the `curriculum/` or
+`game/` segment. Confirmed against a fixture before fixing:
+
+```
+before: .../broken/missing-file/quests/a0-ghost.yml
+after:  .../broken/missing-file/game/quests/a0-ghost.yml
+```
+
+Worth more than it looks: §6.10 budgets two minutes to fix an authoring mistake, and a path
+that does not open spends most of it. **`build.ts`'s call site was already correct, which is
+precisely why the other two survived** — one right caller makes a function look right. Now
+gated by a test that asserts `existsSync` on every path the report prints rather than comparing
+strings, since the only property that matters is that the path opens. Proved by mutation.
+
+**The surfaced comment was the smallest of the three**, and still correct: ADR 0002's Context
+claimed "the manifest is four fields, none of them a week range" in the present tense,
+immediately above a Decision that adds `weeks` and `blurb`, and false of every manifest in the
+tree. This branch is what surfaced it — updating the path in that sentence put it under review.
+Rewritten in the past tense, with a parenthetical recording what the manifest carries now.
+
+**The lesson is about review triage, not about the bugs.** A reviewer's own ranking is not
+evidence: the two findings it judged not worth surfacing were the two that were actually wrong,
+and the one it promoted was a documentation nit. Read the suppressed list.
