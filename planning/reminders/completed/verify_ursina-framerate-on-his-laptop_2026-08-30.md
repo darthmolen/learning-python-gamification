@@ -5,7 +5,8 @@
 **Subject:** hardware
 **Raised:** 2026-08-30
 **Plan:** `planning/**/feature_world-shim_2026-08-28.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — the measures went really well. blew the minimums out of the water. claude is going to record results
 
 ## What to do
 

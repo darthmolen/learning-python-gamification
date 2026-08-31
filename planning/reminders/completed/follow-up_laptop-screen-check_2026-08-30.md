@@ -5,7 +5,8 @@
 **Subject:** screens
 **Raised:** 2026-08-30
 **Plan:** `planning/**/feature_spa_2026-08-28-v2.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — his screen is actually at 1920 x 1080 and looks fine.
 
 ## What to do
 

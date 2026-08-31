@@ -5,7 +5,8 @@
 **Subject:** tooling
 **Raised:** 2026-08-30
 **Plan:** `planning/**/feature_field-manual_2026-08-30.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — this was turned on but it wanted some kind of workflow. the setting was turned on though.
 
 ## What to do
 

@@ -5,7 +5,8 @@
 **Subject:** hardware
 **Raised:** 2026-08-30
 **Plan:** `planning/**/feature_gitea-lan-access-for-the-son_2026-08-27.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — after an hour setup, we finally got it to work and I made claude write a setup package
 
 ## What to do
 

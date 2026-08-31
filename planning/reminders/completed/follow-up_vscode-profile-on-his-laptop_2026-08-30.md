@@ -5,7 +5,8 @@
 **Subject:** hardware
 **Raised:** 2026-08-30
 **Plan:** `planning/**/feature_area-2-scribes-rite-and-sandbox_2026-08-28.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — import was only through ui but it worked, kinda. no widgets on the side but a terminal bottom and files were showing. much simpler
 
 ## What to do
 
