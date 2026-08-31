@@ -17,10 +17,39 @@ services:
     image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
     container_name: pyquest-web
     working_dir: /workspace
-    command: ["npm", "run", "dev", "--workspace", "@pyquest/web"]
+    # `--host` and `--port` are flags, not environment variables, and both are load-bearing.
+    #
+    # This line used to read `["npm", "run", "dev", "--workspace", "@pyquest/web"]` with
+    # `HOST: "0.0.0.0"` beside it, and **that combination could never have worked**. Vite reads
+    # neither `HOST` nor `PORT` from the environment — grep 6.4.3's dist and there is no such
+    # read — so the container bound `127.0.0.1`, and `vite.config.ts` pins `port: 5173` with
+    # `strictPort`, so it bound 5173. The `3082:3082` mapping below published a port nothing was
+    # listening on. Whoever first ran this would have got a connection reset and no error
+    # anywhere to explain it. Set on the command line, both take effect; `strictPort` then means
+    # a clash inside the container fails loudly instead of silently moving the port.
+    #
+    # The bare `--` is npm's, separating npm's own arguments from the script's.
+    command: ["npm", "run", "dev", "--workspace", "@pyquest/web", "--", "--host", "0.0.0.0", "--port", "3082"]
     environment:
-      # Vite binds loopback by default, which is invisible from outside the container.
-      HOST: "0.0.0.0"
+      # ---------------------------------------------------------------------------
+      # Where the SPA fetches from, and the one place in the repository it is set.
+      #
+      # `apps/web/src/gateway/index.ts` treats an ABSENT `VITE_API_URL` as "answer from
+      # fixtures". That fallback is deliberate — it is how the SPA is developed with no stack
+      # behind it, and how `vitest run --project web` stays hermetic — so this must not be
+      # written into a committed `.env` or defaulted in the gateway. A compose file is the one
+      # place where "the api is up" is actually true, which is why it is set here and nowhere
+      # else.
+      #
+      # **It is the address the BROWSER can reach, not the one this container can.**
+      # `http://api:3081` resolves on the compose network and means nothing to Chrome on the
+      # host, which is the mistake this line exists to have already made. Vite inlines the value
+      # into the bundle at serve time, so it is evaluated in the browser, not here.
+      #
+      # It follows that `--profile api` must be up too, or the SPA reports failed fetches rather
+      # than falling back — see infra/README.md, "It says the api is down".
+      # ---------------------------------------------------------------------------
+      VITE_API_URL: "http://localhost:${API_PORT:-3081}"
     volumes:
       - ../../pyquest:/workspace
     ports:

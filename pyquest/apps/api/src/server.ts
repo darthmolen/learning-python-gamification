@@ -93,6 +93,39 @@ export function jobStateFor(status: RunnerJobStatus): JobState {
   return status === 'claimed' ? 'running' : status;
 }
 
+/**
+ * A browser origin on this machine or on this household's LAN.
+ *
+ * The SPA is served on 3082 and this api answers on 3081, so **every request the browser makes is
+ * cross-origin** and a `fetch` without these headers fails before it reaches a route — in a way
+ * that looks, from the screen, exactly like the api being down. That is the whole reason this
+ * exists: not a feature, a wire that is otherwise cut.
+ *
+ * The allowance is loopback plus the RFC 1918 ranges and `*.local`, which is precisely the
+ * reachable set. §6.4 puts the api on the parent's machine and the code on the son's, so
+ * `http://localhost:3082` alone would be wrong the first time he opens the console on his own
+ * laptop; `*` would be wrong in the other direction, letting any page he happens to be reading
+ * read the household's progress with his browser. Neither is a security boundary — `:playerId`
+ * is an assertion, not a credential, and anyone who can reach the port can already `curl` it —
+ * but a wildcard hands that reach to pages nobody invited.
+ */
+const LAN_ORIGIN =
+  /^https?:\/\/(?:localhost|\[::1\]|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|[a-z0-9-]+\.local)(?::\d{1,5})?$/i;
+
+/**
+ * The value for `access-control-allow-origin`, or nothing.
+ *
+ * The request's own origin is echoed rather than a configured one written back. A browser
+ * compares the header to the origin it sent, so echoing is what actually works across the two
+ * addresses the same api is reached at — and returning `undefined` for anything unrecognised is
+ * what keeps the echo from being a wildcard spelled differently.
+ */
+export function corsOrigin(origin: string | undefined, extra: readonly string[] = []): string | undefined {
+  if (origin === undefined) return undefined;
+  if (extra.includes(origin)) return origin;
+  return LAN_ORIGIN.test(origin) ? origin : undefined;
+}
+
 export interface ServerOptions {
   readonly content: ContentRoot;
   readonly db: Writable;
@@ -115,6 +148,14 @@ export interface ServerOptions {
   readonly spool?: Spool;
   /** `/workspaces/` — one clone per player lives under it. See `checkout.ts`. */
   readonly workspaceRoot?: string;
+  /**
+   * Browser origins allowed on top of loopback and the LAN — see `corsOrigin`.
+   *
+   * Empty by default and expected to stay empty. It exists so that the day someone reaches this
+   * api through a name that is neither an RFC 1918 address nor `.local`, the answer is one option
+   * rather than a regex edit in the file that also holds every route.
+   */
+  readonly corsOrigins?: readonly string[];
   readonly logger?: boolean;
 }
 
@@ -158,6 +199,48 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   const { content, db } = options;
   const clock = options.clock ?? ((): Date => new Date());
   const app = Fastify({ logger: options.logger ?? false });
+  const corsOrigins = options.corsOrigins ?? [];
+
+  /* ---------------------------------------------------------------------------------------
+   * CORS — the SPA is on 3082 and this is on 3081
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * Registered before any route, because a Fastify hook only runs for routes added after it.
+   *
+   * `vary: origin` is not decoration. The header this sets depends on the request's own origin,
+   * so a cache that keyed only on the URL would serve the son's laptop an allowance written for
+   * the parent's browser — and the failure would be one machine, intermittently, which is the
+   * hardest shape of this bug to see.
+   */
+  app.addHook('onRequest', async (request, reply) => {
+    const allowed = corsOrigin(request.headers.origin, corsOrigins);
+    reply.header('vary', 'origin');
+    if (allowed !== undefined) reply.header('access-control-allow-origin', allowed);
+  });
+
+  /**
+   * The preflight, answered for every path this api has.
+   *
+   * A `GET` with only `accept` would not need one, so it is tempting to think the reads are fine
+   * without this. The writes are not: `POST /api/signoffs/:attemptId` sends `content-type:
+   * application/json`, which is not a safelisted value, and the browser asks first. Without an
+   * answer here the Console's one button fails and the reads keep working, which reads as the
+   * sign-off being broken rather than as CORS being absent.
+   *
+   * `access-control-max-age` is a day. The preflight is a round trip before every write on a
+   * household LAN, and the answer does not change between them.
+   */
+  app.options('/*', async (request, reply) => {
+    const allowed = corsOrigin(request.headers.origin, corsOrigins);
+    if (allowed === undefined) return reply.code(403).send();
+    return reply
+      .header('access-control-allow-methods', 'GET, POST, OPTIONS')
+      .header('access-control-allow-headers', 'accept, content-type')
+      .header('access-control-max-age', '86400')
+      .code(204)
+      .send();
+  });
 
   /**
    * The Gitea client, or a refusal that records nothing.

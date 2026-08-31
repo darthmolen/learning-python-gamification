@@ -2,9 +2,9 @@
 
 Postgres and Gitea, per spec §6.1. Backups and a rehearsed restore, per §6.9.
 
-This pass ships only the two services that need no code of ours. `api`, `runner`, and `web`
-are specified in §6.1, reserved in `docker-compose.yml`, and deliberately not implemented —
-none of them can exist before the code they run does.
+`api`, `runner` and `web` live in `compose/`, one fragment per track, and are profile-gated —
+see [The compose fragments](#the-compose-fragments--who-owns-what) and
+[Running the whole stack](#running-the-whole-stack).
 
 ---
 
@@ -69,6 +69,95 @@ The images in the fragments are pinned by tag *and* digest, the same as the root
 the same reason: this campaign runs ~48 weeks and a floating tag that drifts mid-campaign is
 a real failure mode here, not a hypothetical one.
 
+---
+
+## Running the whole stack
+
+In the order you type it, from `infra/`:
+
+```sh
+docker compose up -d                                  # 1. postgres and gitea
+docker compose --profile migrate run --rm migrate     # 2. schema, safe to repeat
+npm run seed --workspace @pyquest/db                  # 3. from pyquest/ — somebody to be
+docker compose --profile api --profile web up -d api runner web
+```
+
+Then open **<http://localhost:3082>**. The API is on **<http://localhost:3081>**; `curl
+http://localhost:3081/health` answers `{"status":"ok","items":23}` and touches no database, so
+it stays true while Postgres restarts.
+
+Step 3 is the `db` track's seed script. Without it the database has a schema and no rows, and
+the SPA's player-scoped screens answer `404` — **which is not a failure of the wiring**: an empty
+campaign and a failed fetch look different, and a 404 from `/api/players/.../campaign` means the
+browser reached the API.
+
+### What makes the browser talk to the API
+
+`compose/web.yml` sets `VITE_API_URL=http://localhost:${API_PORT:-3081}`, and that is **the only
+place in the repository it is set**. `apps/web/src/gateway/index.ts` reads it and treats an
+absent value as "answer from fixtures", which is how the SPA is developed on a train with no
+database and how `vitest run --project web` stays hermetic. So it must not be added to `.env`,
+and it must not become a default in the gateway.
+
+The value is the address **the browser** can reach. `http://api:3081` would resolve on the
+compose network and mean nothing to Chrome on the host — Vite inlines the value into the bundle
+and it is evaluated in the browser, not in the container.
+
+The api answers CORS for loopback, the RFC 1918 ranges and `*.local` (`corsOrigin` in
+`apps/api/src/server.ts`). The SPA on 3082 and the api on 3081 are cross-origin, so without that
+every request fails in a way that looks exactly like the api being down.
+
+### Reaching it from the son's laptop
+
+§6.4 puts the api on the parent's machine and the code on his, so the browser is often not on
+this host. Both services already bind all interfaces, and the CORS allowance already covers
+private addresses, so the two things to change are the address and the firewall:
+
+```sh
+# infra/.env
+API_PORT=3081        # unchanged; the port is fine
+```
+
+Set `VITE_API_URL` for that case by overriding it on the `web` service — it must name **this
+machine**, e.g. `http://192.168.4.102:3081`, because the browser resolves it, and `localhost` on
+his laptop is his laptop. A Windows Firewall rule for 3081 and 3082 is required, the same as for
+Gitea's 3080 and 3022.
+
+### It says the api is down
+
+In order of how often it is the answer:
+
+1. **`--profile api` is not up.** `VITE_API_URL` is set unconditionally by `web.yml`, so the SPA
+   stops falling back to fixtures the moment the web container starts. Web without api is failed
+   fetches, not fixtures. That is deliberate — a screen silently showing fixtures when you asked
+   for live data is the worse failure — but it is the first thing to check.
+2. **Nothing is seeded.** See step 3 above. `404` on player routes, `200` on `/api/tome`.
+3. **A CORS refusal.** It looks identical to a dead server in the console. `curl -i -H 'Origin:
+   http://localhost:3082' http://localhost:3081/api/tome` must echo
+   `access-control-allow-origin: http://localhost:3082`.
+
+To develop the SPA against fixtures, do not run the container — run `npm run dev --workspace
+@pyquest/web` from `pyquest/` with no `VITE_API_URL` in the environment. That path is checked:
+with the api process killed outright, the gateway still answered every call from fixtures.
+
+### The Windows gap
+
+**`api`, `web` and `migrate` do not start on a Windows host**, and this is recorded rather than
+fixed — see the block at the top of `compose/api.yml`. `npm install` on Windows writes
+`pyquest/node_modules/@pyquest/*` as symlinks to absolute Docker-VM paths, which do not resolve
+inside a container that mounts only `/workspace`, so `import '@pyquest/contract'` fails before
+any of our code runs. All three fragments share it and the fix is one decision for all three: a
+Dockerfile that installs dependencies for Linux, the way `apps/runner` already has.
+
+Until then, run those two on the host, which is what the ports above are mapped to anyway:
+
+```sh
+# from pyquest/, with DATABASE_URL and CONTENT_ROOT set (CONTENT_ROOT is the REPOSITORY root,
+# the directory holding curriculum/ and game/ — the api resolves both underneath it)
+npm run start --workspace @pyquest/api
+VITE_API_URL=http://localhost:3081 npm run dev --workspace @pyquest/web -- --host 0.0.0.0 --port 3082
+```
+
 ## Ports
 
 | Service | Host port | Container | Bound on | Why |
@@ -76,8 +165,8 @@ a real failure mode here, not a hypothetical one.
 | postgres | **5433** | 5432 | `127.0.0.1` only | Only the `api` talks to it, and the `api` runs on this host. |
 | gitea HTTP | **3080** | 3000 | all interfaces | §6.4 makes `git push` the verification mechanism; learners push from their own machines. |
 | gitea SSH | **3022** | 22 | all interfaces | Same reason. |
-| *(reserved)* api | 3081 | — | — | Not yet implemented. |
-| *(reserved)* web | 3082 | — | — | Not yet implemented. |
+| api | **3081** | 3081 | all interfaces | The SPA fetches from it, and §6.4 puts the son's browser on another machine. |
+| web | **3082** | 3082 | all interfaces | The Vite dev server. Same reason. |
 
 **Postgres is on 5433, not 5432, on purpose.** This machine already runs an unrelated
 `ec-postgres` container on 5432. All six ports above were probed free before being chosen, and

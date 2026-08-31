@@ -5,7 +5,8 @@
 **Subject:** tooling
 **Raised:** 2026-08-31
 **Plan:** `planning/**/feature_integration-suite_2026-08-30.md`
-**Status:** open
+**Status:** done
+**Closed:** 2026-08-31 — Ruled 1, a separate CI workflow: `.github/workflows/build.yml`, installed by `planning/completed/feature_the-stack-runs-end-to-end_2026-08-31.md`. Not option 2 or 3 — a hook is per-machine and a checklist depends on somebody reading it, and the third incident happened *in CI*, which is where the answer had to be. Step zero was worked around rather than solved: there is still no root `build` script, so the workflow names `npm run typecheck` (which runs `tsc -b`, emitting the `dist/` the third incident died without) and then `npm run build --workspace @pyquest/web`. Seeding a mutant in it immediately paid for itself — a bare `tsc -b` from `pyquest/` compiles **no app at all**, exits 0 on a broken import in `apps/api`, and would have been the sixth green-but-blind gate; `planning/backlog/feature_root-tsconfig-omits-the-apps_2026-08-31.md` is the real fix. The hand-build mitigation this reminder was holding open can stop.
 
 ## What to do
 

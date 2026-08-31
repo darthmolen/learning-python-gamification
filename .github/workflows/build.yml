@@ -1,0 +1,119 @@
+# The build gate — does this repository still compile and package?
+#
+# Separate from `field-manual.yml` on purpose. That workflow's own header says it "is not a
+# general CI pipeline and should not quietly grow into one", and it is right: it publishes one
+# static site and its trigger is scoped to the content that site is made of. This is the other
+# question, and it applies to every line of TypeScript in `pyquest/`.
+#
+# ## Why a build gate rather than another test
+#
+# `vitest.config.ts` aliases every `@pyquest/*` package to its `src/`, deliberately, so the suite
+# runs against source and cannot be green against a stale `dist/`. The cost of that correct
+# decision is that **the suite never loads what a consumer loads**: `package.json` `exports` point
+# at `dist/`, and `dist/` is gitignored. A packaging break is therefore invisible to every test in
+# the repository, by construction, and no amount of extra tests would find it.
+#
+# It has been found the expensive way twice — one silent runtime error in the dev server, and the
+# Field Manual's build failing in public with both of its gates green. The fix is not a test that
+# reaches into `dist/`; it is a step that builds. This is that step.
+#
+# ## What each step is for
+#
+#   npm ci                     the lockfile installs cleanly
+#   npm run typecheck          every package AND every app compiles, and dist/ is emitted
+#   validate:content           content still satisfies the concept ids the packages declare
+#   vite build --workspace web the SPA actually packages, resolving through exports rather than
+#                              through the test aliases
+#
+# The typecheck step before `vite build` is not tidiness — it is the fix for the exact failure
+# recorded in `field-manual.yml`: `npm ci` does not build workspace packages, and
+# `@pyquest/content`'s exports point at a gitignored `dist/`, so the SPA build dies on
+# ERR_MODULE_NOT_FOUND without it. That passes locally only because an earlier build left `dist/`
+# on disk.
+#
+# ## Why `npm run typecheck` and not a bare `tsc -b`
+#
+# **Because a bare `tsc -b` here would have been the sixth green-but-blind gate in this
+# repository, and it was caught by seeding a mutant rather than by reading the config.** The plan
+# this workflow came from specified `tsc -b`. Root `tsconfig.json` references exactly four
+# projects — `packages/content`, `contract`, `db`, `engine` — and **no app**. So `tsc -b` compiles
+# nothing in `apps/api`, `apps/web` or `apps/field-manual`.
+#
+# Measured, 2026-08-31: `import ... from './views-that-do-not-exist.ts'` put into
+# `apps/api/src/server.ts` — `npx tsc -b --pretty` printed nothing and **exited 0**. The same tree
+# under `npm run typecheck` exited 2 with `src/server.ts(81,62): error TS2307: Cannot find module`.
+#
+# `npm run typecheck` is `tsc -b --pretty && npm run typecheck --workspaces --if-present`: the
+# references build (which is what emits `dist/`) followed by each app's own `tsc -p`. It is the
+# only command in this repository that compiles all of it.
+#
+# The narrower fix is to add `apps/*` to root `tsconfig.json`'s references. That file belongs to
+# no track and is named by none of the plans in flight, so this workflow calls the script that is
+# already correct rather than editing it from the side.
+#
+# ## What is deliberately NOT here
+#
+# `npx vitest run` in full. `apps/api`'s suites refuse to start without Postgres — `server.test.ts`
+# throws `no database: start the stack, or set TEST_DATABASE_URL` — so a bare `vitest run` on a
+# hosted runner fails for a reason that is not a regression. Running the database in a service
+# container is a real and worthwhile change; it belongs to whoever owns the api suite, not to the
+# plan that wired the SPA to the api. Recorded here rather than half-done.
+#
+# §6.5 notes Gitea Actions is GitHub-Actions-compatible and that a pipeline should port "almost
+# verbatim". Nothing below uses anything that would not.
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pyquest/**'
+      - '.github/workflows/build.yml'
+  pull_request:
+    paths:
+      - 'pyquest/**'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Supersede an in-flight run for the same ref. Unlike the publish in `field-manual.yml`, there is
+# nothing half-finished to leave behind here: a cancelled build deploys nothing.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pyquest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22          # pyquest/package.json engines: >=22, and the CLIs use --experimental-strip-types
+          cache: npm
+          cache-dependency-path: pyquest/package-lock.json
+
+      - run: npm ci
+
+      # Compiles the project references — which is what emits the dist/ the exports below
+      # resolve to — and then every app's own tsconfig. See the header: a bare `tsc -b` here
+      # exits 0 on a broken import in apps/api, and that was demonstrated, not assumed.
+      - name: Typecheck and build the workspace
+        run: npm run typecheck
+
+      # Lane B is validated against Lane A's concept ids (CLAUDE.md). A concept id that moved
+      # should break here, loudly, rather than in a screen.
+      - name: Validate content
+        run: npm run validate:content
+
+      # The step this workflow exists for. It resolves @pyquest/* through package exports —
+      # dist/ — which is the one path no test in this repository takes.
+      - name: Build the SPA
+        run: npm run build --workspace @pyquest/web
