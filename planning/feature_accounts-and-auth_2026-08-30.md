@@ -1,6 +1,12 @@
 # Accounts, And Who Is Allowed To Ask
 
 **Status:** Planned
+**Blocked on:** two things, neither of them large, and they are being worked in parallel by two
+sessions. **The Journal's text** must land before this gate opens at all — it needs
+`endpoints.ts` and `apps/api/src/**` (**not** `packages/db/**`: the 2026-08-31 ruling killed the
+migration), it is clear of `in-progress/` today, and it stops being clear the moment this starts.
+**The git-backed api tests** must stop flaking before *Phase 2* — not before Phase 1. Both are
+argued in *Dependencies*
 **Version:** v2 — checked against `main` on 2026-08-31, at `36ab69c` and again at `dedd255` after
 one of its own findings was fixed mid-revision. Seven of v1's claims had gone stale in the day
 since it was written; see *What changed in v2*
@@ -245,14 +251,26 @@ guarded route from an open one. `fixtures-agree.test.ts` is the one to watch. It
 compares the SPA's fixtures against what the API actually returns, and it is worth exactly
 nothing the moment it starts comparing two 401s.
 
-**And two of those files already fail at random.**
-`planning/backlog/feature_git-tests-time-out-under-load_2026-08-31.md` was filed on 2026-08-31:
-`checkout.test.ts` and `server.localrepo.test.ts` shell out to real git and run five and a half
-to six and a half seconds against a 5000ms default, so they fail under full-suite load and pass
-in isolation. **Fix that first, or do not start Phase 2.** Adding a guard to a suite that is
-already red at random destroys the only signal this phase has: a refusal test that fails becomes
-indistinguishable from the flake, and the reflex it trains — re-run, move on — is exactly how a
-route ships unguarded.
+**And that suite already fails at random, for two unrelated reasons.** Both were filed on
+2026-08-31 and both land on files this phase edits:
+
+- `feature_git-tests-time-out-under-load_2026-08-31.md` — `checkout.test.ts` and
+  `server.localrepo.test.ts` shell out to real git, run five and a half to six and a half seconds
+  against a 5000ms default, and so fail under full-suite load while passing in isolation
+- `feature_gitsignal-tests-are-flaky_2026-08-31.md` — `server.gitsignal.test.ts` fails about one
+  run in four **including in isolation**, always the same two tests. That last fact rules out
+  load, so despite the first item's guess these are *not* the same bug. The standing hypothesis
+  is two commits made in the same second ordering unstably in `git log`, on a test that is
+  precisely about which commit came first
+
+`server.gitsignal.test.ts` is one of the four files that gains a token helper here, so both items
+sit directly on this phase's path. **Fix them first, or do not start Phase 2.** Adding a guard to
+a suite that is already red at random destroys the only signal this phase has: a refusal test
+that fails becomes indistinguishable from the flake, and the reflex it trains — re-run, move on —
+is exactly how a route ships unguarded.
+
+Both are owned by a separate session as of 2026-08-31 and are not this plan's work. Their files —
+those three suites and `pyquest/vitest.config.ts` — are disjoint from everything below.
 
 ### Phase 3 — the Console gains its second panel
 
@@ -311,9 +329,12 @@ survive `resetHousehold`.
 - **The Journal work should land first, and two documents already say so.**
   `planning/backlog/feature_journal-text-has-no-column_2026-08-29.md` and the ruling in
   `planning/reminders/completed/decide_where-the-journal-actually-lives_2026-08-31.md` record the
-  same constraint from both ends: the Journal needs `packages/db/**`, `endpoints.ts` and
-  `apps/api/src/**`, it is clear of everything in `in-progress/` today, and it stops being clear
-  the moment this gate opens. It is half a day to a day of work. **Let it go first**
+  same constraint from both ends: it claims `endpoints.ts` and `apps/api/src/**`, it is clear of
+  everything in `in-progress/` today, and it stops being clear the moment this gate opens. It is
+  half a day to a day of work. **Let it go first**.
+  **It does *not* claim `packages/db/**` any more** — the ruling made markdown in his repository
+  the system of record and Postgres not, so there is no migration and `journal_entries` keeps the
+  four columns it was designed with. An earlier draft of this line said otherwise
 - `planning/backlog/feature_spa-player-id-is-not-a-uuid_2026-08-31.md` is **still open, correctly**.
   `dedd255` met three of its four criteria — the screens render against a live seeded API, "who am
   I" is one place, and the fixture path still works. The fourth says the SPA "does not hardcode a
