@@ -87,7 +87,17 @@ describe('the site publishes the work, not the assessments', () => {
     const bosses = items.filter((i) => i.kind === 'boss');
     expect(bosses.length, 'fixture sanity: there are bosses to leave out').toBeGreaterThan(0);
 
-    const headings = pages.flatMap((p) => [...p.html.matchAll(/<h3>([^<]+)<\/h3>/g)].map((m) => m[1]));
+    /**
+     * Exercise titles only, and the scoping is load-bearing rather than tidy. This once matched
+     * every `<h3>` on the page, which was the same set right up until `lesson.md` arrived and
+     * authored prose started contributing its own subheadings. The assertion then counted
+     * teaching as exercises and failed — correctly, but for a reason that had nothing to do
+     * with what it guards. A proxy holds only until something else starts producing the thing
+     * it was standing in for.
+     */
+    const headings = pages.flatMap((p) =>
+      [...p.html.matchAll(/<section class="ex">\s*<h3>([^<]+)<\/h3>/g)].map((m) => m[1]),
+    );
     expect(headings).toHaveLength(quests.length);
     for (const boss of bosses) {
       expect(headings, `${boss.title} is an assessment and must not be published as work`)

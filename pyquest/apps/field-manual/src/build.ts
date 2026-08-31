@@ -9,17 +9,40 @@
  * published while the API is unfinished — §6.7 puts content in git, and this reads git.
  */
 
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CONCEPTS, checkContent, contentRootsFrom } from '@pyquest/content';
+import { CONCEPTS, checkContent, contentRootsFrom, formatIssues } from '@pyquest/content';
 import { marked } from 'marked';
 import { renderArea, renderIndex, type AreaView } from './render.ts';
+
+/**
+ * Who the build is for.
+ *
+ * `learner` is the Tome. `dm` is the same pages plus the teaching aids, and the difference is
+ * whether the guide is *rendered at all* — never whether it is visible. A hidden aid is an aid
+ * anyone can read with view-source, and this site is public.
+ */
+export type Audience = 'learner' | 'dm';
 
 export interface BuildOptions {
   /** The directory holding `curriculum/` and `game/`. Briefs resolve under the former. */
   readonly contentRoot: string;
   readonly outDir: string;
+  /** Defaults to `learner`, so forgetting the flag cannot publish the teacher's notes. */
+  readonly audience?: Audience;
+}
+
+/**
+ * A markdown file beside an area, or `undefined`.
+ *
+ * `lesson.md` and `dm-guide.md` are optional by design: an area with neither is an area whose
+ * teaching is unwritten, and the page says so rather than pretending. That is §5.1a's honesty
+ * rule applied to prose — the same reason areas 3–7 announce their missing exercises.
+ */
+function areaProse(curriculumRoot: string, area: number, file: string): string | undefined {
+  const path = join(curriculumRoot, `area-${area}`, file);
+  return existsSync(path) ? readFileSync(path, 'utf8') : undefined;
 }
 
 /**
@@ -44,7 +67,7 @@ function briefBody(markdown: string): string {
   return marked.parse(withoutTitle, { async: false });
 }
 
-export function buildSite({ contentRoot, outDir }: BuildOptions): AreaView[] {
+export function buildSite({ contentRoot, outDir, audience = 'learner' }: BuildOptions): AreaView[] {
   const roots = contentRootsFrom(contentRoot);
   const { items, manifests, issues } = checkContent(roots);
 
@@ -52,8 +75,10 @@ export function buildSite({ contentRoot, outDir }: BuildOptions): AreaView[] {
   // publishing a site built from it.
   if (issues.length > 0) {
     throw new Error(
-      `content has ${issues.length} validation issue(s); run \`npm run validate:content\` — ` +
-        `the Field Manual will not publish invalid content.`,
+      `content has ${issues.length} validation issue(s); the Field Manual will not publish ` +
+        `invalid content.
+
+${formatIssues(issues, roots)}`,
     );
   }
 
@@ -64,6 +89,20 @@ export function buildSite({ contentRoot, outDir }: BuildOptions): AreaView[] {
       title: manifest.title,
       ...(manifest.weeks ? { weeks: manifest.weeks } : {}),
       ...(manifest.blurb ? { blurb: manifest.blurb } : {}),
+      ...(() => {
+        const lesson = areaProse(roots.curriculum, manifest.area, 'lesson.md');
+        return lesson ? { lesson: briefBody(lesson) } : {};
+      })(),
+      /**
+       * The guide is read only for the DM build. Reading it and letting the renderer decide
+       * would put the teacher's notes one template mistake away from the learner's page; not
+       * reading it means the learner build has nothing to leak.
+       */
+      ...(() => {
+        if (audience !== 'dm') return {};
+        const guide = areaProse(roots.curriculum, manifest.area, 'dm-guide.md');
+        return guide ? { teachingAid: briefBody(guide) } : {};
+      })(),
       concepts: CONCEPTS.filter((c) => c.area === manifest.area).map((c) => ({
         id: c.id,
         label: c.label,
