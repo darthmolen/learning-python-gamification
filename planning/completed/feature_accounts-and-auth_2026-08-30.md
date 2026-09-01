@@ -1,6 +1,6 @@
 # Accounts, And Who Is Allowed To Ask
 
-**Status:** In Progress
+**Status:** Completed
 **Blocked on:** nothing. Both blockers cleared 2026-08-31 and the track opened 2026-09-01.
 The Journal landed (`planning/completed/feature_journal-reads-from-git_2026-08-31.md`) and the
 git-test budgets were fixed (`da23a8f`). `spa` yielded to this gate on the DM's override and sits
@@ -532,3 +532,61 @@ Two things to settle before it starts:
 - **The seed's stale pointer.** `packages/db/src/seed.ts:8` names this plan at `planning/backlog/…`,
   a path it has never had. One line, and it belongs to whichever plan next opens that file rather
   than to a commit of its own
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** `auth`
+**Completed:** 2026-09-01
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+Nine of eleven criteria met outright, two partial and both recorded rather than quietly dropped:
+scrypt in place of argon2id, and the Console's account *screen* left to the track that owns
+`apps/web/src/screens/**`.
+
+Phase 0 was not in the plan when it opened. The clock bug arrived with the `flakes` track's
+finding and was carried because it was api-track work in files this plan already claimed.
+
+### Deviations
+
+**scrypt, not argon2id.** Argued in `packages/db/src/auth.ts`: argon2 is a native module compiled
+at install time, on the machine whose own backlog records three services that will not start over
+that class of problem. The format is self-describing, so argon2id is a rolling upgrade rather than
+a flag day if this ever leaves the household.
+
+**Phase 0's fix is not the shape its own backlog item sketched.** That item proposed set membership
+on the sha; only the tip is ever recorded, so a re-submit would have paid for an unclaimed ancestor.
+The log's *position* is what makes "newer" mean newer. Seeding the item's own sketch as a mutant is
+what proved it.
+
+**Phase 3 is API-only.** All four routes served and guarded; the screen is
+`planning/backlog/feature_console-account-panel_2026-09-01.md`.
+
+### Lessons Learned
+
+**The database refused two constraints and was right both times.** An expiry CHECK forbids revoking
+by expiring, because a CHECK applies to updates too. A deferrable CHECK does not exist in Postgres —
+and being told so produced a better ordering, where the player is created first and one UPDATE both
+consumes and claims, its own WHERE winning the race.
+
+**A functionally-identical mutant is the one that survives.** `===` for `timingSafeEqual` passed ten
+tests, because the property is timing rather than output. Some security properties cannot be reached
+behaviourally, and the honest answer is a source-level check that says so in its own comment rather
+than a suite that quietly does not cover it.
+
+**The lexicon collision arrived twice, in two languages.** The plan predicted `sessions` in SQL and
+the migration obeyed. TypeScript then caught the same word colliding in the contract. A vocabulary
+rule is not a schema rule; it applies wherever names are.
+
+**An allow-list guard is the difference between a rule and a habit.** Enumerating what is *open*
+means a route added tomorrow is closed by default, and `auth.test.ts` walking `API_ROUTES` means the
+list cannot silently fall behind the contract.
+
+### Backlog Items Created
+
+- `planning/backlog/feature_console-account-panel_2026-09-01.md` — the Console's second panel,
+  `spa` track
