@@ -13,7 +13,22 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+/**
+ * Every test here spawns a fresh `node --experimental-strip-types` process to run a CLI, which
+ * means a process start and a strip-types compile of the CLI and everything it imports, per call.
+ *
+ * At rest that is 215–841ms. Under the parallel load of a full run it was measured at **6438ms**,
+ * an eightfold blowup against vitest's 5000ms default — a worse ratio than the Gitea suites,
+ * because process spawn and JIT are exactly what contends when every worker is busy.
+ *
+ * Found by running the full suite ten times rather than once: the git timeouts were fixed, eight
+ * runs were green, and this went red on the sixth and eighth. One green run would have called the
+ * flake fixed and left this to be rediscovered by whoever added the api suite to CI.
+ */
+vi.setConfig({ testTimeout: 30_000 });
+
 
 const CONTENT_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
 const VALIDATE_CLI = fileURLToPath(new URL('../src/cli/validate.ts', import.meta.url));

@@ -49,7 +49,7 @@ const AREA_CARDS = [
   },
   {
     area: 5,
-    identity: identity(5, 'State and Objects', 21, 28, 'Modelling a world. Block, Player and Inventory hold their own state.'),
+    identity: identity(5, 'State and Objects', 21, 28, 'Modeling a world. Block, Player and Inventory hold their own state.'),
     progress: { cleared: 0, total: 5, estimated: true },
     boss: { cleared: 0, required: 3, unlocked: false },
   },

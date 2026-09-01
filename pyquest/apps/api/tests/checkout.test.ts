@@ -17,9 +17,29 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { CheckoutError, exportTree, syncCheckout } from '../src/checkout.ts';
 import { HAVE_GITEA, useGiteaRepo } from './support/gitea.ts';
+
+/**
+ * These tests drive a real Gitea container over HTTP — create a user, mint a token, push a
+ * commit, clone it back — and vitest's default `testTimeout` is 5000ms, which was never enough.
+ *
+ * Measured per test on an idle machine, `checkout.test.ts`: 631ms, 1484ms, 1611ms, 2411ms,
+ * 2829ms, 3177ms, 3319ms. The worst case spends two thirds of the default budget with nothing
+ * else running, so under the parallel load of a full run they went over at 5437ms, 5553ms and
+ * 6220ms. That is the same work taking the time it takes, not a race: every file passes its own
+ * label to `useGiteaRepo` and gets its own account and repository.
+ *
+ * `useGiteaRepo` already gives its `beforeAll` 120 seconds. Somebody measured this setup and
+ * budgeted for it — for the hook, and not for the tests it sets up. This finishes that thought.
+ *
+ * The ceiling is not a duration. A suite that passes in eighteen seconds still passes in
+ * eighteen seconds; the number only decides when vitest gives up. Deliberately not `retry`,
+ * which would hide a real failure the moment there is one.
+ */
+vi.setConfig({ testTimeout: 30_000, hookTimeout: 120_000 });
+
 
 describe.skipIf(!HAVE_GITEA)('the local-repo checkout', () => {
   const fixture = useGiteaRepo('checkout');

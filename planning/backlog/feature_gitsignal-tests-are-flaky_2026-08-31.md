@@ -1,6 +1,7 @@
 # server.gitsignal.test.ts fails intermittently
 
-**Status:** Backlog
+**Status:** Superseded 2026-09-01 by `planning/backlog/feature_git-signal-compares-two-different-clocks_2026-09-01.md`
+**Why:** this stub diagnosed a flaky test. It is a deterministic bug — `gitsignal.ts` compares a git commit timestamp from one machine against `now()` from another, and Postgres here runs ~5.9s behind the host. A 30-second ceiling did not touch it. The test was right all along.
 **Date Discovered:** 2026-08-31
 **Discovered During:** `planning/completed/feature_curriculum-foundation_2026-08-31.md`
 

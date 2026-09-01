@@ -1,6 +1,6 @@
 # The git-backed api tests time out under full-suite load
 
-**Status:** Backlog
+**Status:** Closed 2026-09-01 — fixed by `planning/completed/feature_the-git-tests-stop-flaking_2026-08-31.md`
 **Date Discovered:** 2026-08-31
 **Discovered During:** the `PLAYER_ID` fix on the `spa` track; independently hit by both the
 `db` and `infra` agents the same afternoon
