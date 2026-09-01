@@ -1,0 +1,42 @@
+# What never enters a build context.
+#
+# `node_modules` is first and is the whole reason this file exists. On Windows it holds
+# `@pyquest/*` as symlinks to absolute Docker-VM paths, which resolve on the host and nowhere
+# else — copying it into an image would carry the exact bug the Dockerfiles are here to fix, and
+# would do it silently, because the symlinks look like directories until something imports one.
+#
+# Every image runs `npm ci` for itself. The host's install is not an input to any build.
+node_modules
+**/node_modules
+
+# Build output. Each image builds what it needs; a stale `dist` from the host would be a second,
+# older answer sitting beside the fresh one.
+dist
+**/dist
+
+# `**/` matters here and its absence cost a build.
+#
+# A bare `*.tsbuildinfo` matches the context root only, so `packages/db/tsconfig.tsbuildinfo` was
+# copied in from the host — and `tsc -b` read it, concluded the project was already built, and
+# emitted nothing. The image then had `src/` and no `dist/`, and the container died on
+# `Cannot find module '/workspace/packages/db/dist/cli.js'`.
+#
+# An incremental build cache from another machine is the most misleading thing that can enter a
+# build context: it does not fail, it succeeds at doing nothing.
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Python bytecode from the curriculum's own verifiers, which has no business in a node image.
+__pycache__
+**/__pycache__
+
+# Local environment. Secrets reach a container through compose, never through a layer — a value
+# baked into an image is a value that leaks with the image.
+.env
+.env.*
+
+# Noise: it slows the build and none of it is read at run time.
+.git
+.vscode
+coverage
+*.log

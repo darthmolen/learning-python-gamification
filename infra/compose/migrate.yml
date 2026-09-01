@@ -21,15 +21,24 @@ services:
 
   migrate:
     profiles: ["migrate"]
-    image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+    # Built rather than pulled, and the workspace is NOT mounted. Both halves matter.
+    #
+    # This service used to run a stock node image with `../../pyquest:/workspace` mounted, and it
+    # did not start on a Windows host: `npm install` there writes `node_modules/@pyquest/*` as
+    # symlinks to absolute Docker-VM paths, so `import '@pyquest/contract'` failed before the
+    # migrator ran. Building fixes that — and mounting the workspace would put it straight back,
+    # because a bind mount over `/workspace` masks whatever the image built underneath.
+    #
+    # The context is `pyquest/` rather than this package, because `npm ci` resolves the whole
+    # workspace from the root lockfile.
+    build:
+      context: ../../pyquest
+      dockerfile: packages/db/Dockerfile
+    image: pyquest-migrate:local
     container_name: pyquest-migrate
     restart: "no"
     depends_on:
       postgres:
         condition: service_healthy
-    working_dir: /workspace
-    command: ["npm", "run", "migrate", "--workspace", "@pyquest/db"]
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-    volumes:
-      - ../../pyquest:/workspace
