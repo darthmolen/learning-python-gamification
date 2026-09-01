@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
 import type { PendingSignoff, SignoffAward } from '@pyquest/contract';
 import { color, eyebrow, font } from '../design/tokens';
-import { PLAYER_ID, getSignoffs, postSignoff } from '../gateway/index.ts';
+import { getSignoffs, postSignoff } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { formatPayout, sinceSubmitted } from '../present/index.ts';
 import { Awaiting } from '../shell/Loading';
@@ -61,6 +62,7 @@ const SEAT: Readonly<Record<'peer' | 'dm', { label: string; accent: string; why:
 };
 
 function Queue({ pending }: { pending: PendingSignoff[] }) {
+  const playerId = usePlayer();
   const [rows, setRows] = useState<Readonly<Record<string, RowState>>>({});
   const stateOf = (attemptId: string): RowState => rows[attemptId] ?? { kind: 'open' };
   const set = (attemptId: string, state: RowState) => setRows((all) => ({ ...all, [attemptId]: state }));
@@ -74,7 +76,7 @@ function Queue({ pending }: { pending: PendingSignoff[] }) {
     const trimmed = note.trim();
     try {
       const outcome = await postSignoff(row.attemptId, {
-        by: PLAYER_ID,
+        by: playerId,
         granted,
         ...(trimmed === '' ? {} : { note: trimmed }),
       });
@@ -150,6 +152,7 @@ function Row({
   onOpenRefusal: () => void;
   onResolve: (granted: boolean, note: string) => void;
 }) {
+  const playerId = usePlayer();
   const [note, setNote] = useState('');
   const seat = SEAT[row.by];
   const waited = sinceSubmitted(row.submittedAt);
@@ -159,7 +162,7 @@ function Row({
    * household-wide on purpose — but the buttons are not, because pressing one could only ever
    * earn a 403, and a control that is guaranteed to fail is a lie about what the screen can do.
    */
-  const mine = row.playerId === PLAYER_ID;
+  const mine = row.playerId === playerId;
   const noteId = `refusal-${row.attemptId}`;
 
   return (

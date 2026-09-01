@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import type { PartyView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { PLAYER_ID, getParty } from '../gateway/index.ts';
+import { getParty } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
 import { Eyebrow, MedalSlots, Mono, Panel } from '../shell/ui';
@@ -12,7 +13,8 @@ import { Eyebrow, MedalSlots, Mono, Panel } from '../shell/ui';
  * field at all, which is the contract enforcing the same ruling one layer down.
  */
 export function PartyScreen() {
-  const load = useCallback(() => getParty(PLAYER_ID), []);
+  const playerId = usePlayer();
+  const load = useCallback(() => getParty(playerId), []);
   const party = useResource(load, []);
 
   return (

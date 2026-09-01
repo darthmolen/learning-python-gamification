@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { Link, useParams } from 'react-router';
 import type { AreaView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { PLAYER_ID, getArea } from '../gateway/index.ts';
+import { getArea } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
 import { formatTotal } from '../present/index.ts';
@@ -24,9 +25,10 @@ const STATUS_MARK: Readonly<Record<string, string>> = {
 };
 
 export function AreaScreen() {
+  const playerId = usePlayer();
   const { areaId = '' } = useParams();
   const area = Number(areaId);
-  const load = useCallback(() => getArea(PLAYER_ID, area), [area]);
+  const load = useCallback(() => getArea(playerId, area), [area]);
   const view = useResource(load, [area]);
 
   return (

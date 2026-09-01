@@ -231,14 +231,30 @@ describe.skipIf(!HAVE_DATABASE)('the schema, on what it deliberately allows', ()
       `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`,
     );
     const tables = rows.map((r) => (r as { table_name: string }).table_name).sort();
+    /*
+     * Exhaustive, so that a table added without a reason fails here first.
+     *
+     * The three from migration 0006 are the auth store, and their names carry an argument.
+     * **None of them is called `sessions`** — that word is four rows below and means a *teaching*
+     * session, a Saturday morning, attended or forgiven. Two unrelated meanings one letter apart
+     * is how somebody joins the wrong table at ten at night, so the token store is `api_tokens`.
+     * The same collision later reappeared in TypeScript, where the contract's grant type had to
+     * be named `TokenGrant` for exactly this reason.
+     *
+     * `player_credentials` is separate from `players` because reading a player is the api's most
+     * common query, and a hash on that row is a hash in every result set that selects it.
+     */
     expect(tables).toEqual([
+      'api_tokens',
       'attempts',
+      'bootstrap_secret',
       'bounties',
       'campaign',
       'concept_reviews',
       'datamines',
       'forced_reviews',
       'journal_entries',
+      'player_credentials',
       'player_roles',
       'players',
       'quest_medals',

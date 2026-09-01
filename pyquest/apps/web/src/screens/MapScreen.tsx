@@ -2,7 +2,8 @@ import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
 import type { AreaCard, CampaignView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { PLAYER_ID, getCampaign, getDefend } from '../gateway/index.ts';
+import { getCampaign, getDefend } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { formatTotal } from '../present/index.ts';
 import { Awaiting } from '../shell/Loading';
@@ -103,7 +104,8 @@ const LEGEND: readonly { label: string; hue: string }[] = [
 ];
 
 export function MapScreen() {
-  const load = useCallback(() => getCampaign(PLAYER_ID), []);
+  const playerId = usePlayer();
+  const load = useCallback(() => getCampaign(playerId), []);
   const campaign = useResource(load, []);
 
   return (
@@ -114,9 +116,10 @@ export function MapScreen() {
 }
 
 function Campaign({ view }: { view: CampaignView }) {
+  const playerId = usePlayer();
   const cards = view.areas;
   const progress = cards.map((c) => c.progress);
-  const dueLoad = useCallback(() => getDefend(PLAYER_ID), []);
+  const dueLoad = useCallback(() => getDefend(playerId), []);
   const due = useResource(dueLoad, []);
   const invasions = due.status === 'ready' ? due.value : [];
 

@@ -1,5 +1,6 @@
 import {
   ApiErrorSchema,
+  AccountSchema,
   AreaViewSchema,
   CampaignViewSchema,
   DueInvasionsSchema,
@@ -8,7 +9,9 @@ import {
   QuestViewSchema,
   SignoffAwardSchema,
   SignoffRequestSchema,
+  TokenGrantSchema,
   TomeSchema,
+  type Account,
   type AreaView,
   type CampaignView,
   type DueInvasion,
@@ -20,6 +23,7 @@ import {
   type Tome,
 } from '@pyquest/contract';
 import * as fixtures from '../fixtures/index.ts';
+import { Unauthenticated, forgetToken, rememberToken, storedToken } from './session.ts';
 
 /**
  * The one module that knows where data comes from.
@@ -59,11 +63,63 @@ const apiBase = (): string | undefined => {
  * escapes before there is anything to catch it, and takes the render down instead of becoming a
  * failed resource the screen can report.
  */
+/**
+ * `accept`, plus the token when there is one.
+ *
+ * `authorization` is not a safelisted header, so sending it makes every request preflighted —
+ * which is why `server.ts` names it in `access-control-allow-headers`. Without that line the
+ * browser refuses *before* the request is made, and the screen shows what looks like the api
+ * being down.
+ */
+function authHeaders(): Record<string, string> {
+  const token = storedToken();
+  return token === undefined
+    ? { accept: 'application/json' }
+    : { accept: 'application/json', authorization: `Bearer ${token}` };
+}
+
+/**
+ * A POST that does not need a token, for the only two routes that do not have one yet.
+ *
+ * It does not fall back to fixtures. With no `VITE_API_URL` the app is running on fixtures and
+ * nobody has to sign in at all, so reaching here without an api is a caller bug rather than an
+ * offline mode — and inventing a token would let a screen believe it was signed in.
+ */
+async function postOpen<T>(
+  path: string,
+  body: unknown,
+  schema: { parse: (raw: unknown) => T },
+): Promise<T> {
+  const base = apiBase();
+  if (base === undefined) throw new Error(`${path} needs an api, and VITE_API_URL is not set`);
+
+  const response = await fetch(`${base}${path}`, {
+    method: 'POST',
+    headers: { accept: 'application/json', 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (response.status === 401) throw new Unauthenticated();
+  if (!response.ok) throw new Error(`${path} answered ${response.status}`);
+  return schema.parse(await response.json());
+}
+
 async function get<T>(path: string, schema: { parse: (raw: unknown) => T }, stub: () => unknown): Promise<T> {
   const base = apiBase();
   if (base === undefined) return schema.parse(stub());
 
-  const response = await fetch(`${base}${path}`, { headers: { accept: 'application/json' } });
+  const response = await fetch(`${base}${path}`, { headers: authHeaders() });
+
+  /*
+   * A 401 is not a failed resource, and telling them apart is the whole reason this case is
+   * separate. `Awaiting` renders a failed resource as "something went wrong, try again", which is
+   * false and useless here: nothing went wrong, the session ended, and pressing the button again
+   * will end it again. `Unauthenticated` is what lets a screen say "sign in" instead.
+   */
+  if (response.status === 401) {
+    forgetToken();
+    throw new Unauthenticated();
+  }
 
   if (!response.ok) {
     /*
@@ -104,10 +160,78 @@ export const getParty = (playerId: string): Promise<PartyView> =>
 export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, () => fixtures.tome);
 
 /**
- * Who every request is made as. Defined in `../household.ts`, which the fixtures also import —
- * see the note there for why it is not defined in this file, and for the 404 it used to cause.
+ * Is there an api at all?
+ *
+ * With no `VITE_API_URL` the app answers from fixtures, and **nobody signs in** — there is no
+ * server to hold a credential and no token to get. `SessionProvider` reads this so that the
+ * fixture app is signed in *synchronously*, rather than flashing a sign-in screen it would then
+ * dismiss on the next tick.
  */
-export { PLAYER_ID, DM_ID } from '../household.ts';
+export const usesApi = (): boolean => apiBase() !== undefined;
+
+/**
+ * Who the fixture app is, without asking anybody.
+ *
+ * Synchronous because the offline app has no sign-in step at all, and an asynchronous answer
+ * would make every screen wait one tick for a fact that is a constant. It lives in the gateway
+ * because the fixtures do: `boundary.test.ts` forbids anything outside this directory from
+ * importing one, which is the rule that keeps a screen from reading data the gateway should have
+ * handed it.
+ */
+export const offlineAccount = (): Account => AccountSchema.parse(fixtures.me);
+
+/**
+ * Exchange a handle and password for a token, and remember it.
+ *
+ * The one call that carries a password, and the only one that works before there is a token.
+ */
+export async function signIn(handle: string, password: string): Promise<Account> {
+  const grant = await postOpen('/api/session', { handle, password }, TokenGrantSchema);
+  rememberToken(grant.token);
+  return grant.account;
+}
+
+/** Spend the printed bootstrap secret, claim the DM seat, and be signed in as it. */
+export async function claimBootstrap(claim: {
+  secret: string;
+  handle: string;
+  displayName: string;
+  password: string;
+}): Promise<Account> {
+  const grant = await postOpen('/api/session/bootstrap', claim, TokenGrantSchema);
+  rememberToken(grant.token);
+  return grant.account;
+}
+
+/**
+ * Who this browser's token belongs to, or nothing.
+ *
+ * **This is what replaced `PLAYER_ID`.** Every screen that needs a player id now waits for this
+ * answer rather than importing a constant, which is why the app has a signed-out state at all.
+ */
+export async function getMe(): Promise<Account | undefined> {
+  const base = apiBase();
+  if (base === undefined) return fixtures.me as Account;
+  if (storedToken() === undefined) return undefined;
+  try {
+    return await get('/api/me', AccountSchema, () => fixtures.me);
+  } catch (error) {
+    if (error instanceof Unauthenticated) return undefined;
+    throw error;
+  }
+}
+
+/** Sign out. The token is revoked server-side and forgotten here, in that order. */
+export async function signOut(): Promise<void> {
+  const base = apiBase();
+  const token = storedToken();
+  if (base !== undefined && token !== undefined) {
+    await fetch(`${base}/api/session/end`, { method: 'POST', headers: authHeaders() }).catch(
+      () => undefined,
+    );
+  }
+  forgetToken();
+}
 
 
 /* -------------------------------------------------------------------------------------------

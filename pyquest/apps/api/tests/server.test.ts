@@ -27,10 +27,14 @@ import { loadContentRoot } from '../src/content.ts';
 import { buildServer, jobStateFor } from '../src/server.ts';
 import type { Gitea } from '../src/gitea.ts';
 import { HAVE_DATABASE, useMigratedDatabase } from './support/database.ts';
+import { inject as authed, signIn } from './support/authed.ts';
 
 if (!HAVE_DATABASE) {
   throw new Error('no database: start the stack, or set TEST_DATABASE_URL');
 }
+
+/** The signed-in player these suites drive routes as. See `support/authed.ts`. */
+let TOKEN: string;
 
 const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../..', import.meta.url)));
 
@@ -79,6 +83,8 @@ beforeAll(async () => {
   );
   app = buildServer({ content: CONTENT, db: client, clock: () => NOW });
   await app.ready();
+  /* Ada already exists with both roles; sign her in rather than making a third player. */
+  TOKEN = (await signIn(client, { id: ADA, handle: 'ada', dm: true })).token;
 });
 
 afterAll(async () => {
@@ -100,19 +106,19 @@ beforeEach(async () => {
 
 describe('the server', () => {
   it('answers health without touching the database', async () => {
-    const response = await app.inject({ method: 'GET', url: '/health' });
+    const response = await authed(app, TOKEN, { method: 'GET', url: '/health' });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchObject({ status: 'ok' });
   });
 
   it('returns the one error shape for an unknown route', async () => {
-    const response = await app.inject({ method: 'GET', url: '/api/nonsense' });
+    const response = await authed(app, TOKEN, { method: 'GET', url: '/api/nonsense' });
     expect(response.statusCode).toBe(404);
     expect(ApiErrorSchema.safeParse(response.json()).success).toBe(true);
   });
 
   it('returns the one error shape for an unknown player', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${NOBODY}/campaign` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${NOBODY}/campaign` });
     expect(response.statusCode).toBe(404);
     expect(response.json()).toMatchObject({ code: 'not-found', retryable: false });
   });
@@ -124,7 +130,7 @@ describe('the server', () => {
 
 describe('the reads', () => {
   it('draws the whole map in one request', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/campaign` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/campaign` });
     expect(response.statusCode).toBe(200);
     const view = CampaignViewSchema.parse(response.json());
     expect(view.areas).toHaveLength(8);
@@ -139,7 +145,7 @@ describe('the reads', () => {
   // `planning/backlog/feature_area-card-without-a-manifest_2026-08-31.md` holds the code.
 
   it('gives the area screen its quests and its progress together', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/areas/0` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/areas/0` });
     expect(response.statusCode).toBe(200);
     const body = response.json();
     expect(body.quests.length).toBeGreaterThan(0);
@@ -147,11 +153,11 @@ describe('the reads', () => {
   });
 
   it('refuses an area outside 0–7', async () => {
-    expect((await app.inject({ method: 'GET', url: `/api/players/${ADA}/areas/9` })).statusCode).toBe(404);
+    expect((await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/areas/9` })).statusCode).toBe(404);
   });
 
   it('prices every unearned medal slot from the engine, never from arithmetic here', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'GET',
       url: `/api/players/${ADA}/quests/a0-name-tag`,
     });
@@ -172,7 +178,7 @@ describe('the reads', () => {
      * Awarding and quoting are separate call sites and this is the one the award test cannot
      * reach, so it gets its own assertion rather than being assumed to follow.
      */
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'GET',
       url: `/api/players/${ADA}/quests/a0-first-light`,
     });
@@ -185,7 +191,7 @@ describe('the reads', () => {
   });
 
   it('never ships the hidden tests, nor the path to them (§6.3)', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'GET',
       url: `/api/players/${ADA}/quests/a0-name-tag`,
     });
@@ -205,7 +211,7 @@ describe('the reads', () => {
   });
 
   it('ships the starter, because Run happens in the browser', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'GET',
       url: `/api/players/${ADA}/quests/a0-name-tag`,
     });
@@ -213,7 +219,7 @@ describe('the reads', () => {
   });
 
   it('returns the syllabus with no unlocked state at all (plan v3)', async () => {
-    const response = await app.inject({ method: 'GET', url: '/api/tome' });
+    const response = await authed(app, TOKEN, { method: 'GET', url: '/api/tome' });
     expect(response.statusCode).toBe(200);
     const tome = TomeSchema.parse(response.json());
     expect(tome.areas.map((a) => a.area)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
@@ -221,7 +227,7 @@ describe('the reads', () => {
   });
 
   it('serves the party with an empty xpSources rather than an absent one', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/party` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/party` });
     expect(response.statusCode).toBe(200);
     expect(response.json().xpSources).toEqual([]);
   });
@@ -241,7 +247,7 @@ describe('the Journal routes', () => {
    * an accident.
    */
   it('has no POST, because committing an entry is how one is written', async () => {
-    const response = await app.inject({ method: 'POST', url: `/api/players/${ADA}/journal` });
+    const response = await authed(app, TOKEN, { method: 'POST', url: `/api/players/${ADA}/journal` });
     expect(response.statusCode).toBe(404);
     expect(ApiErrorSchema.safeParse(response.json()).success).toBe(true);
   });
@@ -256,13 +262,13 @@ describe('the Journal routes', () => {
    * and nothing is. He simply has not got there yet.
    */
   it('answers an empty journal with an empty list rather than a failure', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/journal` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/journal` });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual([]);
   });
 
   it('404s for a player who does not exist, like every other player-scoped read', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${NOBODY}/journal` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${NOBODY}/journal` });
     expect(response.statusCode).toBe(404);
   });
 
@@ -281,7 +287,7 @@ describe('the Journal routes', () => {
       [ADA],
     );
 
-    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/journal` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/journal` });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual([]);
   });
@@ -337,7 +343,7 @@ describe('the Journal routes', () => {
     await withGitea.ready();
 
     try {
-      const response = await withGitea.inject({
+      const response = await authed(withGitea, TOKEN, {
         method: 'GET',
         url: `/api/players/${GRACE}/journal`,
       });
@@ -367,7 +373,7 @@ describe('the Journal routes', () => {
 
 describe('submit', () => {
   it('enqueues a hidden-tests job and hands back an id to poll', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/a0-name-tag/submit`,
       payload: { type: 'hidden-tests', code: 'print("hi")' },
@@ -376,14 +382,14 @@ describe('submit', () => {
     const { jobId, state } = response.json();
     expect(state).toBe('queued');
 
-    const polled = await app.inject({ method: 'GET', url: `/api/jobs/${jobId}` });
+    const polled = await authed(app, TOKEN, { method: 'GET', url: `/api/jobs/${jobId}` });
     expect(polled.statusCode).toBe(200);
     expect(polled.json()).toMatchObject({ state: 'queued', questId: 'a0-name-tag', result: null });
   });
 
   it('keeps the hidden tests out of the queued payload as content, storing only the path', async () => {
     const { client } = scratch();
-    await app.inject({
+    await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/a0-name-tag/submit`,
       payload: { type: 'hidden-tests', code: 'print("hi")' },
@@ -395,7 +401,7 @@ describe('submit', () => {
   });
 
   it('refuses a submission whose verifier is not the quest’s', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/a0-name-tag/submit`,
       payload: { type: 'peer-signoff' },
@@ -404,7 +410,7 @@ describe('submit', () => {
   });
 
   it('refuses a hidden-tests submission with no code', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/a0-name-tag/submit`,
       payload: { type: 'hidden-tests' },
@@ -414,7 +420,7 @@ describe('submit', () => {
 
   it('translates a claimed job to running, and never shows the storage word', async () => {
     const { client } = scratch();
-    const submitted = await app.inject({
+    const submitted = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/a0-name-tag/submit`,
       payload: { type: 'hidden-tests', code: 'print("hi")' },
@@ -422,7 +428,7 @@ describe('submit', () => {
     const { jobId } = submitted.json();
     await client.query(`UPDATE runner_jobs SET status = 'claimed' WHERE id = $1::bigint`, [jobId]);
 
-    const polled = await app.inject({ method: 'GET', url: `/api/jobs/${jobId}` });
+    const polled = await authed(app, TOKEN, { method: 'GET', url: `/api/jobs/${jobId}` });
     expect(polled.json().state).toBe('running');
     expect(polled.body).not.toContain('claimed');
   });
@@ -440,7 +446,7 @@ describe('submit', () => {
  * ----------------------------------------------------------------------------------------- */
 
 async function submitForSignoff(): Promise<string> {
-  const response = await app.inject({
+  const response = await authed(app, TOKEN, {
     method: 'POST',
     url: `/api/players/${ADA}/quests/a0-first-light/submit`,
     payload: { type: 'peer-signoff' },
@@ -451,7 +457,7 @@ async function submitForSignoff(): Promise<string> {
 describe('peer sign-off', () => {
   it('queues a submission for a person, household-wide', async () => {
     const attemptId = await submitForSignoff();
-    const queue = await app.inject({ method: 'GET', url: '/api/signoffs?state=pending' });
+    const queue = await authed(app, TOKEN, { method: 'GET', url: '/api/signoffs?state=pending' });
     expect(queue.json()).toEqual([
       expect.objectContaining({ attemptId, playerId: ADA, questId: 'a0-first-light', by: 'peer' }),
     ]);
@@ -459,7 +465,7 @@ describe('peer sign-off', () => {
 
   it('refuses a player signing off their own submission', async () => {
     const attemptId = await submitForSignoff();
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/signoffs/${attemptId}`,
       payload: { by: ADA, granted: true },
@@ -470,7 +476,7 @@ describe('peer sign-off', () => {
 
   it('awards exactly the number the engine returned, and takes it off the queue', async () => {
     const attemptId = await submitForSignoff();
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/signoffs/${attemptId}`,
       payload: { by: GRACE, granted: true },
@@ -500,7 +506,7 @@ describe('peer sign-off', () => {
       [ADA],
     );
     expect(rows).toEqual([{ xp_awarded: expected }]);
-    expect((await app.inject({ method: 'GET', url: '/api/signoffs' })).json()).toEqual([]);
+    expect((await authed(app, TOKEN, { method: 'GET', url: '/api/signoffs' })).json()).toEqual([]);
   });
 
   it('pays the delta and not the base price, when a medal is already held', async () => {
@@ -521,7 +527,7 @@ describe('peer sign-off', () => {
       [ADA],
     );
     const attemptId = await submitForSignoff();
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/signoffs/${attemptId}`,
       payload: { by: GRACE, granted: true },
@@ -536,7 +542,7 @@ describe('peer sign-off', () => {
 
   it('leaves a denied sign-off as a scar and pays nothing', async () => {
     const attemptId = await submitForSignoff();
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/signoffs/${attemptId}`,
       payload: { by: GRACE, granted: false },
@@ -551,7 +557,7 @@ describe('peer sign-off', () => {
   });
 
   it('refuses a sign-off on an attempt that is not pending one', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: '/api/signoffs/999999',
       payload: { by: GRACE, granted: true },
@@ -583,7 +589,7 @@ describe('defend', () => {
   });
 
   it('queues an overdue concept against the api’s own clock', async () => {
-    const response = await app.inject({ method: 'GET', url: `/api/players/${ADA}/defend` });
+    const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/defend` });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual([
       expect.objectContaining({ conceptId: 'variables', source: 'ladder' }),
@@ -591,7 +597,7 @@ describe('defend', () => {
   });
 
   it('takes no date from the caller, on the query string or in the body', async () => {
-    const repelled = await app.inject({
+    const repelled = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/defend/variables`,
       payload: { repelled: true, now: '2020-01-01' },
@@ -600,7 +606,7 @@ describe('defend', () => {
   });
 
   it('stores the rung the engine returned and the date the api read', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/defend/variables`,
       payload: { repelled: true },
@@ -620,7 +626,7 @@ describe('defend', () => {
       `UPDATE concept_reviews SET rung = 4 WHERE player_id = $1 AND concept_id = 'variables'`,
       [ADA],
     );
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/defend/variables`,
       payload: { repelled: true },
@@ -630,7 +636,7 @@ describe('defend', () => {
   });
 
   it('steps back exactly one rung when the invasion is not repelled', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/defend/variables`,
       payload: { repelled: false },
@@ -639,7 +645,7 @@ describe('defend', () => {
   });
 
   it('refuses a concept that is not on this player’s ladder', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/defend/for`,
       payload: { repelled: true },

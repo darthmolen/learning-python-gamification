@@ -16,7 +16,23 @@
  * unlabelled areas is the honest one, and it is also the one the API will actually send.
  */
 
-import { DM_ID, PLAYER_ID } from '../household.ts';
+/**
+ * Who the fixtures are about.
+ *
+ * **These moved here from `household.ts`, which is now deleted.** That module existed because the
+ * app had to name a player before it could ask who it was, and every request was made as a
+ * constant compiled into the build. `GET /api/me` replaced it: against a live api the player comes
+ * from the token, and no uuid is compiled into anything.
+ *
+ * They survive *here* because fixture data has to be about somebody. The plan's criterion is that
+ * no uuid literal lives in `apps/web` outside the fixtures, and this is inside them.
+ *
+ * The values are `packages/db/src/seed.ts`'s, so the offline app and a seeded database describe
+ * the same household — which is what makes switching `VITE_API_URL` on and off a change of source
+ * rather than a change of story.
+ */
+export const PLAYER_ID = '5eed0000-0000-4000-8000-000000000001';
+export const DM_ID = '5eed0000-0000-4000-8000-000000000002';
 
 const identity = (area: number, title: string, from: number, to: number, blurb: string) => ({
   area,
@@ -66,6 +82,14 @@ const AREA_CARDS = [
     boss: { cleared: 0, required: 3, unlocked: false },
   },
 ];
+
+/** What `GET /api/me` answers offline: the peer seat, holding both roles as §5.11 has it. */
+export const me: unknown = {
+  id: PLAYER_ID,
+  handle: 'peer',
+  displayName: 'The Peer',
+  roles: ['player', 'dm'],
+};
 
 export const campaign: unknown = { playerId: PLAYER_ID, areas: AREA_CARDS };
 

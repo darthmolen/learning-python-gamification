@@ -2,7 +2,8 @@ import { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 import type { QuestView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { PLAYER_ID, getQuest } from '../gateway/index.ts';
+import { getQuest } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
 import { Editor } from '../quest/Editor';
@@ -32,8 +33,9 @@ interface QuestScreenProps {
 }
 
 export function QuestScreen({ makeWorker }: QuestScreenProps = {}) {
+  const playerId = usePlayer();
   const { areaId = '', questId = '' } = useParams();
-  const load = useCallback(() => getQuest(PLAYER_ID, questId), [questId]);
+  const load = useCallback(() => getQuest(playerId, questId), [questId]);
   const quest = useResource(load, [questId]);
 
   return (

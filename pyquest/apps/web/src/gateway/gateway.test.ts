@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as gateway from './index.ts';
-import { PLAYER_ID } from '../household.ts';
+import { PLAYER_ID } from '../fixtures/index.ts';
 
 /**
  * The seam Phase 5 rests on, now that it is a seam over the network.
@@ -11,7 +11,7 @@ import { PLAYER_ID } from '../household.ts';
  */
 describe('every endpoint parses what it answers with', () => {
   it('the campaign, with an area appearing once', async () => {
-    const campaign = await gateway.getCampaign(gateway.PLAYER_ID);
+    const campaign = await gateway.getCampaign(PLAYER_ID);
     expect(campaign.areas).toHaveLength(8);
   });
 
@@ -22,25 +22,25 @@ describe('every endpoint parses what it answers with', () => {
    * the `AREA_NAMES` table was removed for.
    */
   it('leaves areas 0 and 2 without an identity, because their manifests have none', async () => {
-    const campaign = await gateway.getCampaign(gateway.PLAYER_ID);
+    const campaign = await gateway.getCampaign(PLAYER_ID);
     const identified = campaign.areas.filter((a) => a.identity !== undefined).map((a) => a.area);
 
     expect(identified).toEqual([1, 3, 4, 5, 6, 7]);
   });
 
   it('an area, with its quests', async () => {
-    const area = await gateway.getArea(gateway.PLAYER_ID, 3);
+    const area = await gateway.getArea(PLAYER_ID, 3);
     expect(area.identity?.title).toBe('Collections');
     expect(area.quests).toHaveLength(5);
   });
 
   it('an area nobody authored, which exists and is empty', async () => {
-    const area = await gateway.getArea(gateway.PLAYER_ID, 5);
+    const area = await gateway.getArea(PLAYER_ID, 5);
     expect(area.quests).toEqual([]);
   });
 
   it('a quest, with a slot for every medal and what each would pay', async () => {
-    const quest = await gateway.getQuest(gateway.PLAYER_ID, 'a3-recipe-book');
+    const quest = await gateway.getQuest(PLAYER_ID, 'a3-recipe-book');
 
     expect(quest.title).toBe('The Recipe Book');
     expect(quest.medalSlots).toHaveLength(5);
@@ -50,7 +50,7 @@ describe('every endpoint parses what it answers with', () => {
   });
 
   it('the Defend queue, under the §5.4 cap and one entry per concept', async () => {
-    const due = await gateway.getDefend(gateway.PLAYER_ID);
+    const due = await gateway.getDefend(PLAYER_ID);
     expect(due.length).toBeLessThanOrEqual(5);
     expect(new Set(due.map((d) => d.conceptId)).size).toBe(due.length);
   });
@@ -61,7 +61,7 @@ describe('every endpoint parses what it answers with', () => {
    * the engine's job. Empty is the truth, and the Party screen says so out loud.
    */
   it('the party board, whose XP provenance is honestly empty', async () => {
-    const party = await gateway.getParty(gateway.PLAYER_ID);
+    const party = await gateway.getParty(PLAYER_ID);
 
     expect(party.standings).toHaveLength(2);
     expect(party.xpSources).toEqual([]);
@@ -112,14 +112,14 @@ describe('the sign-off queue, with nothing behind it', () => {
 
     expect(queue).toHaveLength(2);
     // Household-wide and deliberately unfiltered: one of these is the caller's own submission.
-    expect(queue.some((row) => row.playerId === gateway.PLAYER_ID)).toBe(true);
+    expect(queue.some((row) => row.playerId === PLAYER_ID)).toBe(true);
     // Seats, not ids: `by` names which chair owes the signature. The player ids on this shape
     // are `playerId`, asserted above.
     expect(queue.every((row) => row.by === 'peer' || row.by === 'dm')).toBe(true);
   });
 
   it('parses the award a granted sign-off pays', async () => {
-    const outcome = await gateway.postSignoff('att-8f21c0', { by: gateway.PLAYER_ID, granted: true });
+    const outcome = await gateway.postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true });
 
     expect(outcome.granted).toBe(true);
     // `server.ts` writes `cleared` and an XP number the engine returned; the stub says the same.
@@ -128,7 +128,7 @@ describe('the sign-off queue, with nothing behind it', () => {
 
   it('carries the note back as the reason a sign-off was refused', async () => {
     const outcome = await gateway.postSignoff('att-8f21c0', {
-      by: gateway.PLAYER_ID,
+      by: PLAYER_ID,
       granted: false,
       note: 'go one level deeper',
     });
@@ -151,7 +151,7 @@ describe('the player the app makes every request as', () => {
    * cannot drift apart on what counts.
    */
   it('is a uuid, which is what the api will accept', () => {
-    expect(gateway.PLAYER_ID).toMatch(
+    expect(PLAYER_ID).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
     );
   });

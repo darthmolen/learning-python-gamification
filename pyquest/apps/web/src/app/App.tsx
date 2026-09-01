@@ -10,6 +10,8 @@ import { JournalScreen } from '../screens/OverlandScreens';
 import { TomeScreen } from '../screens/TomeScreen';
 import { PartyScreen } from '../screens/PartyScreen';
 import { QuestScreen } from '../screens/QuestScreen';
+import { SignInScreen } from '../screens/SignInScreen';
+import { SessionProvider, useSession } from '../session/SessionProvider.tsx';
 
 /**
  * The shell: the rail, then whatever screen you are standing on.
@@ -45,7 +47,23 @@ function Shell() {
   );
 }
 
-export function App() {
+/**
+ * The whole app, once somebody is signed in — and the sign-in screen until they are.
+ *
+ * **Three states, not two.** The moment between a reload and `GET /api/me` answering is its own
+ * state: treating it as signed-out flashes the sign-in form at somebody who is already signed in,
+ * on every single reload. Rendering nothing for that beat is the correct answer.
+ *
+ * The routes are not merely hidden while signed out — they are not mounted at all, which is what
+ * lets `usePlayer()` promise an id rather than an id-or-undefined. Six screens would otherwise
+ * each have to invent an answer for a case that cannot happen.
+ */
+function Routed() {
+  const { status } = useSession();
+
+  if (status === 'loading') return null;
+  if (status === 'out') return <SignInScreen />;
+
   return (
     <Routes>
       <Route element={<Shell />}>
@@ -65,5 +83,13 @@ export function App() {
         <Route path="/area/:areaId/boss" element={<BossScreen />} />
       </Route>
     </Routes>
+  );
+}
+
+export function App() {
+  return (
+    <SessionProvider>
+      <Routed />
+    </SessionProvider>
   );
 }

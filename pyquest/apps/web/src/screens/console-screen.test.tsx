@@ -1,11 +1,20 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AsSignedIn } from '../test-support/session.tsx';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PendingSignoff } from '@pyquest/contract';
 import { ConsoleScreen } from './ConsoleScreen';
 import { rgb } from '../test-support/rgb';
-import { PLAYER_ID } from '../household.ts';
+/**
+ * The signed-in player, named here rather than imported from the fixtures.
+ *
+ * `boundary.test.ts` forbids anything outside `gateway/` from importing a fixture, and it is
+ * right to: the rule is what keeps a screen from reading data the gateway should have handed it.
+ * A test needing an id is not that, but the cheapest way to respect a rule is to not need an
+ * exception to it.
+ */
+const PLAYER_ID = '5eed0000-0000-4000-8000-000000000001';
 
 /**
  * The Console's sign-off queue - §6.3, §5.11, artboard `docs/design/pyquest/Console.dc.html`.
@@ -51,9 +60,11 @@ const own: PendingSignoff = {
 const queue = async (pending: PendingSignoff[]) => {
   getSignoffs.mockResolvedValue(pending);
   const result = render(
-    <MemoryRouter>
-      <ConsoleScreen />
-    </MemoryRouter>,
+    <AsSignedIn>
+      <MemoryRouter>
+        <ConsoleScreen />
+      </MemoryRouter>
+    </AsSignedIn>,
   );
   await screen.findByRole('heading', { level: 1, name: 'Console' });
   return result;

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { PLAYER_ID, getCampaign, getDefend, getSignoffs, postSignoff } from './index.ts';
+import { getCampaign, getDefend, getSignoffs, postSignoff } from './index.ts';
+import { PLAYER_ID } from '../fixtures/index.ts';
 
 /**
  * The path Phase 5 exists to build, and the one nothing was testing.

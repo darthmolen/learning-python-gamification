@@ -22,6 +22,7 @@ import { gitea, type Gitea } from '../src/gitea.ts';
 import { buildServer } from '../src/server.ts';
 import { HAVE_DATABASE, useMigratedDatabase } from './support/database.ts';
 import { HAVE_GITEA, useGiteaRepo } from './support/gitea.ts';
+import { inject as authed, signIn } from './support/authed.ts';
 
 /**
  * These tests drive a real Gitea container over HTTP — create a user, mint a token, push a
@@ -46,6 +47,9 @@ vi.setConfig({ testTimeout: 30_000, hookTimeout: 120_000 });
 if (!HAVE_DATABASE) {
   throw new Error('no database: start the stack, or set TEST_DATABASE_URL');
 }
+
+/** The signed-in player these suites drive routes as. See `support/authed.ts`. */
+let TOKEN: string;
 
 const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../..', import.meta.url)));
 
@@ -80,6 +84,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
 
     app = buildServer({ content: CONTENT, db, clock: () => NOW, gitea: client });
     await app.ready();
+    TOKEN = (await signIn(db, { id: ADA, handle: 'ada' })).token;
   }, 120_000);
 
   afterAll(async () => {
@@ -93,7 +98,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
   });
 
   const submit = async (questId: string): Promise<ReturnType<FastifyInstance['inject']>> =>
-    app.inject({
+    authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${questId}/submit`,
       payload: { type: 'git-signal' },
@@ -215,7 +220,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
   });
 
   it('refuses a body whose type disagrees with the quest', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${COMMIT_QUEST}/submit`,
       payload: { type: 'hidden-tests', code: 'print(1)' },
@@ -250,6 +255,8 @@ describe.skipIf(!HAVE_GITEA)('submitting when the verifier cannot run at all', (
     });
     await unconfigured.ready();
     await unmapped.ready();
+    /* Its own scratch database, so its own token — the one above belongs to another. */
+    TOKEN = (await signIn(db, { id: ADA, handle: 'ada' })).token;
   }, 120_000);
 
   afterAll(async () => {
@@ -267,7 +274,7 @@ describe.skipIf(!HAVE_GITEA)('submitting when the verifier cannot run at all', (
   };
 
   it('refuses without Gitea, and records nothing — a verifier that never ran leaves no scar', async () => {
-    const response = await unconfigured.inject({
+    const response = await authed(unconfigured, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${COMMIT_QUEST}/submit`,
       payload: { type: 'git-signal' },
@@ -277,7 +284,7 @@ describe.skipIf(!HAVE_GITEA)('submitting when the verifier cannot run at all', (
   });
 
   it('refuses when no repository is configured for the player, and records nothing', async () => {
-    const response = await unmapped.inject({
+    const response = await authed(unmapped, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${COMMIT_QUEST}/submit`,
       payload: { type: 'git-signal' },

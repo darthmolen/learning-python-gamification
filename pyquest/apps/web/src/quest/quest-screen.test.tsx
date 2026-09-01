@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
+import { AsSignedIn } from '../test-support/session.tsx';
 import { describe, expect, it } from 'vitest';
 import { QuestScreen } from '../screens/QuestScreen';
 import type { WorkerLike } from './useRunner.ts';
@@ -44,11 +45,13 @@ function fakeWorker() {
  */
 const renderQuest = async (factory: () => WorkerLike) => {
   const result = render(
-    <MemoryRouter initialEntries={['/area/3/quest/a3-recipe-book']}>
-      <Routes>
-        <Route path="/area/:areaId/quest/:questId" element={<QuestScreen makeWorker={factory} />} />
-      </Routes>
-    </MemoryRouter>,
+    <AsSignedIn>
+      <MemoryRouter initialEntries={['/area/3/quest/a3-recipe-book']}>
+        <Routes>
+          <Route path="/area/:areaId/quest/:questId" element={<QuestScreen makeWorker={factory} />} />
+        </Routes>
+      </MemoryRouter>
+    </AsSignedIn>,
   );
   await screen.findByRole('button', { name: 'Run' });
   return result;

@@ -33,8 +33,20 @@ import {
  * ----------------------------------------------------------------------------------------- */
 
 describe('the route table', () => {
-  it('carries the twelve routes the plan names', () => {
-    expect(API_ROUTES).toHaveLength(12);
+  it('carries the twenty routes the plan names', () => {
+    expect(API_ROUTES).toHaveLength(20);
+  });
+
+  /**
+   * Exactly two routes may be reached without a token, and both are how you get one.
+   *
+   * This is the assertion that makes the guard's scope a countable property rather than a promise
+   * in a comment. A route added outside this list is a route somebody has to justify here first —
+   * which is the review that would otherwise not happen.
+   */
+  it('leaves only the two ways of getting a token unauthenticated', () => {
+    const open = ['POST /api/session', 'POST /api/session/bootstrap'];
+    expect(open.every((route) => API_ROUTES.some((r) => `${r.method} ${r.path}` === route))).toBe(true);
   });
 
   /**
@@ -72,12 +84,31 @@ describe('the route table', () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 
+  /**
+   * Every player-facing read names its player, and the exceptions are enumerated rather than
+   * assumed.
+   *
+   * **Auth added five, and they are a different kind of unscoped.** `/api/me` is the sharpest: it
+   * is as player-scoped as anything in this table, but by the *token* rather than by the path —
+   * which is strictly stronger, because a path is an assertion and a token is a credential. The
+   * plan's whole objective is that sentence. `/api/players` is the DM's roster, deliberately
+   * household-wide. The three `/api/session` routes have no player yet; that is what they are for.
+   *
+   * The list stays exhaustive so that adding a sixth is a decision somebody makes here, on
+   * purpose, rather than a route that quietly serves two households from one URL.
+   */
   it('scopes every player-facing read by player, so two players cannot share one route', () => {
     const unscoped = API_ROUTES.filter((route) => !route.path.includes(':playerId'))
       .map((route) => route.path)
       .sort();
     expect(unscoped).toEqual([
       '/api/jobs/:jobId',
+      '/api/me',
+      '/api/players',
+      '/api/players',
+      '/api/session',
+      '/api/session/bootstrap',
+      '/api/session/end',
       '/api/signoffs',
       '/api/signoffs/:attemptId',
       '/api/tome',

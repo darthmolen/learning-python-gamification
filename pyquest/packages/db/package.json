@@ -16,7 +16,8 @@
     "migrate": "tsc -b && node dist/cli.js",
     "seed": "tsc -b && node dist/seed.js",
     "seed:reset": "tsc -b && node dist/seed.js --reset",
-    "typecheck": "tsc -b && tsc -p tsconfig.test.json"
+    "typecheck": "tsc -b && tsc -p tsconfig.test.json",
+    "bootstrap": "tsc -b && node dist/bootstrap.js"
   },
   "dependencies": {
     "@pyquest/content": "*",

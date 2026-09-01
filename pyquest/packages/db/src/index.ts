@@ -26,6 +26,30 @@ export {
 } from './migrate.ts';
 
 export {
+  BootstrapError,
+  TOKEN_TTL_HOURS,
+  accountById,
+  accountByHandle,
+  armBootstrap,
+  authenticate,
+  bootstrapConsumed,
+  claimBootstrap,
+  createPlayer,
+  issueToken,
+  playerForToken,
+  purgeExpiredTokens,
+  revokeToken,
+  revokeTokensFor,
+  roster,
+  setPassword,
+  setRole,
+  type Account,
+  type IssuedToken,
+} from './accounts.ts';
+
+export { digest, hashPassword, mintToken, verifyPassword } from './auth.ts';
+
+export {
   CAMPAIGN_START_OFFSET_DAYS,
   CLEARED_BY_RANK,
   REPO_ROOT,

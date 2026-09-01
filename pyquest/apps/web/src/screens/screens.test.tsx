@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AsSignedIn } from '../test-support/session.tsx';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AreaScreen } from './AreaScreen';
@@ -16,18 +17,24 @@ import { PartyScreen } from './PartyScreen';
  */
 const atArea = async (areaId: string) => {
   const result = render(
-    <MemoryRouter initialEntries={[`/area/${areaId}`]}>
-      <Routes>
-        <Route path="/area/:areaId" element={<AreaScreen />} />
-      </Routes>
-    </MemoryRouter>,
+    <AsSignedIn>
+      <MemoryRouter initialEntries={[`/area/${areaId}`]}>
+        <Routes>
+          <Route path="/area/:areaId" element={<AreaScreen />} />
+        </Routes>
+      </MemoryRouter>
+    </AsSignedIn>,
   );
   await screen.findByRole('heading', { level: 1 });
   return result;
 };
 
 const renderAndSettle = async (node: React.ReactElement) => {
-  const result = render(<MemoryRouter>{node}</MemoryRouter>);
+  const result = render(
+    <AsSignedIn>
+      <MemoryRouter>{node}</MemoryRouter>
+    </AsSignedIn>,
+  );
   await screen.findByRole('heading', { level: 1 });
   return result;
 };
@@ -79,11 +86,13 @@ describe('the Area screen renders the decisions the engine does not make', () =>
 
   it('refuses an area outside the campaign, as a failed request rather than a blank page', async () => {
     render(
-      <MemoryRouter initialEntries={['/area/9']}>
-        <Routes>
-          <Route path="/area/:areaId" element={<AreaScreen />} />
-        </Routes>
-      </MemoryRouter>,
+      <AsSignedIn>
+        <MemoryRouter initialEntries={['/area/9']}>
+          <Routes>
+            <Route path="/area/:areaId" element={<AreaScreen />} />
+          </Routes>
+        </MemoryRouter>
+      </AsSignedIn>,
     );
 
     // The gateway throws rather than inventing an empty area, and the screen says so with the

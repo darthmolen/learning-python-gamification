@@ -80,23 +80,28 @@ one thing that is awkward to change once a household exists. It goes first.
 
 ## Success Criteria
 
-- [ ] A generated single-use secret, written by a script, claims the DM seat exactly once
-- [ ] `POST /api/session` exchanges credentials for a token; every other route requires one
-- [ ] **A request with no token, a bad token or an expired token is refused** — asserted per
+- [x] A generated single-use secret, written by a script, claims the DM seat exactly once
+- [x] `POST /api/session` exchanges credentials for a token; every other route requires one
+- [x] **A request with no token, a bad token or an expired token is refused** — asserted per
       route shape, not assumed from the middleware existing
-- [ ] The DM can create a player, reset a password and promote a role, from the Console
-- [ ] `apps/web/src/household.ts` is deleted, and both `PLAYER_ID` and `DM_ID` are replaced by
+- [~] The DM can create a player, reset a password and promote a role — **all four routes served
+      and guarded**; the Console *screen* is the `spa` track's, filed as
+      `planning/backlog/feature_console-account-panel_2026-09-01.md`
+- [x] `apps/web/src/household.ts` is deleted, and both `PLAYER_ID` and `DM_ID` are replaced by
       the session's own player. No uuid literal survives in `apps/web` outside the fixtures
-- [ ] Passwords are hashed with argon2id. **No test, log or traceback ever contains one** — and
-      the place to look is the *server log*, not the wire: `asFailure` chains the original error
-      as `cause` into the log deliberately, so a driver's complaint about a failed insert is
-      exactly where a plaintext password would surface
-- [ ] The credential table is **not** called `sessions`, and neither is the token's
-- [ ] `player_roles` is written with the stored roles it already names, and peer sign-off is
+- [~] Passwords are hashed with **scrypt, not argon2id** — a recorded deviation, argued in
+      `packages/db/src/auth.ts`. **No test, log or traceback ever contains one**, asserted: the
+      sign-in route's own body is checked for the password and for `scrypt`, and no account shape
+      carries a hash. The place that still needs care is the *server log*, where `asFailure`
+      chains the original error as `cause` on purpose — a driver's complaint about a failed
+      insert is where a plaintext password would surface if one were ever passed as a parameter
+- [x] The credential table is **not** called `sessions`, and neither is the token's — nor, after
+      the compiler caught the same collision, is the contract type
+- [x] `player_roles` is written with the stored roles it already names, and peer sign-off is
       checked as a relation — authenticated and not the submitter — rather than as a role
-- [ ] The seed still runs, still converges on a second run, and `resetHousehold` still leaves
+- [x] The seed still runs, still converges on a second run, and `resetHousehold` still leaves
       nothing behind — credentials included
-- [ ] `npm test`, `npm run typecheck` and the build gate's `npm run build --workspace @pyquest/web`
+- [x] `npm test`, `npm run typecheck` and the build gate's `npm run build --workspace @pyquest/web`
       are clean
 
 ## What already exists, and what is missing
@@ -275,7 +280,7 @@ own vocabulary. They now name the sha that was claimed. `server.gitsignal.test.t
 stronger for it: it used to rely on the repository's commits happening to be older than `now()`,
 and now says exactly which commit was already paid for.
 
-### Phase 1 — the walking skeleton
+### Phase 1 — the walking skeleton — DONE 2026-09-01
 
 One account, one token, one guarded route, proved end to end.
 
@@ -295,7 +300,7 @@ One account, one token, one guarded route, proved end to end.
 a token, `GET /api/me` names the player, and the guarded route answers with the token and refuses
 without it.
 
-### Phase 2 — the guard everywhere
+### Phase 2 — the guard everywhere — DONE 2026-09-01
 
 Every remaining route requires a token. The gateway sends it on every call. A 401 takes the SPA
 back to sign-in rather than rendering a failed resource — the one place `Loading.tsx`'s failed
@@ -331,7 +336,7 @@ is exactly how a route ships unguarded.
 Both are owned by a separate session as of 2026-08-31 and are not this plan's work. Their files —
 those three suites and `pyquest/vitest.config.ts` — are disjoint from everything below.
 
-### Phase 3 — the Console gains its second panel
+### Phase 3 — the Console gains its second panel — API DONE 2026-09-01, screen deferred
 
 The Console is **not** a frame — its sign-off queue landed 2026-08-31 and is 303 lines of
 `ConsoleScreen.tsx`. §6.8 gives the Console three jobs; one is served, and account management is
@@ -346,6 +351,72 @@ the second.
 The screen's existing rule holds for all three: nothing gets a panel that nothing serves. The
 artboard's attendance, challenge-run and backup columns stayed out for exactly that reason, and
 these three go in only because this plan builds the routes underneath them.
+
+## What Phases 1-3 actually built
+
+**Migration `0006`** — `player_credentials`, `api_tokens`, `bootstrap_secret`. Nothing is called
+`sessions`, as the plan required. **The collision then reappeared in TypeScript**, which the plan
+did not predict: `progress.ts` already exported `Session` for the teaching-session table, so the
+compiler refused the ambiguous re-export and the grant type is `TokenGrant`. The same argument,
+one layer up, caught by a different tool.
+
+**scrypt, not argon2id — a deviation, recorded.** argon2 is a native module compiled at install
+time, on the machine whose `feature_compose-services-cannot-start-on-windows_2026-08-29.md` records
+three services that will not start over exactly that class of problem. `scrypt` is in `node:crypto`,
+is memory-hard for the same reason argon2 is, and needs no dependency. Every stored hash names its
+own scheme (`scrypt$salt$key`), so argon2id is a rolling upgrade rather than a flag day if this ever
+leaves the household. Argued in `packages/db/src/auth.ts`.
+
+**Two SQL constraints were wrong and Postgres said so**, both worth keeping in the record:
+
+- `CHECK (expires_at > created_at)` on `api_tokens` forbids the one thing an expiry column is for —
+  revoking a live token by expiring it now. A CHECK applies to updates too. Dropped; the rule lives
+  in `playerForToken`'s `WHERE`, enforced on every read rather than at write time only.
+- The bootstrap's `(consumed_at IS NULL) = (claimed_by IS NULL)` wanted to be `DEFERRABLE`, and
+  Postgres does not defer a CHECK. Being refused produced the better design: `claimBootstrap` now
+  creates the player **first** and consumes the secret in one `UPDATE` that sets both columns, whose
+  own `WHERE consumed_at IS NULL` is what wins the race. A caller who loses rolls back the player it
+  speculatively made.
+
+**The guard is an allow-list, not a deny-list**, so a route added tomorrow is guarded by default and
+opening one is a deliberate edit. `auth.test.ts` walks `API_ROUTES` and requires 401 from every route
+but the two that issue tokens — from the contract's own list, so a new route is covered the day it is
+added rather than when somebody remembers.
+
+**`household.ts` is deleted.** Six screens that imported `PLAYER_ID` now call `usePlayer()`, and the
+id comes from `GET /api/me`. The fixture ids moved into `fixtures/` — which the plan's criterion
+explicitly allows — and `boundary.test.ts` was left unweakened: the one test that would have needed
+an exception got its own constant instead.
+
+**Twelve hours for a token.** §5.4 puts a session at 45-60 minutes, so an hour expires him mid-quest
+and a week means a token overheard on Saturday still works the next Saturday. The plan's Anticipated
+Backlog wants this decided against a real session; this is a reasoned guess in one named constant
+until then.
+
+### The mutants
+
+```text
+guard identifies before checking the token   ->  8 failed, caught
+expired token accepted                       ->  3 failed, caught
+== instead of a constant-time verifier       ->  SURVIVED
+bootstrap secret spendable twice             ->  2 failed, caught
+```
+
+**The third one is the honest finding.** A string comparison is functionally identical to
+`timingSafeEqual` — the difference is *how long it takes to say no*, and `===` returns at the first
+byte that differs, which leaks a secret one byte at a time to anybody who can time a request. No
+behavioural assertion can see that, and a timing assertion would be slow and flaky. The suite now
+reads the source of `verifyPassword` instead, which pins an implementation because the behaviour is
+identical by construction — a real compromise, named as one, with the precedent being
+`gateway/boundary.test.ts`.
+
+### What Phase 3 did not build
+
+The Console's account **screen**. All four routes are served and tested — create, reset, promote,
+roster, with the DM-only refusals — and `ConsoleScreen.tsx` still shows only the sign-off queue.
+`apps/web/src/screens/**` belongs to the `spa` track, which yielded this gate rather than closing,
+and drawing a second panel is that track's work rather than a gate's. Filed as
+`planning/backlog/feature_console-account-panel_2026-09-01.md`.
 
 ## Approach
 

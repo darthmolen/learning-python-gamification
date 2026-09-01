@@ -30,6 +30,7 @@ import { gitea, type Gitea } from '../src/gitea.ts';
 import { buildServer } from '../src/server.ts';
 import { HAVE_DATABASE, useMigratedDatabase } from './support/database.ts';
 import { HAVE_GITEA, useGiteaRepo } from './support/gitea.ts';
+import { inject as authed, signIn } from './support/authed.ts';
 
 /**
  * These tests drive a real Gitea container over HTTP — create a user, mint a token, push a
@@ -54,6 +55,9 @@ vi.setConfig({ testTimeout: 30_000, hookTimeout: 120_000 });
 if (!HAVE_DATABASE) {
   throw new Error('no database: start the stack, or set TEST_DATABASE_URL');
 }
+
+/** The signed-in player these suites drive routes as. See `support/authed.ts`. */
+let TOKEN: string;
 
 const CONTENT = loadContentRoot(fileURLToPath(new URL('../../../..', import.meta.url)));
 
@@ -108,6 +112,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a local-repo quest', () => {
 
     app = buildServer({ content: CONTENT, db, clock: () => NOW, gitea: client, spool, workspaceRoot });
     await app.ready();
+    TOKEN = (await signIn(db, { id: ADA, handle: 'ada' })).token;
   }, 180_000);
 
   afterAll(async () => {
@@ -125,7 +130,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a local-repo quest', () => {
   });
 
   const submit = async (): Promise<ReturnType<FastifyInstance['inject']>> =>
-    app.inject({
+    authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${QUEST}/submit`,
       payload: { type: 'local-repo' },
@@ -443,7 +448,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a local-repo quest', () => {
   });
 
   it('refuses a body whose type disagrees with the quest, and queues nothing', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${QUEST}/submit`,
       payload: { type: 'hidden-tests', code: 'print(1)' },
@@ -458,7 +463,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a local-repo quest', () => {
    * test. It must not become a scar, and it must not leave a tar behind either.
    */
   it('refuses a ref the server does not have, and records nothing', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${QUEST}/submit`,
       payload: { type: 'local-repo', ref: 'no-such-branch' },
@@ -476,7 +481,7 @@ describe.skipIf(!HAVE_GITEA)('submitting a local-repo quest', () => {
    * to anyone on the LAN — and the response body is the one place it would be most visible.
    */
   it('never puts the token in the error it sends back', async () => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${QUEST}/submit`,
       payload: { type: 'local-repo', ref: 'no-such-branch' },
@@ -529,6 +534,8 @@ describe.skipIf(!HAVE_DATABASE)('a local-repo submission the api cannot even att
       }),
     });
     await Promise.all([unconfigured.ready(), unmapped.ready(), unspooled.ready()]);
+    /* Its own scratch database, so its own token — the one above belongs to another. */
+    TOKEN = (await signIn(db, { id: ADA, handle: 'ada' })).token;
   }, 60_000);
 
   afterAll(async () => {
@@ -544,7 +551,7 @@ describe.skipIf(!HAVE_DATABASE)('a local-repo submission the api cannot even att
   });
 
   const refused = async (app: FastifyInstance): Promise<void> => {
-    const response = await app.inject({
+    const response = await authed(app, TOKEN, {
       method: 'POST',
       url: `/api/players/${ADA}/quests/${QUEST}/submit`,
       payload: { type: 'local-repo' },

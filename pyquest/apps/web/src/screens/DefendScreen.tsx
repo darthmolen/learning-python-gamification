@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import type { DueInvasion } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { PLAYER_ID, getDefend } from '../gateway/index.ts';
+import { getDefend } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
 import { Eyebrow, Mono, Panel } from '../shell/ui';
@@ -21,7 +22,8 @@ const SOURCE_LABEL: Readonly<Record<string, string>> = {
  * showing an empty list, because a blank panel reads as broken.
  */
 export function DefendScreen() {
-  const load = useCallback(() => getDefend(PLAYER_ID), []);
+  const playerId = usePlayer();
+  const load = useCallback(() => getDefend(playerId), []);
   const queue = useResource(load, []);
 
   return (

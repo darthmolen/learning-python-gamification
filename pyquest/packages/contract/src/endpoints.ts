@@ -561,6 +561,117 @@ export type JournalEntry = z.infer<typeof JournalEntrySchema>;
  * The route table
  * ----------------------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------------------------
+ * Accounts and sessions — who is asking, and what proves it
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * A player as anybody is allowed to see one.
+ *
+ * **There is no credential on this shape and there is no room for one.** `.strict()` is what makes
+ * that a guarantee rather than an intention: a handler that spread a database row in here would
+ * fail to parse rather than quietly serving a hash to a browser. §6.3's rule — anything shipped to
+ * the client is readable — applies hardest to the one table that holds secrets.
+ *
+ * `roles` is the stored vocabulary (`player`, `dm`) and not the lexicon's `peer`. A peer is what
+ * you are *to somebody* on a particular piece of work, so it is a relation computed against the
+ * thing being signed and there is no row for it. See the plan's *Two vocabularies*.
+ */
+export const AccountSchema = z
+  .object({
+    id: z.string().min(1),
+    handle: z.string().min(1),
+    displayName: z.string().min(1),
+    roles: z.array(z.enum(['player', 'dm'])),
+  })
+  .strict();
+
+export type Account = z.infer<typeof AccountSchema>;
+
+/** What `POST /api/session` takes. The one request in this api that carries a password. */
+export const SignInRequestSchema = z
+  .object({
+    handle: z.string().min(1),
+    password: z.string().min(1),
+  })
+  .strict();
+
+export type SignInRequest = z.infer<typeof SignInRequestSchema>;
+
+/**
+ * The token, the account it belongs to, and when it stops working.
+ *
+ * **Named `TokenGrant` because `Session` was already taken, and the collision is the plan's own.**
+ * `progress.ts` exports `Session` for the `sessions` table — a *teaching* session, a Saturday
+ * morning, attended or forgiven. The plan warned that an auth table must not be called `sessions`
+ * and the migration obeyed; the contract then walked into the same collision one layer up, where
+ * TypeScript caught it as an ambiguous re-export. Two unrelated meanings, one word, and the
+ * compiler refused to choose. `POST /api/session` keeps its name because a URL is a place rather
+ * than a type, and signing in is what a person calls it.
+ *
+ * `expiresAt` is on the wire so the SPA can tell a stale token from a broken one without asking.
+ * §5.4 puts a session at 45–60 minutes and this token lasts twelve hours, so in practice a screen
+ * never sees this fire — which is the point of the number, not an argument for omitting the field.
+ */
+export const TokenGrantSchema = z
+  .object({
+    token: z.string().min(1),
+    expiresAt: z.string().datetime(),
+    account: AccountSchema,
+  })
+  .strict();
+
+export type TokenGrant = z.infer<typeof TokenGrantSchema>;
+
+/**
+ * What `POST /api/session/bootstrap` takes: the printed secret, and the seat to claim with it.
+ *
+ * The secret is *spent* here rather than issued here. `packages/db/src/bootstrap.ts` is what
+ * creates one, and it is a command line rather than a route because an api that hands out a
+ * bootstrap secret hands out the household.
+ */
+export const BootstrapRequestSchema = z
+  .object({
+    secret: z.string().min(1),
+    handle: z.string().min(1),
+    displayName: z.string().min(1),
+    password: z.string().min(1),
+  })
+  .strict();
+
+export type BootstrapRequest = z.infer<typeof BootstrapRequestSchema>;
+
+/** What the Console posts to make a player. No role: everyone created here is a `player`. */
+export const CreatePlayerRequestSchema = z
+  .object({
+    handle: z.string().min(1),
+    displayName: z.string().min(1),
+    password: z.string().min(1),
+  })
+  .strict();
+
+export type CreatePlayerRequest = z.infer<typeof CreatePlayerRequestSchema>;
+
+/** A password reset, which is the DM's act because no address was collected to email. */
+export const SetPasswordRequestSchema = z.object({ password: z.string().min(1) }).strict();
+
+export type SetPasswordRequest = z.infer<typeof SetPasswordRequestSchema>;
+
+/**
+ * Granting or removing a role.
+ *
+ * `held` rather than two verbs, because promote and demote are one decision with a boolean in it
+ * and two routes would be two places to forget the token revocation that follows either.
+ */
+export const SetRoleRequestSchema = z
+  .object({
+    role: z.enum(['player', 'dm']),
+    held: z.boolean(),
+  })
+  .strict();
+
+export type SetRoleRequest = z.infer<typeof SetRoleRequestSchema>;
+
 /**
  * Thirteen routes, written down rather than left to be discovered by reading handlers.
  *
@@ -641,4 +752,36 @@ export const API_ROUTES: readonly ApiRoute[] = [
     returns: 'pending peer-signoffs, household-wide',
   },
   { method: 'POST', path: '/api/signoffs/:attemptId', returns: 'the medal awarded' },
+
+  /*
+   * Accounts and sessions.
+   *
+   * `POST /api/session` is the only route that takes a password, and the only one reachable
+   * without a token. Everything above requires one — see the guard in `apps/api/src/server.ts`.
+   *
+   * There is no route that *issues* a bootstrap secret. `packages/db/src/bootstrap.ts` does that,
+   * from a command line, because an api that hands one out hands out the household.
+   */
+  { method: 'POST', path: '/api/session', returns: 'Session — a token and the account it belongs to' },
+  {
+    method: 'POST',
+    path: '/api/session/bootstrap',
+    returns: 'Session — spends the printed secret and claims the DM seat, once',
+  },
+  { method: 'POST', path: '/api/session/end', returns: 'nothing; the presented token is revoked' },
+  { method: 'GET', path: '/api/me', returns: 'Account — who the presented token belongs to' },
+
+  /* The Console's three acts (§6.8). Every one of these requires the `dm` role. */
+  { method: 'GET', path: '/api/players', returns: 'Account[] — the household roster. dm only' },
+  { method: 'POST', path: '/api/players', returns: 'Account — always a player, never a dm. dm only' },
+  {
+    method: 'POST',
+    path: '/api/players/:playerId/password',
+    returns: 'nothing; the password is replaced and that player is signed out. dm only',
+  },
+  {
+    method: 'POST',
+    path: '/api/players/:playerId/roles',
+    returns: 'the roles now held, and that player is signed out. dm only',
+  },
 ];

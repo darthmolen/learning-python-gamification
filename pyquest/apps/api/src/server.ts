@@ -37,7 +37,14 @@ import {
   DrillOutcomeSchema,
   JobAcceptedSchema,
   JobViewSchema,
+  AccountSchema,
+  BootstrapRequestSchema,
+  CreatePlayerRequestSchema,
   JournalEntrySchema,
+  TokenGrantSchema,
+  SetPasswordRequestSchema,
+  SetRoleRequestSchema,
+  SignInRequestSchema,
   PartyViewSchema,
   PendingSignoffsSchema,
   QuestViewSchema,
@@ -51,7 +58,24 @@ import {
   type PlayerProgress,
   type RunnerJobStatus,
 } from '@pyquest/contract';
-import { bounties, journalEntries, playerProgress, players } from '@pyquest/db';
+import {
+  accountByHandle,
+  authenticate,
+  bounties,
+  claimBootstrap,
+  createPlayer,
+  issueToken,
+  journalEntries,
+  playerForToken,
+  playerProgress,
+  players,
+  revokeToken,
+  revokeTokensFor,
+  roster,
+  setPassword,
+  setRole,
+  type Account,
+} from '@pyquest/db';
 import {
   dueInvasions,
   intervalDays,
@@ -244,7 +268,15 @@ export function buildServer(options: ServerOptions): FastifyInstance {
     if (allowed === undefined) return reply.code(403).send();
     return reply
       .header('access-control-allow-methods', 'GET, POST, OPTIONS')
-      .header('access-control-allow-headers', 'accept, content-type')
+      /*
+       * `authorization` is here because without it the guard is unreachable from a browser.
+       *
+       * It is not a safelisted header, so the moment the gateway starts sending a bearer token
+       * the browser asks permission first — and a preflight that does not name it fails *before*
+       * the request is made. From the screen that looks exactly like the api being down, which is
+       * the most expensive way to spend an evening on a bug that is one word long.
+       */
+      .header('access-control-allow-headers', 'accept, authorization, content-type')
       .header('access-control-max-age', '86400')
       .code(204)
       .send();
@@ -334,6 +366,238 @@ export function buildServer(options: ServerOptions): FastifyInstance {
 
   /** Liveness only. It does not touch Postgres, so it stays true while the database is restarting. */
   app.get('/health', async () => ({ status: 'ok', items: content.items.length }));
+
+  /* ---------------------------------------------------------------------------------------
+   * The guard — §6.4, and the plan's Phase 2
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * Two routes may be reached without a token, and both are how a token is obtained.
+   *
+   * An allow-list rather than a deny-list, and the direction is the point: a route added
+   * tomorrow is guarded by default, and opening one is an edit somebody has to make on purpose.
+   * A deny-list makes forgetting the failure mode, and the thing being forgotten is a route that
+   * answers to anybody. `endpoints.test.ts` asserts this same pair from the contract's side.
+   *
+   * `/health` is here too. It is liveness for a container, it touches no database and names no
+   * player, and a health check that needs a credential is a health check that cannot run before
+   * anybody has one.
+   */
+  const OPEN = new Set(['POST /api/session', 'POST /api/session/bootstrap', 'GET /health']);
+
+  /** The bearer token on a request, or nothing. Case-insensitive because the scheme is. */
+  function bearer(request: { headers: Record<string, unknown> }): string | undefined {
+    const header = request.headers['authorization'];
+    if (typeof header !== 'string') return undefined;
+    const match = /^bearer[ \t]+(\S+)$/i.exec(header.trim());
+    return match?.[1];
+  }
+
+  /**
+   * Every request, before any handler: who is asking?
+   *
+   * **`onRequest`, so a handler cannot be reached without passing here.** Checking inside each
+   * handler would put the guard in nineteen places and leave the twentieth to be noticed by
+   * somebody reading a diff.
+   *
+   * A refusal is `401` with the same body shape as every other failure, and it says nothing about
+   * *why* — an unknown token and an expired one are the same sentence, because an api that tells
+   * them apart is telling somebody which of their guesses was closer.
+   *
+   * The account is attached to the request rather than looked up again in each handler, so
+   * "who is asking" is answered exactly once per request and every route reads the same answer.
+   */
+  app.addHook('onRequest', async (request, reply) => {
+    if (request.method === 'OPTIONS') return;
+    const route = `${request.method} ${request.url.split('?')[0]}`;
+    if (OPEN.has(route)) return;
+
+    const token = bearer(request as never);
+    const account = token === undefined ? undefined : await playerForToken(db, token);
+    if (account === undefined) {
+      return reply.code(401).send(
+        ApiErrorSchema.parse({
+          code: 'not-found',
+          message: 'this request carried no usable token — sign in and try again',
+          retryable: false,
+        }),
+      );
+    }
+    (request as { account?: Account }).account = account;
+  });
+
+  /** The account this request proved. Only reachable after the hook above has run. */
+  const asker = (request: unknown): Account => {
+    const account = (request as { account?: Account }).account;
+    if (account === undefined) {
+      /* Unreachable: the guard refuses before a handler runs. Thrown rather than asserted so
+       * that a future route registered ahead of the hook fails loudly instead of anonymously. */
+      throw new ApiFailure('internal', 'this route ran without the guard having identified anybody');
+    }
+    return account;
+  };
+
+  /** `dm`-only, checked against the role stored now rather than the role held when signing in. */
+  function requireDm(request: unknown): Account {
+    const account = asker(request);
+    if (!account.roles.includes('dm')) {
+      throw new ApiFailure('signoff-denied', 'only the DM may do that');
+    }
+    return account;
+  }
+
+  /* ---------------------------------------------------------------------------------------
+   * Sessions
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * Credentials in, token out. The only route in this api that takes a password.
+   *
+   * **A wrong password and an unknown handle are one answer**, produced by one code path, because
+   * `authenticate` refuses to tell them apart. Confirming which handles exist costs nothing to
+   * avoid and is worth avoiding.
+   */
+  app.post('/api/session', async (request, reply) => {
+    const parsed = SignInRequestSchema.safeParse(request.body);
+    if (!parsed.success) throw new ApiFailure('not-found', 'that is not a sign-in');
+
+    const account = await authenticate(db, parsed.data.handle, parsed.data.password);
+    if (account === undefined) {
+      return reply.code(401).send(
+        ApiErrorSchema.parse({
+          code: 'not-found',
+          message: 'that handle and password do not go together',
+          retryable: false,
+        }),
+      );
+    }
+
+    const issued = await issueToken(db, account.id, 'sign-in');
+    return TokenGrantSchema.parse({ token: issued.token, expiresAt: issued.expiresAt, account });
+  });
+
+  /**
+   * Spend the printed secret and claim the DM seat.
+   *
+   * Unauthenticated by necessity — there is nobody to authenticate as yet, which is the whole
+   * problem it solves. What makes it safe is that the secret exists only because somebody ran a
+   * command on the api's own machine, and it can be spent exactly once.
+   */
+  app.post('/api/session/bootstrap', async (request, reply) => {
+    const parsed = BootstrapRequestSchema.safeParse(request.body);
+    if (!parsed.success) throw new ApiFailure('not-found', 'that is not a bootstrap claim');
+
+    let claimed;
+    try {
+      claimed = await claimBootstrap(db, parsed.data.secret, {
+        handle: parsed.data.handle,
+        displayName: parsed.data.displayName,
+        password: parsed.data.password,
+      });
+    } catch (cause) {
+      /* The reason is deliberately the same for a wrong secret and a spent one. */
+      return reply.code(401).send(
+        ApiErrorSchema.parse({
+          code: 'not-found',
+          message: 'that bootstrap secret cannot be used',
+          retryable: false,
+        }),
+      );
+    }
+
+    const issued = await issueToken(db, claimed.account.id, 'bootstrap');
+    return TokenGrantSchema.parse({
+      token: issued.token,
+      expiresAt: issued.expiresAt,
+      account: claimed.account,
+    });
+  });
+
+  /** Sign out. Revokes the presented token and nothing else — other devices stay signed in. */
+  app.post('/api/session/end', async (request, reply) => {
+    const token = bearer(request as never);
+    if (token !== undefined) await revokeToken(db, token);
+    return reply.code(204).send();
+  });
+
+  /**
+   * Who the presented token belongs to.
+   *
+   * This is what replaces `PLAYER_ID` in the SPA, and the difference is the plan's objective in
+   * one route: the client no longer asserts who it is, it asks.
+   */
+  app.get('/api/me', async (request) => AccountSchema.parse(asker(request)));
+
+  /* ---------------------------------------------------------------------------------------
+   * The Console's three acts — §6.8
+   * ------------------------------------------------------------------------------------- */
+
+  app.get('/api/players', async (request) => {
+    requireDm(request);
+    return (await roster(db)).map((account) => AccountSchema.parse(account));
+  });
+
+  app.post('/api/players', async (request, reply) => {
+    requireDm(request);
+    const parsed = CreatePlayerRequestSchema.safeParse(request.body);
+    if (!parsed.success) throw new ApiFailure('not-found', 'that is not a new player');
+
+    const taken = await accountByHandle(db, parsed.data.handle);
+    if (taken !== undefined) {
+      throw new ApiFailure('already-awarded', `${parsed.data.handle} is already somebody's handle`);
+    }
+
+    const made = await createPlayer(db, parsed.data);
+    return reply.code(201).send(AccountSchema.parse(made));
+  });
+
+  /**
+   * Reset a password, which is the DM's act because no address was collected to email.
+   *
+   * **It signs that player out.** A reset happens because somebody has forgotten, or because
+   * something went wrong; either way the tokens issued against the old password should not
+   * outlive it.
+   */
+  app.post<{ Params: { playerId: string } }>(
+    '/api/players/:playerId/password',
+    async (request, reply) => {
+      requireDm(request);
+      const parsed = SetPasswordRequestSchema.safeParse(request.body);
+      if (!parsed.success) throw new ApiFailure('not-found', 'that is not a password');
+
+      const player = await playerFor(db, request.params.playerId);
+      await setPassword(db, player.id, parsed.data.password);
+      await revokeTokensFor(db, player.id);
+      return reply.code(204).send();
+    },
+  );
+
+  /**
+   * Promote or demote, and never to oneself.
+   *
+   * **A DM may not remove their own `dm`.** Not paternalism — a household whose only DM demotes
+   * themselves has no way back except the bootstrap, which is spent. The refusal is cheaper than
+   * the recovery.
+   */
+  app.post<{ Params: { playerId: string } }>(
+    '/api/players/:playerId/roles',
+    async (request) => {
+      const dm = requireDm(request);
+      const parsed = SetRoleRequestSchema.safeParse(request.body);
+      if (!parsed.success) throw new ApiFailure('not-found', 'that is not a role change');
+
+      const player = await playerFor(db, request.params.playerId);
+      if (player.id === dm.id && parsed.data.role === 'dm' && !parsed.data.held) {
+        throw new ApiFailure(
+          'signoff-denied',
+          'you cannot take the DM seat away from yourself — promote somebody else first',
+        );
+      }
+
+      return { roles: await setRole(db, player.id, parsed.data.role, parsed.data.held) };
+    },
+  );
+
 
   /* ---------------------------------------------------------------------------------------
    * The map and the area screen

@@ -2,7 +2,8 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { CampaignView, Tome as TomeContent } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { PLAYER_ID, getCampaign, getTome } from '../gateway/index.ts';
+import { getCampaign, getTome } from '../gateway/index.ts';
+import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
 import { Eyebrow, Mono } from '../shell/ui';
@@ -20,6 +21,7 @@ import { Eyebrow, Mono } from '../shell/ui';
  * boss early is a legal move" (§361, §5.3). An area he has not reached is dimmer, never hidden.
  */
 export function TomeScreen() {
+  const playerId = usePlayer();
   /*
    * Two requests, in parallel, because the two halves belong to different owners. `/api/tome`
    * carries concepts by area and deliberately no player state — "the syllabus is the same for
@@ -27,7 +29,7 @@ export function TomeScreen() {
    * ranges come from the campaign; the concepts come from the Tome.
    */
   const load = useCallback(async () => {
-    const [campaign, content] = await Promise.all([getCampaign(PLAYER_ID), getTome()]);
+    const [campaign, content] = await Promise.all([getCampaign(playerId), getTome()]);
     return { campaign, content };
   }, []);
   const both = useResource(load, []);

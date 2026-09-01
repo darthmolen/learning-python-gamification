@@ -30,6 +30,7 @@ import type { FastifyInstance } from 'fastify';
 import { loadContentRoot } from '../src/content.ts';
 import { buildServer } from '../src/server.ts';
 import { HAVE_DATABASE, useMigratedDatabase } from './support/database.ts';
+import { inject as authed, signIn } from './support/authed.ts';
 import { campaign as campaignFixture, areaView as areaViewFixture } from '../../web/src/fixtures/index.ts';
 
 if (!HAVE_DATABASE) {
@@ -37,6 +38,9 @@ if (!HAVE_DATABASE) {
 }
 
 const REPO_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
+/** The signed-in player these suites drive routes as. See `support/authed.ts`. */
+let TOKEN: string;
+
 const CONTENT = loadContentRoot(REPO_ROOT);
 const ITEMS = checkContent(contentRootsFrom(REPO_ROOT)).items;
 
@@ -50,6 +54,7 @@ beforeAll(async () => {
   await seedHousehold(scratch().client, { now: NOW, items: ITEMS });
   app = buildServer({ content: CONTENT, db: scratch().client, clock: () => NOW });
   await app.ready();
+  TOKEN = (await signIn(scratch().client, { handle: 'fixtures' })).token;
 }, 60_000);
 
 afterAll(async () => {
@@ -59,7 +64,7 @@ afterAll(async () => {
 const PEER = SEEDED_PLAYERS.peer.id;
 
 const get = async (url: string): Promise<unknown> => {
-  const response = await app.inject({ method: 'GET', url });
+  const response = await authed(app, TOKEN, { method: 'GET', url });
   expect(response.statusCode).toBe(200);
   return response.json();
 };
