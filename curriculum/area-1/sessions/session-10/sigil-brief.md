@@ -89,5 +89,5 @@ things you wrote down as *what will break next time* are, quite often, the thing
 to break tonight.
 
 You will also notice that entry 07 is easy to read now. That feeling is the point of the
-whole Journal and it is the best evidence you are going to get that six weeks did
-something.
+whole Journal and it is the best evidence you are going to get that everything since
+did something.

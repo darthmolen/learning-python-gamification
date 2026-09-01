@@ -60,7 +60,7 @@ These are not suggestions. Check each one before you say you are finished.
 Not on yours, with the window already open, with you nudging it. His machine, his
 terminal, your file, cold.
 
-This is a rehearsal. In about six weeks there is a boss fight whose entire win
+This is a rehearsal. Later in the campaign there is a boss fight whose entire win
 condition is that sentence, and it is the one that every learn-to-code website in
 the world fails at. You are getting an early look at it.
 

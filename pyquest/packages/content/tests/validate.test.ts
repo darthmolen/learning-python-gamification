@@ -140,6 +140,81 @@ describe('identity and manifests', () => {
   });
 });
 
+describe('pace in a lesson (ADR 0006)', () => {
+  const issues = () => byRule(validateContent(broken('pace-in-lesson')), 'pace-in-lesson');
+
+  /**
+   * Six of eight lessons opened with a duration before this check existed, and the parent had
+   * corrected it by hand more than once. ADR 0006 rules that lesson prose places the reader in
+   * the sequence and never on the calendar; this is that rule, made load-bearing.
+   */
+  it('refuses every unit that pace is measured in', () => {
+    expect(issues().map((i) => i.message)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('"Six weeks"'),
+        expect.stringContaining('"three days"'),
+        expect.stringContaining('"A few months"'),
+        expect.stringContaining('"Next year"'),
+      ]),
+    );
+  });
+
+  /** Asked for by name, and right to be: a spelled quantifier is still a count. */
+  it('catches "Four score and 7 years ago"', () => {
+    expect(issues().map((i) => i.message)).toContainEqual(expect.stringContaining('"7 years"'));
+  });
+
+  /**
+   * The three shapes that must survive, because a check that fires on honest sentences teaches
+   * authors to write around it — ADR 0005's reason for refusing to be a test at all.
+   */
+  it('leaves seconds alone, because a game loop at sixty a second is the subject', () => {
+    expect(issues().map((i) => i.message).join(' ')).not.toMatch(/second/i);
+  });
+
+  it('leaves a hyphenated age alone, because 11-14-year-old is not a duration', () => {
+    expect(issues().map((i) => i.message).join(' ')).not.toMatch(/14-year|year-old/i);
+  });
+
+  /**
+   * `ninety days` sits in a comment inside a fenced block and nowhere else in the fixture, which
+   * is the whole point of choosing it. An earlier version of this test asserted on `two weeks` —
+   * a phrase the fixture also uses in prose — so a mutant that stopped stripping fences altogether
+   * passed it. A negative assertion is only as good as the uniqueness of the string it names.
+   */
+  it('leaves code alone, because a duration in a comment is Python rather than prose', () => {
+    expect(issues().map((i) => i.message).join(' ')).not.toMatch(/ninety days/i);
+  });
+
+  it('honors a pace-ok marker that gives a reason', () => {
+    expect(issues().map((i) => i.message).join(' ')).not.toMatch(/3 days/);
+  });
+
+  /**
+   * **A bare `<!-- pace-ok -->` suppresses nothing**, and this is the assertion that makes the
+   * reason load-bearing rather than decorative.
+   *
+   * Without it the marker is a mute switch: an author silences the check, nobody learns why, and
+   * the next reader cannot tell a considered exception from a shrug. A mutant that relaxed the
+   * pattern to `/<!--\\s*pace-ok:/` survived the suite until this test existed.
+   */
+  it('refuses a pace-ok marker that gives no reason', () => {
+    const messages = issues().map((i) => i.message);
+    /* `<!-- pace-ok: -->` — the colon is there and the reason is not. */
+    expect(messages).toContainEqual(expect.stringContaining('"eleven days"'));
+    /* `<!-- pace-ok -->` — not even the colon. */
+    expect(messages).toContainEqual(expect.stringContaining('"twelve days"'));
+  });
+
+  /** Every issue names the file, the line and what to write instead. §6.10 promises two minutes. */
+  it('reports where it is and what to write instead', () => {
+    const first = issues()[0];
+    expect(first?.file).toBe('area-1/lesson.md');
+    expect(first?.line).toBeGreaterThan(0);
+    expect(first?.fix).toMatch(/next session|by the end of this area/);
+  });
+});
+
 describe('malformed YAML', () => {
   it('reports the parse error against the file instead of throwing out of the run', () => {
     const parseIssues = byRule(validateContent(broken('malformed-yaml')), 'yaml-parse');

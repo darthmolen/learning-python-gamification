@@ -48,7 +48,7 @@ Change one dial. Run it. Change it again. Run it again.
 generator.** If it only looks right at the numbers you happened to be using while
 you wrote it, you have built one picture and got lucky.
 
-Boss 1 is judged on this exact test, so find out tonight rather than next week.
+Boss 1 is judged on this exact test, so find out tonight rather than on the night.
 
 ---
 
@@ -92,5 +92,5 @@ If it hangs, that is a session-3 problem and you know the key. If it draws the w
 thing silently, that is a session-6 problem and you know the tool: make it count, and
 print the count.
 
-Write both in the Journal. What broke tonight is next week's list of what to watch for,
-and next week is the boss.
+Write both in the Journal. What broke tonight is your list of what to watch for next
+session, and next session is the boss.

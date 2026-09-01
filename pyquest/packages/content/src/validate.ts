@@ -46,7 +46,8 @@ export type ValidationRule =
   | 'prerequisite-cycle'
   | 'missing-file'
   | 'concept-above-area'
-  | 'missing-area-manifest';
+  | 'missing-area-manifest'
+  | 'pace-in-lesson';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -381,6 +382,7 @@ export function checkContent(source: ContentSource): ContentSet {
   issues.push(...referenceIssues(roots, items, byId(records), locate));
   issues.push(...conceptAreaIssues(items, byId(records), locate));
   issues.push(...manifestIssues(items, manifests, byId(records), locate));
+  issues.push(...paceIssues(roots));
 
   issues.sort(
     (a, b) => a.file.localeCompare(b.file) || (a.line ?? 0) - (b.line ?? 0) || a.rule.localeCompare(b.rule),
@@ -529,6 +531,104 @@ function conceptAreaIssues(
         rule: 'concept-above-area',
         message: `tags "${concept}", first taught in area ${taught}, but this item is area ${item.area}`,
         fix: `drop the tag, or move the item to area ${taught} — spec §4 orders the vocabulary and the learner has not met this one yet`,
+      });
+    }
+  }
+
+  return issues;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Pace in learner-facing prose — ADR 0006
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Which files this rule reaches: what a learner reads, and nothing written for a calendar.
+ *
+ * ADR 0006 governs lessons and briefs. It deliberately does **not** reach session plans, DM
+ * guides, journal prompts or READMEs — those are written for somebody running a schedule, and
+ * "in two weeks, opening this file" is exactly the sentence a DM guide should contain. Scoping
+ * this wrongly would be worse than not having it: 66 honest sentences elsewhere in the
+ * curriculum match this pattern, and a check that fires on them teaches authors to write around
+ * the check.
+ */
+const readsAsLesson = (file: string): boolean =>
+  /(?:^|\/)lesson\.(?:draft\.)?md$/.test(file) || /brief[^/]*\.md$/i.test(file);
+
+/**
+ * A count of calendar time: a number, then a unit a learner's pace is measured in.
+ *
+ * **Days, weeks, months and years only.** Minutes and seconds are not pace — Area 4's game loop
+ * runs "sixty times a second", which is the subject rather than a claim about the reader — and a
+ * rule that swept them up would fail the one lesson that most needs to say it.
+ *
+ * `next` and `last` are in the number list because they place the reader on a calendar just as
+ * firmly as a digit does: "next week is the boss" is false for a learner who takes a fortnight,
+ * and "next session" is both true for everybody and the better sentence. `score` is in it because
+ * the parent asked for it by name, and was right to — a spelled quantifier is still a count.
+ */
+const PACE = new RegExp(
+  String.raw`\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|` +
+    String.raw`fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|` +
+    String.raw`sixty|seventy|eighty|ninety|hundred|score|dozen|next|last|a few|a couple|several)` +
+    String.raw`\b[\s\-]+(?:of\s+)?\b(?:day|week|month|year)s?\b(?!-)`,
+  'gi',
+);
+
+/**
+ * An author saying "I know, and here is why."
+ *
+ * ADR 0005 refused to make its rule a test because a check that has to be wrong to be strict
+ * teaches people to work around it. This rule is tighter than that one but not perfect: a lesson
+ * that teaches the review ladder's `+3 days` interval is naming a fact about the system rather
+ * than about the reader, and it should be able to say so. The reason is required, so an exception
+ * documents itself rather than becoming a silent hole.
+ */
+const ALLOWED = /<!--\s*pace-ok:\s*\S[^>]*-->/i;
+
+/**
+ * Comment out what is not prose before looking for pace in it.
+ *
+ * A fenced block is code the learner types, and `datetime.timedelta(days=7)` is not a claim about
+ * how long an area takes. Stripping fences first is the difference between a rule about writing
+ * and a rule about Python.
+ */
+const prose = (markdown: string): string =>
+  markdown.replace(/```[\s\S]*?```/g, (block) => block.replace(/[^\n]/g, ' '));
+
+/**
+ * §5.6's Journal and ADR 0006's lessons agree: the game owns pace, the lesson owns teaching.
+ *
+ * The check is whole-file rather than first-paragraph. All six openings that prompted the ADR
+ * were in the first sentence, but three of the five violations this first caught were not —
+ * `mandala-brief.md` says "next week is the boss" three quarters of the way down, and it is just
+ * as false for a learner who took a fortnight over the rehearsal.
+ */
+function paceIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const trees = roots.curriculum === roots.game ? [roots.curriculum] : [roots.curriculum, roots.game];
+  const issues: ContentIssue[] = [];
+
+  for (const root of trees) {
+    if (!existsSync(root)) continue;
+    const files = readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+      .map((entry) => toPosix(join(entry.parentPath, entry.name).slice(root.length + 1)))
+      .filter(readsAsLesson)
+      .sort();
+
+    for (const file of files) {
+      const lines = prose(readFileSync(join(root, file), 'utf8')).split(/\r?\n/);
+      lines.forEach((line, index) => {
+        if (ALLOWED.test(line)) return;
+        for (const match of line.matchAll(PACE)) {
+          issues.push({
+            file,
+            line: index + 1,
+            rule: 'pace-in-lesson',
+            message: `"${match[0]}" places the reader on a calendar, and a lesson may only place him in the sequence (ADR 0006)`,
+            fix: 'say it in sequence — "next session", "by the end of this area", "the first time you go looking" — or, if the duration is the subject rather than the reader\'s pace, mark the line `<!-- pace-ok: why -->`',
+          });
+        }
       });
     }
   }
