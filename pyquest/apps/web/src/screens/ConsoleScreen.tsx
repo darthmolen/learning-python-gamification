@@ -2,7 +2,8 @@ import { useCallback, useState } from 'react';
 import type { PendingSignoff, SignoffAward } from '@pyquest/contract';
 import { color, eyebrow, font } from '../design/tokens';
 import { getSignoffs, postSignoff } from '../gateway/index.ts';
-import { usePlayer } from '../session/SessionProvider.tsx';
+import { useIsDm, usePlayer } from '../session/SessionProvider.tsx';
+import { AccountsPanel } from './AccountsPanel.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { formatPayout, sinceSubmitted } from '../present/index.ts';
 import { Awaiting } from '../shell/Loading';
@@ -62,6 +63,7 @@ const SEAT: Readonly<Record<'peer' | 'dm', { label: string; accent: string; why:
 };
 
 function Queue({ pending }: { pending: PendingSignoff[] }) {
+  const isDm = useIsDm();
   const playerId = usePlayer();
   const [rows, setRows] = useState<Readonly<Record<string, RowState>>>({});
   const stateOf = (attemptId: string): RowState => rows[attemptId] ?? { kind: 'open' };
@@ -136,6 +138,16 @@ function Queue({ pending }: { pending: PendingSignoff[] }) {
             ))}
           </ul>
         )}
+
+        {/*
+          * §6.8's second job, and it only renders for the seat that can act on it.
+          *
+          * Hidden rather than disabled for a player: every control in it would answer 403, and a
+          * control guaranteed to fail is a lie about what the screen can do — the same rule the
+          * sign-off buttons already follow for a submission of your own. The api refuses
+          * regardless; this is about not offering.
+          */}
+        {isDm && <AccountsPanel />}
       </div>
     </div>
   );

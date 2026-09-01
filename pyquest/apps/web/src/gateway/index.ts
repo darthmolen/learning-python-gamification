@@ -221,6 +221,82 @@ export async function getMe(): Promise<Account | undefined> {
   }
 }
 
+/* -------------------------------------------------------------------------------------------
+ * The Console's account acts — §6.8. Every one of these is dm-only at the api.
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * A write that carries the token and reads nothing back but a status.
+ *
+ * Separate from `postOpen` because these need the credential, and separate from `get` because a
+ * 409 has to survive as a 409: the create form says "that handle is taken" and can only do so if
+ * the status reaches it.
+ */
+async function send(path: string, body: unknown): Promise<Response> {
+  const base = apiBase();
+  if (base === undefined) throw new Error(`${path} needs an api, and VITE_API_URL is not set`);
+
+  const response = await fetch(`${base}${path}`, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (response.status === 401) {
+    forgetToken();
+    throw new Unauthenticated();
+  }
+  return response;
+}
+
+/** Everybody in the household, for the Console's roster. */
+export const getRoster = (): Promise<Account[]> =>
+  get('/api/players', AccountSchema.array(), () => [fixtures.me]);
+
+/** Thrown when a handle is taken, so the form can say which thing went wrong. */
+export class HandleTaken extends Error {
+  constructor(handle: string) {
+    super(`${handle} is already somebody's handle`);
+    this.name = 'HandleTaken';
+  }
+}
+
+export async function createPlayer(input: {
+  handle: string;
+  displayName: string;
+  password: string;
+}): Promise<Account> {
+  const response = await send('/api/players', input);
+  if (response.status === 409) throw new HandleTaken(input.handle);
+  if (!response.ok) throw new Error(`creating ${input.handle} answered ${response.status}`);
+  return AccountSchema.parse(await response.json());
+}
+
+/** Replace a password. The api signs that player out; the screen says so before it is pressed. */
+export async function resetPassword(playerId: string, password: string): Promise<void> {
+  const response = await send(`/api/players/${playerId}/password`, { password });
+  if (!response.ok) throw new Error(`resetting that password answered ${response.status}`);
+}
+
+/**
+ * Grant or remove a role.
+ *
+ * A 403 here is the api refusing a DM who is removing their own seat, and it carries a sentence
+ * worth showing. Everything else is a failure with a status.
+ */
+export async function setRole(
+  playerId: string,
+  role: 'player' | 'dm',
+  held: boolean,
+): Promise<string[]> {
+  const response = await send(`/api/players/${playerId}/roles`, { role, held });
+  if (response.status === 403) {
+    const body = ApiErrorSchema.safeParse(await response.json().catch(() => undefined));
+    throw new Error(body.success ? body.data.message : 'that role change was refused');
+  }
+  if (!response.ok) throw new Error(`that role change answered ${response.status}`);
+  return (await response.json()).roles as string[];
+}
+
 /** Sign out. The token is revoked server-side and forgotten here, in that order. */
 export async function signOut(): Promise<void> {
   const base = apiBase();
