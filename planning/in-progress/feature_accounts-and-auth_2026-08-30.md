@@ -1,12 +1,15 @@
 # Accounts, And Who Is Allowed To Ask
 
-**Status:** Planned
-**Blocked on:** two things, neither of them large, and they are being worked in parallel by two
-sessions. **The Journal's text** must land before this gate opens at all — it needs
-`endpoints.ts` and `apps/api/src/**` (**not** `packages/db/**`: the 2026-08-31 ruling killed the
-migration), it is clear of `in-progress/` today, and it stops being clear the moment this starts.
-**The git-backed api tests** must stop flaking before *Phase 2* — not before Phase 1. Both are
-argued in *Dependencies*
+**Status:** In Progress
+**Blocked on:** nothing. Both blockers cleared 2026-08-31 and the track opened 2026-09-01.
+The Journal landed (`planning/completed/feature_journal-reads-from-git_2026-08-31.md`) and the
+git-test budgets were fixed (`da23a8f`). `spa` yielded to this gate on the DM's override and sits
+in `planning/` with a Status block saying so — it was unblocked and idle, not blocked.
+**Carries:** `planning/backlog/feature_git-signal-compares-two-different-clocks_2026-09-01.md`.
+A real correctness bug in §6.4's verification mechanism, on this track, in files this plan already
+claims — its own trigger names this plan as the place to do it. Folded in as **Phase 0**: it is
+one bug, it is not auth, and it goes first because a gate is the only time `apps/api/src/**` is
+quiet.
 **Version:** v2 — checked against `main` on 2026-08-31, at `36ab69c` and again at `dedd255` after
 one of its own findings was fixed mid-revision. Seven of v1's claims had gone stale in the day
 since it was written; see *What changed in v2*
@@ -215,6 +218,33 @@ things follow, and none is optional:
   reset.
 
 ## Phases
+
+### Phase 0 — the clock bug, which is not auth
+
+**Carried in because it is one bug in these files and this is the only week they are quiet.**
+`planning/backlog/feature_git-signal-compares-two-different-clocks_2026-09-01.md` has the
+diagnosis; this plan has the hands.
+
+`gitsignal.ts` decides whether a learner has done something new by comparing a git commit time
+written on **his** machine against `attempts.attempted_at` written by `now()` in **Postgres**,
+with a bare `>`. The two clocks were measured 5,900 ms apart, so a commit made six seconds
+*before* an attempt reads as after it: stale history counts as fresh evidence and the quest pays
+for work nobody did. §6.4 makes push the verification mechanism, and this is the code that
+decides whether a push happened.
+
+**The fix removes the clock rather than correcting it.** `SignalEvidence` already carries a
+`sha`, so "new" becomes *a commit this quest has not already been shown* — set membership, with
+nothing for a wrong clock to answer wrongly. `since` becomes a first-attempt fallback or goes.
+
+- **Do not make the test tolerant.** `server.gitsignal.test.ts` is the only thing that noticed,
+  and a widened assertion would delete the alarm rather than the fire
+- **Do not restart Postgres to make it pass.** That resynchronises the clock and hides it; the
+  flakes session deliberately left it skewed so the evidence stayed reproducible
+- Git commit timestamps are second-granularity anyway, so even honest clocks are ambiguous inside
+  one second — another reason the answer is not a tolerance
+
+**Done when** the sha decides it, the suite passes with the clocks still skewed, and the mutant —
+comparing timestamps again — is caught.
 
 ### Phase 1 — the walking skeleton
 

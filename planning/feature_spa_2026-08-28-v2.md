@@ -1,6 +1,6 @@
 # The SPA
 
-**Status:** In Progress
+**Status:** Queued — returned to `planning/` 2026-09-01, see Status
 **Version:** v2 — revised 2026-08-29 after two reviews; admitted to the `spa` track 2026-08-29
 **Track:** spa
 **Blocked on:** the Journal's text, which is a `JournalEntrySchema` correction and a Gitea read path. The Console came off this line 2026-08-31 — its queue was served all along and is now built. The laptop check cleared 2026-08-31 — and his screen is 1920×1080, not 1366×768
@@ -455,3 +455,48 @@ button copy.
   only on his machine, and Phase 2's exit condition is when we find out
 - Where `xpSources` is implemented, engine or API. The Party screen stays stubbed until
   it is answered
+
+---
+
+## Status
+
+**Final Status:** Incomplete — returned to the queue, not abandoned
+**Track:** `spa` — advisory now; reassign when it restarts
+**Returned:** 2026-09-01
+**Returned By:** Claude (Opus 5), on the DM's explicit override
+
+### Why it stopped
+
+**It did not stop because it was stuck. It yielded.** `planning/feature_accounts-and-auth_2026-08-30.md`
+is a gate that runs alone, and it edits three files this plan owns —
+`apps/web/src/gateway/index.ts`, `src/household.ts` and `src/screens/**`. `plan-workflow` admits a
+plan to a track only when its file set is disjoint from every other in-progress plan, so one of
+the two had to move. The DM chose which.
+
+**Its stated blocker had already cleared.** The header read "blocked on the Journal's text, which
+is a `JournalEntrySchema` correction and a Gitea read path" — both shipped 2026-08-31 in
+`planning/completed/feature_journal-reads-from-git_2026-08-31.md`, and `GET /journal` is served.
+So this was unblocked and idle rather than blocked, which is worth knowing before anybody
+restarts it.
+
+### Where it got to
+
+Five of ten criteria met. The five outstanding:
+
+- Nine screens matching the artboards
+- Run executes in Pyodide, recording nothing; Submit posts to the API (§6.3)
+- Turtle renders in Pyodide (§8)
+- Keyboard reachability and accessible names on every control
+- Legibility on the learner's laptop
+
+**Two of those have moved since they were written and should be re-read rather than resumed.**
+The Journal screen is no longer blocked — `GET /journal` serves it — so the "nine screens"
+criterion is closer than the count suggests. And the laptop criterion still says 1366×768, which
+the plan's own header contradicts: the check cleared 2026-08-31 and the screen is 1920×1080. That
+criterion is asking for a check against a resolution he does not have.
+
+### What restarting it needs
+
+The auth gate to close, or to yield back. After that, a pass over the five remaining criteria to
+see which survived the fortnight — the Pyodide work is untouched and real; the laptop one is
+stale; the screens one is partly done by other hands.
