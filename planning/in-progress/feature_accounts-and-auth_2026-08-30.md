@@ -219,7 +219,7 @@ things follow, and none is optional:
 
 ## Phases
 
-### Phase 0 — the clock bug, which is not auth
+### Phase 0 — the clock bug, which is not auth — DONE 2026-09-01
 
 **Carried in because it is one bug in these files and this is the only week they are quiet.**
 `planning/backlog/feature_git-signal-compares-two-different-clocks_2026-09-01.md` has the
@@ -243,8 +243,37 @@ nothing for a wrong clock to answer wrongly. `since` becomes a first-attempt fal
 - Git commit timestamps are second-granularity anyway, so even honest clocks are ambiguous inside
   one second — another reason the answer is not a tolerance
 
-**Done when** the sha decides it, the suite passes with the clocks still skewed, and the mutant —
-comparing timestamps again — is caught.
+**Done.** The sha decides it, and `firstUnclaimed` has no clock in it.
+
+**Position, not membership** — and that was a correction to this plan, not a detail. The backlog
+item sketched "a sha this quest has not seen", which is wrong: only the *tip* is ever recorded, so
+every commit beneath it is equally unclaimed and a re-submit with no new work would find an
+ancestor and pay again. The log arrives newest-first, so the answer is to stop at the first
+claimed entry.
+
+**No migration and no backfill.** `attemptDetail.gitSignal` has written the sha into
+`attempts.detail` since the verifier was built — §3.5 wanted it so a granted medal could be
+checked later — so `claimedShas` reads `detail->'gitSignal'->>'sha'` and the column was already
+there. `lastAttemptAt` is gone.
+
+```text
+RED     3 failed — the stub tests, "expected true to be false": it paid for history
+                  it had already been shown
+GREEN   793 passed across 50 files, typecheck clean
+MUTANT  membership instead of position   -> 4 failed, caught (2 of them integration)
+MUTANT  baseline ignored entirely        -> 7 failed, caught
+```
+
+**Verified against the skew rather than around it.** The plan forbade restarting Postgres to
+resynchronise it, and it was not restarted: measured again after the fix, the host is 1,620 ms
+ahead of Postgres. The suite passes with the clocks still disagreeing, which is the only evidence
+that means anything here — a green run on two agreeing clocks would have proved nothing.
+
+Two test fixtures had to be restated rather than relaxed, and the difference matters. Both
+expressed their precondition as *a timestamp late enough that nothing counts*, which is the bug's
+own vocabulary. They now name the sha that was claimed. `server.gitsignal.test.ts`'s scar test is
+stronger for it: it used to rely on the repository's commits happening to be older than `now()`,
+and now says exactly which commit was already paid for.
 
 ### Phase 1 — the walking skeleton
 

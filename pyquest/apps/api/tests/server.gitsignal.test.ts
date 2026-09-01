@@ -136,11 +136,24 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
    */
   it('records a scar and pays nothing when the history does not carry the signal', async () => {
     const { client: db } = scratch();
-    /** An attempt a moment ago, so nothing already in the repository counts as new evidence. */
+
+    /*
+     * The precondition, named rather than timed.
+     *
+     * This used to seed an attempt at `now()` and rely on the repository's commits being older —
+     * a comparison between a Postgres clock and a git clock on another machine, which is the bug
+     * this phase removed. The claim is now the sha itself: this quest has already been paid
+     * against the tip, so the tip is not new evidence and nothing under it is either.
+     */
+    const head = await fixture().commit('claimed.py', 'print("claimed")\n', 'already paid for');
     await db.query(
-      `INSERT INTO attempts (player_id, quest_id, passed, attempted_at)
-       VALUES ($1, $2, false, now())`,
-      [ADA, PUSH_QUEST],
+      `INSERT INTO attempts (player_id, quest_id, passed, detail)
+       VALUES ($1, $2, true, $3::jsonb)`,
+      [
+        ADA,
+        PUSH_QUEST,
+        JSON.stringify({ gitSignal: { signal: 'push', satisfied: true, reason: 'seeded', sha: head } }),
+      ],
     );
 
     const response = await submit(PUSH_QUEST);
@@ -151,8 +164,8 @@ describe.skipIf(!HAVE_GITEA)('submitting a git-signal quest', () => {
       `SELECT passed FROM attempts WHERE quest_id = $1 ORDER BY id`,
       [PUSH_QUEST],
     );
-    expect(attempts.rows).toHaveLength(2);
-    expect(attempts.rows.every((row) => (row as { passed: boolean }).passed === false)).toBe(true);
+    /* The seeded claim, then the scar this submission earned. Both kept — §3.5 deletes neither. */
+    expect(attempts.rows).toEqual([{ passed: true }, { passed: false }]);
 
     const medals = await db.query(`SELECT 1 FROM quest_medals WHERE quest_id = $1`, [PUSH_QUEST]);
     expect(medals.rows).toHaveLength(0);

@@ -1,6 +1,11 @@
 # git-signal compares two different clocks
 
-**Status:** Backlog
+**Status:** Fixed 2026-09-01 in `planning/in-progress/feature_accounts-and-auth_2026-08-30.md`
+Phase 0 — carried by the auth gate because it was api-track work in files that plan already
+claimed. **The sketch below was half right:** set membership on the sha is the shape, but it has
+to read the log's *position*, because only the tip is ever recorded and a re-submit would
+otherwise pay for an unclaimed ancestor. No migration was needed — the sha was already in
+`attempts.detail`.
 **Track:** `api`
 **Date Discovered:** 2026-09-01
 **Discovered During:** `planning/**/feature_the-git-tests-stop-flaking_2026-08-31.md`

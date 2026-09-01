@@ -76,7 +76,7 @@ import {
   clearForcedReviews,
   enqueueJob,
   job as readJob,
-  lastAttemptAt,
+  claimedShas,
   pendingSignoff,
   pendingSignoffs,
   playerRoles,
@@ -456,11 +456,11 @@ export function buildServer(options: ServerOptions): FastifyInstance {
           if (body.type !== 'git-signal') throw mismatch();
           const client = requireGitea('git-signal');
           const repo = requireRepo(client, player.handle);
-          const since = await lastAttemptAt(db, playerId, questId);
+          const claimed = await claimedShas(db, playerId, questId);
 
           let evidence;
           try {
-            evidence = await readSignal(client, repo, item.verifier.signal, { since });
+            evidence = await readSignal(client, repo, item.verifier.signal, { claimed });
           } catch (cause) {
             /** Gitea refused. Not the learner's failure, so no scar — see `requireGitea`. */
             throw new ApiFailure(

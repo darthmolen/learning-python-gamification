@@ -201,26 +201,32 @@ export const attemptDetail = {
 } as const;
 
 /**
- * When this player last attempted this quest, or `undefined` if never.
+ * Every sha this quest has already been paid against, for this player.
  *
- * `git-signal` is "evidence since the last recorded attempt", and this is the last recorded
- * attempt. A quest with no attempts has no baseline, so anything in the history counts — which is
- * right: none of it has been claimed yet.
+ * **Replaced `lastAttemptAt`, and the replacement is the fix.** That function returned
+ * `attempts.attempted_at` — a Postgres timestamp — which `gitsignal.ts` compared against a git
+ * commit time written on the learner's machine. Two clocks on two machines, measured 5,900 ms
+ * apart, so stale history read as fresh evidence and a quest paid for work nobody did. The sha
+ * was already being recorded in `detail` for §3.5's sake; it turns out to be the whole answer.
+ *
+ * Reads `detail->'gitSignal'->>'sha'`, which `attemptDetail.gitSignal` has written since the
+ * verifier was built — so this needs no migration and no backfill. A failed attempt stored a
+ * null sha and contributes nothing, which is right: it claimed nothing.
  */
-export async function lastAttemptAt(
+export async function claimedShas(
   client: Writable,
   playerId: string,
   questId: string,
-): Promise<string | undefined> {
+): Promise<Set<string>> {
   const { rows } = await client.query(
-    `SELECT to_char(attempted_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "at"
+    `SELECT DISTINCT detail->'gitSignal'->>'sha' AS "sha"
        FROM attempts
-      WHERE player_id = $1::uuid AND quest_id = $2
-      ORDER BY attempted_at DESC, id DESC
-      LIMIT 1`,
+      WHERE player_id = $1::uuid
+        AND quest_id = $2
+        AND detail->'gitSignal'->>'sha' IS NOT NULL`,
     [playerId, questId],
   );
-  return (rows[0] as { at: string } | undefined)?.at;
+  return new Set((rows as { sha: string }[]).map((row) => row.sha));
 }
 
 /**

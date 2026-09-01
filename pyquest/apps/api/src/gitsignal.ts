@@ -5,10 +5,12 @@
  * onto the server.* *Write the entry down.* There is no test to run against those; the evidence
  * is the repository, and the repository is on a Gitea the api can already read.
  *
- * **One question, asked of four different parts of the history.** Is there evidence, dated after
- * the last time this quest was attempted? That framing is the plan's — "commits since the last
- * recorded attempt" — and it is what makes a second Submit on unchanged history fail rather than
- * pay a second time.
+ * **One question, asked of four different parts of the history.** Is there evidence this quest has
+ * not already been paid against? The plan framed that as "commits since the last recorded
+ * attempt" and it was built as a comparison of timestamps, which was wrong for a reason worth
+ * keeping: the two timestamps came from two machines. See `firstUnclaimed`. The question is now
+ * asked of the log's order and the shas already claimed, and it is still what makes a second
+ * Submit on unchanged history fail rather than pay twice.
  *
  * **`commit` and `push` read the same evidence, and that is the honest answer.** The api is
  * looking at a bare repository on a server. A commit it can see is a commit that was pushed,
@@ -45,21 +47,39 @@ export interface SignalEvidence {
 
 export interface SignalOptions {
   /**
-   * ISO-8601. Only evidence dated strictly after this counts.
+   * Every sha this quest has already been paid against, from its own `attempts` rows.
    *
-   * Supplied by the api from the last `attempts` row on this quest, and absent on a first
-   * submission — where anything in the history counts, because none of it has been claimed yet.
+   * Empty on a first submission, where anything in the history counts because none of it has
+   * been claimed yet.
    */
-  readonly since?: string | undefined;
+  readonly claimed: ReadonlySet<string>;
 }
 
-/** Strictly after, and `undefined` means everything counts. Both halves matter. */
-function newer(committedAt: string, since: string | undefined): boolean {
-  if (since === undefined || since === '') return true;
-  const at = Date.parse(committedAt);
-  const bound = Date.parse(since);
-  if (Number.isNaN(at) || Number.isNaN(bound)) return false;
-  return at > bound;
+/**
+ * The newest entry the quest has not already been shown, or nothing.
+ *
+ * **There is no clock in here, and its absence is the whole point.** This compared
+ * `committedAt` — written by git on the learner's machine — against `attempts.attempted_at`,
+ * written by `now()` in Postgres. Two clocks, two machines, measured 5,900 ms apart: a commit
+ * made six seconds *before* an attempt carried the later timestamp, so stale history read as
+ * fresh evidence and the quest paid for work nobody had done. §6.4 makes push the verification
+ * mechanism, so this is not a rounding error; it is the mechanism being wrong.
+ *
+ * **Position, not membership**, and that distinction is load-bearing. The obvious fix is "a sha
+ * this quest has not seen", but only the *tip* is ever recorded — every commit beneath it is
+ * equally unrecorded, so a re-submit with no new work would find an unclaimed ancestor and pay
+ * again. The log arrives newest-first, so stopping at the first claimed entry is what makes
+ * "newer" mean newer. Nothing claimed at all means a first attempt, and everything counts.
+ *
+ * Git commit timestamps are second-granularity anyway, so even two honest clocks cannot order
+ * work done inside the same second. An ordered list can.
+ */
+function firstUnclaimed<T extends { readonly sha: string }>(
+  entries: readonly T[],
+  claimed: ReadonlySet<string>,
+): T | undefined {
+  const seen = entries.findIndex((entry) => claimed.has(entry.sha));
+  return (seen === -1 ? entries : entries.slice(0, seen))[0];
 }
 
 const nothing = (reason: string): SignalEvidence => ({ satisfied: false, reason, sha: null });
@@ -77,11 +97,11 @@ export async function readSignal(
   signal: GitSignal,
   options: SignalOptions,
 ): Promise<SignalEvidence> {
-  const { since } = options;
+  const { claimed } = options;
 
   if (signal === 'tag') {
     const tags = await client.tags(repo);
-    const fresh = tags.find((tag) => newer(tag.committedAt, since));
+    const fresh = firstUnclaimed(tags, claimed);
     if (fresh === undefined) {
       return nothing(
         tags.length === 0
@@ -94,7 +114,7 @@ export async function readSignal(
 
   const path = signal === 'journal-entry' ? client.settings.journalPath : undefined;
   const log = await client.commits(repo, path === undefined ? {} : { path });
-  const fresh = log.find((entry) => newer(entry.committedAt, since));
+  const fresh = firstUnclaimed(log, claimed);
 
   if (fresh === undefined) {
     if (signal === 'journal-entry') {
