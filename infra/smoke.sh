@@ -13,6 +13,7 @@
 #   3. gitea serves over its mapped host port
 #   4. a real repository with a real commit can be created
 #   4b. the migration job applies the progress schema, and is a no-op twice (6.1)
+#   4c. the api container boots and reaches healthy  (the Windows bind-mount fix)
 #   5. backup.sh produces a readable dated tarball          (6.9)
 #   6. restore.sh restores it and the commit comes back     (6.9)
 #
@@ -265,6 +266,22 @@ else
   bad "missing tables:$MISSING"
 fi
 
+# The three auth tables from 0006. Named for the same reason the others are, and
+# with one extra: none of them may be called `sessions`. That word is four lines
+# up and means a TEACHING session -- a Saturday morning, attended or forgiven --
+# and two unrelated meanings one letter apart is how somebody joins the wrong
+# table at ten at night.
+MISSING_AUTH=""
+for t in player_credentials api_tokens bootstrap_secret; do
+  HAVE=$(psql_super -d "$POSTGRES_DB" -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='$t';")
+  [ "${HAVE:-0}" = "1" ] || MISSING_AUTH="$MISSING_AUTH $t"
+done
+if [ -z "$MISSING_AUTH" ]; then
+  ok "the credential, token and bootstrap tables exist, and none is named sessions"
+else
+  bad "missing auth tables:$MISSING_AUTH"
+fi
+
 # Content stays in git. If a table ever appears here holding curriculum, 6.7 has
 # been crossed and this is the check that says so.
 CONTENT_TABLES=$(psql_super -d "$POSTGRES_DB" -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('quests','areas','concepts');")
@@ -296,6 +313,50 @@ if [ -n "$JOURNAL_SENTINEL" ] && dc exec -T postgres psql -v ON_ERROR_STOP=1 -qX
 else
   bad "could not seed the progress database"
   JOURNAL_SENTINEL=""
+fi
+
+# =============================================================================
+step "4c. the node services actually boot (the Windows bind-mount fix)"
+# =============================================================================
+# The assertion this file was missing, and the one the whole Dockerfile change
+# exists to make true.
+#
+# Steps 1 through 4b prove postgres and gitea, which are precisely the two
+# services that NEVER had the problem: they are pulled images that run their own
+# code. `api`, `web` and `migrate` mounted the workspace and ran `npm run`, and
+# on a Windows host `node_modules/@pyquest/*` are symlinks to absolute Docker-VM
+# paths -- so every workspace import failed before the api read a line of its
+# own code. Nothing here noticed, because nothing here asked.
+#
+# `api` is the one worth asserting on. It imports four workspace packages, so a
+# healthy api is proof the resolution works; `web` only proves Vite built, which
+# happened on the host. And /health touches no database (server.ts), so this
+# stays true while postgres is restarting -- a check that goes red when a
+# dependency blinks reports the wrong service as broken.
+dc --profile api up -d api >/dev/null 2>&1 || true
+
+API_HEALTHY=0
+i=0
+while [ $i -lt 30 ]; do
+  STATE=$(docker inspect -f '{{.State.Health.Status}}' pyquest-api 2>/dev/null || echo none)
+  [ "$STATE" = "healthy" ] && { API_HEALTHY=1; break; }
+  i=$((i + 1))
+  sleep 2
+done
+
+if [ "$API_HEALTHY" = "1" ]; then
+  ok "the api container reaches healthy - workspace imports resolve inside a container"
+else
+  bad "the api container did not reach healthy"
+  docker logs pyquest-api 2>&1 | tail -12 | sed 's/^/        /'
+fi
+
+# The bug had one signature and it is worth naming, because a future regression
+# will look exactly like this and nothing else will.
+if docker logs pyquest-api 2>&1 | grep -q 'ERR_MODULE_NOT_FOUND'; then
+  bad "ERR_MODULE_NOT_FOUND in the api log - a bind mount is masking the image's node_modules"
+else
+  ok "no ERR_MODULE_NOT_FOUND - nothing is mounted over what the image installed"
 fi
 
 # =============================================================================

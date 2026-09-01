@@ -48,20 +48,24 @@ services:
   # real runner container, which is the loop this service exists to run.
   api:
     profiles: ["api"]
-    image: node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+    build:
+      context: ../../pyquest
+      dockerfile: apps/api/Dockerfile
+    image: pyquest-api:local
     container_name: pyquest-api
     depends_on:
       postgres:
         condition: service_healthy
-    working_dir: /workspace
-    command: ["npm", "run", "start", "--workspace", "@pyquest/api"]
     environment:
       CONTENT_ROOT: /content
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       SPOOL_ROOT: /spool
       API_PORT: "3081"
     volumes:
-      - ../../pyquest:/workspace
+      # No workspace mount, and its absence is the fix. See `apps/api/Dockerfile`: a bind mount
+      # over `/workspace` replaces the directory wholesale and masks the `node_modules` the image
+      # installed, which is the original Windows bug wearing a Dockerfile.
+      #
       # Content is read from git on boot and validated on load (§6.10), so the api needs the
       # content roots as well as the workspace. Read-only: §6.10 makes authoring a CLI, and an
       # api that cannot write content cannot grow an authoring endpoint by accident.
