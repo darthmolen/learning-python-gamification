@@ -406,3 +406,61 @@ drive that leaves the house, encrypt it.
 
 `GITEA_SECRET_KEY` signs sessions and encrypts stored tokens. Changing it invalidates every
 session and every stored OAuth token, so generate it once and keep it.
+
+## One command
+
+```
+infra\start-full.cmd
+```
+
+postgres and gitea, then the migration job to completion, then api, runner and web — each waited
+for until its healthcheck passes. **It exits non-zero if anything is wrong**: a missing `.env`, a
+failed migration, or a service that never reaches healthy. `docker compose up -d` returns success
+the moment a container is *created*, which is also true of one that then crash-loops, and a start
+script that reports success while the api is dying is worse than no script at all.
+
+Then claim the DM seat, because nobody can sign in until somebody does:
+
+```
+cd ../pyquest
+npm run bootstrap --workspace @pyquest/db     # needs DATABASE_URL; prints a secret once
+```
+
+Paste it into the SPA's sign-in screen under *"Setting this up for the first time?"*.
+
+## Pushing a change into the running stack
+
+```
+infraounce.cmd api        # or web, or migrate
+```
+
+Rebuilds that profile's images and recreates **only** its own containers. This is the local loop
+the household has instead of CD: §6.4 puts the api on the parent's machine, so "deploy" means the
+container on this desk restarts. Nothing is pushed to a registry and there is none.
+
+Two things it does deliberately:
+
+- **It names its services** rather than inferring them. `docker compose --profile api up` starts
+  every service in that profile *and every service with no profile*, so postgres and gitea would
+  come up too — `--no-deps` does not prevent that, because they are unprofiled rather than
+  dependencies.
+- **`--no-deps`**, so bouncing the api does not restart Postgres underneath it. A dependency is
+  something to wait for at startup, not something to recycle when a route handler changes.
+
+## Two things that will bite
+
+**`VITE_API_URL` is baked in at build time.** Vite inlines it into the bundle, so the SPA's idea of
+where the api lives is fixed when `bounce.cmd web` runs — not when the container starts. Setting it
+under `environment:` in compose would be read by nothing and change nothing. The day the api moves
+to a different port or a LAN address, the web image needs rebuilding rather than restarting.
+
+**An old `runner_spool` volume keeps its old ownership.** Docker creates a named volume
+`root:root 0755` and seeds it from the image only when it is *first* created. The api and the
+runner are both non-root, so a volume made before 2026-09-01 is unwritable by either:
+
+```
+docker volume rm pyquest_runner_spool
+```
+
+once, after which it is seeded correctly from the api image. The symptom is
+`EACCES mkdir /spool/incoming` in the api's log.
