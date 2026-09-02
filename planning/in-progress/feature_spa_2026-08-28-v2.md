@@ -1,9 +1,11 @@
 # The SPA
 
-**Status:** Queued — returned to `planning/` 2026-09-01, see Status
+**Status:** In progress — restarted 2026-09-01, see Status
 **Version:** v2 — revised 2026-08-29 after two reviews; admitted to the `spa` track 2026-08-29
 **Track:** spa
-**Blocked on:** the Journal's text, which is a `JournalEntrySchema` correction and a Gitea read path. The Console came off this line 2026-08-31 — its queue was served all along and is now built. The laptop check cleared 2026-08-31 — and his screen is 1920×1080, not 1366×768
+**Blocked on:** nothing. Every blocker this header has carried is cleared: the Console's queue was
+served all along and is built (2026-08-31); the Journal's text landed with `GET /journal`
+(2026-08-31); the laptop check cleared 2026-08-31, and his screen is 1920×1080, not 1366×768
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
 **Lane:** A — **not blocked by the API**
@@ -104,17 +106,23 @@ in either role.
 
 ## Success Criteria
 
-- [ ] Nine screens matching the artboards — values lifted from them, not re-derived
+- [x] Nine screens matching the artboards — values lifted from them, not re-derived.
+      **Completed 2026-09-01**: the Journal was the last frame, and it is built — entry list,
+      body, DM reply, what each entry paid, and the served template
 - [x] Every sub-area carries a working breadcrumb; nothing is reachable without a way back
 - [x] The Tome expands in place and pushes content down. **No modal, no overlay, no scrim**
-- [ ] Run executes in Pyodide and records nothing; Submit posts to the API (§6.3)
-- [ ] Turtle renders in Pyodide (§8)
+- [x] Run executes in Pyodide and records nothing; Submit posts to the API (§6.3).
+      **Submit landed 2026-09-01**, all four verifiers, with the job poll behind it
+- [ ] Turtle renders in Pyodide (§8) — the shim is built and its geometry is proved against the
+      stroke protocol, but **nothing automated has ever booted Pyodide**. Unchanged, and it is
+      tier 4 of `planning/backlog/feature_integration-suite_2026-08-30.md`
 - [x] No button label changes with state — asserted per screen, not eyeballed
-- [ ] Every screen reachable and operable by keyboard, every control carrying an accessible
+- [x] Every screen reachable and operable by keyboard, every control carrying an accessible
       name. Not a full WCAG pass — that is a different plan — but a screen no keyboard can
-      reach is not finished
-- [ ] Every screen is legible on the son's laptop at 1366×768, checked on his machine rather
-      than in a devtools viewport. **This is a Phase 2 exit condition** (see below)
+      reach is not finished. **Swept 2026-09-01**, and it found a real trap: see below
+- [x] Every screen is legible on the learner's laptop at **1920×1080**, checked on his machine
+      rather than in a devtools viewport. **Done 2026-08-31, and the premise was wrong** — this
+      criterion said 1366×768 until then, a number nobody had measured. See *Where it stands*
 - [x] Every fixture parses through its `@pyquest/contract` schema **at the collection level**;
       a drifted fixture fails the suite instead of rendering
 - [x] `npm run typecheck` from `pyquest/` covers this app and its tests, and `npm test`
@@ -410,6 +418,18 @@ something implements it.
 - `pyquest/apps/web/**` — new
 - `pyquest/vitest.config.ts` — the `projects` entry that gives `apps/web` a DOM. This is the
   one root file this track touches; it is additive, and no other track has a projects entry
+- **Added by the 2026-09-01 restart, and they are not this track's usual property:**
+  - `pyquest/packages/contract/src/endpoints.ts` — `JournalTemplateSchema` and its route row,
+    plus a correction to the Submit row's `returns`, which claims "a runner_jobs id" and is
+    false for `peer-signoff` and `git-signal` (both return an attempt id)
+  - `pyquest/apps/api/src/server.ts` — `GET /api/players/:playerId/journal/template`
+  - `pyquest/apps/api/src/content.ts` — `exists()` beside `read()`
+
+  The Journal's copy-paste template is authored curriculum that differs per area, and a screen
+  holding sixty lines of it is the `AREA_NAMES` mistake at four times the size — the same one
+  `boundary.test.ts` already forbids the small version of. So it is served, which means the
+  contract and the api. `planning/in-progress/` held nothing else when this was claimed, so
+  there is no collision; a later `api` plan should read this list rather than assume disjointness
 - ~~`infra/compose/web.yml` — the `web` service, development only; this track owns the
   file~~ — **ownership transferred to the `infra` track, 2026-08-31.** This track created the
   service and is done with it; what remains to be done to that file is wiring `VITE_API_URL` so
@@ -451,8 +471,9 @@ button copy.
 
 ## Anticipated Backlog
 
-- Whether the son's 1366×768 laptop wants a narrower rail or smaller type — measurable
-  only on his machine, and Phase 2's exit condition is when we find out
+- ~~Whether the son's 1366×768 laptop wants a narrower rail or smaller type~~ — **closed
+  2026-08-31.** The screen is 1920×1080 and the layouts read fine on it; the 1366 figure was
+  never measured. `planning/reminders/completed/follow-up_laptop-screen-check_2026-08-30.md`
 - Where `xpSources` is implemented, engine or API. The Party screen stays stubbed until
   it is answered
 
@@ -460,10 +481,13 @@ button copy.
 
 ## Status
 
-**Final Status:** Incomplete — returned to the queue, not abandoned
-**Track:** `spa` — advisory now; reassign when it restarts
+**Current Status:** In progress — restarted 2026-09-01
+**Track:** `spa`, authoritative. It was demoted to "advisory, reassign when it restarts" while this
+plan sat in the queue; restarting **is** the reassignment, and a promoted plan whose own Status
+block calls its track advisory is one `wave-workflow` cannot schedule
 **Returned:** 2026-09-01
 **Returned By:** Claude (Opus 5), on the DM's explicit override
+**Restarted:** 2026-09-01, once the auth gate closed
 
 ### Why it stopped
 
@@ -500,3 +524,71 @@ criterion is asking for a check against a resolution he does not have.
 The auth gate to close, or to yield back. After that, a pass over the five remaining criteria to
 see which survived the fortnight — the Pyodide work is untouched and real; the laptop one is
 stale; the screens one is partly done by other hands.
+
+### The restart, 2026-09-01
+
+The auth gate closed and that pass was made. What it found, verified against the code rather than
+read off the checkboxes:
+
+- **Submit is the whole of the gap.** `grep -c '/submit' apps/web/src/gateway/index.ts` answers
+  `0`, and `GET /api/jobs/:jobId` is not called either. Everything else on the §6.3 path exists
+- **Two defects nobody had hit yet.** `postSignoff` builds its own headers and so carries no
+  bearer token, which means granting a sign-off against a live api answers 401 — the Console has
+  only ever been exercised against fixtures. And `POST /submit` is **not uniformly pollable**:
+  `peer-signoff` returns an attempt id with no `runner_jobs` row behind it, `git-signal` returns a
+  terminal state with nothing to poll, and `JobAcceptedSchema` cannot tell a caller which it has
+- **The laptop criterion was asking for a resolution he does not have**, and is now rewritten
+- The Journal is the last frame, and `GET /journal` serves it
+
+Execution order for the restart: Submit and the job poll, then the Journal, then the Defend
+drill, then the accessibility sweep.
+
+### What the restart shipped — 2026-09-01
+
+All four, plus three defects the work turned up. **927 tests across 57 files**, up from 857.
+
+**Submit (§6.3), all four verifiers.** `src/quest/submit.ts` is a pure reducer beside `runner.ts`
+and `useSubmit.ts` owns the request and the interval. The rule the phase turns on:
+**pollability is a property of the verifier, not of the response.** `JobAcceptedSchema` is
+`{ jobId, state }.strict()`, so a queued `peer-signoff` and a queued `hidden-tests` arrive
+identical while only one has a `runner_jobs` row — `GET /api/jobs/:jobId` requires a numeric id
+and 404s on the other. The client is not guessing: it chose the body from the quest's `verifier`,
+which is the field `server.ts` switches on. `git-signal` takes its verdict from the 200 and polls
+nothing. `killed` keeps its own sentence, because §6.6's limits firing is not his code being wrong.
+
+**The Journal.** `OverlandScreens.tsx` is deleted. The template he copies is **served**
+(`GET /api/players/:playerId/journal/template`, `JournalTemplateSchema`) rather than shipped in
+the SPA — area 0's and area 1's differ substantially and one lands per area, so a copy in a
+component is the `AREA_NAMES` mistake at four times the size. The panel names the area it picked,
+and the two resources fail independently: a missing template never blanks his writing.
+`journalPayout` joins `present/` because §5.10's `brag` is the opposite claim to §5.6's zero.
+
+**The Defend drill.** Rows answer in place and keep their position; the engine's `rung` and
+`dueOn` are carried, never recomputed. The artboard's per-drill recall prompt is **not drawn** —
+`DueInvasionSchema` says prompts are content looked up by concept id, and that content does not
+exist.
+
+**Three defects, all found by reading or by the sweep rather than by a failing test:**
+
+1. **`postSignoff` carried no bearer token.** Every route but the two session ones is behind the
+   guard, so granting a sign-off against a live api answered 401 and the Console reported the DM's
+   decision as "could not record it". Invisible because the Console had only run against fixtures.
+2. **The editor was a keyboard trap with no escape hatch, and a comment said otherwise.**
+   `Editor.tsx` claimed "Escape-then-Tab still leaves — CodeMirror's own behaviour". That is
+   *Monaco's* behaviour; CodeMirror binds Escape to `simplifySelection` and its real hatch is
+   `Ctrl-m`, which nothing on screen mentioned. Run, Stop and Submit all follow the editor in the
+   tab order, so a learner who tabbed in **could not reach the button that submits his work**.
+   Escape is now bound to `temporarilySetTabFocusMode` and the screen says so. jsdom cannot
+   express tab-focus mode — CodeMirror's own `Ctrl-m` fails identically under vitest, which is how
+   we know it is the environment — so the key itself is verified by a person:
+   `planning/reminders/follow-up_editor-escape-hatch-in-a-browser_2026-09-01.md`.
+3. **`accounts-panel.test.tsx` was racing a second resource.** The panel's frame and its roster
+   arrive on different ticks, and a `getByText` after the frame lost about one run in five once
+   the suite grew. Now a `findByText`; four consecutive clean runs.
+
+**Contract corrections.** The Submit row said `'JobAccepted — a runner_jobs id'`, false for
+`peer-signoff` and `git-signal`, which both return an attempt id. Corrected, along with the
+`/api/jobs/:jobId` row, which now says a non-numeric id 404s there.
+
+**Still open:** turtle in Pyodide has never been booted by anything automated. That is the
+integration suite's tier 4 and needs a browser, not another unit test.

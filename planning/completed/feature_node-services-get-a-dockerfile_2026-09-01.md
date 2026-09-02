@@ -1,6 +1,6 @@
 # The node services get a Dockerfile, and the stack gets one command
 
-**Status:** In Progress
+**Status:** Completed
 **Version:** v2 — revised 2026-09-01 after review. Six points accepted, one merged, none rejected,
 and one flagged question answered by the DM. The review changed the design: see *What v1 got wrong*
 **Track:** `infra`
@@ -66,18 +66,18 @@ household with one api on one desk, and it is the trade the alternative was hidi
 
 ## Success Criteria
 
-- [ ] `api`, `web` and `migrate` each build from a Dockerfile that installs **and copies source**
+- [x] `api`, `web` and `migrate` each build from a Dockerfile that installs **and copies source**
       inside the image
-- [ ] All three **start and stay up** on this Windows host — the failure this was filed for
-- [ ] **No service bind-mounts the workspace**, and no `node_modules` volume exists. Both were
+- [x] All three **start and stay up** on this Windows host — the failure this was filed for
+- [x] **No service bind-mounts the workspace**, and no `node_modules` volume exists. Both were
       routes back to the same bug
-- [ ] `infra/smoke.sh` asserts `api` reaches healthy on `GET /health` — the route at
+- [x] `infra/smoke.sh` asserts `api` reaches healthy on `GET /health` — the route at
       `server.ts:370`, which touches no database and so stays true while Postgres restarts
-- [ ] `infra/start-full.cmd` brings the stack up in one command, **exits non-zero** if `.env` is
+- [x] `infra/start-full.cmd` brings the stack up in one command, **exits non-zero** if `.env` is
       missing, if the migration job fails, or if a service does not reach healthy
-- [ ] `infra/bounce.cmd <profile>` rebuilds that profile's images and recreates **only its own
+- [x] `infra/bounce.cmd <profile>` rebuilds that profile's images and recreates **only its own
       services**, named explicitly — see the mapping below
-- [ ] From `pyquest/`: `npm test`, `npm run typecheck`, `npm run validate:content` and
+- [x] From `pyquest/`: `npm test`, `npm run typecheck`, `npm run validate:content` and
       `npm run build --workspace @pyquest/web` all clean
 
 ## Approach
@@ -186,3 +186,62 @@ Written last, so they script something that already works rather than being the 
 - **`VITE_API_URL` is baked at build time.** The day the api moves — a different port, his laptop
   reaching it by LAN address — the web image needs rebuilding rather than restarting. Worth a line
   in `infra/README.md` and worth revisiting if it ever bites twice.
+
+---
+
+## Status
+
+**Final Status:** Completed
+**Track:** `infra`
+**Completed:** 2026-09-01
+**Completed By:** Claude (Opus 5)
+
+### Outcomes
+
+All seven criteria met. Three compose services that had never started on this host now start,
+and the household has one command to run the stack and one to push a change into it.
+
+Verified by running rather than by reading: a cold `start-full.cmd` exits 0 with five containers
+up, the api answering `/health` with 23 items, and the SPA served on 3082.
+
+### Deviations
+
+**`web` serves a production build rather than a dev server**, ruled by the DM. The container is
+what the learner's laptop reaches over the LAN (§6.4) instead of scaffolding thrown away the first
+time anybody needs the real thing. `VITE_API_URL` becomes a build arg as a consequence, which is
+written into the Dockerfile, the compose fragment and the README because it changes nothing
+*silently* if set in the wrong place.
+
+**`web` lost its `depends_on: api`** — compose refuses a dependency whose profile is not also
+active, so declaring it made `--profile web` an invalid project. The ordering moved to
+`start-full.cmd`, which is where startup ordering belongs.
+
+### Lessons Learned
+
+**Moving toward production found a bug that dev scaffolding would have hidden.** `runner_spool` is
+created `root:root 0755` while both the api and the runner are non-root, so the api died on
+`EACCES mkdir /spool/incoming` the first time it ran in a container. The bug was older than this
+plan and simply unreachable — nothing had ever tried. It would have surfaced on the first real
+Submit.
+
+**The review caught the one thing that would have wasted the implementation.** v1 said "modelled
+on `apps/runner` — mount source only", and `apps/runner` mounts nothing at all. A bind mount over
+`/workspace` masks the `node_modules` the image installed, so v1 would have shipped three
+Dockerfiles and reproduced the identical failure.
+
+**A stale build cache is the most misleading thing that can enter a build context.** A bare
+`*.tsbuildinfo` in `.dockerignore` matches the root only, so the host's came in, `tsc -b` read it,
+concluded the project was built, and emitted nothing. It did not fail — it succeeded at doing
+nothing.
+
+**Two script bugs that only running could find.** `timeout` dies under redirected stdin, and
+`for /f` leaves a variable at its previous value when the command prints nothing — so the health
+poll announced a container with no healthcheck as healthy, using another container's status. That
+is exactly the failure the script's own header claims to prevent, and the tell was missing
+progress dots.
+
+### Backlog Items Created
+
+- **A shared group for the spool.** `/spool` is seeded `0777` from the api image; one gid with
+  both users in it and mode `2775` is tidier and needs `apps/runner/Dockerfile`, which is another
+  track's file
