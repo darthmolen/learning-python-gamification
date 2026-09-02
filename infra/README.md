@@ -422,11 +422,19 @@ script that reports success while the api is dying is worse than no script at al
 Then claim the DM seat, because nobody can sign in until somebody does:
 
 ```
-cd ../pyquest
-npm run bootstrap --workspace @pyquest/db     # needs DATABASE_URL; prints a secret once
+infra/bootstrap.sh              # ONE TIME ONLY — prints the secret once
+infra/bootstrap.sh --status     # safe any time; writes nothing
 ```
 
 Paste it into the SPA's sign-in screen under *"Setting this up for the first time?"*.
+
+The script exists only to assemble `DATABASE_URL` out of `.env` so nobody has to remember the
+connection string. **The secret is the only thing on stdout** and every other line goes to stderr,
+so `infra/bootstrap.sh | clip` puts it on the clipboard and nothing else.
+
+It is single-use: spending it creates the DM, and after that the script refuses to arm another —
+re-arming a consumed bootstrap beside an existing DM is a second way in that nobody remembers
+leaving open. Every account after the first is made from the Console.
 
 ## Pushing a change into the running stack
 
