@@ -10,7 +10,22 @@
 # arm another, because re-arming a consumed bootstrap beside an existing DM is a
 # second way into the household that nobody remembers leaving open.
 #
-# After this, accounts are made from the Console. There is no second run.
+# After this, accounts are made from the Console.
+#
+# SAFE TO RE-RUN UNTIL IT IS SPENT, and that is the useful half of "one time
+# only". Arming is not claiming. Run this twice before anybody has signed in and
+# the second run simply re-primes: a fresh secret is written and the standing one
+# stops working. Nothing is created, nothing is lost, and no second way in is
+# opened — which is exactly why rotating an UNSPENT secret is allowed while
+# re-arming a SPENT one is refused. The first is somebody who mislaid a printout;
+# the second would be somebody minting a spare key beside an existing DM.
+#
+# **Re-running does not hand back the same secret.** It replaces it. If you piped
+# the last one to the clipboard and run this again, the clipboard is now stale —
+# take the new one.
+#
+# Once it has been spent, this refuses and says so, and `--status` will tell you
+# which side of that line you are on without changing anything.
 #
 # What it is for: it assembles DATABASE_URL out of ./.env so nobody has to
 # remember the connection string, which is the only reason this file exists —
@@ -78,7 +93,8 @@ fi
 
 # One line, not two: the command below already says "shown once and is not stored",
 # and repeating it here only trains people to skim both.
-echo "bootstrap: ONE TIME ONLY — this claims the DM seat." >&2
+echo "bootstrap: ONE TIME ONLY — spending this secret claims the DM seat." >&2
+echo "bootstrap: safe to re-run until it is spent; each run replaces the last one." >&2
 echo >&2
 
 exec npm run --silent bootstrap --workspace @pyquest/db
