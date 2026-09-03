@@ -2,6 +2,7 @@
 import harnessSource from './harness.py?raw';
 import turtleSource from './turtle.py?raw';
 import type { TurtleOp } from './protocol.ts';
+import { stdinFrom } from './stdin.ts';
 
 /**
  * Learner Python, off the main thread.
@@ -24,6 +25,14 @@ export interface RunRequest {
   code: string;
   /** What his program is called in a traceback. `<exec>` is not a filename he can learn from. */
   filename: string;
+  /**
+   * What `input()` reads, one line per call.
+   *
+   * Without it Pyodide has no stdin and `input()` raises `OSError: [Errno 29]` — which is what
+   * `a0-ask-and-draw` did on Run, on the Area 0 quest that teaches `input()` and whose starter
+   * says "Run it first and read what falls out". See `stdin.ts`.
+   */
+  stdin: string;
 }
 
 export interface RunResult {
@@ -41,6 +50,8 @@ interface PyodideApi {
   registerJsModule: (name: string, module: object) => void;
   FS: { writeFile: (path: string, data: string) => void };
   setStdout: (options: { batched: (s: string) => void }) => void;
+  /** Pyodide's stdin hook. `null` from the handler is end-of-stream, so Python raises EOFError. */
+  setStdin: (options: { stdin: () => string | null; isatty?: boolean }) => void;
   globals: { get: (name: string) => unknown; set: (name: string, value: unknown) => void };
 }
 
@@ -81,9 +92,19 @@ async function boot(): Promise<PyodideApi> {
   return api;
 }
 
-async function run(code: string, filename: string): Promise<RunResult> {
+async function run(code: string, filename: string, stdin: string): Promise<RunResult> {
   const api = await boot();
   stdout = '';
+
+  /*
+   * A fresh queue per run, which is what makes pressing Run twice with a different number work
+   * — and that is precisely what Area 0 session 5 asks for ("type 150, then try 40").
+   *
+   * `isatty: false` because this is a pipe, not a terminal. It is what `python x.py < answers`
+   * looks like from inside Python, and a program that checks would otherwise be told it has a
+   * console it cannot use.
+   */
+  api.setStdin({ stdin: stdinFrom(stdin), isatty: false });
 
   let error: string | null = null;
 
@@ -134,7 +155,7 @@ export interface RunFailure {
 self.onmessage = (event: MessageEvent<RunRequest>) => {
   if (event.data.kind !== 'run') return;
 
-  void run(event.data.code, event.data.filename).then(
+  void run(event.data.code, event.data.filename, event.data.stdin ?? '').then(
     (result) => self.postMessage(result),
     /*
      * Boot failures land here — a CDN that will not answer, a Pyodide that will not start. They

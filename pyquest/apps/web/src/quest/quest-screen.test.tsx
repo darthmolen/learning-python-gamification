@@ -403,6 +403,45 @@ describe('the traceback', () => {
     });
   });
 
+  /**
+   * The bug this pair was written after, found by pressing Run on `a0-ask-and-draw`.
+   *
+   * Pyodide has no stdin unless it is given one, so `input()` answered
+   * `OSError: [Errno 29] I/O error` — on the Area 0 quest that *teaches* `input()`, whose own
+   * starter says "Run it first and read what falls out before you fix anything". The error the
+   * session is about is a `TypeError` from handing a str to `forward()`; what he got was a fault
+   * in the runner, and an evening debugging the tool instead of the bug.
+   *
+   * Nothing automated caught it because nothing automated has ever booted Pyodide. What is
+   * asserted here is the plumbing — that what he typed reaches the worker — and `stdin.test.ts`
+   * proves the queue. The wasm end of it stays a person's job.
+   */
+  it('sends the answers he typed, so input() has something to read', async () => {
+    const sent: { code: string; filename: string; stdin: string }[] = [];
+    const { worker, factory } = fakeWorker();
+    worker.postMessage = (message) => sent.push({ ...message });
+    const { container } = await renderQuest(factory);
+
+    await userEvent.type(screen.getByRole('textbox', { name: /Answers for input/i }), '150');
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+
+    expect(sent[0]?.stdin).toBe('150');
+    void container;
+  });
+
+  it('sends an empty stdin rather than undefined when he typed nothing', async () => {
+    const sent: { stdin: string }[] = [];
+    const { worker, factory } = fakeWorker();
+    worker.postMessage = (message) => sent.push({ stdin: message.stdin });
+    await renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Run' }));
+
+    // Not `undefined`: the worker would then read `input()` off a stream that does not exist,
+    // which is the OSError this whole path exists to stop.
+    expect(sent[0]?.stdin).toBe('');
+  });
+
   it('runs his code under a filename taken from the quest', async () => {
     const sent: { code: string; filename: string }[] = [];
     const { worker, factory } = fakeWorker();

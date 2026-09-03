@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 import type { PublicVerifier, QuestView } from '@pyquest/contract';
-import { color, font } from '../design/tokens';
+import { color, eyebrow, font } from '../design/tokens';
 import { getQuest } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
@@ -177,6 +177,16 @@ function Quest({
    */
   const starter = view.starter ?? '';
   const [code, setCode] = useState(starter);
+  /**
+   * What `input()` reads when he presses Run.
+   *
+   * A worker has no `prompt()`, so Run takes its answers up front rather than pausing for them.
+   * That is a trade, and it buys the thing Area 0 session 5 actually asks for: **the run is
+   * repeatable.** "Type 150, then try 40" is editing a box and pressing Run again, which is a
+   * better shape than answering a modal twice — and it is how the hidden tests feed the same
+   * program, so Run and Submit read the same way.
+   */
+  const [stdin, setStdin] = useState('');
   const { state, run, stop } = useRunner(makeWorker);
   const submitter = useSubmit(playerId, view.id, view.verifier, pollMs);
   const running = state.phase === 'running';
@@ -254,7 +264,7 @@ function Quest({
                 */}
               <button
                 type="button"
-                onClick={() => run(code, `${view.id}.py`)}
+                onClick={() => run(code, `${view.id}.py`, stdin)}
                 disabled={running}
                 style={{
                   padding: '8px 20px',
@@ -355,6 +365,40 @@ function Quest({
           </div>
 
           <div style={{ width: '520px', flexShrink: 0 }}>
+            {/*
+              * The answers `input()` will read, one per line.
+              *
+              * It is always here rather than appearing only for quests that call `input()` —
+              * the screen would have to read his code to know that, and a panel that comes and
+              * goes as he types is worse than one that is simply present and empty.
+              */}
+            <Eyebrow style={{ marginBottom: '10px' }}>Input</Eyebrow>
+            <label htmlFor="stdin" style={{ ...eyebrow, position: 'absolute', left: '-9999px' }}>
+              Answers for input, one per line
+            </label>
+            <textarea
+              id="stdin"
+              value={stdin}
+              onChange={(event) => setStdin(event.target.value)}
+              rows={2}
+              spellCheck={false}
+              placeholder="one answer per line"
+              style={{
+                width: '100%',
+                background: color.bg,
+                border: `1px solid ${color.border}`,
+                color: color.fg,
+                fontFamily: font.mono,
+                fontSize: '12px',
+                padding: '10px 12px',
+                resize: 'vertical',
+              }}
+            />
+            <Mono style={{ display: 'block', margin: '6px 0 20px' }}>
+              Run has no keyboard to ask with, so it reads these instead. Ask for more than you
+              wrote here and Python raises EOFError, the same as it would on your own machine.
+            </Mono>
+
             <Eyebrow style={{ marginBottom: '10px' }}>What it drew</Eyebrow>
             <TurtleCanvas ops={state.ops} />
 

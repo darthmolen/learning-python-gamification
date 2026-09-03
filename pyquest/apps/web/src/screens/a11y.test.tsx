@@ -65,40 +65,47 @@ const settle = async (node: React.ReactElement, path: string, account = DM) => {
   return result;
 };
 
+const ROLES = ['button', 'link', 'textbox', 'checkbox', 'combobox'] as const;
+
 /**
- * The accessible name of every control on screen.
+ * Every control on screen.
  *
- * `hidden: false` is the default and it matters here: an element behind `display: none` is not
+ * `hidden: false` is the default and it matters: an element behind `display: none` is not
  * something a user can reach, so requiring it to be named would fail on things nobody meets.
  */
-const controls = () => [
-  ...screen.queryAllByRole('button'),
-  ...screen.queryAllByRole('link'),
-  ...screen.queryAllByRole('textbox'),
-  ...screen.queryAllByRole('checkbox'),
-  ...screen.queryAllByRole('combobox'),
-];
+const controls = () => ROLES.flatMap((role) => screen.queryAllByRole(role));
 
-/** What a screen reader would announce, by the same rules the queries use. */
-const nameOf = (el: HTMLElement): string =>
-  (
-    el.getAttribute('aria-label') ??
-    (el.getAttribute('aria-labelledby') !== null
-      ? (document.getElementById(el.getAttribute('aria-labelledby') as string)?.textContent ?? '')
-      : null) ??
-    el.textContent ??
-    ''
-  ).trim();
+/**
+ * The unnamed ones, found by **asking the query for named ones and subtracting**.
+ *
+ * The first version of this hand-rolled the name — `aria-label`, then `aria-labelledby`, then
+ * `textContent` — and that is an approximation of the accessible name computation rather than
+ * the thing itself. It has no idea about `<label for>`, `<fieldset><legend>`, `title`, or
+ * `alt`, so **it reports correctly-labelled controls as unnamed.**
+ *
+ * It went unnoticed because nothing in the sweep's nine screens had a `<label for>` control
+ * rendered by default — the Console's refusal textarea only appears once a row is open. Adding
+ * the Quest screen's Input box exposed it immediately: `quest-screen.test.tsx` finds that
+ * textarea *by its accessible name* while this file called it nameless.
+ *
+ * Testing Library already implements the real algorithm, and `{ name: /\S/ }` is how to make it
+ * do the work. A guard whose own idea of the rule is a paraphrase is a guard that fails on
+ * exactly the code that got the rule right.
+ */
+const unnamedControls = () =>
+  ROLES.flatMap((role) => {
+    const named = new Set(screen.queryAllByRole(role, { name: /\S/ }));
+    return screen
+      .queryAllByRole(role)
+      .filter((el) => !named.has(el))
+      .map((el) => `<${el.tagName.toLowerCase()}> with role ${role} and no accessible name`);
+  });
 
 describe('every control on every screen has a name', () => {
   it.each(SCREENS)('%s', async (_name, node, path) => {
     await settle(node, path);
 
-    const unnamed = controls()
-      .filter((el) => nameOf(el) === '')
-      .map((el) => `<${el.tagName.toLowerCase()}> with no accessible name`);
-
-    expect(unnamed).toEqual([]);
+    expect(unnamedControls()).toEqual([]);
   });
 
   /** A sweep that found nothing to check would pass forever. Prove it can see the controls. */

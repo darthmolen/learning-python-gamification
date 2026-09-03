@@ -53,6 +53,16 @@ export function Editor({ value, onChange, label }: EditorProps) {
           lineNumbers(),
           history(),
           python(),
+          /*
+           * The name goes on the element that actually has the textbox role.
+           *
+           * The wrapper below is `role="group" aria-label={label}`, which names the *region* —
+           * but CodeMirror's contenteditable is its own `role="textbox"`, and a screen reader
+           * landing in it announced nothing. The accessibility sweep missed this at first
+           * because its hand-rolled name check fell back to `textContent`, so it decided the
+           * editor's name was the entire program.
+           */
+          EditorView.contentAttributes.of({ 'aria-label': label }),
           /* Escape first, so it wins over `defaultKeymap`'s `simplifySelection`. Releasing the
            * Tab key matters more than collapsing a selection nobody made. */
           keymap.of([
