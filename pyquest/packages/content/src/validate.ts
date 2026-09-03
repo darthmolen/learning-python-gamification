@@ -22,7 +22,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
-import { conceptArea } from './concepts.ts';
+import { CONCEPTS, conceptArea } from './concepts.ts';
 import {
   parseContentItem,
   parseAreaManifest,
@@ -47,7 +47,8 @@ export type ValidationRule =
   | 'missing-file'
   | 'concept-above-area'
   | 'missing-area-manifest'
-  | 'pace-in-lesson';
+  | 'pace-in-lesson'
+  | 'glossary-gap';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -383,6 +384,7 @@ export function checkContent(source: ContentSource): ContentSet {
   issues.push(...conceptAreaIssues(items, byId(records), locate));
   issues.push(...manifestIssues(items, manifests, byId(records), locate));
   issues.push(...paceIssues(roots));
+  issues.push(...glossaryIssues(roots));
 
   issues.sort(
     (a, b) => a.file.localeCompare(b.file) || (a.line ?? 0) - (b.line ?? 0) || a.rule.localeCompare(b.rule),
@@ -629,6 +631,74 @@ function paceIssues(roots: { curriculum: string; game: string }): ContentIssue[]
             fix: 'say it in sequence — "next session", "by the end of this area", "the first time you go looking" — or, if the duration is the subject rather than the reader\'s pace, mark the line `<!-- pace-ok: why -->`',
           });
         }
+      });
+    }
+  }
+
+  return issues;
+}
+
+/**
+ * Every concept an area teaches has a definition, and every definition names a real concept.
+ *
+ * CLAUDE.md draws this edge already: authored content is validated against `concepts.ts`, and a
+ * changed id has to break content rather than drift from it. A glossary is the sharpest case,
+ * because the id is not merely referenced — it is the key the definition hangs on.
+ *
+ * Three ways to drift, all silent without this:
+ *
+ * * a concept with no definition is a chip the learner clicks and gets nothing from;
+ * * a misspelled heading is the same failure, with a definition nobody will ever reach;
+ * * a real concept defined in the wrong area's file puts the word on a page he opens before he
+ *   has met it, which is the mistake `concept-above-area` already refuses for quests.
+ *
+ * **An area with no `glossary.md` is not an issue.** Areas are authored one at a time and the
+ * file arrives with the teaching; a rule that demanded it everywhere would fail an area whose
+ * lesson has not been written yet, which is the state `build.ts` is careful to allow.
+ *
+ * Medals live in `game/` and are deliberately not checked here. Deleting `game/` has to leave a
+ * curriculum that still validates, so a curriculum rule may not depend on a file in it.
+ */
+function glossaryIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const issues: ContentIssue[] = [];
+  const areas = new Set(CONCEPTS.map((concept) => concept.area));
+
+  for (const area of [...areas].sort()) {
+    const file = `area-${area}/glossary.md`;
+    const path = join(roots.curriculum, file);
+    if (!existsSync(path)) continue;
+
+    const defined = [
+      ...readFileSync(path, 'utf8').matchAll(/^## ([^\n]+?)\s*$/gm),
+    ].map((match) => match[1] as string);
+
+    const expected = CONCEPTS.filter((concept) => concept.area === area).map((c) => c.id);
+    const missing = expected.filter((id) => !defined.includes(id));
+
+    if (missing.length > 0) {
+      issues.push({
+        file,
+        rule: 'glossary-gap',
+        message: `no definition for ${missing.join(', ')}`,
+        fix: `add a \`## <id>\` section for each, or move the concept in concepts.ts if it belongs to another area`,
+      });
+    }
+
+    for (const heading of defined) {
+      if (expected.includes(heading)) continue;
+
+      const elsewhere = CONCEPTS.find((concept) => concept.id === heading);
+      issues.push({
+        file,
+        rule: 'glossary-gap',
+        message:
+          elsewhere === undefined
+            ? `\`${heading}\` is not a concept`
+            : `\`${heading}\` is a concept of area ${elsewhere.area}, not area ${area}`,
+        fix:
+          elsewhere === undefined
+            ? 'use an id from packages/content/src/concepts.ts, or add the concept there if the curriculum really teaches it'
+            : `move the section to area-${elsewhere.area}/glossary.md`,
       });
     }
   }
