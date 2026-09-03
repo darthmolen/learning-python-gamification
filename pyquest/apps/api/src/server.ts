@@ -1034,7 +1034,7 @@ export function buildServer(options: ServerOptions): FastifyInstance {
    * The Tome — content, and only content
    * ------------------------------------------------------------------------------------- */
 
-  app.get('/api/tome', async () => TomeSchema.parse({ areas: tomeAreas() }));
+  app.get('/api/tome', async () => TomeSchema.parse({ areas: tomeAreas(content) }));
 
   /* ---------------------------------------------------------------------------------------
    * Sign-offs — §6.3, §5.11

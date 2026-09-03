@@ -377,14 +377,32 @@ describe('the composite views', () => {
 
   it('returns concepts by area from the Tome and no progress at all (plan v3)', () => {
     const tome = {
-      areas: [{ area: 0, concepts: [{ id: 'print', label: 'print' }] }],
+      areas: [
+        { area: 0, concepts: [{ id: 'print', label: 'print' }], lesson: '# First Light', lessonIsDraft: false },
+      ],
     };
     expect(TomeSchema.safeParse(tome).success).toBe(true);
     expect(
       TomeSchema.safeParse({
-        areas: [{ area: 0, concepts: [], unlocked: true }],
+        areas: [{ area: 0, concepts: [], unlocked: true, lessonIsDraft: false }],
       }).success,
     ).toBe(false);
+  });
+
+  /**
+   * An unwritten lesson is absent, never an empty string. `''` would render as a page that
+   * silently teaches nothing, where absence makes the screen say the teaching is unwritten —
+   * §5.1a's honesty rule, which is the whole reason the field is optional rather than defaulted.
+   */
+  it('lets an area carry no lesson, but not an empty one, and always says whether it is a draft', () => {
+    const withoutLesson = { areas: [{ area: 0, concepts: [], lessonIsDraft: false }] };
+    expect(TomeSchema.safeParse(withoutLesson).success).toBe(true);
+
+    const empty = { areas: [{ area: 0, concepts: [], lesson: '', lessonIsDraft: false }] };
+    expect(TomeSchema.safeParse(empty).success).toBe(false);
+
+    const noFlag = { areas: [{ area: 0, concepts: [], lesson: '# First Light' }] };
+    expect(TomeSchema.safeParse(noFlag).success).toBe(false);
   });
 
   it('ships the party view with an empty xpSources, which this plan declined to compute', () => {

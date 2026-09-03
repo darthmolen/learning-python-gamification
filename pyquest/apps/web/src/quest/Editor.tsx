@@ -109,7 +109,24 @@ export function Editor({ value, onChange, label }: EditorProps) {
       ref={host}
       role="group"
       aria-label={label}
-      style={{ border: `1px solid ${color.border}`, background: color.bg, minHeight: '260px' }}
+      /*
+       * Capped, and the cap is what keeps Run on screen.
+       *
+       * CodeMirror grows to its content, so `a0-ask-and-draw`'s 46-line starter pushed the Run
+       * button, the input box and the console below the fold — on the quest whose instructions
+       * say "Run it first". A learner who has to scroll to find Run is a learner who has not yet
+       * found out that Run exists.
+       *
+       * The editor scrolls inside the cap rather than the page scrolling around it, so the
+       * controls under it stay where they were the last time he looked.
+       */
+      style={{
+        border: `1px solid ${color.border}`,
+        background: color.bg,
+        minHeight: '260px',
+        maxHeight: '46vh',
+        overflow: 'auto',
+      }}
     />
   );
 }

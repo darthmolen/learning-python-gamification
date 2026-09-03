@@ -74,6 +74,26 @@ function heldOn(progress: PlayerProgress, questId: string): Medal[] {
  * A slot whose combination §5.12 forbids is omitted rather than priced at zero. The engine throws
  * `IllegalModifierSetError` for Conjured beside Ironman; a zero would render as "take it, it pays
  * nothing", which is a different and false statement about a move that is not available at all.
+ *
+ * **A slot that would pay a negative is omitted for the same reason, and that one reached a
+ * browser.** Conjured is −5 DC, so on `a0-name-tag` — DC 5, the lowest in the campaign — a player
+ * holding Cleared and Idiomatic is already priced at DC 8 and paid 16. Adding Conjured puts the
+ * effective DC at 3, `effectiveDC` clamps that up to the floor of 5, and the total falls to 10.
+ * §5.10 says a medal "pays the difference", and the difference is −6.
+ *
+ * `MedalSlotSchema.xp` is a non-negative `CountSchema`, so the view did not render wrongly — it
+ * threw, and `GET /quests/a0-name-tag` answered 500. Both players `seedHousehold` writes hold
+ * that pair, so a quest in the first area was unreachable for the whole household.
+ *
+ * Dropping it is the honest answer rather than flooring it at zero: §5.10 reads a zero as a brag,
+ * a medal earned for depth nothing required, and this is the opposite — an offer that cannot be
+ * taken, because XP already awarded is never clawed back (`progress.ts` on `xpAwarded`: "re-pricing
+ * history reports a figure the player was never paid"). The Quest screen already says what an
+ * absent slot means, and for this case it says the true thing: "not with a medal you hold."
+ *
+ * Whether Conjured should be *offerable* after Cleared at all is a spec question — you cannot
+ * retroactively have had help — and it is recorded in
+ * `planning/backlog/feature_no-way-to-claim-a-medal_2026-09-02.md` rather than decided here.
  */
 export function medalSlots(item: ContentItem, held: readonly Medal[]): MedalSlot[] {
   const slots: MedalSlot[] = [];
@@ -84,11 +104,12 @@ export function medalSlots(item: ContentItem, held: readonly Medal[]): MedalSlot
   for (const medal of medalsFor(item)) {
     if (held.includes(medal)) continue;
     try {
-      slots.push({
-        medal,
-        effectiveDC: effectiveDC(item.dc, [...held, medal]),
-        xp: medalDelta(kind, item.dc, held, medal),
-      });
+      const xp = medalDelta(kind, item.dc, held, medal);
+      // Not an offer. See the note above: a medal that would pay less than he has already been
+      // given is not a move he can make, and pricing it at zero would say it was.
+      if (xp < 0) continue;
+
+      slots.push({ medal, effectiveDC: effectiveDC(item.dc, [...held, medal]), xp });
     } catch (error) {
       if (error instanceof IllegalModifierSetError) continue;
       throw error;
@@ -182,13 +203,39 @@ export function areaView(
 }
 
 /**
- * The Tome: concepts by area, and nothing else.
+ * An area's lesson, and whether it is a draft.
+ *
+ * `lesson.md` wins over `lesson.draft.md`, which is the precedence `apps/field-manual/src/build.ts`
+ * already states: "promoting a lesson is a rename." Mirroring it rather than inventing a second
+ * rule is the point — the two publishers of the same prose must not disagree about which file is
+ * the real one.
+ *
+ * An area with neither returns nothing at all, and the screen says the teaching is unwritten.
+ * That is `build.ts`'s rule as well: "an area with neither is an area whose teaching is unwritten,
+ * and the page says so rather than pretending."
+ */
+function areaLesson(content: ContentRoot, area: Area): { lesson?: string; lessonIsDraft: boolean } {
+  const finished = `area-${area}/lesson.md`;
+  if (content.exists(finished)) return { lesson: content.read(finished), lessonIsDraft: false };
+
+  const draft = `area-${area}/lesson.draft.md`;
+  if (content.exists(draft)) return { lesson: content.read(draft), lessonIsDraft: true };
+
+  return { lessonIsDraft: false };
+}
+
+/**
+ * The Tome: concepts by area, and the lesson that teaches them.
  *
  * Not player-scoped and carrying no unlocked state. The syllabus is content and content is the
  * same for everyone (§6.7); the SPA holds the player's areas from `/campaign` and derives what is
  * open from the two, which is a presentation decision and therefore the UI's.
+ *
+ * The lesson is content by the same test, which is why it belongs here rather than on a
+ * player-scoped route: every player reads the same page, and §6.8's promise that "every page is
+ * open from day one" is only true if nothing about the reader is consulted to serve it.
  */
-export function tomeAreas(): TomeArea[] {
+export function tomeAreas(content: ContentRoot): TomeArea[] {
   const byArea = new Map<Area, TomeConcept[]>();
   for (const concept of CONCEPTS) {
     const listed = byArea.get(concept.area) ?? [];
@@ -196,6 +243,6 @@ export function tomeAreas(): TomeArea[] {
     byArea.set(concept.area, listed);
   }
   return [...byArea.entries()]
-    .map(([area, concepts]) => ({ area, concepts }))
+    .map(([area, concepts]) => ({ area, concepts, ...areaLesson(content, area) }))
     .sort((a, b) => a.area - b.area);
 }

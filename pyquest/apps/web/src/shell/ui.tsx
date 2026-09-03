@@ -15,6 +15,14 @@ export function Display({ children, size = 24 }: { children: ReactNode; size?: n
   );
 }
 
+/**
+ * The small mono line under almost everything.
+ *
+ * 12px, not 11. The document is 14px and IBM Plex Mono runs small for its size, so 11px against
+ * it came out as texture rather than as text — and what it is carrying is not decoration: the
+ * concepts an area teaches, what a medal pays, why Submit is disabled. A line worth putting on
+ * the screen is worth being able to read.
+ */
 export function Mono({
   children,
   style,
@@ -26,9 +34,49 @@ export function Mono({
   id?: string;
 }) {
   return (
-    <span id={id} style={{ fontFamily: font.mono, fontSize: '11px', color: color.muted, ...style }}>
+    <span id={id} style={{ fontFamily: font.mono, fontSize: '12px', color: color.muted, ...style }}>
       {children}
     </span>
+  );
+}
+
+/**
+ * The concepts a quest teaches, as terms rather than as a sentence.
+ *
+ * They were joined with ` · ` into one muted line, which reads as prose and scans as noise. This
+ * is a *vocabulary* — the words Area 7 expects him to know — and a list of terms should look like
+ * one. A chip apiece also gives the eye somewhere to stop, which a middot does not.
+ */
+export function ConceptList({
+  concepts,
+  label = 'Concepts',
+  style,
+}: {
+  concepts: readonly string[];
+  /** Named per row on the Area screen, where several of these sit in one list. */
+  label?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <ul
+      aria-label={label}
+      style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', listStyle: 'none', margin: 0, padding: 0, ...style }}
+    >
+      {concepts.map((concept) => (
+        <li
+          key={concept}
+          style={{
+            fontFamily: font.mono,
+            fontSize: '11.5px',
+            color: color.secondary,
+            border: `1px solid ${color.border}`,
+            padding: '2px 7px',
+          }}
+        >
+          {concept}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -60,20 +108,33 @@ export function RiskWarning({ dc }: { dc: number }) {
  * §5.10: every slot the quest offers, unearned ones greyed rather than absent. The diamond is
  * the artboard's, and each carries its own accessible name so the row does not announce as five
  * anonymous shapes.
+ *
+ * **Unearned is an outline, not a darker fill.** It was an 8px `--crumb-rule` diamond on
+ * `--panel`, which is about 1.3:1 — drawn, and invisible. Depth he cannot see is depth he does
+ * not know exists, and that is the whole argument §5.10 makes for showing the slot at all, so a
+ * slot rendered below the threshold of sight fails the rule while appearing to keep it. An
+ * outline separates from its background at this size where a fill does not, and it stays honestly
+ * *unfilled* — the one thing the filled diamond has to mean.
  */
 export function MedalSlots({ held }: { held: readonly string[] }) {
   return (
-    <div style={{ display: 'flex', gap: '2px', width: '46px', justifyContent: 'flex-end' }}>
+    <div style={{ display: 'flex', gap: '3px', width: '58px', justifyContent: 'flex-end' }}>
       {medalSlots(held).map((slot) => (
         <svg
           key={slot.medal}
-          width="8"
-          height="8"
-          viewBox="0 0 8 8"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
           role="img"
           aria-label={`${slot.medal}: ${slot.held ? 'earned' : 'not earned'}`}
         >
-          <polygon points="4,0 8,4 4,8 0,4" fill={slot.held ? color.accent : color.crumbRule} />
+          <polygon
+            points="5,0.6 9.4,5 5,9.4 0.6,5"
+            fill={slot.held ? color.accent : 'none'}
+            stroke={slot.held ? color.accent : color.muted}
+            strokeWidth="1.1"
+            strokeLinejoin="round"
+          />
         </svg>
       ))}
     </div>

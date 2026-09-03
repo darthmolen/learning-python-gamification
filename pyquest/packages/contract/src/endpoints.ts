@@ -445,10 +445,26 @@ export const TomeConceptSchema = z
 
 export type TomeConcept = z.infer<typeof TomeConceptSchema>;
 
+/**
+ * An area's page: what it teaches, and the teaching itself.
+ *
+ * `lesson` is `curriculum/area-<n>/lesson.md`, unrendered. Rendering is the UI's, for the same
+ * reason `QuestView.brief` says so — the API serves content and the screen decides how it looks.
+ *
+ * **Optional means unwritten, and the screen says so.** An area with no lesson is an area whose
+ * teaching has not been authored, which is §5.1a's honesty rule applied to prose: the same reason
+ * a partial area's total wears a tilde rather than a confident number. `lessonIsDraft` carries the
+ * `lesson.draft.md` fallback out to the reader instead of passing a draft off as finished work.
+ *
+ * Both are content, so both belong on this route. `.strict()`'s argument above is about
+ * *progress* — an `unlocked` field added here in a hurry still fails the parse.
+ */
 export const TomeAreaSchema = z
   .object({
     area: AreaSchema,
     concepts: z.array(TomeConceptSchema),
+    lesson: z.string().min(1).optional(),
+    lessonIsDraft: z.boolean(),
   })
   .strict();
 

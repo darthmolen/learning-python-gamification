@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { AsSignedIn } from '../test-support/session.tsx';
@@ -322,6 +322,64 @@ describe('the Tome, on the screen where he is working', () => {
     // The editor is still mounted underneath. Nothing is covered and nothing is lost.
     expect(screen.getByRole('group', { name: 'Python editor' })).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  /**
+   * It used to sit below the editor, the console and the canvas — about fifty lines of scrolling
+   * past his own work to reach the reference. §6.8 put the Tome on this screen so that looking
+   * something up costs nothing; making him leave the work to find it is the same cost by another
+   * route.
+   */
+  it('sits above the editor rather than below the whole screen', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory);
+
+    const tome = screen.getByRole('button', { name: 'Tome' });
+    const editor = screen.getByRole('group', { name: 'Python editor' });
+
+    // Node.DOCUMENT_POSITION_FOLLOWING: the editor comes after the trigger in the document.
+    expect(tome.compareDocumentPosition(editor) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  /**
+   * The panel used to hold a paragraph about the Tome. Opening the field manual and being told
+   * what a field manual is for is the same as opening nothing, and `curriculum/area-N/lesson.md`
+   * — the actual teaching — was sitting on disk the whole time.
+   */
+  it('holds the area lesson rather than a paragraph about itself', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Tome' }));
+    const panel = screen.getByRole('region', { name: 'Tome' });
+
+    expect(panel).toHaveTextContent('A list holds things in order');
+    expect(panel).not.toHaveTextContent('opens here, in place');
+  });
+});
+
+/**
+ * §5.10 prices five elective medals and nothing in the repository can award one — every path
+ * writes `cleared`. A price list for a purchase that cannot be made is the screen telling him
+ * something false by omission, which is the same fault §5.1a's tilde exists to prevent.
+ */
+describe('the medal slots say what they are worth, and what cannot be had yet', () => {
+  it('prices each slot and says only Cleared is awarded today', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory);
+
+    const medals = screen.getByRole('group', { name: 'Medals' });
+    expect(medals).toHaveTextContent('ironman');
+    expect(medals).toHaveTextContent('DC 14');
+    expect(screen.getByText(/only Cleared is awarded/i)).toBeInTheDocument();
+  });
+
+  it('lists the concepts as separate terms rather than as one sentence', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory);
+
+    const vocabulary = screen.getByRole('list', { name: 'Concepts' });
+    expect(within(vocabulary).getAllByRole('listitem').length).toBeGreaterThan(1);
   });
 });
 

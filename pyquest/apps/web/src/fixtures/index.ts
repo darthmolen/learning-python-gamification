@@ -93,14 +93,22 @@ export const me: unknown = {
 
 export const campaign: unknown = { playerId: PLAYER_ID, areas: AREA_CARDS };
 
-/** The Area screen's cards. Ids and concepts are real — they exist in `content/`. */
+/**
+ * The Area screen's cards. Ids and concepts are real — they exist in `content/`.
+ *
+ * **Deliberately not in DC order.** They used to be, by accident, which made the fixture unable
+ * to tell a screen that sorts from a screen that does not — `screens.test.tsx` asserts the
+ * rendered order, and against an already-sorted list that assertion passes either way. The API
+ * hands these over in content-load order, so a fixture that arrives pre-sorted is also the less
+ * faithful stub.
+ */
 const QUESTS: Readonly<Record<number, unknown[]>> = {
   3: [
-    { id: 'a3-inventory-lists', title: 'The Inventory', dc: 10, concepts: ['list', 'iteration'], medals: ['cleared', 'idiomatic'], status: 'cleared' },
-    { id: 'a3-recipe-book', title: 'The Recipe Book', dc: 12, concepts: ['dict', 'dict-methods', 'iteration'], medals: ['cleared'], status: 'cleared' },
-    { id: 'a3-the-smelter', title: 'The Smelter', dc: 14, concepts: ['dict', 'iteration'], medals: ['cleared'], status: 'cleared' },
-    { id: 'a3-the-enchanter', title: 'The Enchanter', dc: 18, concepts: ['dict-methods', 'list'], medals: [], status: 'available' },
     { id: 'a3-the-trading-hall', title: 'The Trading Hall', dc: 20, concepts: ['dict', 'list', 'iteration'], medals: [], status: 'locked' },
+    { id: 'a3-recipe-book', title: 'The Recipe Book', dc: 12, concepts: ['dict', 'dict-methods', 'iteration'], medals: ['cleared'], status: 'cleared' },
+    { id: 'a3-the-enchanter', title: 'The Enchanter', dc: 18, concepts: ['dict-methods', 'list'], medals: [], status: 'available' },
+    { id: 'a3-inventory-lists', title: 'The Inventory', dc: 10, concepts: ['list', 'iteration'], medals: ['cleared', 'idiomatic'], status: 'cleared' },
+    { id: 'a3-the-smelter', title: 'The Smelter', dc: 14, concepts: ['dict', 'iteration'], medals: ['cleared'], status: 'cleared' },
   ],
 };
 
@@ -284,11 +292,56 @@ export const party: unknown = {
  * anything the registry does not know, and it caught this fixture inventing `conditionals` on
  * the first run. Area 1's condition concept is `if`.
  */
+const AREA_0_LESSON = `# First Light
+
+By the end of this area you will have typed a line that draws a square, given things
+names, and read an error message on purpose.
+
+## The first line
+
+\`\`\`python
+import turtle
+
+turtle.forward(100)
+turtle.done()
+\`\`\`
+
+Three lines and a window opens with a line drawn across it. The dot matters:
+\`turtle.forward\` means **the \`forward\` that belongs to \`turtle\`**.
+`;
+
+const AREA_3_LESSON = `# Collections
+
+A list holds things in order, and the order is the point.
+
+- \`inventory[0]\` is the first slot, not the zeroth thing you own.
+- \`len(inventory)\` counts them.
+`;
+
+/**
+ * Area 1 carries concepts and no lesson on purpose. Offline is where the "unwritten" branch is
+ * easiest to look at, and a fixture where every area is written would leave the screen's honest
+ * empty state to be discovered in production.
+ */
 export const tome: unknown = {
   areas: [
-    { area: 0, concepts: [{ id: 'print', label: 'print' }, { id: 'variables', label: 'variables' }] },
-    { area: 1, concepts: [{ id: 'if', label: 'if' }, { id: 'else', label: 'else' }] },
-    { area: 3, concepts: [{ id: 'list', label: 'list' }, { id: 'indexing', label: 'indexing' }] },
+    {
+      area: 0,
+      concepts: [{ id: 'print', label: 'print' }, { id: 'variables', label: 'variables' }],
+      lesson: AREA_0_LESSON,
+      lessonIsDraft: false,
+    },
+    {
+      area: 1,
+      concepts: [{ id: 'if', label: 'if' }, { id: 'else', label: 'else' }],
+      lessonIsDraft: false,
+    },
+    {
+      area: 3,
+      concepts: [{ id: 'list', label: 'list' }, { id: 'indexing', label: 'indexing' }],
+      lesson: AREA_3_LESSON,
+      lessonIsDraft: true,
+    },
   ],
 };
 

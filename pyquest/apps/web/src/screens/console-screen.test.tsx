@@ -172,7 +172,7 @@ describe('a sign-off is a check, not a formality', () => {
   });
 
   /** §5.10: a medal that pays nothing reads as a brag, never as a zero. */
-  it('renders a zero payout as a brag', async () => {
+  it('renders a zero payout without claiming it was a triumph', async () => {
     postSignoff.mockResolvedValue({
       granted: true,
       award: { attemptId: 'att-8f21c0', questId: 'a3-the-enchanter', medal: 'cleared', xpAwarded: 0 },
@@ -181,7 +181,8 @@ describe('a sign-off is a check, not a formality', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign it off' }));
 
-    expect(await screen.findByText('cleared · brag to dm')).toBeInTheDocument();
+    // `brag` was the old word, and it congratulated somebody for an award of nothing.
+    expect(await screen.findByText('cleared · no extra xp to dm')).toBeInTheDocument();
   });
 });
 

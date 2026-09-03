@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import type { PublicVerifier, QuestView } from '@pyquest/contract';
+import type { MedalSlot, PublicVerifier, QuestView, TomeArea } from '@pyquest/contract';
+import type { Medal } from '@pyquest/content/browser';
 import { color, eyebrow, font } from '../design/tokens';
-import { getQuest } from '../gateway/index.ts';
+import { getQuest, getTome } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
@@ -10,10 +11,11 @@ import { Editor } from '../quest/Editor';
 import { isUnchanged, statusLine } from '../quest/runner.ts';
 import { inFlight, submitStatus, type SubmitState } from '../quest/submit.ts';
 import { useSubmit } from '../quest/useSubmit.ts';
-import { formatPayout } from '../present/index.ts';
+import { formatPayout, medalSlots } from '../present/index.ts';
 import { useRunner, type WorkerFactory } from '../quest/useRunner.ts';
 import { Breadcrumbs } from '../shell/Breadcrumbs';
-import { Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
+import { ConceptList, Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
+import { Markdown } from '../tome/Markdown';
 import { Tome } from '../tome/Tome';
 import { TurtleCanvas } from '../turtle/TurtleCanvas';
 
@@ -39,13 +41,29 @@ interface QuestScreenProps {
 export function QuestScreen({ makeWorker, pollMs }: QuestScreenProps = {}) {
   const playerId = usePlayer();
   const { areaId = '', questId = '' } = useParams();
-  const load = useCallback(() => getQuest(playerId, questId), [questId]);
+  /*
+   * Two requests, in parallel — the same shape `TomeScreen` uses, and for the same reason. The
+   * quest is the player's; the lesson behind the Tome button is content, identical for everyone,
+   * and §6.8 wants it here rather than one navigation away: "if looking something up costs a
+   * learner the code in his editor, he stops looking things up."
+   */
+  const load = useCallback(async () => {
+    const [view, tome] = await Promise.all([getQuest(playerId, questId), getTome()]);
+    return { view, tome };
+  }, [questId]);
   const quest = useResource(load, [questId]);
 
   return (
     <Awaiting resource={quest} label={questId}>
-      {(view) => (
-        <Quest view={view} areaId={areaId} makeWorker={makeWorker} pollMs={pollMs} playerId={playerId} />
+      {({ view, tome }) => (
+        <Quest
+          view={view}
+          page={tome.areas.find((area) => area.area === view.area)}
+          areaId={areaId}
+          makeWorker={makeWorker}
+          pollMs={pollMs}
+          playerId={playerId}
+        />
       )}
     </Awaiting>
   );
@@ -159,12 +177,15 @@ function Verdict({ state }: { state: SubmitState }) {
 
 function Quest({
   view,
+  page,
   areaId,
   makeWorker,
   pollMs,
   playerId,
 }: {
   view: QuestView;
+  /** This area's Tome page. Absent when the area is not in the syllabus at all. */
+  page: TomeArea | undefined;
   areaId: string;
   makeWorker?: WorkerFactory;
   pollMs?: number;
@@ -177,6 +198,26 @@ function Quest({
    */
   const starter = view.starter ?? '';
   const [code, setCode] = useState(starter);
+
+  /**
+   * What he holds, refreshed when a submission passes.
+   *
+   * The screen used to show whatever the medals were when the page loaded, so he could watch
+   * Submit go green and see Cleared still sitting there unearned — on the screen whose whole job
+   * is to tell him what the work was worth.
+   *
+   * **Only the medals are re-read, and the editor is never remounted.** `useResource` sets
+   * `loading` when it re-runs, which would take `Awaiting` back to its placeholder and unmount
+   * the editor with his code in it. §6.8 spends a paragraph on that cost for the Tome; a
+   * *refresh* that threw his work away would be a worse version of the same mistake.
+   *
+   * A failed refresh leaves the old medals and says nothing. The verdict panel has already told
+   * him what happened, and a second error about bookkeeping would bury it.
+   */
+  const [awarded, setAwarded] = useState<{ held: readonly Medal[]; slots: readonly MedalSlot[] }>({
+    held: view.medalsHeld,
+    slots: view.medalSlots,
+  });
   /**
    * What `input()` reads when he presses Run.
    *
@@ -189,6 +230,27 @@ function Quest({
   const [stdin, setStdin] = useState('');
   const { state, run, stop } = useRunner(makeWorker);
   const submitter = useSubmit(playerId, view.id, view.verifier, pollMs);
+
+  /*
+   * Re-read the medals when a submission passes, and only then. `awardMedal` runs server-side on
+   * the verdict, so what he holds is knowable only by asking again.
+   */
+  const passed = submitter.state.phase === 'passed';
+  useEffect(() => {
+    if (!passed) return;
+    let live = true;
+    getQuest(playerId, view.id).then(
+      (fresh) => {
+        if (live) setAwarded({ held: fresh.medalsHeld, slots: fresh.medalSlots });
+      },
+      () => {
+        /* Deliberately silent — see `awarded`. */
+      },
+    );
+    return () => {
+      live = false;
+    };
+  }, [passed, playerId, view.id]);
   const running = state.phase === 'running';
   const untouched = isUnchanged(code, starter);
 
@@ -224,39 +286,105 @@ function Quest({
           <RiskWarning dc={view.dc} />
           <Mono style={{ fontSize: '13px' }}>{`DC ${view.dc}`}</Mono>
           <div style={{ flexGrow: 1 }} />
-          <MedalSlots held={view.medalsHeld} />
+          <MedalSlots held={awarded.held} />
         </div>
 
-        <Mono style={{ display: 'block', marginTop: '8px' }}>{view.concepts.join(' · ')}</Mono>
+        <ConceptList concepts={view.concepts} style={{ marginTop: '10px' }} />
+
+        <Medals held={awarded.held} slots={awarded.slots} />
 
         {/*
-          * What each medal would pay from here. §5.10: zero is legal and reads as a brag, which
-          * is why `formatPayout` exists rather than a bare number — a `0 xp` beside something he
-          * went back to earn on purpose says it counted for nothing.
+          * The Tome, above the work rather than below it.
+          *
+          * It used to sit under the editor, the canvas and the console — fifty lines of scrolling
+          * past his own code to reach the reference. §6.8's rule is that looking something up must
+          * cost nothing, and making him leave the work to find the manual is that cost by another
+          * name. Opening it still pushes the editor down; nothing is covered and nothing is lost.
           */}
-        <div style={{ display: 'flex', gap: '18px', marginTop: '10px', flexWrap: 'wrap' }}>
-          {view.medalSlots.map((slot) => (
-            <Mono key={slot.medal} style={{ color: view.medalsHeld.includes(slot.medal) ? color.accent : color.muted }}>
-              {`${slot.medal} · DC ${slot.effectiveDC} · ${formatPayout(slot.xp)}`}
-            </Mono>
-          ))}
+        <div style={{ marginTop: '22px' }}>
+          <Tome>
+            {page?.lesson === undefined ? (
+              <Mono style={{ display: 'block', lineHeight: 1.7 }}>
+                The lesson for this area is not written yet. Nothing above was closed to tell you
+                so — your editor keeps whatever is in it.
+              </Mono>
+            ) : (
+              <>
+                {page.lessonIsDraft && (
+                  <Mono style={{ display: 'block', marginBottom: '14px', lineHeight: 1.7, color: color.badge }}>
+                    This lesson is a draft. It was written ahead of the sessions that will correct it.
+                  </Mono>
+                )}
+                {/* `baseLevel={2}` — the quest title is this page's `h1`, so the lesson's own
+                  * sections continue that outline instead of starting a second one. */}
+                <Markdown text={page.lesson} baseLevel={2} />
+              </>
+            )}
+          </Tome>
         </div>
 
         <div style={{ display: 'flex', gap: '18px', marginTop: '24px', alignItems: 'flex-start' }}>
           <div style={{ flexGrow: 1, minWidth: 0 }}>
-            <Eyebrow style={{ marginBottom: '10px' }}>Your code</Eyebrow>
-            <Editor value={code} onChange={setCode} label="Python editor" />
             {/*
-              * Discoverability, not decoration. Tab indents in here because Python is
-              * whitespace-significant, which makes the editor a keyboard trap — and an escape
-              * hatch nobody is told about is the same as no escape hatch. Run, Stop and Submit
-              * all sit after this in the tab order.
+              * The keyboard note sits beside the label rather than under the editor.
+              *
+              * Discoverability, not decoration: Tab indents in here because Python is
+              * whitespace-significant, which makes the editor a keyboard trap, and an escape
+              * hatch nobody is told about is the same as no escape hatch. Under the editor it
+              * was forty lines below the thing it describes and read as a footnote to the code.
+              * Beside the label it is where somebody about to type looks.
               */}
-            <Mono style={{ display: 'block', marginTop: '6px' }}>
-              Tab indents. Press Escape, then Tab, to move on.
-            </Mono>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '10px' }}>
+              <Eyebrow>Your code</Eyebrow>
+              <Mono>Tab indents. Press Escape, then Tab, to move on.</Mono>
+            </div>
+            <Editor value={code} onChange={setCode} label="Python editor" />
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '12px' }}>
+            {/*
+              * The answers `input()` will read, one per line — under the editor and above Run,
+              * which is the order he uses them in.
+              *
+              * It sat in the right-hand column beside the drawing, which put the one thing he
+              * has to fill in before pressing Run furthest from the button, and next to the two
+              * panels that only mean anything *after* he presses it. Left column, between the
+              * code and the Run that consumes it.
+              *
+              * It is always here rather than appearing only for quests that call `input()` —
+              * the screen would have to read his code to know that, and a panel that comes and
+              * goes as he types is worse than one that is simply present and empty.
+              */}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '14px 0 8px' }}>
+              <Eyebrow>Input</Eyebrow>
+              <Mono>
+                Run has no keyboard to ask with, so it reads these instead. Ask for more than you
+                wrote here and Python raises EOFError, the same as on your own machine.
+              </Mono>
+            </div>
+            <label htmlFor="stdin" style={{ ...eyebrow, position: 'absolute', left: '-9999px' }}>
+              Answers for input, one per line
+            </label>
+            <textarea
+              id="stdin"
+              value={stdin}
+              onChange={(event) => setStdin(event.target.value)}
+              rows={2}
+              spellCheck={false}
+              placeholder="one answer per line"
+              style={{
+                display: 'block',
+                width: '100%',
+                boxSizing: 'border-box',
+                background: color.bg,
+                border: `1px solid ${color.border}`,
+                color: color.fg,
+                fontFamily: font.mono,
+                fontSize: '12px',
+                padding: '10px 12px',
+                resize: 'vertical',
+              }}
+            />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '14px' }}>
               {/*
                 * Two buttons, two words, and neither word changes. State lives in the line to
                 * their right — a Run button that reads "Running…" is the same mistake as "Take
@@ -364,41 +492,10 @@ function Quest({
             <Verdict state={submitter.state} />
           </div>
 
+          {/* What the run produced: the drawing and the console, both of which only mean
+            * something after Run. What he has to fill in *before* Run is in the left column
+            * beside the code that uses it. */}
           <div style={{ width: '520px', flexShrink: 0 }}>
-            {/*
-              * The answers `input()` will read, one per line.
-              *
-              * It is always here rather than appearing only for quests that call `input()` —
-              * the screen would have to read his code to know that, and a panel that comes and
-              * goes as he types is worse than one that is simply present and empty.
-              */}
-            <Eyebrow style={{ marginBottom: '10px' }}>Input</Eyebrow>
-            <label htmlFor="stdin" style={{ ...eyebrow, position: 'absolute', left: '-9999px' }}>
-              Answers for input, one per line
-            </label>
-            <textarea
-              id="stdin"
-              value={stdin}
-              onChange={(event) => setStdin(event.target.value)}
-              rows={2}
-              spellCheck={false}
-              placeholder="one answer per line"
-              style={{
-                width: '100%',
-                background: color.bg,
-                border: `1px solid ${color.border}`,
-                color: color.fg,
-                fontFamily: font.mono,
-                fontSize: '12px',
-                padding: '10px 12px',
-                resize: 'vertical',
-              }}
-            />
-            <Mono style={{ display: 'block', margin: '6px 0 20px' }}>
-              Run has no keyboard to ask with, so it reads these instead. Ask for more than you
-              wrote here and Python raises EOFError, the same as it would on your own machine.
-            </Mono>
-
             <Eyebrow style={{ marginBottom: '10px' }}>What it drew</Eyebrow>
             <TurtleCanvas ops={state.ops} />
 
@@ -424,15 +521,76 @@ function Quest({
           </div>
         </div>
 
-        <div style={{ marginTop: '28px' }}>
-          <Tome>
-            <p style={{ margin: 0, color: color.fgBright }}>
-              The field manual for this area opens here, in place. Nothing above is covered and
-              nothing is lost — your editor keeps whatever is in it.
-            </p>
-          </Tome>
-        </div>
       </div>
     </>
+  );
+}
+
+/**
+ * The medal slots, priced — and honest about which of them can actually be taken.
+ *
+ * §5.10 makes every medal a difficulty modifier: it raises the quest's effective DC and pays the
+ * difference, once. That is the whole scoring model and it is the thing the old one-line-per-slot
+ * row failed to say, at 11px, in the same grey as everything around it.
+ *
+ * **The note at the bottom is not a caveat, it is the state of the game.** `SubmitRequest` carries
+ * no medal claim and every award path in the API writes `cleared`, so four of these five prices
+ * are quotes for a purchase nobody can make. §5.1a already settled how this repository handles
+ * that: the tilde on an estimated total exists because "an estimate rendered as a fact is
+ * dishonest, and this is a curriculum a child is measuring himself against." A price list is a
+ * stronger claim than an estimate.
+ */
+function Medals({ held, slots }: { held: readonly Medal[]; slots: readonly MedalSlot[] }) {
+  const priced = new Map(slots.map((slot) => [slot.medal, slot]));
+
+  return (
+    <div style={{ marginTop: '18px' }}>
+      <Eyebrow style={{ marginBottom: '8px' }}>Medals</Eyebrow>
+      <div role="group" aria-label="Medals" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {medalSlots(held).map((slot) => {
+          const offer = priced.get(slot.medal);
+
+          return (
+            <div
+              key={slot.medal}
+              style={{
+                padding: '8px 13px',
+                minWidth: '108px',
+                background: slot.held ? '#1a2119' : color.panel,
+                border: `1px solid ${slot.held ? color.accentMid : color.border}`,
+              }}
+            >
+              <span
+                style={{
+                  display: 'block',
+                  fontSize: '12.5px',
+                  fontWeight: 600,
+                  color: slot.held ? color.accent : color.fgBright,
+                }}
+              >
+                {slot.medal}
+              </span>
+              <Mono style={{ display: 'block', marginTop: '3px' }}>
+                {/*
+                  * Held pays nothing more, and says so as a fact rather than as `0 xp`. An offer
+                  * §5.12 forbids — Conjured beside Ironman — never reaches `medalSlots` at all,
+                  * and "not while you hold Ironman" is the true reason for its absence where a
+                  * zero would have read as "available, worth nothing".
+                  */}
+                {slot.held
+                  ? 'earned'
+                  : offer === undefined
+                    ? 'not with a medal you hold'
+                    : `DC ${offer.effectiveDC} · ${formatPayout(offer.xp)}`}
+              </Mono>
+            </div>
+          );
+        })}
+      </div>
+      <Mono style={{ display: 'block', marginTop: '8px', lineHeight: 1.6 }}>
+        Each medal raises this quest's DC and pays the difference, once. Only Cleared is awarded
+        today — there is no way to claim the others yet.
+      </Mono>
+    </div>
   );
 }

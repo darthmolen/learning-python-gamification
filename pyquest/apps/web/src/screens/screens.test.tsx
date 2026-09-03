@@ -73,10 +73,73 @@ describe('the Area screen renders the decisions the engine does not make', () =>
     expect(within(row).getByRole('img', { name: 'teach-back: not earned' })).toBeInTheDocument();
   });
 
+  /**
+   * §5.10 wants an unearned slot "greyed rather than absent", and it was greyed past the point of
+   * being visible: an 8px `--crumb-rule` diamond on `--panel` is about 1.3:1. Depth he cannot see
+   * is depth he does not know exists, which is the rule failing while appearing to be kept — so
+   * the outline is pinned here rather than left as a taste that drifts back to a fill.
+   */
+  it('draws an unearned slot as an outline, not as a fill nobody can see', async () => {
+    await atArea('3');
+    const row = screen.getByRole('listitem', { name: /Recipe Book/i });
+    const pip = (name: string) =>
+      within(row).getByRole('img', { name }).querySelector('polygon');
+
+    expect(pip('cleared: earned')?.getAttribute('fill')).toBe('var(--accent)');
+    expect(pip('ironman: not earned')?.getAttribute('fill')).toBe('none');
+    expect(pip('ironman: not earned')?.getAttribute('stroke')).toBe('var(--muted)');
+  });
+
+  /**
+   * The list arrived in the order content loaded — which is the order the YAML files sit on
+   * disk. Area 0's ten came out alphabetical by accident and read as though it meant something.
+   * §5.2 hands the choice of which three to the player; an arbitrary order is not neutrality
+   * about that choice, it is noise dressed as one.
+   *
+   * The fixture is deliberately shuffled (see `fixtures/index.ts`), so this fails if the screen
+   * stops sorting. It could not, while the fixture happened to be in DC order already.
+   */
+  it('lists the quests cheapest first, rather than in whatever order they loaded', async () => {
+    const { container } = await atArea('3');
+    // `li[aria-label]` rather than every listitem: the concept chips inside each row are list
+    // items too, and they are the ones with no label of their own.
+    const titles = [...container.querySelectorAll('li[aria-label]')].map(
+      (row) => row.getAttribute('aria-label')?.split(',')[0],
+    );
+
+    expect(titles).toEqual([
+      'The Inventory',
+      'The Recipe Book',
+      'The Smelter',
+      'The Enchanter',
+      'The Trading Hall',
+    ]);
+  });
+
   it('links an available quest and leaves a locked one unclickable', async () => {
     await atArea('3');
     expect(screen.getByRole('link', { name: 'The Enchanter' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'The Trading Hall' })).toBeNull();
+  });
+
+  /**
+   * The link used to wrap the title alone, so most of a 50px row — its padding, its concept
+   * chips, its DC, its five medal pips — was dead to the click. A row that looks like one target
+   * and behaves like a five-word one teaches him that the app is unreliable rather than that he
+   * missed.
+   *
+   * It stays a real anchor rather than a click handler on the `<li>`: middle-click, ctrl-click,
+   * Tab and Enter all have to keep working, and none of them is a `click` event.
+   */
+  it('makes the whole row the link, not just the title', async () => {
+    await atArea('3');
+    const link = screen.getByRole('link', { name: 'The Enchanter' });
+
+    expect(within(link).getByText('DC 18')).toBeInTheDocument();
+    expect(within(link).getByRole('list', { name: /The Enchanter/ })).toBeInTheDocument();
+    expect(within(link).getByRole('img', { name: 'ironman: not earned' })).toBeInTheDocument();
+    // Its name stays the quest, not the whole row read out as one string.
+    expect(link).toHaveAccessibleName('The Enchanter');
   });
 
   it('says an unauthored area is empty rather than showing nothing', async () => {

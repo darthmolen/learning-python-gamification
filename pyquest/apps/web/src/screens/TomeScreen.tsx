@@ -7,6 +7,7 @@ import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
 import { Eyebrow, Mono } from '../shell/ui';
+import { Markdown } from '../tome/Markdown';
 
 /**
  * The Tome as a rail destination: **the whole field manual, open.**
@@ -45,12 +46,17 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
   const navigate = useNavigate();
   const [selected, setSelected] = useState(0);
 
-  /** One row per area: the name content knows, and the concept count the syllabus knows. */
-  const syllabus = campaign.areas.map((card) => ({
-    area: card.area,
-    identity: card.identity,
-    concepts: content.areas.find((a) => a.area === card.area)?.concepts.length ?? 0,
-  }));
+  /** One row per area: the name content knows, and the syllabus and lesson the Tome knows. */
+  const syllabus = campaign.areas.map((card) => {
+    const page = content.areas.find((a) => a.area === card.area);
+    return {
+      area: card.area,
+      identity: card.identity,
+      concepts: page?.concepts.length ?? 0,
+      lesson: page?.lesson,
+      lessonIsDraft: page?.lessonIsDraft ?? false,
+    };
+  });
 
   const entry = syllabus[selected];
 
@@ -202,14 +208,23 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
             </p>
 
             {/*
-              * The manual's sections, prose and code samples are authored content the API has yet
-              * to serve — there is no contract shape for a Tome page. The syllabus above is real;
-              * this is honest about not being.
+              * The teaching itself, from `curriculum/area-N/lesson.md`. An area with none says so
+              * rather than showing an empty page — the same honesty §5.1a asks of the tilde, and
+              * the rule `apps/field-manual/src/build.ts` already keeps for the same prose.
               */}
-            <Mono style={{ display: 'block', lineHeight: 1.7 }}>
-              The written manual for this area is content the API has yet to serve. The syllabus
-              beside it is real, and every area in it is open.
-            </Mono>
+            {entry.lessonIsDraft && (
+              <Mono style={{ display: 'block', marginBottom: '18px', lineHeight: 1.7, color: color.badge }}>
+                This lesson is a draft. It was written ahead of the sessions that will correct it.
+              </Mono>
+            )}
+            {entry.lesson === undefined ? (
+              <Mono style={{ display: 'block', lineHeight: 1.7 }}>
+                The lesson for this area is not written yet. The syllabus beside it is real, and
+                every area in it is open.
+              </Mono>
+            ) : (
+              <Markdown text={entry.lesson} />
+            )}
           </div>
         </div>
       </div>
