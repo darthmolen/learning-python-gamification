@@ -1,6 +1,6 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AsSignedIn } from '../test-support/session.tsx';
+import { AsSignedIn, SIGNED_IN } from '../test-support/session.tsx';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AreaScreen } from './AreaScreen';
@@ -104,6 +104,23 @@ describe('the Area screen renders the decisions the engine does not make', () =>
 
 describe('the Map', () => {
   const renderMap = () => renderAndSettle(<MapScreen />);
+
+  /**
+   * The header names the person, not the row.
+   *
+   * It rendered `view.playerId` — `5eed0000-0000-4000-8000-000000000002` across the top of the
+   * Map — which was the honest answer while the SPA had no identity and a uuid was the only thing
+   * it knew. `GET /api/me` answers with a display name now, and a database key shown to a child
+   * is not a header.
+   *
+   * The uuid assertion is the half that matters: a regression here would put it back, and a test
+   * that only checked for the name would still pass with both on screen.
+   */
+  it('names who is signed in, rather than printing their uuid', async () => {
+    await renderMap();
+    expect(screen.getByText(SIGNED_IN.displayName)).toBeInTheDocument();
+    expect(screen.queryByText(SIGNED_IN.id)).not.toBeInTheDocument();
+  });
 
   /**
    * The artboard's model: an island **selects** and fills the panel; entering the area is a
@@ -240,6 +257,97 @@ describe('the Defend queue', () => {
     const merged = screen.getAllByRole('listitem').filter((r) => plain(r).includes('list'));
     expect(merged).toHaveLength(1);
     expect(plain(merged[0] as HTMLElement)).toContain('ladder + datamine');
+  });
+});
+
+/**
+ * The drill itself — §5.4, and the half that was never wired.
+ *
+ * `DrillResultSchema` is `{ repelled: boolean }` and `.strict()`, so this is a self-report: the
+ * recall happens in his head or out loud, and the screen records which way it went. The artboard
+ * draws a prompt per concept, and `DueInvasionSchema` says outright that prompts are content
+ * looked up by concept id — content that does not exist yet, so it is not drawn.
+ */
+describe('answering an invasion', () => {
+  const firstRow = () => screen.getAllByRole('listitem')[0] as HTMLElement;
+
+  it('offers both answers, with labels that do not change', async () => {
+    await renderAndSettle(<DefendScreen />);
+
+    const row = within(firstRow());
+    expect(row.getByRole('button', { name: 'Held it' })).toBeEnabled();
+    expect(row.getByRole('button', { name: 'Let it through' })).toBeEnabled();
+  });
+
+  /**
+   * **The row is answered in place and keeps its position**, which is the decision this test
+   * exists to hold. A row that vanished would move the §5.4 count under his cursor and take with
+   * it the thing he just earned — and the queue is a session's work, not an inbox to empty.
+   */
+  it('records the answer in the row rather than removing it', async () => {
+    await renderAndSettle(<DefendScreen />);
+    const before = screen.getAllByRole('listitem').length;
+    const label = plain(firstRow()).slice(0, 20);
+
+    await userEvent.click(within(firstRow()).getByRole('button', { name: 'Held it' }));
+
+    await waitFor(() => {
+      expect(within(firstRow()).queryByRole('button', { name: 'Held it' })).toBeNull();
+    });
+    expect(screen.getAllByRole('listitem')).toHaveLength(before);
+    expect(plain(firstRow())).toContain(label);
+  });
+
+  /**
+   * The engine's numbers, carried rather than recomputed. `nextRung` is called server-side for
+   * exactly this reason: `rung + 1` is the same number today and stops being the same number the
+   * first time §5.4's ladder is retuned.
+   */
+  it('shows the rung it landed on and when it comes back', async () => {
+    await renderAndSettle(<DefendScreen />);
+
+    await userEvent.click(within(firstRow()).getByRole('button', { name: 'Held it' }));
+
+    await waitFor(() => expect(plain(firstRow())).toMatch(/rung \d+ · back on \d{4}-\d{2}-\d{2}/));
+  });
+
+  it('pays a repelled invasion the flat rate §5.1 prices it at', async () => {
+    await renderAndSettle(<DefendScreen />);
+
+    await userEvent.click(within(firstRow()).getByRole('button', { name: 'Held it' }));
+
+    await waitFor(() => expect(plain(firstRow())).toContain('repelled · 5 xp'));
+  });
+
+  /**
+   * A concept let through pays nothing because it was let through. §5.10's zero is a *brag* — an
+   * elective medal earned for nothing — and reusing that word here would congratulate him for
+   * failing. Same number, opposite claim.
+   */
+  it('never calls a let-through drill a brag', async () => {
+    await renderAndSettle(<DefendScreen />);
+
+    await userEvent.click(within(firstRow()).getByRole('button', { name: 'Let it through' }));
+
+    await waitFor(() => expect(plain(firstRow())).toContain('let through · no xp'));
+    expect(plain(firstRow())).not.toContain('brag');
+  });
+
+  /**
+   * The two buttons send opposite booleans. A test that only pressed one would pass against a
+   * screen that sent `true` from both — and the learner would climb the ladder by failing.
+   */
+  it('sends the opposite answer from each button', async () => {
+    await renderAndSettle(<DefendScreen />);
+    const rows = screen.getAllByRole('listitem');
+
+    await userEvent.click(within(rows[0] as HTMLElement).getByRole('button', { name: 'Held it' }));
+    await userEvent.click(
+      within(rows[1] as HTMLElement).getByRole('button', { name: 'Let it through' }),
+    );
+
+    await waitFor(() => expect(plain(rows[0] as HTMLElement)).toContain('repelled'));
+    expect(plain(rows[1] as HTMLElement)).toContain('let through');
   });
 });
 

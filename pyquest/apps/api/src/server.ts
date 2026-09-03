@@ -41,6 +41,7 @@ import {
   BootstrapRequestSchema,
   CreatePlayerRequestSchema,
   JournalEntrySchema,
+  JournalTemplateSchema,
   TokenGrantSchema,
   SetPasswordRequestSchema,
   SetRoleRequestSchema,
@@ -92,6 +93,7 @@ import { rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { exportTree, syncCheckout } from './checkout.ts';
 import type { Spool } from './dispatcher.ts';
+import { DEFAULT_JOURNAL_PATH } from './gitea.ts';
 import type { Gitea, GiteaRepo } from './gitea.ts';
 import { readSignal } from './gitsignal.ts';
 import { splitEntries } from './journal.ts';
@@ -974,6 +976,56 @@ export function buildServer(options: ServerOptions): FastifyInstance {
             ...(section.reply === undefined ? {} : { reply: section.reply }),
           }),
         ];
+      });
+    },
+  );
+
+  /**
+   * The entry to copy, for the area he is working in.
+   *
+   * **Served rather than shipped in the SPA**, because it is authored curriculum: area 0's and
+   * area 1's templates already differ substantially, and one lands per area as the curriculum
+   * is written. A copy in a React component is content duplicated into a screen, which goes
+   * stale in silence the moment somebody edits the file.
+   *
+   * **Which area, and why it is not a guess.** The first whose quests are not all cleared — the
+   * area he is *in*, which is what the Map already draws as in-progress and where tonight's
+   * session happened. Going back to Area 0 for an elective medal does not change what tonight's
+   * entry is about. The answer carries `area` so the screen can say which one it picked, since
+   * a heuristic that guesses wrong in silence cannot be corrected by the person reading it.
+   *
+   * **The walk down is load-bearing, not defensive.** Only areas 0 and 1 have a `TEMPLATE.md`
+   * today, so a learner in Area 3 reaches this route and must get *something* — the nearest
+   * earlier template is the honest answer, and the `area` field stops it being a silent one.
+   */
+  app.get<{ Params: { playerId: string } }>(
+    '/api/players/:playerId/journal/template',
+    async (request) => {
+      const progress = await progressFor(db, request.params.playerId);
+      const { areas } = campaignView(content, progress);
+
+      const working =
+        areas.find((card) => card.progress.cleared < card.progress.total) ?? areas[areas.length - 1];
+      if (working === undefined) throw notFound('a journal template, in a campaign with no areas');
+
+      const templatePath = (area: number): string => `area-${area}/journal/TEMPLATE.md`;
+
+      /* From where he is, downwards. `areas` is sorted, so this is "the nearest one written". */
+      const authored = areas
+        .filter((card) => card.area <= working.area)
+        .reverse()
+        .find((card) => content.exists(templatePath(card.area)));
+
+      if (authored === undefined) {
+        throw notFound(`a journal template at or before area ${working.area}`);
+      }
+
+      return JournalTemplateSchema.parse({
+        area: authored.area,
+        markdown: content.read(templatePath(authored.area)),
+        /* Where it goes, from the same setting `git-signal: journal-entry` watches — so the
+         * screen is not a second place the filename is written down. */
+        path: options.gitea?.settings.journalPath ?? DEFAULT_JOURNAL_PATH,
       });
     },
   );

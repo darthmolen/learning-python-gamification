@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Navigate, Outlet, Route, Routes } from 'react-router';
 import { color, font } from '../design/tokens';
 import { Rail } from '../shell/Rail';
@@ -6,7 +7,7 @@ import { BossScreen } from '../screens/BossScreen';
 import { DefendScreen } from '../screens/DefendScreen';
 import { MapScreen } from '../screens/MapScreen';
 import { ConsoleScreen } from '../screens/ConsoleScreen';
-import { JournalScreen } from '../screens/OverlandScreens';
+import { JournalScreen } from '../screens/JournalScreen';
 import { TomeScreen } from '../screens/TomeScreen';
 import { PartyScreen } from '../screens/PartyScreen';
 import { QuestScreen } from '../screens/QuestScreen';
@@ -39,11 +40,54 @@ function Shell() {
         * waiting when it is not, or hides work that is. Defend owns that number; the rail carries
         * it again when something pushes it rather than the shell polling for it.
         */}
+      <SkipLink />
       <Rail />
-      <div style={{ flexGrow: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      {/*
+        * A `main` landmark rather than a bare `div`. It is what the skip link targets, and it is
+        * how a screen reader's own "jump to main content" finds the same place.
+        */}
+      <main id="main" tabIndex={-1} style={{ flexGrow: 1, minWidth: 0, display: 'flex', flexDirection: 'column', outline: 'none' }}>
         <Outlet />
-      </div>
+      </main>
     </div>
+  );
+}
+
+/**
+ * The first thing a keyboard reaches, and it is invisible until it is reached.
+ *
+ * Six rail destinations sit before the content on **every** screen. Without this, moving from
+ * the Map to a quest and then to the editor means tabbing past all six again — nine screens
+ * deep, that is what makes a keyboard user stop using a keyboard.
+ *
+ * Positioned off-screen rather than `display: none`, because a hidden element is not focusable
+ * and an unfocusable skip link is decoration. It comes back into view on focus, which is the
+ * only time anybody wants to see it.
+ */
+function SkipLink() {
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <a
+      href="#main"
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      style={{
+        position: 'absolute',
+        left: focused ? '8px' : '-9999px',
+        top: focused ? '8px' : 'auto',
+        zIndex: 100,
+        padding: '10px 18px',
+        background: color.accent,
+        color: color.bg,
+        fontFamily: font.sans,
+        fontWeight: 700,
+        fontSize: '13px',
+        textDecoration: 'none',
+      }}
+    >
+      Skip to content
+    </a>
   );
 }
 

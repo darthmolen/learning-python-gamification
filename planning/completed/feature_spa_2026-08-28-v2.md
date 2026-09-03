@@ -1,6 +1,6 @@
 # The SPA
 
-**Status:** In progress — restarted 2026-09-01, see Status
+**Status:** Completed 2026-09-01 — nine of ten criteria; the tenth needs a browser, see Status
 **Version:** v2 — revised 2026-08-29 after two reviews; admitted to the `spa` track 2026-08-29
 **Track:** spa
 **Blocked on:** nothing. Every blocker this header has carried is cleared: the Console's queue was
@@ -481,13 +481,136 @@ button copy.
 
 ## Status
 
-**Current Status:** In progress — restarted 2026-09-01
-**Track:** `spa`, authoritative. It was demoted to "advisory, reassign when it restarts" while this
-plan sat in the queue; restarting **is** the reassignment, and a promoted plan whose own Status
-block calls its track advisory is one `wave-workflow` cannot schedule
-**Returned:** 2026-09-01
-**Returned By:** Claude (Opus 5), on the DM's explicit override
-**Restarted:** 2026-09-01, once the auth gate closed
+**Final Status:** Completed — released 2026-09-01 with one criterion outstanding and owned
+**Track:** `spa`
+**Completed:** 2026-09-01
+**Completed By:** Claude (Opus 5), on the DM's call to release rather than hold for verification
+**Returned:** 2026-09-01 · **Restarted:** 2026-09-01, once the auth gate closed
+
+### Why it closes with nine of ten rather than ten
+
+**Every criterion this repository can settle is settled.** The tenth — turtle rendering in
+Pyodide — cannot be closed by writing more code, and holding a plan open for a check that needs a
+browser and a person turns the in-progress column into a waiting room. It is owned in two places
+rather than left in a plan nobody rereads:
+
+- `planning/backlog/feature_integration-suite_2026-08-30.md` tier 4, which is the suite that
+  would boot Pyodide
+- `planning/reminders/follow-up_editor-escape-hatch-in-a-browser_2026-09-01.md`, for the keyboard
+  hatch that jsdom provably cannot express
+
+**Nothing about the screens is blocked, and the styling is somebody else's plan already.** The
+DM's verdict was that the styles wanted reworking; a second `spa` session did that in parallel
+and landed it as `78b7a3e` — *"The theme belongs to the document, and the tokens become CSS
+variables"* — which moves the palette out of `design/tokens.ts` inline values and into
+`index.css`. That is a redesign of how this app is styled, not an unfinished phase of this plan,
+and it closed under its own commit.
+
+**Two `spa` sessions ran the same track at once, and it is worth writing down that it held.**
+`plan-workflow` admits one plan per track precisely to stop this. It worked here only because the
+file sets happened to be disjoint — this plan owned the gateway, the quest surface, the Journal
+and the Defend queue; the other owned the tokens, `index.css`, the Map and Sign-in headers and
+the shell tests. **The one file both touched was `screens.test.tsx`**, and the collision was real:
+the other session's new Map test landed in this plan's staged copy while its implementation sat in
+theirs, so for a few minutes each half of a working change was in a different pending commit.
+Green tree, two broken commits available. Nothing caught that but reading the diff.
+
+### Outcomes
+
+**Nine of ten criteria met. 927 tests across 57 files**, up from 857 at `80f1c64`. `npm test`,
+`npm run typecheck`, `npm run validate:content` and `npm run build --workspace @pyquest/web` all
+clean.
+
+The 2026-09-01 restart closed the four that were outstanding and left one:
+
+- **Nine screens** — the Journal was the last frame and it is built
+- **Submit posts to the API (§6.3)** — all four verifiers, with the job poll behind it
+- **Keyboard and accessible names** — swept across all nine, and the sweep found a real trap
+- **The learner's laptop** — closed 2026-08-31 at 1920×1080; the criterion had been asking about
+  a resolution he does not have
+- **Turtle in Pyodide** — *not* met, and honestly so. The shim's geometry is proved against the
+  stroke protocol; nothing automated has ever booted Pyodide
+
+### Deviations
+
+**The Journal template forced this track to claim `api` and `contract` files.** The plan's file
+set was `apps/web/**` plus one root vitest config. Serving `GET /api/players/:playerId/journal/
+template` added `packages/contract/src/endpoints.ts`, `apps/api/src/server.ts` and
+`apps/api/src/content.ts`. That was the right call — area 0's and area 1's templates differ
+substantially and one lands per area, so a copy in a React component is the `AREA_NAMES` mistake
+at four times the size — but it is a widening of the track, taken because `in-progress/` was
+otherwise empty and recorded in **Files Expected to Change** rather than discovered later.
+
+**The artboards were not followed where they draw features nothing serves.** The Journal's draft
+editor (ADR 0004 removed `POST /journal`), the Defend queue's per-drill recall prompt
+(`DueInvasionSchema` says prompts are content looked up by concept id, and that content does not
+exist), and the artboard's attendance/streak/recap column all went undrawn — the same rule the
+Console followed with streak forgiveness. A picture of a feature is worse than an absence.
+
+**One reviewer suggestion was declined**, with reasoning kept in the plan: broadening
+`JobAcceptedSchema` to encode pollability. It would edit a `.strict()` schema and all four API
+branches to tell the client a fact it already holds.
+
+### Lessons Learned
+
+**Three defects landed this session and not one was found by a failing test.** Two were found by
+reading and one by the accessibility sweep. That is the argument for both practices, and it is
+worth stating because the plan's own discipline is `test-filter-development` — tests catch
+regressions in what you thought to check, and these were three things nobody had thought to check.
+
+1. **`postSignoff` carried no bearer token.** Every route but the two session ones sits behind the
+   `onRequest` guard, so granting a sign-off against a live api answered 401 and the Console
+   reported the DM's decision as "could not record it". It was invisible because **the Console had
+   only ever been exercised against fixtures** — a whole screen whose write path no test had run
+   against a real status code. The existing test asserted
+   `objectContaining({ method, body })`, which is true of a request carrying no credential at all.
+
+2. **The editor was a keyboard trap and a code comment said otherwise.** `Editor.tsx` claimed
+   "Escape-then-Tab still leaves — CodeMirror's own behaviour". **That is Monaco's behaviour.**
+   CodeMirror binds Escape to `simplifySelection`; its real hatch is `Ctrl-m`, which nothing on
+   screen mentioned. Run, Stop and Submit all follow the editor in the tab order, so for as long
+   as that comment stood **a learner who tabbed into the editor could not reach the button that
+   submits his work** — on the one screen he spends an evening in.
+
+   The comment was confident, specific, and wrong, and it was wrong for exactly as long as it took
+   somebody to try it. A "considered trade" is only considered if the mechanism was checked.
+
+3. **A test was racing a second resource** and losing about one run in five once the suite grew.
+   The Console's panel frame and its roster arrive on different ticks. A gate that fails at random
+   is a gate people learn to re-run, and a gate people re-run is not a gate.
+
+**The rule Submit turns on could not be read off the wire, and that is a contract fact worth
+keeping.** `JobAcceptedSchema` is `{ jobId, state }.strict()`, so a queued `peer-signoff` and a
+queued `hidden-tests` arrive byte-identical — while only one has a `runner_jobs` row and the other
+carries an attempts id that `GET /api/jobs/:jobId` refuses with a 404. **So pollability is a
+property of the verifier, decided before the request is sent, and `state` only decides when to
+stop.** A client that decided from the response would report a submission that worked as one that
+went missing.
+
+The route table had said `'JobAccepted — a runner_jobs id'` since the API landed. False for half
+the verifiers, and corrected here.
+
+**A mutant can be masked by a second guard, and the first version of this suite was.** Making
+`git-signal` pollable survived every screen test, because `git-signal` always answers terminal and
+the terminal check caught it anyway. The verifier rule was not load-bearing until a test handed it
+a non-terminal `git-signal` — a state only a changed API would send. **Two correct guards can hide
+which one is doing the work.**
+
+**A limitation stated is worth more than an assertion that cannot fail honestly.** jsdom cannot
+express CodeMirror's tab-focus mode; CodeMirror's *own* `Ctrl-m` fails identically under vitest,
+which is how we know it is the environment rather than the binding. `a11y.test.tsx` therefore
+asserts the on-screen instruction and the tab order and deliberately does not assert the key,
+with the key itself filed as a reminder. A test that passes or fails for reasons unrelated to the
+behaviour is worth less than no test.
+
+**§5.10's zero and §5.6's zero are opposite claims.** `formatPayout` renders a zero as `brag` —
+an elective medal earned for nothing. A journal entry that paid nothing had empty prompts, and a
+drill that paid nothing was let through. Reusing that function would have congratulated a child
+for not writing, on the one screen §5.6 says must never tell somebody who wrote that they wrote
+nothing. Same number, opposite meaning, so `journalPayout` is a separate function rather than a
+shared one with a flag.
+
+### Why it stopped, the first time
 
 ### Why it stopped
 

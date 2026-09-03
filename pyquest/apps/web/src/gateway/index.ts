@@ -3,7 +3,13 @@ import {
   AccountSchema,
   AreaViewSchema,
   CampaignViewSchema,
+  DrillOutcomeSchema,
+  DrillResultSchema,
   DueInvasionsSchema,
+  JobAcceptedSchema,
+  JobViewSchema,
+  JournalEntrySchema,
+  JournalTemplateSchema,
   PartyViewSchema,
   PendingSignoffsSchema,
   QuestViewSchema,
@@ -14,12 +20,19 @@ import {
   type Account,
   type AreaView,
   type CampaignView,
+  type DrillOutcome,
+  type DrillResult,
   type DueInvasion,
+  type JobAccepted,
+  type JobView,
+  type JournalEntry,
+  type JournalTemplate,
   type PartyView,
   type PendingSignoff,
   type QuestView,
   type SignoffAward,
   type SignoffRequest,
+  type SubmitRequest,
   type Tome,
 } from '@pyquest/contract';
 import * as fixtures from '../fixtures/index.ts';
@@ -149,15 +162,107 @@ export const getQuest = (playerId: string, questId: string): Promise<QuestView> 
 export const getDefend = (playerId: string): Promise<DueInvasion[]> =>
   get(`/api/players/${playerId}/defend`, DueInvasionsSchema, () => fixtures.dueInvasions);
 
+/**
+ * Record one drill: repelled, or let through.
+ *
+ * **`DrillResultSchema` is `{ repelled: boolean }` and `.strict()`, and the strictness is the
+ * point.** The obvious next field is the date, and the date is exactly what a client must not be
+ * able to supply — §5.4's ladder is a schedule the learner does not get to negotiate, and
+ * `{ repelled: true, now: 'yesterday' }` is how they would.
+ *
+ * What comes back is the engine's: the new rung, when it is next due, and what it paid. None of
+ * it is recomputed here. `nextRung` is called server-side precisely so that nobody writes
+ * `rung + 1`, which is the same number today and stops being the same number the first time the
+ * ladder is retuned.
+ */
+export async function postDrill(
+  playerId: string,
+  conceptId: string,
+  result: DrillResult,
+): Promise<DrillOutcome> {
+  const path = `/api/players/${playerId}/defend/${conceptId}`;
+  const body = DrillResultSchema.parse(result);
+  const base = apiBase();
+
+  if (base === undefined) return DrillOutcomeSchema.parse(fixtures.drillOutcome(conceptId, body.repelled));
+
+  const response = await send(path, body);
+  if (!response.ok) throw new Error(`${path} answered ${response.status}`);
+  return DrillOutcomeSchema.parse(await response.json());
+}
+
 /** The completion board, XP provenance, and open bounties. */
 export const getParty = (playerId: string): Promise<PartyView> =>
   get(`/api/players/${playerId}/party`, PartyViewSchema, () => fixtures.party);
+
+/* -------------------------------------------------------------------------------------------
+ * Submit — §6.3, and the one path the whole game turns on
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Post a submission. One route, four verifiers, and the quest picks which.
+ *
+ * The body is discriminated on the quest's own `verifier` rather than on anything a client
+ * chooses — `server.ts` refuses a mismatched body, because a client that could pick
+ * `peer-signoff` on a `hidden-tests` quest could take a medal by asking a person instead of by
+ * passing the tests.
+ *
+ * **What comes back is not uniformly pollable, and this function does not pretend otherwise.**
+ * It returns exactly what the API said; `submit.ts` decides what may be done with it, from the
+ * verifier rather than from the response. See `enqueuesJob`.
+ */
+export async function submitQuest(
+  playerId: string,
+  questId: string,
+  body: SubmitRequest,
+): Promise<JobAccepted> {
+  const path = `/api/players/${playerId}/quests/${questId}/submit`;
+  const base = apiBase();
+
+  if (base === undefined) return JobAcceptedSchema.parse(fixtures.jobAccepted(body.type, questId));
+
+  const response = await send(path, body);
+  /* 202 for a queued job, 200 for a `git-signal` that resolved on the spot. Both are ok. */
+  if (!response.ok) throw new Error(`${path} answered ${response.status}`);
+  return JobAcceptedSchema.parse(await response.json());
+}
+
+/**
+ * Poll one runner job.
+ *
+ * **Only for `hidden-tests` and `local-repo`.** The route requires a numeric id, so a
+ * `peer-signoff` or `git-signal` id answers 404 — which is a submission that worked, reported
+ * as missing. `submit.ts` is what stops that call being made; this function is not defensive
+ * about it, because a guard here would hide the bug rather than the 404 doing it loudly.
+ */
+export const getJob = (jobId: string): Promise<JobView> =>
+  get(`/api/jobs/${jobId}`, JobViewSchema, () => fixtures.job(jobId));
 
 /**
  * The syllabus. Not player-scoped and carrying no unlocked state — the syllabus is the same for
  * everyone, and what is open is derived from the campaign the SPA already holds.
  */
 export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, () => fixtures.tome);
+
+/**
+ * §5.6's entries: what he wrote, joined to the commits that were paid for.
+ *
+ * An empty list is a real and common answer, not a failure — §5.6 starts the Journal in week 1
+ * as plain markdown and only commits it at Area 2a, so the first eight weeks have nothing to
+ * read. The screen has to say that rather than reporting a fault.
+ */
+export const getJournal = (playerId: string): Promise<JournalEntry[]> =>
+  get(`/api/players/${playerId}/journal`, JournalEntrySchema.array(), () => fixtures.journal);
+
+/**
+ * The entry to copy, for the area he is working in.
+ *
+ * A separate request from the entries on purpose, and the screen treats it as separate: only
+ * areas 0 and 1 have a `TEMPLATE.md` today, so this is the call most likely to fail — and a
+ * learner whose writing is on screen must not lose it because a coaching file is unauthored.
+ */
+export const getJournalTemplate = (playerId: string): Promise<JournalTemplate> =>
+  get(`/api/players/${playerId}/journal/template`, JournalTemplateSchema, () => fixtures.journalTemplate);
 
 /**
  * Is there an api at all?
@@ -358,11 +463,13 @@ export async function postSignoff(attemptId: string, request: SignoffRequest): P
       : { granted: false, reason: body.note ?? 'the sign-off was not granted' };
   }
 
-  const response = await fetch(`${base}${path}`, {
-    method: 'POST',
-    headers: { accept: 'application/json', 'content-type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  /*
+   * Through `send`, not a bare `fetch`. This built its own headers until 2026-09-01 and so
+   * carried no token, which every route but the two session ones now requires — a granted
+   * sign-off answered 401 and the Console rendered the DM's decision as "could not record it".
+   * It was invisible because the Console had only ever run against fixtures.
+   */
+  const response = await send(path, body);
 
   if (response.ok) return { granted: true, award: SignoffAwardSchema.parse(await response.json()) };
 

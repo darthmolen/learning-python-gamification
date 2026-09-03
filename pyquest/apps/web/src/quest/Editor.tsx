@@ -1,17 +1,34 @@
 import { python } from '@codemirror/lang-python';
 import { EditorState } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
-import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+  temporarilySetTabFocusMode,
+} from '@codemirror/commands';
 import { useEffect, useRef } from 'react';
 import { color, font } from '../design/tokens';
 
 /**
  * The editor he actually types in.
  *
- * `indentWithTab` is included deliberately: Python is whitespace-significant and Tab escaping to
- * the next control is correct for a form and wrong for a code editor. It costs a keyboard trap,
- * which is why Escape-then-Tab still leaves — CodeMirror's own behaviour, and the reason this
- * is a considered trade rather than an oversight.
+ * `indentWithTab` is included deliberately: Python is whitespace-significant, and Tab escaping to
+ * the next control is right for a form and wrong for a code editor. It costs a keyboard trap.
+ *
+ * **The escape hatch used to be stated here and did not exist.** This file claimed
+ * "Escape-then-Tab still leaves — CodeMirror's own behaviour", which is Monaco's behaviour, not
+ * CodeMirror's: `defaultKeymap` binds Escape to `simplifySelection`, and the real hatch is
+ * **Ctrl-m** (`toggleTabFocusMode`), which nothing on screen mentioned. So the considered trade
+ * was made against a mechanism nobody had checked, and the Quest screen's Run, Stop and Submit
+ * buttons — all of which follow the editor in the DOM — were unreachable by keyboard once you
+ * were in it. Found 2026-09-01 by the accessibility sweep, which is what a sweep is for.
+ *
+ * Escape is now bound to `temporarilySetTabFocusMode`, so the sentence above is true rather than
+ * merely written down: Escape releases Tab for two seconds, which is long enough to leave and
+ * short enough not to break indenting. Ctrl-m still latches it, and `label` says so out loud —
+ * an escape hatch nobody can discover is the same as no escape hatch.
  */
 interface EditorProps {
   value: string;
@@ -36,7 +53,14 @@ export function Editor({ value, onChange, label }: EditorProps) {
           lineNumbers(),
           history(),
           python(),
-          keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
+          /* Escape first, so it wins over `defaultKeymap`'s `simplifySelection`. Releasing the
+           * Tab key matters more than collapsing a selection nobody made. */
+          keymap.of([
+            { key: 'Escape', run: temporarilySetTabFocusMode },
+            ...defaultKeymap,
+            ...historyKeymap,
+            indentWithTab,
+          ]),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) latest.current(update.state.doc.toString());
           }),

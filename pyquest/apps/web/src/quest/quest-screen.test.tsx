@@ -43,12 +43,18 @@ function fakeWorker() {
  * starter now, so everything below is asserted against a loaded screen rather than a loading one
  * that happens not to have the thing being looked for.
  */
-const renderQuest = async (factory: () => WorkerLike) => {
+const renderQuest = async (factory: () => WorkerLike, questId = 'a3-recipe-book') => {
   const result = render(
     <AsSignedIn>
-      <MemoryRouter initialEntries={['/area/3/quest/a3-recipe-book']}>
+      <MemoryRouter initialEntries={[`/area/3/quest/${questId}`]}>
         <Routes>
-          <Route path="/area/:areaId/quest/:questId" element={<QuestScreen makeWorker={factory} />} />
+          <Route
+            path="/area/:areaId/quest/:questId"
+            /* `pollMs={0}` so the job poll runs on the next tick rather than in 700ms. The
+             * interval is injectable for exactly this reason — a suite that waited on the real
+             * one would be slow and, worse, flaky under load. */
+            element={<QuestScreen makeWorker={factory} pollMs={0} />}
+          />
         </Routes>
       </MemoryRouter>
     </AsSignedIn>,
@@ -65,7 +71,7 @@ describe('Run', () => {
     expect(screen.getByRole('img', { name: /nothing drawn yet/i })).toBeInTheDocument();
     expect(screen.getByText(/Nothing yet. Press Run/)).toBeInTheDocument();
     // The status line, not the panel heading of the same name.
-    expect(screen.getByRole('status')).toHaveTextContent('Console');
+    expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Console');
   });
 
   it('draws what the program drew', async () => {
@@ -85,7 +91,7 @@ describe('Run', () => {
     await waitFor(() => {
       expect(screen.getByRole('img', { name: 'Turtle drawing, 4 lines' })).toBeInTheDocument();
     });
-    expect(screen.getByRole('status')).toHaveTextContent('Run · browser');
+    expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · browser');
   });
 
   /** The property the shim exists for: a failed program keeps the drawing it managed. */
@@ -104,7 +110,7 @@ describe('Run', () => {
     });
     // Two strokes survived. Losing them would take away the evidence he needs to debug.
     expect(screen.getByRole('img', { name: 'Turtle drawing, 2 lines' })).toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent('Run · raised');
+    expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · raised');
   });
 
   it('prints what the program printed', async () => {
@@ -145,7 +151,7 @@ describe('Stop', () => {
 
     // There is no cooperative way to interrupt a Python loop that is not yielding.
     expect(worker.terminated).toBe(true);
-    expect(screen.getByRole('status')).toHaveTextContent('Run · stopped');
+    expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · stopped');
   });
 
   it('ignores a result that lands after he stopped', async () => {
@@ -158,7 +164,7 @@ describe('Stop', () => {
 
     // Showing the output of a run he cancelled would tell him Stop does not work.
     expect(screen.queryByText(/too late/)).toBeNull();
-    expect(screen.getByRole('status')).toHaveTextContent('Run · stopped');
+    expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · stopped');
   });
 });
 
@@ -183,7 +189,7 @@ describe('the labels', () => {
     expect(run.textContent).toBe('Run');
 
     reply({ error: 'boom' });
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Run · raised'));
+    await waitFor(() => expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · raised'));
     expect(screen.getByRole('button', { name: 'Run' }).textContent).toBe('Run');
   });
 
@@ -200,10 +206,10 @@ describe('the labels', () => {
     await renderQuest(factory);
 
     const submit = screen.getByRole('button', { name: 'Submit' });
+    // Untouched starter on a hidden-tests quest. The refusal is the mechanic, not a missing API.
     expect(submit).toBeDisabled();
     expect(submit.textContent).toBe('Submit');
-    // §6.3: Submit goes to the API because hidden tests shipped to the client are not hidden.
-    expect(screen.getByText(/Submit needs the API/)).toBeInTheDocument();
+    expect(screen.getByText(/Change something first/)).toBeInTheDocument();
   });
 
   it('says Submit reads the editor rather than the click, while the code is untouched', async () => {
@@ -211,6 +217,95 @@ describe('the labels', () => {
     await renderQuest(factory);
 
     expect(screen.getByText(/reads the editor, not the click/)).toBeInTheDocument();
+  });
+
+  /**
+   * The rule only applies where it means something. `local-repo` grades what was pushed (§6.4),
+   * so the editor is not the evidence and gating on it would refuse a submission for a reason
+   * that does not apply — the learner would be told to change code the API will never read.
+   */
+  it('does not hold Submit against the editor on a quest that grades what was pushed', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory, 'a3-the-smelter');
+
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeEnabled();
+    expect(screen.getByText(/grades what you pushed/)).toBeInTheDocument();
+  });
+});
+
+/**
+ * Submit — §6.3, and the path the whole game turns on.
+ *
+ * The four verifiers behave differently on purpose, and the difference that matters most is
+ * invisible on the wire: a queued `peer-signoff` and a queued `hidden-tests` are identical in
+ * `JobAccepted`, while only one of them has a `runner_jobs` row to poll. Polling the other
+ * answers 404, which would report a submission that worked as one that went missing.
+ */
+describe('Submit', () => {
+  it('runs a hidden-tests submission through the job queue to a verdict', async () => {
+    const { factory } = fakeWorker();
+    const { container } = await renderQuest(factory, 'a3-inventory-lists');
+
+    // CodeMirror owns a contenteditable rather than a textarea, so the editor is reached
+    // through its content node. Typing is the only way to make Submit legal here, and that is
+    // the mechanic rather than a testing inconvenience.
+    const content = container.querySelector('.cm-content') as HTMLElement;
+    await userEvent.click(content);
+    await userEvent.type(content, 'x = 1');
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Submit' })).toBeEnabled());
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('status', { name: 'Submit' })).toHaveTextContent('Submit · passed');
+    });
+    // The runner's summary, which only arrives by polling — a screen that stopped at the 202
+    // would show the verdict and never this.
+    expect(screen.getByText(/4 passed in 0.31s/)).toBeInTheDocument();
+  });
+
+  /**
+   * The case the whole rule exists for. `server.ts` records an `attempts` row and answers 202
+   * with its id; there is no job and never will be, because what happens next is a person
+   * reading it. A client that polled would ask `/api/jobs/att-…`, which requires a numeric id.
+   */
+  it('does not poll a peer-signoff, and says which seat it is waiting on', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory, 'a3-the-enchanter');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('status', { name: 'Submit' })).toHaveTextContent(
+        'Submit · waiting on the peer',
+      );
+    });
+    // Not a failure, and not a verdict. It is recorded and somebody has to look at it.
+    expect(screen.getByText(/sits in the Console until somebody signs it/)).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: 'Submit' })).not.toHaveTextContent(/not found|404/);
+  });
+
+  /**
+   * `git-signal` resolves at submit time — the evidence is a history already on the server, so
+   * the API answers 200 with a terminal state rather than an id to poll. Telling a client to
+   * poll for an answer it already has is how a screen says "working" about something finished.
+   */
+  it('takes a git-signal verdict from the submit response itself', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory, 'a3-the-trading-hall');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('status', { name: 'Submit' })).toHaveTextContent('Submit · passed');
+    });
+  });
+
+  it('explains what Submit will do before it is pressed, per verifier', async () => {
+    const { factory } = fakeWorker();
+    await renderQuest(factory, 'a3-the-trading-hall');
+
+    expect(screen.getByText(/reads your git history for a push/)).toBeInTheDocument();
   });
 });
 
@@ -245,12 +340,12 @@ describe('when the runner itself breaks', () => {
     await renderQuest(factory);
 
     await userEvent.click(screen.getByRole('button', { name: 'Run' }));
-    expect(screen.getByRole('status')).toHaveTextContent('Run · working');
+    expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · working');
 
     fail("Module scripts don't support importScripts()");
 
     await waitFor(() => {
-      expect(screen.getByRole('status')).toHaveTextContent('Run · runner broke');
+      expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · runner broke');
     });
     expect(screen.getByRole('alert')).toHaveTextContent('importScripts');
   });
@@ -263,7 +358,7 @@ describe('when the runner itself breaks', () => {
     crash('failed to fetch the worker');
 
     await waitFor(() => {
-      expect(screen.getByRole('status')).toHaveTextContent('Run · runner broke');
+      expect(screen.getByRole('status', { name: 'Run' })).toHaveTextContent('Run · runner broke');
     });
   });
 

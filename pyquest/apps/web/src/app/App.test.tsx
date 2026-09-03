@@ -21,7 +21,9 @@ describe('routing', () => {
     ['/tome', 'The Tome'],
     ['/defend', 'Defend'],
     ['/party', 'Party'],
-    ['/journal', 'Journal'],
+    // The artboard's heading, like "The Campaign" and "The Tome" above it. The rail's label is
+    // the shorter "Journal"; a destination and its screen do not have to share a word.
+    ['/journal', 'The Journal'],
     ['/console', 'Console'],
   ];
 

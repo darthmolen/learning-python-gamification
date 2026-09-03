@@ -33,8 +33,15 @@ import {
  * ----------------------------------------------------------------------------------------- */
 
 describe('the route table', () => {
-  it('carries the twenty routes the plan names', () => {
-    expect(API_ROUTES).toHaveLength(20);
+  /**
+   * A count, deliberately, so that adding a route is a thing somebody has to come here and do.
+   *
+   * Twenty-first: `GET /api/players/:playerId/journal/template`, added 2026-09-01. The Journal's
+   * copy-paste template is authored curriculum that differs per area, so it is served rather than
+   * shipped in the SPA — a copy in a React component is content duplicated into a screen.
+   */
+  it('carries the twenty-one routes the plan names', () => {
+    expect(API_ROUTES).toHaveLength(21);
   });
 
   /**

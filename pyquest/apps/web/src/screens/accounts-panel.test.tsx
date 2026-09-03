@@ -66,10 +66,22 @@ beforeEach(() => {
 });
 
 describe('who the panel is for', () => {
+  /**
+   * `findBy` for the roster, not `getBy`, and the difference is not style.
+   *
+   * The panel's frame and its contents arrive on **different ticks**: the `region` renders as
+   * soon as the DM is known, while the roster is its own `useResource` that is still loading.
+   * A `getByText` immediately after the frame therefore raced, and lost about one run in five
+   * once the suite grew — failing with "loading the household" still on screen, which reads as a
+   * broken panel rather than as a test that asked too early.
+   *
+   * Fixed 2026-09-01. A gate that fails at random is a gate people learn to re-run, and a gate
+   * people re-run is not a gate.
+   */
   it('shows the household to the DM', async () => {
     await consoleAs(DM);
     expect(await screen.findByRole('region', { name: 'Accounts' })).toBeInTheDocument();
-    expect(screen.getByText('The Peer')).toBeInTheDocument();
+    expect(await screen.findByText('The Peer')).toBeInTheDocument();
   });
 
   /**

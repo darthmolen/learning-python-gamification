@@ -557,6 +557,35 @@ export const JournalEntrySchema = z
 
 export type JournalEntry = z.infer<typeof JournalEntrySchema>;
 
+/**
+ * `GET /api/players/:playerId/journal/template` — the entry to copy, for the area he is in.
+ *
+ * **It is served rather than shipped in the client, and that is the whole reason this shape
+ * exists.** `curriculum/area-0/journal/TEMPLATE.md` and `area-1`'s differ substantially — the
+ * `**Area:**` line, and coaching that names what goes wrong in *that* area's material — and one
+ * lands per area as the curriculum is authored. Sixty lines of that copied into a component is
+ * the `AREA_NAMES` mistake at four times the size: content duplicated into a screen, going stale
+ * silently the moment somebody edits the file it was copied from.
+ *
+ * `area` is on the payload because the screen has to say which area's template it is showing.
+ * The server picks it from progress, and a heuristic that guesses wrong in silence is worse than
+ * one a reader can see and correct.
+ *
+ * `path` is where it goes — `journal.md`, or whatever `JOURNAL_PATH` names. The instruction on
+ * screen is then served too, rather than a second place to write the filename down.
+ */
+export const JournalTemplateSchema = z
+  .object({
+    area: AreaSchema,
+    /** The file's markdown, verbatim, coaching comments and all. */
+    markdown: z.string().min(1),
+    /** Repository-relative, and the same path `git-signal: journal-entry` watches. */
+    path: z.string().min(1),
+  })
+  .strict();
+
+export type JournalTemplate = z.infer<typeof JournalTemplateSchema>;
+
 /* -------------------------------------------------------------------------------------------
  * The route table
  * ----------------------------------------------------------------------------------------- */
@@ -717,12 +746,31 @@ export const API_ROUTES: readonly ApiRoute[] = [
     path: '/api/players/:playerId/quests/:questId',
     returns: 'the quest, its brief, medals held, effectiveDC per medal',
   },
+  /*
+   * **`jobId` is not always a job, and only two of the four verifiers may be polled.**
+   *
+   * This row said "a runner_jobs id" until 2026-09-01, and it was false for half the verifiers.
+   * `hidden-tests` and `local-repo` enqueue a row and return its numeric id; `peer-signoff` and
+   * `git-signal` return an **attempt** id, because neither has anything to run — one is waiting
+   * on a person and the other is a read of a git history that already happened.
+   *
+   * That matters to a client rather than being trivia. `GET /api/jobs/:jobId` requires a numeric
+   * id, so polling a `peer-signoff` answers 404 — a submission that worked, reported as missing.
+   * And `JobAccepted` cannot tell the two apart: a queued `peer-signoff` and a queued
+   * `hidden-tests` are byte-identical on the wire. **So pollability is a property of the
+   * verifier, decided before the request is sent, and `state` only decides when to stop.**
+   */
   {
     method: 'POST',
     path: '/api/players/:playerId/quests/:questId/submit',
-    returns: 'JobAccepted — a runner_jobs id',
+    returns:
+      'JobAccepted — a runner_jobs id for hidden-tests and local-repo, an attempts id for peer-signoff and git-signal. Only the first two may be polled',
   },
-  { method: 'GET', path: '/api/jobs/:jobId', returns: 'JobView' },
+  {
+    method: 'GET',
+    path: '/api/jobs/:jobId',
+    returns: 'JobView. Numeric ids only — a peer-signoff or git-signal id answers 404 here',
+  },
   { method: 'GET', path: '/api/players/:playerId/defend', returns: 'DueInvasions' },
   {
     method: 'POST',
@@ -743,6 +791,11 @@ export const API_ROUTES: readonly ApiRoute[] = [
     method: 'GET',
     path: '/api/players/:playerId/journal',
     returns: 'JournalEntry[] — the ledger, joined to the markdown at each commit',
+  },
+  {
+    method: 'GET',
+    path: '/api/players/:playerId/journal/template',
+    returns: 'JournalTemplate — the entry to copy, for the area he is working in',
   },
   { method: 'GET', path: '/api/tome', returns: 'the syllabus: concepts by area. Content only' },
   {

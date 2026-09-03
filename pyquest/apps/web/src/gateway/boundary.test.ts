@@ -130,6 +130,66 @@ describe('the gateway is the only way to the data', () => {
    * The titles are read from the manifests rather than listed, so re-titling an area in YAML
    * cannot leave this test guarding a name nobody uses any more.
    */
+  /**
+   * **A clickable `div` is the one accessibility failure a render test cannot see**, because it
+   * renders perfectly. It has no role, so it is announced as nothing; it has no tab stop, so a
+   * keyboard never reaches it; and `a11y.test.tsx` — which walks buttons, links and textboxes —
+   * would not even know to look for it.
+   *
+   * So it is checked in the source, here, where the file already scans the tree under the node
+   * environment and already has the "prove you can see it" guard the check needs.
+   *
+   * The allowed set is the elements that are interactive on their own: `button`, `a`, `input`,
+   * and react-router's `Link`. Capitalised components are ours and are covered by the render
+   * sweep, which can see whatever role they put on the page.
+   */
+  it('puts every click handler on something a keyboard can reach', () => {
+    const INTERACTIVE = new Set(['button', 'a', 'input', 'select', 'textarea', 'Link', 'NavLink']);
+
+    const offenders = [
+      ...filesUnder(join(srcDir, 'screens')),
+      ...filesUnder(join(srcDir, 'shell')),
+      ...filesUnder(join(srcDir, 'tome')),
+    ]
+      .filter((file) => !/\.(test|spec)\.tsx?$/.test(file))
+      .flatMap((file) => {
+        const source = readFileSync(file, 'utf8');
+        /*
+         * Each opening tag and everything up to the next `<`, which is its whole attribute
+         * block plus any text children. The window has to reach *past* `onClick` rather than
+         * stopping at it: the Map's islands declare `onKeyDown` after `onClick`, and a scan
+         * that stopped early reported the one keyboard-reachable custom control in the app as
+         * the offender. Found by seeding nothing at all — just by running it.
+         */
+        return [...source.matchAll(/<([A-Za-z][\w.]*)((?:(?!<)[\s\S])*)/g)]
+          .filter(([, , attrs]) => /onClick=/.test(attrs as string))
+          .filter(([, tag]) => {
+            const name = tag as string;
+            if (INTERACTIVE.has(name)) return false;
+            /* Capitalised components are ours, and whatever role they render is covered by the
+             * render sweep in `a11y.test.tsx`, which can see the finished page. */
+            return name[0] === (name[0] ?? '').toLowerCase();
+          })
+          .filter(([, , attrs]) => {
+            /*
+             * The Map's islands are the reason this is a rule about *reachability* rather than a
+             * rule about tag names. A `<g role="button" tabIndex={0}>` with an Enter/Space
+             * handler is a real control — `screens.test.tsx` selects one by keyboard — and
+             * banning it would be banning the artboard's isometric map.
+             *
+             * So what is required is the two things that actually make a custom element usable:
+             * a tab stop, and a key handler. Either one alone is the bug — `tabIndex` without
+             * `onKeyDown` is a control you can focus and cannot activate.
+             */
+            const text = attrs as string;
+            return !(/tabIndex/.test(text) && /onKeyDown/.test(text));
+          })
+          .map(([, tag]) => `${relative(srcDir, file)} puts onClick on <${tag as string}> with no tab stop or key handler`);
+      });
+
+    expect(offenders).toEqual([]);
+  });
+
   it('lets no screen contain an area title as a literal', () => {
     const curriculum = join(srcDir, '..', '..', '..', '..', 'curriculum');
     const titles = readdirSync(curriculum)

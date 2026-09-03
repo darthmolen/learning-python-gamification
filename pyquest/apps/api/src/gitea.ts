@@ -26,7 +26,7 @@
 const DEFAULT_BASE_URL = 'http://localhost:3080';
 
 /** Where a Journal commit has to land for `git-signal: journal-entry` to see it. */
-const DEFAULT_JOURNAL_PATH = 'journal.md';
+export const DEFAULT_JOURNAL_PATH = 'journal.md';
 
 /** One repository on this Gitea. Owner is a Gitea account; name is the one the learner chose. */
 export interface GiteaRepo {

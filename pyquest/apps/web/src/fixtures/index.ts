@@ -104,6 +104,23 @@ const QUESTS: Readonly<Record<number, unknown[]>> = {
   ],
 };
 
+/**
+ * A verifier per quest, and **all four of them**, because §6.3's four are what Submit branches
+ * on and a fixture set that was uniformly `hidden-tests` would leave three branches undrawn.
+ *
+ * The mix is not invented for the sake of it: the real content already carries all four —
+ * sixteen `hidden-tests`, four `peer-signoff`, two `local-repo` and two `git-signal` across
+ * `curriculum/` and `game/`. What these fixtures do is make the offline app able to reach each
+ * one, which is the only way the branch that must not poll gets exercised without a stack.
+ */
+const VERIFIERS: Readonly<Record<string, unknown>> = {
+  'a3-inventory-lists': { type: 'hidden-tests' },
+  'a3-recipe-book': { type: 'hidden-tests' },
+  'a3-the-smelter': { type: 'local-repo' },
+  'a3-the-enchanter': { type: 'peer-signoff', by: 'peer' },
+  'a3-the-trading-hall': { type: 'git-signal', signal: 'push' },
+};
+
 export const areaView = (area: number): unknown => {
   const card = AREA_CARDS.find((c) => c.area === area);
   if (card === undefined) throw new Error(`no area ${area} in this campaign`);
@@ -145,8 +162,74 @@ export const questView = (questId: string): unknown => {
       { medal: 'teach-back', effectiveDC: card.dc, xp: 15 },
       { medal: 'conjured', effectiveDC: card.dc, xp: 0 },
     ],
-    verifier: { type: 'hidden-tests' },
-    starter: STARTER,
+    verifier: VERIFIERS[card.id] ?? { type: 'hidden-tests' },
+    /*
+     * Only a quest Run can execute gets a starter. `local-repo` grades what was pushed and
+     * `git-signal` reads a history, so an editor pre-filled with a square would be inviting
+     * work into a box the API will never look in.
+     */
+    ...(VERIFIERS[card.id] === undefined ||
+    (VERIFIERS[card.id] as { type: string }).type === 'hidden-tests'
+      ? { starter: STARTER }
+      : {}),
+  };
+};
+
+/* -------------------------------------------------------------------------------------------
+ * Submit and the job queue — §6.3, §6.6
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * What Submit answers offline, per verifier — and the three answers are genuinely different.
+ *
+ * A fixture that returned one shape for all four would hide the thing the client most needs to
+ * get right: `hidden-tests` and `local-repo` enqueue a runner job and hand back its **numeric**
+ * id; `peer-signoff` hands back an `attempts` id and waits on a person; `git-signal` resolves at
+ * submit time and comes back already terminal. Only the first two may be polled.
+ */
+interface FixtureJob {
+  polls: number;
+  questId: string;
+}
+
+let lastJobId = 40;
+const jobs = new Map<string, FixtureJob>();
+
+export const jobAccepted = (verifier: string, questId: string): unknown => {
+  if (verifier === 'peer-signoff') return { jobId: 'att-fixture-signoff', state: 'queued' };
+  /* The evidence is a history already on the server, so the answer is a read, not a job. */
+  if (verifier === 'git-signal') return { jobId: 'att-fixture-signal', state: 'passed' };
+
+  lastJobId += 1;
+  const jobId = String(lastJobId);
+  jobs.set(jobId, { polls: 0, questId });
+  return { jobId, state: 'queued' };
+};
+
+/**
+ * A job that actually moves: `running`, then `passed`.
+ *
+ * A fixture stuck on `queued` would let a screen that never polls look exactly like one that
+ * does — and the polling loop is the half of Submit with no other way to be exercised without a
+ * database and a runner container behind it.
+ */
+export const job = (jobId: string): unknown => {
+  const known = jobs.get(jobId);
+  if (known === undefined) throw new Error(`no job ${jobId}`);
+
+  known.polls += 1;
+  const passed = known.polls > 1;
+
+  return {
+    jobId,
+    playerId: PLAYER_ID,
+    questId: known.questId,
+    state: passed ? 'passed' : 'running',
+    result: passed
+      ? { passed: true, stdout: '4 passed in 0.31s\n', stderr: '', truncated: false, durationMs: 812 }
+      : null,
+    errorCode: null,
+    attemptId: passed ? 'att-fixture-run' : null,
   };
 };
 
@@ -207,6 +290,105 @@ export const tome: unknown = {
     { area: 1, concepts: [{ id: 'if', label: 'if' }, { id: 'else', label: 'else' }] },
     { area: 3, concepts: [{ id: 'list', label: 'list' }, { id: 'indexing', label: 'indexing' }] },
   ],
+};
+
+/**
+ * What a drill answers offline — §5.4, §5.1.
+ *
+ * **This fixture computes, and that is allowed because it stands in for the server.** The rule
+ * the SPA keeps is that a *screen* never recomputes what the engine returned; nothing here runs
+ * in a screen. The ladder below is the engine's `INVASION_LADDER` copied rather than imported,
+ * because `apps/web` depends on the contract and not on the engine — the SPA talks to shapes, and
+ * a build edge to the engine would be a new dependency for a stub.
+ *
+ * §5.1 prices an invasion flat, and `server.ts` writes `repelled ? 5 : 0` — a concept let through
+ * is not work done. The rung moves one either way and never resets to the beginning: §5.4 is
+ * explicit that "losing one evening should not cost you everything you already held."
+ */
+const LADDER = [1, 3, 7, 16, 35];
+const rungs = new Map<string, number>();
+
+export const drillOutcome = (conceptId: string, repelled: boolean): unknown => {
+  const current = rungs.get(conceptId) ?? 2;
+  const rung = repelled ? Math.min(current + 1, LADDER.length - 1) : Math.max(current - 1, 0);
+  rungs.set(conceptId, rung);
+
+  const due = new Date();
+  due.setUTCDate(due.getUTCDate() + (LADDER[rung] as number));
+
+  return {
+    conceptId,
+    rung,
+    dueOn: due.toISOString().split('T')[0],
+    xpAwarded: repelled ? 5 : 0,
+  };
+};
+
+/* -------------------------------------------------------------------------------------------
+ * The Journal — §5.6, ADR 0004
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Entries as `GET /journal` serves them: the ledger joined to the markdown he wrote.
+ *
+ * Three, and the three are deliberately unlike each other. One is answered and one is not,
+ * because `reply` is optional and a screen that can only draw the answered case cannot draw the
+ * common one — a reply lands after the entry, always. And one paid **nothing**: §5.6 pays ten XP
+ * *for substance*, and empty prompts pay nothing, which is the case `formatPayout` would render
+ * as a brag if anybody reused it here.
+ */
+export const journal: unknown = [
+  {
+    sessionDate: '2026-08-27',
+    body: '### What I built\n\nA square, then a hexagon by changing the 4 to a 6 and the 90 to a 60.\n\n### What broke\n\nThe hexagon did not close. 360/6 is 60 and I had written 90 out of habit.',
+    commitSha: 'a1b2c3d',
+    xpAwarded: 10,
+    reply: 'The habit is the interesting part — you wrote 90 because the square worked. Next time try predicting the angle before you run it.',
+  },
+  {
+    sessionDate: '2026-08-24',
+    body: '### What I built\n\nThe name tag exercise.\n\n### What broke\n\nNothing broke, which the template says is nearly always false. What surprised me was that print puts a space between things automatically.',
+    commitSha: 'ff0091a',
+    xpAwarded: 10,
+  },
+  {
+    // Paid nothing. Not a brag, and the screen has to say why rather than showing a bare zero.
+    sessionDate: '2026-08-20',
+    body: '### What I built\n\nnot much',
+    commitSha: '77de1b0',
+    xpAwarded: 0,
+  },
+];
+
+/**
+ * The template the offline app offers, standing in for `curriculum/area-0/journal/TEMPLATE.md`.
+ *
+ * **Short, and deliberately not a copy of the real file.** A fixture that reproduced all sixty
+ * lines would be the very duplication this endpoint exists to prevent, and it would go stale the
+ * same way. What it does keep is the two things `journal.ts` parses — the dated `##` heading and
+ * `### DM reply` — so the offline screen shows a template that would actually work.
+ */
+export const journalTemplate: unknown = {
+  area: 0,
+  markdown: [
+    '## YYYY-MM-DD — Session NN',
+    '',
+    '**Area:** 0 — First Light',
+    '',
+    '### What I built',
+    '',
+    '<!-- Specific. A stranger should be able to tell which session it was. -->',
+    '',
+    '### What broke',
+    '',
+    '### What I would do differently',
+    '',
+    '### What will break next time',
+    '',
+    '### DM reply',
+    '',
+  ].join('\n'),
+  path: 'journal.md',
 };
 
 /**

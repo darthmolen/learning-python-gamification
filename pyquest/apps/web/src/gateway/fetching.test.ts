@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getCampaign, getDefend, getSignoffs, postSignoff } from './index.ts';
+import { getCampaign, getDefend, getJob, getSignoffs, postDrill, postSignoff, submitQuest } from './index.ts';
+import { Unauthenticated } from './session.ts';
 import { PLAYER_ID } from '../fixtures/index.ts';
 
 /**
@@ -32,6 +33,13 @@ const answers = (body: unknown, init: { ok?: boolean; status?: number } = {}): v
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
+  /*
+   * The token is real browser state, not a stub, so `unstubAllGlobals` does not touch it. A
+   * leaked one would put an `authorization` header on the tests above that assert the exact
+   * header object — which would fail them for a reason that has nothing to do with what they
+   * are checking.
+   */
+  window.localStorage.clear();
 });
 
 describe('when an API is configured', () => {
@@ -111,6 +119,137 @@ describe('when an API is configured', () => {
 
 
 /* -----------------------------------------------------------------------------------------
+ * Submit and the job queue — §6.3, §6.6
+ * --------------------------------------------------------------------------------------- */
+
+describe('submitting', () => {
+  it('posts to the one route, at the path the contract names', async () => {
+    withApi();
+    window.localStorage.setItem('pyquest.token', 'tok-1');
+    answers({ jobId: '41', state: 'queued' }, { status: 202 });
+
+    await submitQuest(PLAYER_ID, 'a3-recipe-book', { type: 'hidden-tests', code: 'x = 1' });
+
+    expect(fetch).toHaveBeenCalledWith(
+      `http://localhost:8080/api/players/${PLAYER_ID}/quests/a3-recipe-book/submit`,
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ type: 'hidden-tests', code: 'x = 1' }),
+        headers: expect.objectContaining({ authorization: 'Bearer tok-1' }),
+      }),
+    );
+  });
+
+  /**
+   * A 200 and a 202 are both accepted answers here and mean different things: 202 is a job
+   * queued, 200 is a `git-signal` that resolved on the spot. A gateway that only took 202 would
+   * turn the fastest-working verifier into an error.
+   */
+  it('accepts the 200 a git-signal answers with, not only the 202 a queued job does', async () => {
+    withApi();
+    answers({ jobId: 'att-4c07ab', state: 'passed' }, { status: 200 });
+
+    await expect(
+      submitQuest(PLAYER_ID, 'a3-the-trading-hall', { type: 'git-signal' }),
+    ).resolves.toEqual({ jobId: 'att-4c07ab', state: 'passed' });
+  });
+
+  /** A state outside `JOB_STATES` is a server this client does not understand. Refuse it. */
+  it('rejects a state the contract does not have', async () => {
+    withApi();
+    answers({ jobId: '41', state: 'pending' }, { status: 202 });
+
+    await expect(
+      submitQuest(PLAYER_ID, 'a3-recipe-book', { type: 'hidden-tests', code: 'x = 1' }),
+    ).rejects.toThrow();
+  });
+});
+
+describe('polling a job', () => {
+  it('asks the path the contract names', async () => {
+    withApi();
+    answers({
+      jobId: '41',
+      playerId: PLAYER_ID,
+      questId: 'a3-recipe-book',
+      state: 'running',
+      result: null,
+      errorCode: null,
+      attemptId: null,
+    });
+
+    await getJob('41');
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/jobs/41',
+      expect.objectContaining({ headers: expect.objectContaining({ accept: 'application/json' }) }),
+    );
+  });
+
+  /**
+   * The mutant this catches is dropping `.parse()`. `durationMs` is a `CountSchema` and a count
+   * is not negative — a screen rendering "-4 ms" is the cheap version of a screen rendering a
+   * result the engine never produced.
+   */
+  it('rejects a result the contract forbids rather than rendering it', async () => {
+    withApi();
+    answers({
+      jobId: '41',
+      playerId: PLAYER_ID,
+      questId: 'a3-recipe-book',
+      state: 'passed',
+      result: { passed: true, stdout: '', stderr: '', truncated: false, durationMs: -4 },
+      errorCode: null,
+      attemptId: 'att-1',
+    });
+
+    await expect(getJob('41')).rejects.toThrow();
+  });
+});
+
+/* -----------------------------------------------------------------------------------------
+ * The Defend drill — §5.4
+ * --------------------------------------------------------------------------------------- */
+
+describe('recording a drill', () => {
+  it('posts the one boolean to the concept, at the path the contract names', async () => {
+    withApi();
+    answers({ conceptId: 'dict', rung: 3, dueOn: '2026-09-08', xpAwarded: 5 });
+
+    await postDrill(PLAYER_ID, 'dict', { repelled: true });
+
+    expect(fetch).toHaveBeenCalledWith(
+      `http://localhost:8080/api/players/${PLAYER_ID}/defend/dict`,
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ repelled: true }) }),
+    );
+  });
+
+  /**
+   * §5.4's ladder is a schedule the learner does not get to negotiate, and `DrillResultSchema`
+   * is `.strict()` so that the obvious next field — the date — cannot be added by a client.
+   * Parsing on the way *out* is what makes that a fact here rather than only at the server.
+   */
+  it('refuses to send anything but the boolean', async () => {
+    withApi();
+    answers({ conceptId: 'dict', rung: 3, dueOn: '2026-09-08', xpAwarded: 5 });
+
+    await expect(
+      postDrill(PLAYER_ID, 'dict', { repelled: true, now: 'yesterday' } as never),
+    ).rejects.toThrow();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects an outcome the contract forbids rather than rendering it', async () => {
+    withApi();
+    // `dueOn` is a calendar date. "soon" is not one, and a row saying "back on soon" is worse
+    // than a row saying nothing.
+    answers({ conceptId: 'dict', rung: 3, dueOn: 'soon', xpAwarded: 5 });
+
+    await expect(postDrill(PLAYER_ID, 'dict', { repelled: true })).rejects.toThrow();
+  });
+});
+
+/* -----------------------------------------------------------------------------------------
  * Sign-offs. The Console's half of §6.3, and the first gateway call that writes.
  * --------------------------------------------------------------------------------------- */
 
@@ -173,6 +312,49 @@ describe('resolving a sign-off', () => {
         body: JSON.stringify({ by: PLAYER_ID, granted: true }),
       }),
     );
+  });
+
+  /**
+   * The defect this test was written for, found 2026-09-01 by reading rather than by failing.
+   *
+   * `postSignoff` built its own headers — `accept` and `content-type` and nothing else — while
+   * every route but `POST /api/session` and `POST /api/session/bootstrap` sits behind the
+   * `onRequest` guard in `server.ts`. So granting a sign-off against a live api answered 401,
+   * and the Console reported the DM's decision as "could not record it".
+   *
+   * Nothing caught it because the Console has only ever been exercised against fixtures, and the
+   * test above asserts `objectContaining({ method, body })` — which is true of a request with no
+   * credential at all. Asserting the header is the only thing that can tell the difference.
+   */
+  it('carries the token, because a sign-off is not one of the two open routes', async () => {
+    withApi();
+    window.localStorage.setItem('pyquest.token', 'tok-console-1');
+    answers({ attemptId: 'att-8f21c0', questId: 'a3-the-enchanter', medal: 'cleared', xpAwarded: 36 });
+
+    await postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true });
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:8080/api/signoffs/att-8f21c0',
+      expect.objectContaining({
+        headers: expect.objectContaining({ authorization: 'Bearer tok-console-1' }),
+      }),
+    );
+  });
+
+  /**
+   * A 401 is a session that ended, not a sign-off that failed. `send()` maps it to
+   * `Unauthenticated` and forgets the token; a `postSignoff` that threw a bare "answered 401"
+   * would leave the app holding a credential the api has already refused.
+   */
+  it('reports an expired session as an ended session, not as a failed sign-off', async () => {
+    withApi();
+    window.localStorage.setItem('pyquest.token', 'tok-stale');
+    answers({ code: 'not-found', message: 'no usable token' }, { ok: false, status: 401 });
+
+    await expect(postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true })).rejects.toThrow(
+      Unauthenticated,
+    );
+    expect(window.localStorage.getItem('pyquest.token')).toBeNull();
   });
 
   it('parses the award rather than handing the response back', async () => {

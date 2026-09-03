@@ -59,6 +59,21 @@ export const medalSlots = (held: readonly string[]): MedalSlot[] =>
  */
 export const formatPayout = (xp: number): string => (xp === 0 ? 'brag' : `${xp} xp`);
 
+/**
+ * §5.6's ten XP an entry — and **zero is not a brag here.**
+ *
+ * This exists because `formatPayout` was the obvious thing to reuse and would have been wrong in
+ * a way that matters. §5.10's zero means a medal that was elective: he went back and earned depth
+ * nothing required, so the word is a boast. §5.6's zero means the opposite — ten XP is paid *for
+ * substance*, "empty prompts pay nothing", so an entry that paid nothing is one he left blank.
+ *
+ * Rendering that as `brag` congratulates a child for not writing, on the one screen §5.6 says
+ * must never tell somebody who did write that they wrote nothing. Same number, opposite claim,
+ * so it is a different function rather than a shared one with a flag.
+ */
+export const journalPayout = (xp: number): string =>
+  xp === 0 ? 'paid nothing — empty prompts pay nothing' : `${xp} xp`;
+
 
 /**
  * §6.3's queue says how long each sign-off has been waiting, and the artboard writes it as

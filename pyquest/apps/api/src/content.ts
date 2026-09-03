@@ -109,6 +109,15 @@ export interface ContentRoot {
   manifest(area: Area): AreaManifest | undefined;
   /** A repository-relative file's text. Refuses anything that escapes the root. */
   read(relativePath: string): string;
+  /**
+   * Whether that file is there, through the same escape check.
+   *
+   * Separate from `read` rather than a try/catch around it, because a catch cannot tell an
+   * absent file from an unreadable one — a permissions fault, a directory where a file was
+   * expected, a truncated mount — and swallowing all three as "not authored yet" is how a
+   * broken content root comes to look like an empty one.
+   */
+  exists(relativePath: string): boolean;
 }
 
 /**
@@ -179,5 +188,17 @@ export function loadContentRoot(base: string): ContentRoot {
      * idea of "inside".
      */
     read: (relativePath) => readFileSync(resolveInside(roots.curriculum, relativePath), 'utf8'),
+    /** Same root and the same escape check, so a path this accepts is one `read` will take. */
+    exists: (relativePath) => {
+      try {
+        return existsSync(resolveInside(roots.curriculum, relativePath));
+      } catch (cause) {
+        /* A path that leaves the root does not "not exist" — it is a caller bug. But a caller
+         * asking whether a file is there is asking a yes/no question, and the honest answer for
+         * something outside the tree is no. `read` still throws, which is where it matters. */
+        if (cause instanceof ContentPathError) return false;
+        throw cause;
+      }
+    },
   };
 }

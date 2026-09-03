@@ -18,6 +18,7 @@ import {
   ApiErrorSchema,
   CampaignViewSchema,
   QuestViewSchema,
+  JournalTemplateSchema,
   TomeSchema,
   type JournalEntry,
 } from '@pyquest/contract';
@@ -270,6 +271,58 @@ describe('the Journal routes', () => {
   it('404s for a player who does not exist, like every other player-scoped read', async () => {
     const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${NOBODY}/journal` });
     expect(response.statusCode).toBe(404);
+  });
+
+  /**
+   * The template he copies, served from the curriculum rather than shipped in the SPA.
+   *
+   * These read the real content root — no stub — because the whole reason the route exists is
+   * that this file is authored, differs per area, and grows. A test against a fixture string
+   * would prove the route returns *a* template and nothing about it being *the* template.
+   */
+  describe('the entry to copy', () => {
+    it('serves the file on disk, verbatim, coaching and all', async () => {
+      const response = await authed(app, TOKEN, {
+        method: 'GET',
+        url: `/api/players/${ADA}/journal/template`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      const template = JournalTemplateSchema.parse(response.json());
+
+      // The two things `journal.ts` actually parses. A template missing either is one that
+      // produces entries the ledger can never join to.
+      expect(template.markdown).toContain('## YYYY-MM-DD');
+      expect(template.markdown).toContain('### DM reply');
+      // The coaching comments are the curriculum talking to him. Stripping them here would
+      // hand the screen a skeleton and call it the template.
+      expect(template.markdown).toContain('<!--');
+      expect(template.path).toBe('journal.md');
+    });
+
+    /**
+     * **Which area, and it says so.** A player with nothing cleared is in Area 0, which is where
+     * the first template is. The `area` field is what makes a wrong guess correctable by the
+     * person reading the screen rather than silent.
+     */
+    it('names the area whose template it picked', async () => {
+      const response = await authed(app, TOKEN, {
+        method: 'GET',
+        url: `/api/players/${ADA}/journal/template`,
+      });
+
+      const template = JournalTemplateSchema.parse(response.json());
+      expect(template.area).toBe(0);
+      expect(template.markdown).toContain('**Area:** 0');
+    });
+
+    it('404s for a player who does not exist, like every other player-scoped read', async () => {
+      const response = await authed(app, TOKEN, {
+        method: 'GET',
+        url: `/api/players/${NOBODY}/journal/template`,
+      });
+      expect(response.statusCode).toBe(404);
+    });
   });
 
   /**
