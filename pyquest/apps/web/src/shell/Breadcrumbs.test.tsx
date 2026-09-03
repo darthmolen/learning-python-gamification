@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import { color, metric } from '../design/tokens';
-import { rgb } from '../test-support/rgb';
 import { Breadcrumbs } from './Breadcrumbs';
 
 const TRAIL = [
@@ -66,7 +65,7 @@ describe('breadcrumbs', () => {
     const bar = container.querySelector('nav');
 
     expect(bar?.style.height).toBe(`${metric.crumbBarHeight}px`);
-    expect(bar?.style.background).toBe(rgb(color.crumbBar));
+    expect(bar?.style.background).toBe(color.crumbBar);
   });
 
   /**

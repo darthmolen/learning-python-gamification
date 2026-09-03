@@ -2,7 +2,6 @@ import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { color, metric } from '../design/tokens';
-import { rgb } from '../test-support/rgb';
 import { Rail } from './Rail';
 
 const renderAt = (path: string) =>
@@ -68,9 +67,12 @@ describe('the rail', () => {
 
     expect(rail).not.toBeNull();
     expect(rail?.style.width).toBe(`${metric.railWidth}px`);
-    // jsdom normalises an inline colour to `rgb()`, so the token is converted rather than
+    // Compared against the token itself rather than a resolved colour. Both sides are
+    // `var(--rail-bg)`, so this asserts the rail uses the TOKEN — which is the thing worth
+    // asserting. It used to convert hex through a `rgb()` helper to survive jsdom's
+    // normalisation; custom properties removed the need and the helper went with it.
     // the assertion loosened — a wrong colour still fails.
-    expect(rail?.style.background).toBe(rgb(color.railBg));
+    expect(rail?.style.background).toBe(color.railBg);
   });
 
   /**

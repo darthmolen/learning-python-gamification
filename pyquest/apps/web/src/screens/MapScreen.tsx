@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
 import type { AreaCard, CampaignView } from '@pyquest/contract';
-import { color, font } from '../design/tokens';
+import { color, font, palette } from '../design/tokens';
 import { getCampaign, getDefend } from '../gateway/index.ts';
-import { usePlayer } from '../session/SessionProvider.tsx';
+import { usePlayer, useSession } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { formatTotal } from '../present/index.ts';
 import { Awaiting } from '../shell/Loading';
@@ -98,7 +98,12 @@ function island(state: State, hue: string, cleared: number): Face[] {
 
 const LEGEND: readonly { label: string; hue: string }[] = [
   { label: 'cleared', hue: '#8b95a5' },
-  { label: 'you are here', hue: color.accent },
+  /*
+   * `palette`, not `color`, and this is the one place in the app where that distinction bites.
+   * These hues are fed to `shade()`, which does hex arithmetic — `parseInt('var(--accent)', 16)`
+   * is NaN and the swatch renders black.
+   */
+  { label: 'you are here', hue: palette.accent },
   { label: 'next', hue: '#3f9fb5' },
   { label: 'locked, still visible', hue: '#2b323d' },
 ];
@@ -117,6 +122,10 @@ export function MapScreen() {
 
 function Campaign({ view }: { view: CampaignView }) {
   const playerId = usePlayer();
+  const { account } = useSession();
+  /* Falls back to the id rather than rendering nothing: a header that empties is worse than one
+   * that is briefly technical, and the routes do not mount while signed out. */
+  const signedInAs = account?.displayName ?? account?.handle ?? playerId;
   const cards = view.areas;
   const progress = cards.map((c) => c.progress);
   const dueLoad = useCallback(() => getDefend(playerId), []);
@@ -180,7 +189,19 @@ function Campaign({ view }: { view: CampaignView }) {
             */}
           <Eyebrow>{`${totalAreas} areas · ${clearedCount} of ${totalAreas} cleared`}</Eyebrow>
           <div style={{ flexGrow: 1 }} />
-          <Mono style={{ fontSize: '12px', color: color.secondary }}>{view.playerId}</Mono>
+          {/*
+            * Who is looking, by name.
+            *
+            * This read `view.playerId` and rendered a raw uuid —
+            * `5eed0000-0000-4000-8000-000000000002` — across the top of the Map. That was the
+            * honest answer while the app had no identity: a uuid was the only thing it knew about
+            * the person using it, because `PLAYER_ID` was a constant compiled into the build.
+            *
+            * `GET /api/me` answers with a handle and a display name now, and the session holds
+            * both. A uuid in a header is a database key shown to a child; his name is the thing
+            * that was always meant to be there.
+            */}
+          <Mono style={{ fontSize: '12px', color: color.secondary }}>{signedInAs}</Mono>
         </div>
 
         <svg viewBox="0 0 1000 700" style={{ flexGrow: 1, width: '100%', minHeight: 0 }} role="presentation">

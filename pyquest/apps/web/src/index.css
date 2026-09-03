@@ -1,0 +1,77 @@
+/*
+ * The theme, on the document rather than on a component.
+ *
+ * It used to live only in `App.tsx`'s `Shell`, which is inside `<Routes>` — so the sign-in
+ * screen, which renders *before* the router when nobody is signed in, inherited nothing and
+ * came out as white with Times New Roman and an 8px body margin. On a dark app that reads as a
+ * broken page rather than a themed one.
+ *
+ * Putting it here makes the theme a property of the document. Anything rendered outside the
+ * shell — the sign-in screen today, an error boundary or a maintenance page tomorrow — is themed
+ * because it is on the page, not because somebody remembered to wrap it. `Shell` keeps its
+ * layout and can keep its own background; this is what is true underneath.
+ *
+ * The values are `src/design/tokens.ts`'s, duplicated here because CSS cannot import a TypeScript
+ * module. **They are the only duplicated values in the app**, so if a token moves, this file is
+ * the second place — which is why there are five of them and not fifty.
+ */
+
+:root {
+  --bg: #12151c;
+  --fg: #e8ecf2;
+  --fg-bright: #c6ced9;
+  --rail-bg: #0d1014;
+  --rail-active-bg: #171d17;
+  --panel: #161a22;
+  --crumb-bar: #1a1f28;
+  --border: #232a35;
+  --border-strong: #333c4a;
+  --crumb-rule: #3d4757;
+  --accent: #5aa860;
+  --accent-hover: #7cc182;
+  --accent-mid: #3f7844;
+  --accent-dark: #2d5731;
+  --secondary: #98a3b3;
+  --muted: #5d6878;
+  --badge: #d9a441;
+  --danger: #cc5a5a;
+  --info: #3f9fb5;
+  --avatar-bg: #1e2a20;
+  --avatar-fg: #8fd196;
+
+  /*
+   * The line that fixes native controls, and the reason this file is CSS rather than a wrapper
+   * component.
+   *
+   * `color-scheme: dark` tells the browser to render its OWN widgets dark — text inputs,
+   * scrollbars, the focus ring, autofill backgrounds, the caret. Without it an `<input>` on this
+   * page is a white box with black text however carefully the page around it is styled, and
+   * Chrome's yellow autofill overlay lands on top of everything. No amount of per-element styling
+   * reaches all of that; one declaration does.
+   */
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/*
+ * Form controls do not inherit the document's font. Every browser gives them a platform default
+ * instead, which is why the sign-in inputs came out in a different face from the label above
+ * them even once the page was themed.
+ */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}

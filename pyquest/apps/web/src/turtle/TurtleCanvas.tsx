@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { color } from '../design/tokens';
+import { color, palette } from '../design/tokens';
 import { SHAPES, interpret, type Marker, type Stroke, type TurtleOp } from './protocol.ts';
 
 /**
@@ -85,7 +85,19 @@ export function TurtleCanvas({ ops, width = 520, height = 360 }: TurtleCanvasPro
     if (canvas === null || ctx === null) return;
 
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = color.bg;
+    /*
+     * `palette`, not `color`, because this is a canvas context rather than a DOM style.
+     *
+     * `ctx.fillStyle = 'var(--bg)'` is not an error — it is silently IGNORED. The canvas 2D API
+     * parses a CSS colour and rejects anything it cannot resolve, leaving the previous value in
+     * place, which on a fresh context is opaque black. Near enough to `#12151c` that the canvas
+     * would have looked almost right and been wrong.
+     *
+     * Line 120's `background` below is a DOM style and correctly uses `color`. The rule is the
+     * one in `design/tokens.ts`: anything that renders through CSS takes `color`, anything that
+     * is handed to an API expecting a literal colour takes `palette`.
+     */
+    ctx.fillStyle = palette.bg;
     ctx.fillRect(0, 0, width, height);
 
     const { scale, dx, dy } = fit(strokes, width, height);

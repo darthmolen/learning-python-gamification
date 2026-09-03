@@ -4,8 +4,8 @@ import { AsSignedIn } from '../test-support/session.tsx';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PendingSignoff } from '@pyquest/contract';
+import { color } from '../design/tokens';
 import { ConsoleScreen } from './ConsoleScreen';
-import { rgb } from '../test-support/rgb';
 /**
  * The signed-in player, named here rather than imported from the fixtures.
  *
@@ -102,13 +102,22 @@ describe('the sign-off queue', () => {
   });
 
   /**
-   * The artboard's accent per row, lifted rather than rounded: `#5aa860` on the green side and
-   * `#d9a441` on the gold. A framework default here is the mutant this catches.
+   * The artboard's accent per row, one colour per seat. A framework default here is the mutant
+   * this catches.
+   *
+   * Read off `borderLeft` rather than `borderLeftColor`, and that is jsdom's constraint rather
+   * than a preference: the component sets the shorthand, and jsdom does not decompose a shorthand
+   * containing `var()` into its longhands — `borderLeftColor` comes back as an empty string. The
+   * shorthand still carries the token, which is what this is asserting.
+   *
+   * It used to compare against `rgb('#5aa860')`, a literal hex the palette also holds. Comparing
+   * against `color.accent` means a re-themed accent moves this test with it instead of leaving a
+   * second copy of the old colour behind.
    */
   it('carries the artboard accent on the stripe, one colour per seat', async () => {
     await queue([fromDm, own]);
-    expect(rowFor('The Enchanter').style.borderLeftColor).toBe(rgb('#5aa860'));
-    expect(rowFor('The Smelter').style.borderLeftColor).toBe(rgb('#d9a441'));
+    expect(rowFor('The Enchanter').style.borderLeft).toContain(color.accent);
+    expect(rowFor('The Smelter').style.borderLeft).toContain(color.badge);
   });
 
   it('counts what is waiting, in the header', async () => {

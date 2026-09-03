@@ -24,7 +24,22 @@ export function SignInScreen() {
 
   return (
     <div style={{ display: 'grid', placeItems: 'center', minHeight: '100vh', padding: '24px' }}>
-      <div style={{ width: 'min(420px, 100%)' }}>
+      {/*
+        * A panel, not bare text on the page.
+        *
+        * This screen renders *outside* `Shell` — it is what `App` returns before the router when
+        * nobody is signed in — so it gets no layout from anything above it. The card is what
+        * gives it the same surface every other screen sits on; `index.css` is what gives it the
+        * theme underneath.
+        */}
+      <div
+        style={{
+          width: 'min(420px, 100%)',
+          background: color.panel,
+          border: `1px solid ${color.border}`,
+          padding: '32px 34px 28px',
+        }}
+      >
         <h1
           style={{
             margin: '0 0 4px',
@@ -91,9 +106,11 @@ function Field({
         onChange={(event) => onChange(event.target.value)}
         style={{
           width: '100%',
-          padding: '8px 10px',
+          padding: '9px 11px',
           font: 'inherit',
-          border: `1px solid ${color.border}`,
+          color: color.fg,
+          background: color.bg,
+          border: `1px solid ${color.borderStrong}`,
           borderRadius: '4px',
         }}
       />
@@ -193,13 +210,20 @@ function ClaimForm({ onDone }: { onDone: (account: Account) => void }) {
   );
 }
 
+/*
+ * The accent, at the weight the rest of the app uses it.
+ *
+ * `color.accent` was always the right token — what made the first version look like a traffic
+ * light was the page around it being unthemed white, not the green itself. On the panel it reads
+ * as the one thing to press, which is what an accent is for.
+ */
 const submitStyle = {
-  marginTop: '8px',
+  marginTop: '10px',
   width: '100%',
   padding: '10px',
   font: 'inherit',
   fontWeight: 600,
-  color: '#fff',
+  color: color.bg,
   background: color.accent,
   border: 'none',
   borderRadius: '4px',

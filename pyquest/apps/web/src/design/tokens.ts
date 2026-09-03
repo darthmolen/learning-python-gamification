@@ -5,12 +5,31 @@
  * swapped for a framework's nearest equivalent, because the artboards are the specification
  * and a palette that drifts toward Tailwind's defaults is a redesign nobody agreed to.
  *
- * These are plain values rather than CSS custom properties on purpose: jsdom does not resolve
- * `var()` in `getComputedStyle`, so a token expressed only in a stylesheet is a token no test
- * can see. The artboards themselves use inline styles, so this also happens to be their idiom.
+ * ## Two exports, and the split is the point
+ *
+ * `palette` holds the hex. `color` holds `var(--x)` references to the same values, and components
+ * use that one. Everything on a screen therefore resolves through a CSS custom property, which is
+ * what lets the browser theme its own widgets — `color-scheme`, autofill, the caret, scrollbars —
+ * none of which an inline style can reach.
+ *
+ * **`palette` exists because some things need the number, not a reference to it.** `MapScreen`'s
+ * `shade()` does hex arithmetic to light the isometric faces, and `parseInt('var(--accent)', 16)`
+ * is `NaN` and a black map. Anything computing a colour reads `palette`; anything rendering one
+ * reads `color`.
+ *
+ * An earlier version of this header argued the opposite — plain values only, because "jsdom does
+ * not resolve `var()` in `getComputedStyle`, so a token expressed only in a stylesheet is a token
+ * no test can see." That was true and it was guarding four assertions, two of which hard-coded
+ * hex and never read a token at all. It also had the comparison backwards: asserting
+ * `style.background === color.crumbBar` with both sides `var(--crumb-bar)` checks that **the
+ * token was used**, which is the thing worth checking. The hex is the implementation.
+ *
+ * The values are written twice — here and in `src/index.css` — because CSS cannot import a
+ * TypeScript module. `design/tokens.test.ts` reads both and fails if they disagree, so the
+ * duplication cannot drift.
  */
 
-export const color = {
+export const palette = {
   /** The canvas behind everything. */
   bg: '#12151c',
   /** Primary text. */
@@ -56,6 +75,30 @@ export const color = {
   /** The player chip in the rail's foot. */
   avatarBg: '#1e2a20',
   avatarFg: '#8fd196',
+} as const;
+
+export const color = {
+  bg: 'var(--bg)',
+  fg: 'var(--fg)',
+  fgBright: 'var(--fg-bright)',
+  railBg: 'var(--rail-bg)',
+  railActiveBg: 'var(--rail-active-bg)',
+  panel: 'var(--panel)',
+  crumbBar: 'var(--crumb-bar)',
+  border: 'var(--border)',
+  borderStrong: 'var(--border-strong)',
+  crumbRule: 'var(--crumb-rule)',
+  accent: 'var(--accent)',
+  accentHover: 'var(--accent-hover)',
+  accentMid: 'var(--accent-mid)',
+  accentDark: 'var(--accent-dark)',
+  secondary: 'var(--secondary)',
+  muted: 'var(--muted)',
+  badge: 'var(--badge)',
+  danger: 'var(--danger)',
+  info: 'var(--info)',
+  avatarBg: 'var(--avatar-bg)',
+  avatarFg: 'var(--avatar-fg)',
 } as const;
 
 export const font = {
