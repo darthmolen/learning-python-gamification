@@ -41,10 +41,11 @@ print(f"Done. A square of side {side} has a perimeter of {side * 4}.")
 
 # --- YOUR MOVE ---------------------------------------------------------------
 # 1. Delete the int() line and use `answer` directly in turtle.forward.
-#    Run it. Read the error. Put it back. You have now seen b2 in the wild.
+#    Run it. Read the error. Put it back. That is The Wrong Kind Of Thing,
+#    in the wild.
 #
 # 2. Run it again and type "big" instead of a number. Which error is that?
-#    You have met it before. Which broken sigil was it?
+#    You have met it before. Which quest was it? (Not A Number.)
 #
 # 3. Ask a second question: what color? Use it. Remember what kind of thing
 #    a color name is, and whether it needs converting.

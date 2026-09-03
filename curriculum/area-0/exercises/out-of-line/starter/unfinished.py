@@ -1,6 +1,6 @@
 """Out Of Line — blank space at the start of a line is not decoration.
 
-Broken sigil 4, from session 3. In Python, where a line starts means
+You met this one in session 3. In Python, where a line starts means
 something. One of these lines starts in the wrong place.
 
 Run it first. Read what falls out. Then fix it.

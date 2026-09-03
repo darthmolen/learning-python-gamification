@@ -1,6 +1,6 @@
 """Not A Number — int() turns text into a number. Usually.
 
-Broken sigil 6, from session 3. The order is spelled right, the brackets are
+You met this one in session 3. The order is spelled right, the brackets are
 closed, the indentation is fine, and it still falls over.
 
 The size is meant to be ten.

@@ -1,6 +1,6 @@
 # Out Of Line
 
-Broken sigil 4, from session 3. In Python, blank space at the start of a line is not
+You met this one in session 3. In Python, blank space at the start of a line is not
 decoration. It means something, and one of these lines starts in the wrong place.
 
 ## What to do

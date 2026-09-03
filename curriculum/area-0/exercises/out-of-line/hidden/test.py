@@ -1,6 +1,6 @@
 """Hidden tests for a0-out-of-line. Spec §6.3: these never reach the browser.
 
-Broken sigil 4 from session 3, promoted to a fix-it quest. One line starts in
+Session 3's fix-it exercise, promoted to a quest. One line starts in
 the wrong place. Like Never Closed it fails before anything runs, and the two
 are cousins: an IndentationError IS a SyntaxError under a narrower name.
 

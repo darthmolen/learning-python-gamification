@@ -1,6 +1,6 @@
 """No Such Order — close to The Typo, and not the same error.
 
-Broken sigil 5, from session 3. The name on the left of the dot is spelled
+You met this one in session 3. The name on the left of the dot is spelled
 correctly this time. The name on the right is not.
 
 Python 3.14 also offers you a guess at what you meant. Notice that it only

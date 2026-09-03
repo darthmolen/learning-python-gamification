@@ -1,6 +1,6 @@
 """Hidden tests for a0-never-closed. Spec §6.3: these never reach the browser.
 
-Broken sigil 3 from session 3, promoted to a fix-it quest. A bracket is never
+Session 3's fix-it exercise, promoted to a quest. A bracket is never
 closed, so Python never gets as far as running anything — the error arrives
 before the program starts, which is the thing the session wants noticed.
 

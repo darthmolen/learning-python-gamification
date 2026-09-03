@@ -1,6 +1,6 @@
 """Hidden tests for a0-the-typo. Spec §6.3: these never reach the browser.
 
-Broken sigil 1 from session 3, promoted to a fix-it quest. The starter says
+Session 3's fix-it exercise, promoted to a quest. The starter says
 `turtel.left(90)`, Python cannot find anything under that name, and the
 NameError names the line it gave up on.
 

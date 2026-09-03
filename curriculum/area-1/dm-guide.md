@@ -136,7 +136,7 @@ Written in the order you will hit them. Predictions, not a completeness exercise
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | `range(4)` draws four sides, so they read it as "1 to 4" | It is 0, 1, 2, 3. They are right about the count and wrong about the numbers, and it will cost them in session 8 | "Print every number it gives you. What is the first one?" |
-| Forgets the colon, gets `SyntaxError` | Area 0 material, arriving on schedule | "You have seen this error before. Which broken sigil was it? What was missing there?" |
+| Forgets the colon, gets `SyntaxError` | Area 0 material, arriving on schedule | "You have seen this error before. Which quest was it? What was missing there?" (Never Closed.) |
 | Indents the body with a mix of tabs and spaces | The editor, not the learner | "Delete the whole indent and put it back with spaces. All of it." |
 | Puts `turtle.done()` inside the loop | Indentation is meaning now, and this is the first time it bites | "Which lines are inside the loop? Read me only those." |
 | Draws a square with `range(4)` and `left(90)`, then wants a pentagon and uses `left(90)` again | Good instinct, wrong number, and it is a better lesson than the square was | "Draw it and look. You went round once and a bit. How far round should you have gone in total?" |

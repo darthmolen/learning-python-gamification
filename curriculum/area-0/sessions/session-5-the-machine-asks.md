@@ -56,7 +56,8 @@ turtle.forward(answer)
 ```
 
 `TypeError: can't multiply sequence by non-int of type 'float'`. They have seen this
-before, as b2. Ask which broken sigil it was. That connection is the payoff for session
+before, in The Wrong Kind Of Thing. Ask which quest it was. That connection is the
+payoff for session
 3 and it is worth waiting for them to make.
 
 Then:

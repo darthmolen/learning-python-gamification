@@ -1,6 +1,6 @@
 # The Typo
 
-Broken sigil 1, from session 3. It is broken on purpose, and the fix is one character.
+You met this one in session 3. It is broken on purpose, and the fix is one character.
 
 That is not what this quest is for. It is for the thing Python says on the way down, which
 you will read several hundred more times before this campaign is over: an error has a
