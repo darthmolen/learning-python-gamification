@@ -28,7 +28,7 @@
 
 import type { ApiErrorCode, JobResult, RunnerJobStatus } from '@pyquest/contract';
 import { medalDelta } from '@pyquest/engine';
-import { mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { playerProgress } from '@pyquest/db';
 import { pricedKind, type ContentRoot } from './content.ts';
@@ -72,6 +72,31 @@ export class Spool {
     return join(this.root, 'repos');
   }
 
+  /**
+   * Create the four directories, writable by the runner as well as by us.
+   *
+   * **The mode is the whole point of this method and it was missing.** The api runs as uid 10003
+   * and the runner as 10001 (`compose/api.yml`), so `mkdirSync` under the default umask produced
+   * `0755 api:api` — directories the runner could list and could not touch. The handoff is a
+   * rename from `incoming/` into `running/`, which needs write on both, so the runner watched a
+   * job it could see, could not claim, and said nothing about. A submission sat at
+   * `Submit · working` for as long as anyone was willing to wait.
+   *
+   * `chmodSync` rather than `mkdirSync`'s `mode`, because that one is masked by the umask and
+   * would have gone on producing 0755 while appearing to ask for something else.
+   *
+   * 0777 is the same call the api's own Dockerfile already makes one directory up
+   * (`RUN mkdir -p /spool && chmod 0777 /spool`). The spool is a named volume mounted by exactly
+   * two containers, and the runner reaches it with no network, a read-only root, every capability
+   * dropped and `no-new-privileges`.
+   *
+   * What it does mean is that a *submission* can reach the spool, because `sandbox.py` applies
+   * rlimits without dropping uid — so learner code runs as the worker and inherits whatever the
+   * worker can write. That is inherent in the design rather than introduced here (the runner has
+   * to write the spool for the handoff to exist at all), and the fix is for the sandbox to drop
+   * to a uid of its own. Recorded in
+   * `planning/backlog/feature_a-submission-runs-as-the-worker_2026-09-03.md`.
+   */
   ensure(): void {
     for (const path of [
       this.incoming,
@@ -81,6 +106,7 @@ export class Spool {
       join(this.root, 'work'),
     ]) {
       mkdirSync(path, { recursive: true });
+      chmodSync(path, 0o777);
     }
   }
 }

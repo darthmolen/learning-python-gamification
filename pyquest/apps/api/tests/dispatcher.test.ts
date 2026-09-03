@@ -12,7 +12,7 @@
  * outcome writes a row and only one of them pays.
  */
 
-import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -266,5 +266,32 @@ describe('recording a verdict', () => {
     publishVerdict(jobId, 'passed', true);
     const second = await pump(client, CONTENT, spool, () => NOW);
     expect(second).toEqual({ dispatched: 0, recorded: 1 });
+  });
+});
+
+/**
+ * The handoff is a rename across two directories, and it needs write on both — from two
+ * different users.
+ *
+ * The api runs as uid 10003 and the runner as 10001 (`infra/compose/api.yml`). `Spool.ensure`
+ * created these under the default umask, so they came out `0755 api:api`: the runner watched
+ * `/spool/incoming`, could list the job file, could not rename it, and logged nothing. The first
+ * real Submit through the containerised stack sat on `Submit · working` while the SPA polled
+ * `/api/jobs/1` forever.
+ *
+ * Skipped on Windows, where these bits mean nothing and the assertion would pass without
+ * checking anything — which is worse than not running.
+ */
+describe.skipIf(process.platform === 'win32')('the spool the runner has to share', () => {
+  it('creates every directory the runner can write, not only read', () => {
+    const root = mkdtempSync(join(tmpdir(), 'pyquest-spool-modes-'));
+    new Spool(root).ensure();
+
+    for (const name of ['incoming', 'running', 'done', 'repos', 'work']) {
+      const mode = statSync(join(root, name)).mode & 0o777;
+      // Group and other need write, because the runner is neither this user nor in its group.
+      expect(mode & 0o022).toBe(0o022);
+    }
+    rmSync(root, { recursive: true, force: true });
   });
 });
