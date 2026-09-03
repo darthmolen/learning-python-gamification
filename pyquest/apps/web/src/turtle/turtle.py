@@ -7,10 +7,15 @@ lives in ``protocol.ts`` on the other side, where it can be tested without a bro
 That split is deliberate. The part most likely to be wrong is the geometry, and this way the
 geometry is a pure function over a list rather than something only observable as pixels.
 
-Two properties this file must keep:
+Three properties this file must keep:
 
-* **Nothing here raises.** A learner's first program ends in ``done()``; if that failed, his
-  program would break on its last line for a reason he could not diagnose.
+* **No cosmetic call raises.** A learner's first program ends in ``done()``; if that failed, his
+  program would break on its last line for a reason he could not diagnose. The same goes for
+  ``shape()``, ``speed()`` and ``exitonclick()`` — a program dying on decoration is a bad trade.
+* **Every arithmetic call raises exactly what CPython raises, in one frame.** This is the other
+  half of the same rule and it was missing, which broke the Area 0 quest that depends on it most:
+  ``forward("100")`` recorded a string, drew nothing, and reported no error at all. See the note
+  above :func:`forward`.
 * **Ops survive an exception.** ``_OPS`` is module state, so a program that raises halfway
   through still leaves behind everything it drew before it failed — which is what he needs to
   see in order to debug it.
@@ -35,28 +40,44 @@ def _drain() -> list[Op]:
     return ops
 
 
+# The `* 1.0` on every line below is the type check, and it is written inline rather than
+# pulled into a helper because **the learner reads these lines in a traceback.**
+#
+# `input()` hands back a `str`, and passing that straight to `forward()` is the mistake Area 0
+# session 5 is built around. On his own machine CPython's turtle reaches `Vec2D.__mul__`,
+# multiplies a float by his string, and says:
+#
+#     TypeError: can't multiply sequence by non-int of type 'float'
+#
+# Doing the same multiplication here gets him the same sentence from the same interpreter,
+# rather than a message this repository invented for an error Python already has words for --
+# and Area 2 moves his file to a real Python, where the invented one would not be there.
+#
+# A `_number()` helper did this first and cost a frame: the traceback ended on
+# `return 1.0 * value` inside a private function, which reads as a trick played on him rather
+# than as work his program asked for. One frame, and it names the parameter he passed.
 def forward(distance: float) -> None:
-    _record("forward", distance)
+    _record("forward", distance * 1.0)
 
 
 def backward(distance: float) -> None:
-    _record("backward", distance)
+    _record("backward", distance * 1.0)
 
 
 def right(angle: float) -> None:
-    _record("right", angle)
+    _record("right", angle * 1.0)
 
 
 def left(angle: float) -> None:
-    _record("left", angle)
+    _record("left", angle * 1.0)
 
 
 def goto(x: float, y: float) -> None:
-    _record("goto", x, y)
+    _record("goto", x * 1.0, y * 1.0)
 
 
 def setheading(angle: float) -> None:
-    _record("setheading", angle)
+    _record("setheading", angle * 1.0)
 
 
 def home() -> None:
@@ -80,7 +101,7 @@ def pencolor(color: str) -> None:
 
 
 def circle(radius: float) -> None:
-    _record("circle", radius)
+    _record("circle", radius * 1.0)
 
 
 def speed(value: float | str = 0) -> None:

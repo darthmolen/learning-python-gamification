@@ -49,7 +49,8 @@ interface PyodideApi {
   runPythonAsync: (code: string) => Promise<unknown>;
   registerJsModule: (name: string, module: object) => void;
   FS: { writeFile: (path: string, data: string) => void };
-  setStdout: (options: { batched: (s: string) => void }) => void;
+  /** `write` rather than `batched` — see `boot`. The return value is bytes accepted. */
+  setStdout: (options: { write: (buffer: Uint8Array) => number }) => void;
   /** Pyodide's stdin hook. `null` from the handler is end-of-stream, so Python raises EOFError. */
   setStdin: (options: { stdin: () => string | null; isatty?: boolean }) => void;
   globals: { get: (name: string) => unknown; set: (name: string, value: unknown) => void };
@@ -86,7 +87,30 @@ async function boot(): Promise<PyodideApi> {
    */
   api.FS.writeFile('turtle.py', turtleSource);
   api.FS.writeFile('_pyquest_harness.py', harnessSource);
-  api.setStdout({ batched: (s) => { stdout += `${s}\n`; } });
+
+  /*
+   * `write`, not `batched`, and the difference is a bug rather than a preference.
+   *
+   * `batched` hands over one *line* at a time and holds anything with no newline after it. That
+   * is not an edge case here: `input("How long should each side be? ")` writes its prompt without
+   * one. A program that then died at that input showed the learner an `EOFError` and **not the
+   * question he had been asked** — and the stranded prompt was not discarded either, so the next
+   * Run began by printing the previous run's question. The console read "How long should each
+   * side be? How long should each side be? Done."
+   *
+   * `print("side", end=" ")` was stranded by the same rule, which is Area 0 material.
+   *
+   * `write` takes the bytes as Python emits them, so what reaches the console is what the program
+   * actually wrote — no line buffer to strand it, and no synthesised `\n` that Python never sent.
+   * `{ stream: true }` because a multi-byte character can be split across two writes.
+   */
+  const decoder = new TextDecoder();
+  api.setStdout({
+    write: (buffer) => {
+      stdout += decoder.decode(buffer, { stream: true });
+      return buffer.length;
+    },
+  });
 
   pyodide = api;
   return api;
