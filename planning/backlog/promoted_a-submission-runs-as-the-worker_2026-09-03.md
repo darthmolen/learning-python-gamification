@@ -1,6 +1,6 @@
 # A Submission Runs As The Worker, And The Worker Owns The Spool
 
-**Status:** Backlog
+**Status:** Promoted 2026-09-03 to planning/feature_a-submission-runs-as-the-worker_2026-09-03.md
 **Date Discovered:** 2026-09-03
 **Discovered During:** fixing the first real Submit through the containerised stack
 
