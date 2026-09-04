@@ -6,7 +6,7 @@ import { getCampaign, getTome } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
-import { Eyebrow, Mono } from '../shell/ui';
+import { ConceptList, Eyebrow, Mono } from '../shell/ui';
 import { Markdown } from '../tome/Markdown';
 
 /**
@@ -46,13 +46,21 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
   const navigate = useNavigate();
   const [selected, setSelected] = useState(0);
 
-  /** One row per area: the name content knows, and the syllabus and lesson the Tome knows. */
+  /**
+   * One row per area: the name content knows, and the syllabus and lesson the Tome knows.
+   *
+   * **The concepts travel as the list, not as its length.** This was `page?.concepts.length ?? 0`,
+   * which was all the screen needed while it only printed a number — and it is exactly how a
+   * count and a list come to disagree later, because nothing structural stops the two being fed
+   * separately. A syllabus that says seventeen beside a list of twelve is worse than one that
+   * says nothing, since it looks authoritative. One source, counted where it is printed.
+   */
   const syllabus = campaign.areas.map((card) => {
     const page = content.areas.find((a) => a.area === card.area);
     return {
       area: card.area,
       identity: card.identity,
-      concepts: page?.concepts.length ?? 0,
+      concepts: page?.concepts ?? [],
       lesson: page?.lesson,
       lessonIsDraft: page?.lessonIsDraft ?? false,
     };
@@ -171,7 +179,7 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
                     </Mono>
                   </span>
                   <Mono style={{ display: 'block', fontSize: '10px', color: '#4a5361', marginLeft: '22px' }}>
-                    {`${item.concepts} concepts`}
+                    {`${item.concepts.length} concepts`}
                   </Mono>
                 </button>
               );
@@ -198,14 +206,38 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
             </h2>
             <p style={{ margin: '0 0 4px', color: color.secondary }}>
               {entry.identity === undefined
-                ? `${entry.concepts} concepts · everything below is on the Boss ${entry.area} specification.`
-                : `Weeks ${entry.identity.weeks.from}–${entry.identity.weeks.to} · ${entry.concepts} concepts · everything below is on the Boss ${entry.area} specification.`}
+                ? `${entry.concepts.length} concepts · everything below is on the Boss ${entry.area} specification.`
+                : `Weeks ${entry.identity.weeks.from}–${entry.identity.weeks.to} · ${entry.concepts.length} concepts · everything below is on the Boss ${entry.area} specification.`}
             </p>
             <div style={{ height: '1px', background: color.border, margin: '24px 0' }} />
 
             <p style={{ margin: '0 0 20px', color: color.fgBright, fontSize: '14.5px', lineHeight: 1.75 }}>
               {entry.identity?.blurb ?? 'This area carries no blurb on the wire yet.'}
             </p>
+
+            {/*
+              * The words the header just counted.
+              *
+              * **Above the lesson, because an area's vocabulary is its index.** The count sits two
+              * lines up; the terms belong with it rather than past a full page of teaching, and a
+              * reader who came here to look one word up should not have to read the area to find
+              * it. As terms it is three rows — nine to seventeen per area — and only one
+              * definition is open at a time, so the lesson is pushed down rather than buried.
+              *
+              * `expandable` is the same control the Quest screen's chips are, deliberately. Two
+              * screens doing the same job with two interactions is how they start behaving
+              * differently, and this one is already tested against the Tome's own rules: no
+              * dialog, no scrim, in flow, nothing underneath unmounted.
+              *
+              * An area the syllabus does not carry renders nothing here rather than an empty
+              * heading — `payloads.ts` declines to invent a blurb for the same reason.
+              */}
+            {entry.concepts.length > 0 && (
+              <div style={{ margin: '0 0 24px' }}>
+                <Eyebrow style={{ marginBottom: '8px' }}>Vocabulary</Eyebrow>
+                <ConceptList concepts={entry.concepts} label="Vocabulary" expandable />
+              </div>
+            )}
 
             {/*
               * The teaching itself, from `curriculum/area-N/lesson.md`. An area with none says so
