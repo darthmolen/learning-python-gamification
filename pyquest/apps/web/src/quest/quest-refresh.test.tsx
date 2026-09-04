@@ -25,7 +25,7 @@ const UNEARNED = {
   kind: 'quest' as const,
   area: 3,
   dc: 10,
-  concepts: ['list'],
+  concepts: [{ id: 'list', label: 'list', definition: 'An ordered collection.' }],
   requires: [],
   status: 'available' as const,
   brief: '# The Inventory\n',

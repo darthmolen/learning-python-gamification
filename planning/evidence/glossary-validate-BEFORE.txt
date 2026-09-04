@@ -1,0 +1,5 @@
+> @pyquest/content@0.0.0 validate:content
+> node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/validate.ts
+
+OK  no problems found in C:/dev/learning-python-gamification
+    23 items across 8 areas

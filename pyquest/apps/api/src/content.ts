@@ -118,6 +118,20 @@ export interface ContentRoot {
    * broken content root comes to look like an empty one.
    */
   exists(relativePath: string): boolean;
+  /**
+   * A file under `game/`, or `undefined` when it is not there.
+   *
+   * Separate from `read` because the two roots are separate, and deliberately the only way in:
+   * `read` and `exists` are rooted at `curriculum/` and nothing that serves curriculum content
+   * may reach the overlay by accident. CLAUDE.md's rule runs the other way too — `game/` is the
+   * overlay, and a curriculum that depended on it would break the deletion test — so the one
+   * caller of this is the medals route, which is game content by name.
+   *
+   * **Absent is a return value, not an error.** Deleting `game/` is a supported state, and
+   * `loadContentRoot` already declines to treat a missing overlay as a misconfiguration. A
+   * caller gets `undefined` and decides; the medals route decides on an empty list.
+   */
+  readGame(relativePath: string): string | undefined;
 }
 
 /**
@@ -199,6 +213,25 @@ export function loadContentRoot(base: string): ContentRoot {
         if (cause instanceof ContentPathError) return false;
         throw cause;
       }
+    },
+    /**
+     * The overlay, through the same escape check against the other root.
+     *
+     * The whole directory being absent and one file in it being absent are the same answer here,
+     * and that is right rather than lazy: both mean "the game text is not available", and the one
+     * caller does the same thing for either. What is *not* folded in is an unreadable file — a
+     * permissions fault or a directory where a file was expected still throws, for the reason
+     * `exists` gives above.
+     */
+    readGame: (relativePath) => {
+      let path: string;
+      try {
+        path = resolveInside(roots.game, relativePath);
+      } catch (cause) {
+        if (cause instanceof ContentPathError) return undefined;
+        throw cause;
+      }
+      return existsSync(path) ? readFileSync(path, 'utf8') : undefined;
     },
   };
 }

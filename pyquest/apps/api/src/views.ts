@@ -13,17 +13,26 @@
  * spreading the object and hoping `.strict()` catches the rest.
  */
 
-import { medalsFor, type Area, type ContentItem, type Medal, type Verifier } from '@pyquest/content';
+import {
+  MEDALS,
+  medalsFor,
+  parseGlossary,
+  type Area,
+  type ContentItem,
+  type Medal,
+  type Verifier,
+} from '@pyquest/content';
 import {
   type AreaCard,
   type AreaView,
   type CampaignView,
+  type ConceptView,
+  type MedalDescription,
   type MedalSlot,
   type PlayerProgress,
   type PublicVerifier,
   type QuestView,
   type TomeArea,
-  type TomeConcept,
 } from '@pyquest/contract';
 import {
   IllegalModifierSetError,
@@ -142,7 +151,7 @@ export function questView(
     kind: item.kind,
     area: item.area,
     dc: item.dc,
-    concepts: [...item.concepts],
+    concepts: conceptViews(content, item.concepts),
     requires: [...item.requires],
     status,
     brief: content.read(item.brief),
@@ -225,6 +234,81 @@ function areaLesson(content: ContentRoot, area: Area): { lesson?: string; lesson
 }
 
 /**
+ * One area's definitions, keyed by concept id.
+ *
+ * Read per request, for the same reason `areaLesson` is: a definition is prose the DM fixes
+ * between sessions, and reading it at boot would mean a container restart to correct a typo the
+ * learner is looking at. Eight small files behind a route that is already reading a lesson from
+ * the same directory.
+ *
+ * An area with no `glossary.md` yields an empty map rather than an error. The validator has the
+ * same rule and says why: areas are authored one at a time and the file arrives with the
+ * teaching, so demanding it everywhere would fail an area whose lesson is not written yet.
+ */
+function areaGlossary(content: ContentRoot, area: Area): ReadonlyMap<string, string> {
+  const file = `area-${area}/glossary.md`;
+  return content.exists(file) ? parseGlossary(content.read(file)) : new Map();
+}
+
+/**
+ * A concept id, dressed for a screen: its label, and its definition when one is written.
+ *
+ * The join lives here rather than in the SPA because the API already holds the concept table.
+ * The alternative that was nearly shipped is worth naming — the Quest screen fetching the whole
+ * Tome in order to label one chip — and it is worse in the way that matters: it puts a screen's
+ * correctness at the mercy of a second request it does not otherwise need.
+ *
+ * **Absent means unwritten, and the field is left off rather than emptied.** §5.1a's honesty rule
+ * is the same one the tilde on an estimated total keeps: a blank string would render as a
+ * definition that says nothing, which is a worse lie than admitting there is none.
+ */
+function conceptViews(content: ContentRoot, ids: readonly string[]): ConceptView[] {
+  const glossaries = new Map<Area, ReadonlyMap<string, string>>();
+
+  return ids.map((id) => {
+    const concept = CONCEPTS.find((candidate) => candidate.id === id);
+    // An id with no concept cannot happen — `validate:content` refuses it — but the label has to
+    // come from somewhere if it ever does, and the id is the honest fallback.
+    const label = concept?.label ?? id;
+    if (concept === undefined) return { id, label };
+
+    let glossary = glossaries.get(concept.area);
+    if (glossary === undefined) {
+      glossary = areaGlossary(content, concept.area);
+      glossaries.set(concept.area, glossary);
+    }
+
+    const definition = glossary.get(id);
+    return definition === undefined ? { id, label } : { id, label, definition };
+  });
+}
+
+/**
+ * What each medal is, from `game/medals.md`.
+ *
+ * Game text on a route of its own — `MedalsSchema` in the contract argues why it is not a field
+ * on `MedalSlot`. The file's headings are medal ids, exactly as the glossary's are concept ids,
+ * so the same parser reads it: one rule for what a heading is, in the one module that owns it.
+ *
+ * **No `game/` yields no medals, and that is the supported answer.** Deleting the overlay has to
+ * leave the curriculum standing (CLAUDE.md), and a route that threw here would make the SPA a
+ * second casualty of a deletion the test suite performs on purpose.
+ */
+export function medalsView(content: ContentRoot): MedalDescription[] {
+  const markdown = content.readGame('medals.md');
+  if (markdown === undefined) return [];
+
+  const described = parseGlossary(markdown);
+
+  return MEDALS.flatMap((medal) => {
+    const description = described.get(medal);
+    // A medal the file does not describe is left out rather than given an empty string. The
+    // screen draws its card either way; what it must not do is print a heading over nothing.
+    return description === undefined ? [] : [{ medal, description }];
+  });
+}
+
+/**
  * The Tome: concepts by area, and the lesson that teaches them.
  *
  * Not player-scoped and carrying no unlocked state. The syllabus is content and content is the
@@ -236,13 +320,19 @@ function areaLesson(content: ContentRoot, area: Area): { lesson?: string; lesson
  * open from day one" is only true if nothing about the reader is consulted to serve it.
  */
 export function tomeAreas(content: ContentRoot): TomeArea[] {
-  const byArea = new Map<Area, TomeConcept[]>();
+  const byArea = new Map<Area, string[]>();
   for (const concept of CONCEPTS) {
     const listed = byArea.get(concept.area) ?? [];
-    listed.push({ id: concept.id, label: concept.label });
+    listed.push(concept.id);
     byArea.set(concept.area, listed);
   }
   return [...byArea.entries()]
-    .map(([area, concepts]) => ({ area, concepts, ...areaLesson(content, area) }))
+    .map(([area, ids]) => ({
+      area,
+      // The same join the quest view uses, so the two routes cannot disagree about what a word
+      // means — which they could, and silently, when each did its own lookup.
+      concepts: conceptViews(content, ids),
+      ...areaLesson(content, area),
+    }))
     .sort((a, b) => a.area - b.area);
 }

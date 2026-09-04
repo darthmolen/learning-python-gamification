@@ -1,0 +1,18 @@
+ RUN  v4.1.11 C:/dev/learning-python-gamification/pyquest
+
+ ❯ |field-manual| tests/no-game.test.ts (17 tests | 1 failed) 53ms
+     × says nothing about boss 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |field-manual| tests/no-game.test.ts > the published site carries no scoring vocabulary > says nothing about boss
+AssertionError: "boss" reached the published site: expected [ 'area-5.html' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "area-5.html",
++ ]
+

@@ -180,8 +180,15 @@ function Area({ view }: { view: AreaView }) {
                     <div style={{ fontWeight: 600, color: quest.status === 'locked' ? color.muted : color.fg }}>
                       {quest.title}
                     </div>
+                    {/*
+                      * Terms, not a reference. `QuestCard.concepts` is bare ids and stays that
+                      * way: this row is one `<a>` so the whole thing is a target, and a chip that
+                      * expanded would be a `<button>` inside it — nested interactive content, and
+                      * two controls wearing one shape on a screen whose job is choosing a quest.
+                      * The definitions are one click away, on the quest itself.
+                      */}
                     <ConceptList
-                      concepts={quest.concepts}
+                      concepts={quest.concepts.map((id) => ({ id, label: id }))}
                       label={`Concepts for ${quest.title}`}
                       style={{ marginTop: '5px' }}
                     />

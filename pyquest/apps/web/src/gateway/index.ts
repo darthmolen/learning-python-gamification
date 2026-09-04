@@ -16,6 +16,7 @@ import {
   SignoffAwardSchema,
   SignoffRequestSchema,
   TokenGrantSchema,
+  MedalsSchema,
   TomeSchema,
   type Account,
   type AreaView,
@@ -33,6 +34,7 @@ import {
   type SignoffAward,
   type SignoffRequest,
   type SubmitRequest,
+  type Medals,
   type Tome,
 } from '@pyquest/contract';
 import * as fixtures from '../fixtures/index.ts';
@@ -243,6 +245,13 @@ export const getJob = (jobId: string): Promise<JobView> =>
  * everyone, and what is open is derived from the campaign the SPA already holds.
  */
 export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, () => fixtures.tome);
+
+/**
+ * What each medal is. Game text, so an empty list is a legitimate answer — the overlay may not be
+ * installed at all, and the Quest screen draws its cards either way.
+ */
+export const getMedals = (): Promise<Medals> =>
+  get('/api/medals', MedalsSchema, () => fixtures.medals);
 
 /**
  * §5.6's entries: what he wrote, joined to the commits that were paid for.

@@ -245,6 +245,33 @@ export const PublicVerifierSchema = z.discriminatedUnion('type', [
 export type PublicVerifier = z.infer<typeof PublicVerifierSchema>;
 
 /* -------------------------------------------------------------------------------------------
+ * Concepts — the vocabulary the quest screen and the Tome both carry
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * One concept: the id progress and content are keyed by, the label a reader sees, and the
+ * definition from `curriculum/area-<n>/glossary.md`.
+ *
+ * It sits above both screens that use it because it belongs to neither. The Quest screen names a
+ * quest's concepts and the Tome names an area's, and before this they were two different shapes —
+ * `QuestView.concepts` was bare ids, so a definition added to the Tome's shape reached the Tome
+ * and nothing else. One shape, defined once, is what stops that from happening again.
+ *
+ * **`definition` is optional for the reason `lesson` is.** An area authored later has no glossary
+ * yet, and §5.1a's honesty rule says the screen reports that rather than rendering a blank space
+ * where a definition would be. Optional here is what lets it.
+ */
+export const ConceptViewSchema = z
+  .object({
+    id: ConceptIdSchema,
+    label: z.string().min(1),
+    definition: z.string().min(1).optional(),
+  })
+  .strict();
+
+export type ConceptView = z.infer<typeof ConceptViewSchema>;
+
+/* -------------------------------------------------------------------------------------------
  * The quest screen
  * ----------------------------------------------------------------------------------------- */
 
@@ -274,7 +301,13 @@ export const QuestViewSchema = z
     kind: KindSchema,
     area: AreaSchema,
     dc: DifficultyClassSchema,
-    concepts: z.array(ConceptIdSchema).min(1),
+    /**
+     * Labelled and defined, not bare ids. The screen draws a chip per concept and the chip
+     * expands its definition in place; joining the id against the glossary is the API's job
+     * because the API already holds the concept table, and the alternative was a screen that
+     * fetches the whole Tome to label one word.
+     */
+    concepts: z.array(ConceptViewSchema).min(1),
     requires: z.array(ContentIdSchema),
     status: QuestStatusSchema,
     /** The brief's markdown, read from the content root. Rendering is the UI's. */
@@ -435,15 +468,10 @@ export type PartyView = z.infer<typeof PartyViewSchema>;
  * two. That it renders differently per player is the UI's business.
  *
  * `.strict()` is the enforcement. An `unlocked` field added here in a hurry fails the parse.
+ *
+ * The concept shape itself is `ConceptViewSchema`, above — the Quest screen carries the same one,
+ * and it is defined once so that a field added for one screen cannot go missing on the other.
  */
-export const TomeConceptSchema = z
-  .object({
-    id: ConceptIdSchema,
-    label: z.string().min(1),
-  })
-  .strict();
-
-export type TomeConcept = z.infer<typeof TomeConceptSchema>;
 
 /**
  * An area's page: what it teaches, and the teaching itself.
@@ -462,7 +490,7 @@ export type TomeConcept = z.infer<typeof TomeConceptSchema>;
 export const TomeAreaSchema = z
   .object({
     area: AreaSchema,
-    concepts: z.array(TomeConceptSchema),
+    concepts: z.array(ConceptViewSchema),
     lesson: z.string().min(1).optional(),
     lessonIsDraft: z.boolean(),
   })
@@ -473,6 +501,38 @@ export type TomeArea = z.infer<typeof TomeAreaSchema>;
 export const TomeSchema = z.object({ areas: z.array(TomeAreaSchema) }).strict();
 
 export type Tome = z.infer<typeof TomeSchema>;
+
+/* -------------------------------------------------------------------------------------------
+ * The medals — game text, on a route of its own
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * `GET /api/medals` — what each medal is, from `game/medals.md`.
+ *
+ * A route rather than a field on `MedalSlot`, and the reason is not tidiness. A medal's
+ * description is identical for every quest and every player; `MedalSlot` is this quest's price
+ * for this player. Hanging the text off the price would ship the same six paragraphs on every
+ * quest view, and would make a *content* string arrive as part of a *priced offer* — the two
+ * things §6.7 keeps apart.
+ *
+ * **An empty list is a legitimate answer.** `game/` is the overlay, and a curriculum without it
+ * is the state the Lane A/Lane B split exists to make possible — `loadContentRoot` already says
+ * a missing `game/` is not a misconfiguration. The Quest screen draws its medal cards without
+ * descriptions rather than failing, which is what makes deleting `game/` a degradation instead
+ * of an outage.
+ */
+export const MedalDescriptionSchema = z
+  .object({
+    medal: MedalSchema,
+    description: z.string().min(1),
+  })
+  .strict();
+
+export type MedalDescription = z.infer<typeof MedalDescriptionSchema>;
+
+export const MedalsSchema = z.object({ medals: z.array(MedalDescriptionSchema) }).strict();
+
+export type Medals = z.infer<typeof MedalsSchema>;
 
 /* -------------------------------------------------------------------------------------------
  * Sign-offs — spec §6.3, §5.11
@@ -814,6 +874,11 @@ export const API_ROUTES: readonly ApiRoute[] = [
     returns: 'JournalTemplate — the entry to copy, for the area he is working in',
   },
   { method: 'GET', path: '/api/tome', returns: 'the syllabus: concepts by area. Content only' },
+  {
+    method: 'GET',
+    path: '/api/medals',
+    returns: 'what each medal is, from game/. Empty when the overlay is absent',
+  },
   {
     method: 'GET',
     path: '/api/signoffs',

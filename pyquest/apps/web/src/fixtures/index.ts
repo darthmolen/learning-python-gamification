@@ -146,6 +146,34 @@ for side in range(4):
 turtle.done()
 `;
 
+/**
+ * Definitions for the concepts the offline fixtures name.
+ *
+ * Real prose rather than lorem, and shorter than the authored glossary, because what the offline
+ * screen has to exercise is the *expander* — a chip that opens, pushes the work down, and closes.
+ * A one-word definition would leave the layout untested at the size it actually renders at.
+ *
+ * **`iteration` is deliberately missing**, and `dict-methods` too. An area authored later has no
+ * glossary yet, and §5.1a's honesty rule says the chip reports that rather than opening onto
+ * nothing. Offline is the easiest place to look at that branch, which is the same argument the
+ * tome fixture makes for Area 1 having no lesson.
+ */
+const DEFINITIONS: Readonly<Record<string, string>> = {
+  dict: 'A mapping from keys to values. `inventory["rope"]` asks the question the key names, and\ngets back whatever was filed under it.',
+  list: 'An ordered collection. The order is the point: `inventory[0]` is the first slot, not the\nzeroth thing you own.',
+  indexing: 'Reaching one item by its position. Counting starts at zero, which is the source of\nexactly one off-by-one error per person per lifetime.',
+  print: 'Puts a value on the screen. The first thing that proves a program ran at all.',
+  variables: 'A name bound to a value, so the value can be referred to later by something a\nreader understands.',
+  if: 'Runs a block only when a condition holds. Everything a program decides, it decides here.',
+  else: 'The branch taken when the `if` above it was not.',
+};
+
+const conceptsWith = (ids: readonly string[]): readonly unknown[] =>
+  ids.map((id) => {
+    const definition = DEFINITIONS[id];
+    return definition === undefined ? { id, label: id } : { id, label: id, definition };
+  });
+
 export const questView = (questId: string): unknown => {
   const card = (QUESTS[3] as { id: string; title: string; dc: number; concepts: string[]; medals: string[]; status: string }[])
     .find((q) => q.id === questId);
@@ -157,7 +185,7 @@ export const questView = (questId: string): unknown => {
     kind: 'quest',
     area: 3,
     dc: card.dc,
-    concepts: card.concepts,
+    concepts: conceptsWith(card.concepts),
     requires: [],
     status: card.status,
     brief: `# ${card.title}\n\nThe brief is authored markdown, read from the content root.\n`,
@@ -327,20 +355,60 @@ export const tome: unknown = {
   areas: [
     {
       area: 0,
-      concepts: [{ id: 'print', label: 'print' }, { id: 'variables', label: 'variables' }],
+      concepts: conceptsWith(['print', 'variables']),
       lesson: AREA_0_LESSON,
       lessonIsDraft: false,
     },
     {
       area: 1,
-      concepts: [{ id: 'if', label: 'if' }, { id: 'else', label: 'else' }],
+      concepts: conceptsWith(['if', 'else']),
       lessonIsDraft: false,
     },
     {
       area: 3,
-      concepts: [{ id: 'list', label: 'list' }, { id: 'indexing', label: 'indexing' }],
+      /**
+       * `iteration` carries no definition, deliberately — it is absent from `DEFINITIONS` above.
+       * Area 1 having no lesson is the same argument at area scale: offline is where the honest
+       * "unwritten" branch is easiest to look at, and a fixture where every word is defined would
+       * leave the Tome's empty state to be discovered in production.
+       */
+      concepts: conceptsWith(['list', 'indexing', 'iteration']),
       lesson: AREA_3_LESSON,
       lessonIsDraft: true,
+    },
+  ],
+};
+
+/**
+ * What each medal is — `game/medals.md`, offline.
+ *
+ * Four of the five the Quest screen draws, and `conjured` left out on purpose. That is what puts
+ * the "a card with no description" branch in front of anyone running the app with no stack behind
+ * it, and the route allows exactly that state: a medal `game/medals.md` does not describe is
+ * omitted rather than given an empty string. It is also the state *every* card is in when `game/`
+ * is not installed at all, which is the deletion CLAUDE.md requires to stay survivable.
+ *
+ * `time-attack` is absent for a different reason and is not the case above: `DEFAULT_MEDALS` is
+ * five long, so the screen never draws a sixth card at all.
+ */
+export const medals: unknown = {
+  medals: [
+    {
+      medal: 'cleared',
+      description:
+        '**The tests pass.** The only medal progression cares about: three cleared quests\nunlock the area’s boss.',
+    },
+    {
+      medal: 'ironman',
+      description: 'Done without running it until the end. Raises the DC, and pays the difference.',
+    },
+    {
+      medal: 'idiomatic',
+      description: 'Ruff and pyright clean — the standard this repository holds itself to.',
+    },
+    {
+      medal: 'teach-back',
+      description: 'You explained it to somebody else and they could then do it.',
     },
   ],
 };

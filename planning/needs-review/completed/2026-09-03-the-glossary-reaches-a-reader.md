@@ -81,3 +81,46 @@ it decides whether `ConceptList` takes an `onSelect` at all.
 `pyquest/packages/contract/src/endpoints.ts`, `pyquest/apps/api/src/views.ts`,
 `pyquest/apps/web/src/shell/ui.tsx` (`ConceptList`), `pyquest/apps/web/src/screens/QuestScreen.tsx`
 and `TomeScreen.tsx`, `pyquest/apps/field-manual/src/build.ts` and `render.ts`.
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-09-03 18:24
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+- Correctly identifies the two-publisher split and protects the game/-deletion test by keeping medals out of the Field Manual.
+- Extracting parseGlossary into packages/content and having alidate.ts consume it is the right call; the current inline regex is exactly the duplication risk described.
+- The nested-interactive hazard on the Area row is real and correctly diagnosed.
+- Reuses established precedent rather than inventing new mechanisms.
+- Test list targets the genuinely fragile cases: ## inside a fence, missing glossary.md, missing entry.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+1. **The Quest screen cannot get definitions from the stated contract change.** QuestView.concepts is bare id strings, not TomeConcept objects. The plan only adds definition to TomeConceptSchema, which serves /api/tome. It never says whether QuestView.concepts changes shape, or whether QuestScreen joins against the Tome response client-side. This is a contract decision that changes endpoints.ts, iews.ts, and Area screen call sites, and it is unstated.
+2. **ConceptList's signature change is unscoped.** It currently takes concepts: readonly string[] and has three callers. Changing it to carry definitions touches AreaScreen.tsx whether or not Area rows stay non-interactive. The plan lists ui.tsx but treats Area as untouched.
+3. **No delivery path for game/medals.md to the browser.** The SPA cannot read disk. The plan does not say whether medal text arrives via a new API field, a new endpoint, or build-time bundling, nor what happens when game/ is absent.
+
+#### Important (Should Address)
+1. **An unresolved design fork sits inside an in-progress plan.** "Decide this before writing the component" leaves ConceptList's onSelect — and therefore items 1 and 2 — undetermined.
+2. **Plan-format conventions not met.** CLAUDE.md requires every plan to declare a **Track:** and a Files Expected to Change section. This plan has neither.
+3. **Fence-aware parsing silently changes validator behavior.** Today's regex treats any line-start ##  as a heading; a fence-aware parseGlossary will stop counting ## inside code blocks. The plan should state the expected delta and that alidate:content stays green.
+4. **No RED-then-mutant step.** CLAUDE.md mandates captured failure output plus a seeded mutant per check. The Tests section lists assertions but no verification protocol.
+
+#### Minor (Consider)
+1. **No API-level test named.** The parser, a11y, and deletion tests are covered, but nothing asserts /api/tome actually emits definition, nor that .strict() still rejects an unknown key after the schema change.
+2. **Field Manual output is unspecified.** "prints each concept with its definition" leaves the element structure open.
+
+### Recommendations
+- Resolve the Area-row fork now and record the decision in the plan.
+- Add an explicit contract subsection covering QuestView.concepts and name the affected call sites.
+- Specify the medals delivery path end to end, plus the game/-absent behavior.
+- Add **Track:** and a Files Expected to Change list, and correct Status to match in-progress/.
+- Add alidate:content before/after checks and the RED/mutant note.
+
+### Assessment
+**Implementable as written?** With fixes
+
+**Reasoning:** The plan is architecturally sound and unusually well-reasoned about the Lane A/Lane B boundary, but the Quest-screen definition source, the ConceptList blast radius, and the medals delivery path are still unspecified, and the plan format is missing required fields.

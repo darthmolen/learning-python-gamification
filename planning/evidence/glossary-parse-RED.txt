@@ -1,0 +1,25 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/pyquest
+
+ ❯ |packages| packages/content/tests/glossary.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |packages| packages/content/tests/glossary.test.ts [ packages/content/tests/glossary.test.ts ]
+Error: Cannot find module '../src/glossary.ts' imported from C:/dev/learning-python-gamification/pyquest/packages/content/tests/glossary.test.ts
+ ❯ packages/content/tests/glossary.test.ts:17:1
+     15| import { fileURLToPath } from 'node:url';
+     16| import { describe, expect, it } from 'vitest';
+     17| import { parseGlossary } from '../src/glossary.ts';
+       | ^
+     18|
+     19| const glossary = (area: number): string =>
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  20:22:58
+   Duration  139ms (transform 17ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+

@@ -1,0 +1,30 @@
+ FAIL  |api| tests/glossary-wire.test.ts > the medals route > describes every medal from game/medals.md
+TypeError: medalsView is not a function
+ ❯ tests/glossary-wire.test.ts:116:20
+    114| describe('the medals route', () => {
+    115|   it('describes every medal from game/medals.md', () => {
+    116|     const medals = medalsView(CONTENT);
+       |                    ^
+    117|     expect(() => MedalsSchema.parse({ medals })).not.toThrow();
+    118|     expect(medals.map((m) => m.medal)).toContain('cleared');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  |api| tests/glossary-wire.test.ts > the medals route > answers with an empty list when game/ is absent, rather than failing
+TypeError: medalsView is not a function
+ ❯ tests/glossary-wire.test.ts:137:12
+    135|     );
+    136|
+    137|     expect(medalsView(loadContentRoot(bare))).toEqual([]);
+       |            ^
+    138|   });
+    139|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 5 passed (11)
+   Start at  20:26:39
+   Duration  382ms (transform 123ms, setup 0ms, import 251ms, tests 13ms, environment 0ms)
+

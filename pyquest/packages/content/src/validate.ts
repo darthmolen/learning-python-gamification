@@ -23,6 +23,7 @@ import { dirname, join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
 import { CONCEPTS, conceptArea } from './concepts.ts';
+import { parseGlossary } from './glossary.ts';
 import {
   parseContentItem,
   parseAreaManifest,
@@ -668,9 +669,11 @@ function glossaryIssues(roots: { curriculum: string; game: string }): ContentIss
     const path = join(roots.curriculum, file);
     if (!existsSync(path)) continue;
 
-    const defined = [
-      ...readFileSync(path, 'utf8').matchAll(/^## ([^\n]+?)\s*$/gm),
-    ].map((match) => match[1] as string);
+    // `parseGlossary` rather than a regex here. The API and the Field Manual read this same file,
+    // and a heading rule written three times is three chances to disagree about what a heading
+    // is — silently, because each of them would still pass its own tests. `glossary.ts` says why
+    // a fenced `##` is the case that makes the difference.
+    const defined = [...parseGlossary(readFileSync(path, 'utf8')).keys()];
 
     const expected = CONCEPTS.filter((concept) => concept.area === area).map((c) => c.id);
     const missing = expected.filter((id) => !defined.includes(id));

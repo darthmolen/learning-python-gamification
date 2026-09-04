@@ -47,7 +47,22 @@ const GAME_WORDS = ['xp', 'dc', 'medal', 'medals', 'ironman', 'idiomatic', 'boss
  * matters.
  */
 const withoutAuthorProse = (html: string): string =>
-  html.replace(/<div class="brief">[\s\S]*?<\/div>/g, '');
+  html
+    .replace(/<div class="brief">[\s\S]*?<\/div>/g, '')
+    /**
+     * Glossary definitions, on the same rule and for the same reason.
+     *
+     * `curriculum/area-5/glossary.md` teaches inheritance with `class Boss(Enemy)`, and the first
+     * run of the site with definitions on it failed here — correctly, by the letter, and wrongly
+     * by the rule above. The alternative was to rename the author's class to satisfy a test, which
+     * is the site editing the curriculum: precisely what the paragraph above refuses to do for the
+     * three briefs that say "boss" in their own teaching prose.
+     *
+     * The narrowness is the point. `<dd class="brief">` is exactly the container the author's
+     * words go into; the `<dt>` beside it is the generator's, and so is every heading, label and
+     * nav item around it. A difficulty class printed next to a concept still fails.
+     */
+    .replace(/<dd class="brief">[\s\S]*?<\/dd>/g, '');
 
 describe('the published site carries no scoring vocabulary', () => {
   it('builds at least one page per authored area, plus an index', () => {

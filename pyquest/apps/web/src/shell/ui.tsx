@@ -1,6 +1,8 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import type { ConceptView } from '@pyquest/contract';
 import { color, eyebrow, font } from '../design/tokens';
 import { isRisky, medalSlots } from '../present/index.ts';
+import { Markdown } from '../tome/Markdown.tsx';
 
 /** The mono, wide-tracked, uppercase label above almost every block on every artboard. */
 export function Eyebrow({ children, style }: { children: ReactNode; style?: React.CSSProperties }) {
@@ -50,33 +52,101 @@ export function Mono({
 export function ConceptList({
   concepts,
   label = 'Concepts',
+  expandable = false,
   style,
 }: {
-  concepts: readonly string[];
+  concepts: readonly ConceptView[];
   /** Named per row on the Area screen, where several of these sit in one list. */
   label?: string;
+  /**
+   * Whether a chip opens its definition.
+   *
+   * **Off by default, and the Area screen is why.** Its quest rows are each a single `<a>` so the
+   * whole row is a target, and a `<button>` inside an `<a>` is nested interactive content — a real
+   * behavior difference across browsers and screen readers, not a validator complaint. A row that
+   * both navigates and expands is also two controls wearing one shape, on a screen whose job is
+   * choosing a quest. So the Area screen renders terms and the Quest screen renders a reference.
+   */
+  expandable?: boolean;
   style?: React.CSSProperties;
 }) {
+  const [open, setOpen] = useState<string | undefined>(undefined);
+  /**
+   * Nothing is open until something is opened, and the guard is not paranoia.
+   *
+   * Without it this was `concepts.find((c) => c.id === open)` with `open` starting `undefined` —
+   * which finds the first concept whose `id` is *also* undefined. That is never the contract's
+   * shape, and it is exactly what a stale payload is: a mocked `QuestView` still carrying bare id
+   * strings put `undefined === undefined` on the first render and the list opened itself, on a
+   * screen where nobody had touched it.
+   */
+  const shown = open === undefined ? undefined : concepts.find((concept) => concept.id === open);
+
+  const chip: React.CSSProperties = {
+    fontFamily: font.mono,
+    fontSize: '11.5px',
+    color: color.secondary,
+    border: `1px solid ${color.border}`,
+    padding: '2px 7px',
+  };
+
   return (
-    <ul
-      aria-label={label}
-      style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', listStyle: 'none', margin: 0, padding: 0, ...style }}
-    >
-      {concepts.map((concept) => (
-        <li
-          key={concept}
+    <div style={style}>
+      <ul
+        aria-label={label}
+        style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', listStyle: 'none', margin: 0, padding: 0 }}
+      >
+        {concepts.map((concept) => (
+          <li key={concept.id}>
+            {expandable ? (
+              <button
+                type="button"
+                aria-expanded={open === concept.id}
+                onClick={() => setOpen(open === concept.id ? undefined : concept.id)}
+                style={{
+                  ...chip,
+                  background: open === concept.id ? color.panel : 'transparent',
+                  borderColor: open === concept.id ? color.accentMid : color.border,
+                  color: open === concept.id ? color.fgBright : color.secondary,
+                  cursor: 'pointer',
+                }}
+              >
+                {concept.label}
+              </button>
+            ) : (
+              <span style={{ ...chip, display: 'inline-block' }}>{concept.label}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {/*
+        * Underneath, in flow, pushing the work down — CLAUDE.md's no-pop-over rule, and the Tome's
+        * own argument for expanding in place: nothing is covered and nothing is lost. One open at
+        * a time, because a stack of open definitions is a wall of text where a reference was
+        * wanted.
+        */}
+      {shown !== undefined && (
+        <div
           style={{
-            fontFamily: font.mono,
-            fontSize: '11.5px',
-            color: color.secondary,
-            border: `1px solid ${color.border}`,
-            padding: '2px 7px',
+            marginTop: '8px',
+            padding: '10px 13px',
+            background: color.panel,
+            borderLeft: `2px solid ${color.accentMid}`,
           }}
         >
-          {concept}
-        </li>
-      ))}
-    </ul>
+          {shown.definition === undefined ? (
+            /* §5.1a's honesty rule, the same one the tilde keeps: an unwritten definition says so
+             * rather than opening onto an empty box that reads as a bug. */
+            <Mono style={{ display: 'block', lineHeight: 1.7 }}>
+              {`\`${shown.label}\` has no definition written yet. The word is real; the glossary entry is not authored.`}
+            </Mono>
+          ) : (
+            <Markdown text={shown.definition} baseLevel={4} />
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

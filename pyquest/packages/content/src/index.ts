@@ -31,6 +31,8 @@ export {
   type Verifier,
 } from './schema.ts';
 
+export { parseGlossary } from './glossary.ts';
+
 export {
   checkContent,
   findPrerequisiteCycle,

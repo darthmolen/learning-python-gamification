@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import type { MedalSlot, PublicVerifier, QuestView, TomeArea } from '@pyquest/contract';
+import type { MedalDescription, MedalSlot, PublicVerifier, QuestView, TomeArea } from '@pyquest/contract';
 import type { Medal } from '@pyquest/content/browser';
 import { color, eyebrow, font } from '../design/tokens';
-import { getQuest, getTome } from '../gateway/index.ts';
+import { getMedals, getQuest, getTome } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
@@ -48,16 +48,23 @@ export function QuestScreen({ makeWorker, pollMs }: QuestScreenProps = {}) {
    * learner the code in his editor, he stops looking things up."
    */
   const load = useCallback(async () => {
-    const [view, tome] = await Promise.all([getQuest(playerId, questId), getTome()]);
-    return { view, tome };
+    const [view, tome, medals] = await Promise.all([
+      getQuest(playerId, questId),
+      getTome(),
+      // Game text, and it travels with the rest rather than after it: a medal card that renders
+      // and then grows a description is a layout shifting under somebody who was reading it.
+      getMedals(),
+    ]);
+    return { view, tome, medals };
   }, [questId]);
   const quest = useResource(load, [questId]);
 
   return (
     <Awaiting resource={quest} label={questId}>
-      {({ view, tome }) => (
+      {({ view, tome, medals }) => (
         <Quest
           view={view}
+          medals={medals.medals}
           page={tome.areas.find((area) => area.area === view.area)}
           areaId={areaId}
           makeWorker={makeWorker}
@@ -177,6 +184,7 @@ function Verdict({ state }: { state: SubmitState }) {
 
 function Quest({
   view,
+  medals,
   page,
   areaId,
   makeWorker,
@@ -184,6 +192,8 @@ function Quest({
   playerId,
 }: {
   view: QuestView;
+  /** What each medal is, from `game/`. Empty when the overlay is not installed. */
+  medals: readonly MedalDescription[];
   /** This area's Tome page. Absent when the area is not in the syllabus at all. */
   page: TomeArea | undefined;
   areaId: string;
@@ -289,9 +299,9 @@ function Quest({
           <MedalSlots held={awarded.held} />
         </div>
 
-        <ConceptList concepts={view.concepts} style={{ marginTop: '10px' }} />
+        <ConceptList concepts={view.concepts} expandable style={{ marginTop: '10px' }} />
 
-        <Medals held={awarded.held} slots={awarded.slots} />
+        <Medals held={awarded.held} slots={awarded.slots} descriptions={medals} />
 
         {/*
           * The Tome, above the work rather than below it.
@@ -540,8 +550,20 @@ function Quest({
  * dishonest, and this is a curriculum a child is measuring himself against." A price list is a
  * stronger claim than an estimate.
  */
-function Medals({ held, slots }: { held: readonly Medal[]; slots: readonly MedalSlot[] }) {
+function Medals({
+  held,
+  slots,
+  descriptions,
+}: {
+  held: readonly Medal[];
+  slots: readonly MedalSlot[];
+  /** `game/medals.md`, per medal. Empty when the overlay is absent, and the cards still draw. */
+  descriptions: readonly MedalDescription[];
+}) {
   const priced = new Map(slots.map((slot) => [slot.medal, slot]));
+  const described = new Map(descriptions.map((entry) => [entry.medal, entry.description]));
+  const [open, setOpen] = useState<Medal | undefined>(undefined);
+  const shown = open === undefined ? undefined : described.get(open);
 
   return (
     <div style={{ marginTop: '18px' }}>
@@ -549,15 +571,37 @@ function Medals({ held, slots }: { held: readonly Medal[]; slots: readonly Medal
       <div role="group" aria-label="Medals" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         {medalSlots(held).map((slot) => {
           const offer = priced.get(slot.medal);
+          /*
+           * A card is a button only when there is something to open. The alternative — every card
+           * focusable, four of them opening nothing — puts stops in a keyboard user's path that
+           * lead nowhere, and with `game/` absent that would be all six of them.
+           */
+          const explains = described.has(slot.medal);
 
           return (
             <div
               key={slot.medal}
+              {...(explains
+                ? {
+                    role: 'button',
+                    tabIndex: 0,
+                    'aria-expanded': open === slot.medal,
+                    onClick: () => setOpen(open === slot.medal ? undefined : slot.medal),
+                    onKeyDown: (event: React.KeyboardEvent) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      setOpen(open === slot.medal ? undefined : slot.medal);
+                    },
+                  }
+                : {})}
               style={{
                 padding: '8px 13px',
                 minWidth: '108px',
                 background: slot.held ? '#1a2119' : color.panel,
-                border: `1px solid ${slot.held ? color.accentMid : color.border}`,
+                border: `1px solid ${
+                  open === slot.medal ? color.accentMid : slot.held ? color.accentMid : color.border
+                }`,
+                cursor: explains ? 'pointer' : 'default',
               }}
             >
               <span
@@ -587,6 +631,21 @@ function Medals({ held, slots }: { held: readonly Medal[]; slots: readonly Medal
           );
         })}
       </div>
+
+      {/* In flow and underneath, like the concept chips above — nothing is covered, nothing lost. */}
+      {shown !== undefined && (
+        <div
+          style={{
+            marginTop: '10px',
+            padding: '10px 13px',
+            background: color.panel,
+            borderLeft: `2px solid ${color.accentMid}`,
+          }}
+        >
+          <Markdown text={shown} baseLevel={4} />
+        </div>
+      )}
+
       <Mono style={{ display: 'block', marginTop: '8px', lineHeight: 1.6 }}>
         Each medal raises this quest's DC and pays the difference, once. Only Cleared is awarded
         today — there is no way to claim the others yet.
