@@ -185,3 +185,117 @@ describe('a medal card explains what the medal is', () => {
     expect(within(medals).queryByRole('button', { name: /conjured/i })).not.toBeInTheDocument();
   });
 });
+
+/**
+ * The Quest screen shows marks as words, and never as a card.
+ *
+ * This is the exception being *withheld*, and it is the sharpest thing the plan review found. The
+ * no-pop-over rule was scoped so that reference material may float over prose, on the argument
+ * that "a learner reading a lesson has no work on the screen to lose." That premise is false here:
+ * this screen embeds the Tome directly above the editor, so the carveout does not apply and the
+ * feature is simply not offered.
+ *
+ * The learner loses nothing. The concept chips above already carry the same definitions, expanding
+ * in place — the reference is on this screen twice over. What it does not need is a card floating
+ * over an editor with a child's code in it.
+ */
+describe('the Quest screen opens a lesson mark, without covering the work', () => {
+  const openTome = async () => {
+    await renderQuest();
+    const toggle = screen.queryByRole('button', { name: /tome/i });
+    if (toggle !== null) await userEvent.click(toggle);
+  };
+
+  it('opens a marked word in the lesson', async () => {
+    /**
+     * **This assertion is the reverse of what it first said, and the reversal is the point.**
+     *
+     * Marks were withheld here, on the reasoning that this screen has work on it so the
+     * no-pop-over carveout should not apply. The DM overruled it: the exercise page is exactly
+     * where a learner meets a word they do not know, and that is when a definition is worth most.
+     *
+     * The rule was never the obstacle. It forbids covering *the editor, a brief, or a form* — not
+     * floating at all — and the card opens upward over lesson prose. Being more conservative than
+     * your own stated rule is still being wrong about it.
+     */
+    await openTome();
+
+    const mark = screen.getByRole('button', { name: 'going through it' });
+    await userEvent.click(mark);
+
+    expect(mark).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+  });
+
+  it('leaves the editor and the Run button reachable while a card is open', async () => {
+    /**
+     * The constraint that replaces the blanket refusal, and the one worth actually holding: the
+     * card may cover prose, and must never take the work out of reach. A dialog would remove the
+     * editor from the accessibility tree and a scrim would block it; neither is here.
+     */
+    await openTome();
+    await userEvent.click(screen.getByRole('button', { name: 'going through it' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Run' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Python editor' })).toBeInTheDocument();
+  });
+
+  it('never prints a double bracket at the learner', async () => {
+    /**
+     * The failure this guards is the one the review caught: `Markdown` renders lesson prose on this
+     * screen too, and if it were given a lookup — or if marks were not stripped by default — a
+     * marked-up lesson would show `[[print]]` on the work surface.
+     */
+    const { container } = await renderQuest();
+    expect(container.textContent).not.toContain('[[');
+  });
+});
+
+/**
+ * Nothing on a chip said it could be pressed.
+ *
+ * The DM, looking at the built screen: "nothing on the chip says CLICK ME". They were right, and
+ * it is the oldest affordance problem there is — a control that looks like a label is a control
+ * nobody uses. The chips are `<button>`s with a thin border and mono text, which reads as a tag.
+ *
+ * **The fix is a standing line, not a hover hint or a changing label.** CLAUDE.md: "Labels never
+ * change with state." A learner who has never pressed one needs to be told once, in prose that is
+ * true whether or not anything is open.
+ */
+describe('the concept chips say they can be pressed', () => {
+  it('carries a standing instruction above the chips', async () => {
+    await renderQuest();
+    expect(screen.getByText(/click a word for what it means/i)).toBeInTheDocument();
+  });
+
+  it('says it whether or not something is already open', async () => {
+    // The label does not change with state — the same sentence before and after.
+    await renderQuest();
+    await userEvent.click(
+      within(screen.getByRole('list', { name: 'Concepts' })).getByRole('button', { name: 'dict' }),
+    );
+    expect(screen.getByText(/click a word for what it means/i)).toBeInTheDocument();
+  });
+
+  it('does not say it on the Area screen, where the chips are inert', async () => {
+    /**
+     * The other half, and the half that makes the first one mean something. Area rows render
+     * `ConceptList` without `expandable` because a button inside the row's `<a>` would be nested
+     * interactive content — so telling that reader to click a word would be a lie.
+     */
+    const { AreaScreen } = await import('../screens/AreaScreen');
+    render(
+      <AsSignedIn>
+        <MemoryRouter initialEntries={['/area/3']}>
+          <Routes>
+            <Route path="/area/:areaId" element={<AreaScreen />} />
+          </Routes>
+        </MemoryRouter>
+      </AsSignedIn>,
+    );
+    await screen.findByRole('heading', { level: 1 });
+
+    expect(screen.queryByText(/click a word for what it means/i)).not.toBeInTheDocument();
+  });
+});

@@ -135,3 +135,53 @@ describe('the Tome lists an area vocabulary', () => {
     expect(screen.queryByRole('list', { name: 'Vocabulary' })).not.toBeInTheDocument();
   });
 });
+
+/**
+ * A marked word in the lesson prose itself.
+ *
+ * The vocabulary list above is the index; this is the reference met mid-sentence — the thing the
+ * DM asked for and could not have as a child, because a book cannot do it.
+ */
+describe('a lesson marks its own words', () => {
+  it('resolves a concept from an earlier area', async () => {
+    /**
+     * The failure the review caught before it shipped. `TomeArea.concepts` carries one area, so an
+     * area-scoped lookup resolves only that area's own words — and Area 3's lesson names `print`,
+     * which is Area 0's. `validate:content` would pass it, because it checks the registry rather
+     * than the area, so the mark would validate green and render dead with no test to say so.
+     */
+    await renderTome();
+    await openArea('Collections');
+
+    const lesson = screen.getByRole('button', { name: 'print' });
+    expect(lesson).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(lesson);
+    expect(screen.getByText(/Puts a value on the screen/i)).toBeInTheDocument();
+  });
+
+  it('renders the author display text, not the id', async () => {
+    await renderTome();
+    await openArea('Collections');
+
+    expect(screen.getByRole('button', { name: 'going through it' })).toBeInTheDocument();
+    expect(screen.queryByText(/\[\[/)).not.toBeInTheDocument();
+  });
+
+  it('says so when the marked concept has no definition written', async () => {
+    // `iteration` is the fixture's undefined concept. §5.1a: say it is unwritten rather than
+    // opening onto an empty box.
+    await renderTome();
+    await openArea('Collections');
+
+    await userEvent.click(screen.getByRole('button', { name: 'going through it' }));
+    expect(screen.getByText(/no definition written yet/i)).toBeInTheDocument();
+  });
+
+  it('prints no double bracket anywhere on the page', async () => {
+    const { container } = await renderTome();
+    await openArea('Collections');
+
+    expect(container.textContent).not.toContain('[[');
+  });
+});

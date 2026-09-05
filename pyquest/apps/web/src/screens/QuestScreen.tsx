@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import type { MedalDescription, MedalSlot, PublicVerifier, QuestView, TomeArea } from '@pyquest/contract';
+import type { ConceptView, MedalDescription, MedalSlot, PublicVerifier, QuestView, TomeArea } from '@pyquest/contract';
 import type { Medal } from '@pyquest/content/browser';
 import { color, eyebrow, font } from '../design/tokens';
 import { getMedals, getQuest, getTome } from '../gateway/index.ts';
@@ -66,6 +66,11 @@ export function QuestScreen({ makeWorker, pollMs }: QuestScreenProps = {}) {
           view={view}
           medals={medals.medals}
           page={tome.areas.find((area) => area.area === view.area)}
+          /* Whole-Tome, not this area's: an Area 3 lesson names `print`, which is Area 0's. The
+           * Tome screen builds the same map for the same reason. */
+          term={(id) =>
+            tome.areas.flatMap((area) => area.concepts).find((concept) => concept.id === id)
+          }
           areaId={areaId}
           makeWorker={makeWorker}
           pollMs={pollMs}
@@ -186,6 +191,7 @@ function Quest({
   view,
   medals,
   page,
+  term,
   areaId,
   makeWorker,
   pollMs,
@@ -196,6 +202,8 @@ function Quest({
   medals: readonly MedalDescription[];
   /** This area's Tome page. Absent when the area is not in the syllabus at all. */
   page: TomeArea | undefined;
+  /** Resolves a marked concept in the lesson prose — every area's, not just this one's. */
+  term: (id: string) => ConceptView | undefined;
   areaId: string;
   makeWorker?: WorkerFactory;
   pollMs?: number;
@@ -327,7 +335,21 @@ function Quest({
                 )}
                 {/* `baseLevel={2}` — the quest title is this page's `h1`, so the lesson's own
                   * sections continue that outline instead of starting a second one. */}
-                <Markdown text={page.lesson} baseLevel={2} />
+                {/*
+                  * **Marks open here too, and this reverses an earlier decision.**
+                  *
+                  * They were withheld on the reasoning that this screen has work on it, so the
+                  * no-pop-over carveout should not apply. The DM overruled it and was right: the
+                  * exercise page is precisely where a learner meets a word they do not know, and a
+                  * concrete example at that moment is worth more than anywhere else.
+                  *
+                  * The rule survives intact, because the rule is about **what is covered**, not
+                  * what is on screen: "anything that would cover the editor, a brief, or a form
+                  * expands in place." A card opens *upward* from its term, and the editor is below
+                  * the Tome — so it covers lesson prose the reader has already passed, which is
+                  * what the rule explicitly allows. `glossary-chips.test.tsx` pins that.
+                  */}
+                <Markdown text={page.lesson} baseLevel={2} term={term} />
               </>
             )}
           </Tome>

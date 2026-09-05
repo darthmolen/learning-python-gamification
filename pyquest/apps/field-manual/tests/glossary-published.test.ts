@@ -12,7 +12,7 @@
  * object.
  */
 
-import { readFileSync, readdirSync, rmSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -64,6 +64,61 @@ describe('the published site defines the words it lists', () => {
     // Area 5's inheritance entry is the one that forced `no-game.test.ts` to widen. If it stopped
     // being published the widening would be dead weight nobody would think to remove.
     expect(area5).toMatch(/class Boss\(Enemy\)/);
+  });
+});
+
+describe('glossary marks never reach the published site', () => {
+  /**
+   * `[[print]]` is authored for the Tome, and `marked` prints unknown syntax rather than ignoring
+   * it. This is the gate that stops a marked-up lesson publishing double brackets to a site whose
+   * whole claim is that the curriculum stands without the game.
+   *
+   * It is asserted over the built HTML rather than over `stripMarks`, because the unit test proves
+   * the function and this proves it is *called* — `briefBody` is one line away from being the
+   * place somebody adds a second renderer that forgets.
+   */
+  it('publishes no literal double bracket anywhere', () => {
+    const offenders = pages.filter((p) => p.html.includes('[[')).map((p) => p.file);
+    expect(offenders, 'a glossary mark reached the published site').toEqual([]);
+  });
+
+  it('renders the display text of a mark, not the id', () => {
+    /**
+     * Built from a fixture rather than the real curriculum, because the authoring pass is Phase 4
+     * and this gate has to work before a single lesson carries a mark. Otherwise the check passes
+     * today for the reason that there is nothing to catch, and stops passing the moment it matters.
+     */
+    const marked = join(out, '..', 'dist-marks-fixture');
+    rmSync(marked, { recursive: true, force: true });
+    mkdirSync(join(marked, 'curriculum', 'area-0'), { recursive: true });
+    writeFileSync(
+      join(marked, 'curriculum', 'area-0', 'area.yml'),
+      ['area: 0', 'title: First Light', 'authoring: complete', ''].join('\n'),
+      'utf8',
+    );
+    writeFileSync(
+      join(marked, 'curriculum', 'area-0', 'lesson.md'),
+      [
+        '# First Light',
+        '',
+        'Use [[print]] to see it, and read the [[reading-errors|error message]] on purpose.',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+
+    const outDir = join(out, '..', 'dist-marks-out');
+    buildSite({ contentRoot: marked, outDir });
+    const html = readFileSync(join(outDir, 'area-0.html'), 'utf8');
+
+    expect(html).not.toContain('[[');
+    expect(html).toContain('Use print to see it');
+    expect(html).toContain('read the error message on purpose');
+    // The id must not leak where the author asked for different words.
+    expect(html).not.toContain('reading-errors');
+
+    rmSync(marked, { recursive: true, force: true });
+    rmSync(outDir, { recursive: true, force: true });
   });
 });
 

@@ -338,12 +338,26 @@ Three lines and a window opens with a line drawn across it. The dot matters:
 \`turtle.forward\` means **the \`forward\` that belongs to \`turtle\`**.
 `;
 
+/**
+ * Area 3's lesson carries three glossary marks, and the first one is the interesting case.
+ *
+ * `[[print]]` is an **Area 0** concept marked in an **Area 3** lesson — a cross-area reference,
+ * which is what a curriculum that builds on itself looks like and what an area-scoped lookup
+ * would silently fail to resolve. The real `curriculum/area-3/lesson.draft.md` already writes
+ * `print` and `range` for the same reason, so the fixture is not inventing a shape.
+ *
+ * `[[iteration]]` is the fixture's concept with no definition, so the offline app can show what an
+ * unwritten glossary entry looks like without waiting for an area to be authored.
+ */
 const AREA_3_LESSON = `# Collections
 
-A list holds things in order, and the order is the point.
+A [[list]] holds things in order, and the order is the point. You already know how to
+[[print]] one.
 
 - \`inventory[0]\` is the first slot, not the zeroth thing you own.
 - \`len(inventory)\` counts them.
+
+Walking one is [[iteration|going through it]], one item at a time.
 `;
 
 /**

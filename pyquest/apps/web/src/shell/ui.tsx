@@ -92,6 +92,24 @@ export function ConceptList({
 
   return (
     <div style={style}>
+      {/*
+        * **A control that looks like a label is a control nobody uses.** These are `<button>`s and
+        * they read as tags — thin border, mono, muted — so the DM's verdict on the built screen was
+        * exactly right: "nothing on the chip says CLICK ME."
+        *
+        * A standing sentence rather than a hover hint or a changing label. CLAUDE.md: "Labels never
+        * change with state." A learner who has never pressed one needs telling once, in words that
+        * stay true whether or not something is open — and a hint that appears on hover is no use to
+        * the person who does not know there is anything to hover.
+        *
+        * Only when the chips actually do something. The Area screen renders them inert, and telling
+        * that reader to click a word would be a lie.
+        */}
+      {expandable && (
+        <Mono style={{ display: 'block', marginBottom: '6px', fontSize: '11px' }}>
+          Click a word for what it means.
+        </Mono>
+      )}
       <ul
         aria-label={label}
         style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', listStyle: 'none', margin: 0, padding: 0 }}
@@ -106,8 +124,15 @@ export function ConceptList({
                 style={{
                   ...chip,
                   background: open === concept.id ? color.panel : 'transparent',
-                  borderColor: open === concept.id ? color.accentMid : color.border,
-                  color: open === concept.id ? color.fgBright : color.secondary,
+                  /*
+                   * An expandable chip is drawn in the accent, and an inert one is not. The border
+                   * alone was the whole difference between "a word" and "a control", at 11.5px, in
+                   * the same grey as the prose around it — which is how a reference nobody pressed
+                   * came to be shipped. Colour is the affordance; the sentence above is the
+                   * instruction; neither alone was enough.
+                   */
+                  borderColor: open === concept.id ? color.accent : color.accentMid,
+                  color: open === concept.id ? color.fgBright : color.accent,
                   cursor: 'pointer',
                 }}
               >

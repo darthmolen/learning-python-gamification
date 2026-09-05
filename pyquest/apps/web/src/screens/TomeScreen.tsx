@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { CampaignView, Tome as TomeContent } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
@@ -67,6 +67,22 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
   });
 
   const entry = syllabus[selected];
+
+  /**
+   * Every concept in the Tome, not just this area's.
+   *
+   * **Area-scoped would break on the first real lesson.** `curriculum/area-3/lesson.draft.md`
+   * already writes `print` and `range` — Area 0 and Area 1 concepts in an Area 3 lesson, which is
+   * exactly what a curriculum that builds on itself looks like. Worse, `validate:content` would
+   * pass them, because it checks the registry rather than the area: a cross-area mark would
+   * validate green and render dead, and nobody would find out from a test.
+   *
+   * The whole response is already in hand, so the lookup costs one map.
+   */
+  const term = useMemo(() => {
+    const byId = new Map(content.areas.flatMap((a) => a.concepts.map((c) => [c.id, c] as const)));
+    return (id: string) => byId.get(id);
+  }, [content]);
 
   /*
    * Derived from what actually has weeks, not from a constant. ADR 0002 wanted `max(weeks.to)`
@@ -255,7 +271,7 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
                 every area in it is open.
               </Mono>
             ) : (
-              <Markdown text={entry.lesson} />
+              <Markdown text={entry.lesson} term={term} />
             )}
           </div>
         </div>

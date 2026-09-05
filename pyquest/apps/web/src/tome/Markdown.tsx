@@ -1,5 +1,8 @@
 import { Fragment, type ReactNode } from 'react';
+import type { ConceptView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
+import { GlossaryTerm } from './GlossaryTerm';
+import { familyFor } from './families.ts';
 
 /**
  * The lessons, rendered — a documented subset of markdown, straight to React elements.
@@ -34,8 +37,39 @@ const TABLE_ROW = /^\s*\|.*\|\s*$/;
 /** The `|---|---|` line, which is what separates a table from a paragraph full of pipes. */
 const TABLE_RULE = /^\s*\|[\s:|-]+\|\s*$/;
 
-const cells = (line: string): string[] =>
-  line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim());
+/**
+ * One table row, split into cells on the pipes that are actually separators.
+ *
+ * **A pipe inside `[[id|words]]` is not a separator**, and a plain `.split('|')` cannot tell the
+ * difference: a two-cell row carrying one piped glossary mark comes out as three, so the table
+ * renders wrong rather than failing, which is the worse of the two. The scan below walks the line
+ * and steps over a mark whole.
+ */
+const cells = (line: string): string[] => {
+  const inner = line.trim().replace(/^\|/, '').replace(/\|$/, '');
+  const out: string[] = [];
+  let current = '';
+
+  for (let i = 0; i < inner.length; i += 1) {
+    if (inner.startsWith('[[', i)) {
+      const close = inner.indexOf(']]', i);
+      if (close !== -1) {
+        current += inner.slice(i, close + 2);
+        i = close + 1;
+        continue;
+      }
+    }
+    if (inner[i] === '|') {
+      out.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += inner[i];
+  }
+  out.push(current.trim());
+
+  return out;
+};
 
 /**
  * Markdown to blocks.
@@ -144,7 +178,18 @@ function parse(markdown: string): Block[] {
  * sentence whose entire job is to distinguish `7` from `"7"` set both in the prose face. Code does
  * not recurse for the opposite reason: inside a code span an asterisk is an operator.
  */
-const INLINE = /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+/**
+ * A glossary mark is matched here, before code, bold and italic — and **before a table row is
+ * ever split**, which is the part that matters.
+ *
+ * `cells()` splits a row on `|`, and `[[reading-errors|the error message]]` contains one. A row
+ * of two cells carrying a piped mark would come out as three, silently, and the table would be
+ * wrong rather than broken. So `cells()` is mark-aware, and this pattern is what it and `inline`
+ * agree on.
+ */
+const MARK = /\[\[[^\]]+\]\]/;
+
+const INLINE = /(\[\[[^\]]+\]\]|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
 
 const codeStyle: React.CSSProperties = {
   fontFamily: font.mono,
@@ -152,21 +197,92 @@ const codeStyle: React.CSSProperties = {
   color: color.accent,
 };
 
-function inline(text: string): ReactNode {
+/**
+ * Resolves a concept id to what a card would show, or `undefined`.
+ *
+ * The Tome screen passes one. **The Quest screen deliberately does not**, and that is the whole
+ * of how CLAUDE.md's no-pop-over rule is kept: with no lookup a mark renders as the author's
+ * words, so nothing floats above the editor. The Field Manual never reaches this code at all —
+ * it strips marks at build time.
+ */
+export type TermLookup = (id: string) => ConceptView | undefined;
+
+/**
+ * The concept id a code span names, if any.
+ *
+ * `print` and `print()` are the same word and both resolve. `int(sides)` does **not**: that is a
+ * *use* of `int` rather than the word, and matching it would underline text whose live part the
+ * reader cannot identify — half a call is not a term. Predictability beats reach here, because the
+ * underline is the only signal that anything is behind the word.
+ */
+function conceptIn(code: string): string {
+  return code.endsWith('()') ? code.slice(0, -2) : code;
+}
+
+/** `[[id]]` or `[[id|words]]`, already known to be a mark. Target first, MediaWiki's order. */
+function splitMark(part: string): { id: string; text: string } {
+  const body = part.slice(2, -2);
+  const bar = body.indexOf('|');
+  const id = (bar === -1 ? body : body.slice(0, bar)).trim();
+  const words = bar === -1 ? '' : body.slice(bar + 1).trim();
+  return { id, text: words === '' ? id : words };
+}
+
+function inline(text: string, term?: TermLookup): ReactNode {
   return text.split(INLINE).map((part, index) => {
     const key = `${index}-${part}`;
+    if (MARK.test(part) && part.startsWith('[[')) {
+      const { id, text: words } = splitMark(part);
+      const concept = term?.(id);
+      /*
+       * No lookup, or an id the lookup does not know: the author's words, plain. `validate:content`
+       * refuses an unknown id so the second case cannot ship — but a screen that printed `[[` at a
+       * learner because a check was skipped would be a worse failure than the one being guarded.
+       */
+      if (concept === undefined || term === undefined) return <Fragment key={key}>{words}</Fragment>;
+      return <GlossaryTerm key={key} concept={concept} text={words} family={familyFor(concept, term)} />;
+    }
     if (part.startsWith('`') && part.endsWith('`') && part.length > 1) {
+      const code = part.slice(1, -1);
+      /**
+       * **Inline code that names a concept is live, and every occurrence of it.**
+       *
+       * Authored `[[marks]]` cover prose, where the concept is named in words no matcher would
+       * find — "Variables", "Reading an error". This covers the other half, and the half a learner
+       * actually meets: the curriculum writes every Python word as code, so `print` appears a
+       * dozen times in Area 0 and, before this, exactly one of them opened.
+       *
+       * That was worse than none. "I see the word but I can't hover in the text" — a reference
+       * that works one time in twelve teaches a reader that hovering does not work.
+       *
+       * The earlier objection was that automatic matching "lights up seventeen spans", and it was
+       * measured. It was also about the wrong thing: it feared decoration added to *prose*. A code
+       * span is already accent mono, set apart from the sentence around it. Making it live adds a
+       * dotted underline and nothing else.
+       */
+      const concept = term?.(conceptIn(code));
+      if (concept !== undefined && term !== undefined) {
+        return (
+          <GlossaryTerm
+            key={key}
+            concept={concept}
+            text={code}
+            code
+            family={familyFor(concept, term)}
+          />
+        );
+      }
       return (
         <code key={key} style={codeStyle}>
-          {part.slice(1, -1)}
+          {code}
         </code>
       );
     }
     if (part.startsWith('**') && part.endsWith('**') && part.length > 3) {
-      return <strong key={key}>{inline(part.slice(2, -2))}</strong>;
+      return <strong key={key}>{inline(part.slice(2, -2), term)}</strong>;
     }
     if (part.startsWith('*') && part.endsWith('*') && part.length > 1) {
-      return <em key={key}>{inline(part.slice(1, -1))}</em>;
+      return <em key={key}>{inline(part.slice(1, -1), term)}</em>;
     }
     return <Fragment key={key}>{part}</Fragment>;
   });
@@ -184,7 +300,20 @@ const cellStyle: React.CSSProperties = {
  * instead of starting a second one. The Tome screen prints an `h2` above this and takes the
  * default; the Quest screen's `h1` is the quest, so it passes 2.
  */
-export function Markdown({ text, baseLevel = 3 }: { text: string; baseLevel?: number }): ReactNode {
+export function Markdown({
+  text,
+  baseLevel = 3,
+  term,
+}: {
+  text: string;
+  baseLevel?: number;
+  /**
+   * Optional, and the default is the case that matters. Two of the three surfaces that render a
+   * lesson pass nothing: the Quest screen, because a card must never float above the editor, and
+   * anything else that has not thought about it. With no lookup a mark is the author's words.
+   */
+  term?: TermLookup;
+}): ReactNode {
   return (
     <div style={{ color: color.fgBright, fontSize: '14.5px', lineHeight: 1.75 }}>
       {parse(text).map((block, index) => {
@@ -204,7 +333,7 @@ export function Markdown({ text, baseLevel = 3 }: { text: string; baseLevel?: nu
                 color: color.fg,
               }}
             >
-              {inline(block.text)}
+              {inline(block.text, term)}
             </Tag>
           );
         }
@@ -236,7 +365,7 @@ export function Markdown({ text, baseLevel = 3 }: { text: string; baseLevel?: nu
             <Tag key={key} style={{ margin: '0 0 16px', paddingLeft: '22px' }}>
               {block.items.map((item, itemIndex) => (
                 <li key={`${itemIndex}-${item}`} style={{ marginBottom: '6px' }}>
-                  {inline(item)}
+                  {inline(item, term)}
                 </li>
               ))}
             </Tag>
@@ -253,7 +382,7 @@ export function Markdown({ text, baseLevel = 3 }: { text: string; baseLevel?: nu
                       key={`${headingIndex}-${heading}`}
                       style={{ ...cellStyle, color: color.secondary, fontWeight: 600 }}
                     >
-                      {inline(heading)}
+                      {inline(heading, term)}
                     </th>
                   ))}
                 </tr>
@@ -263,7 +392,7 @@ export function Markdown({ text, baseLevel = 3 }: { text: string; baseLevel?: nu
                   <tr key={rowIndex}>
                     {row.map((cell, cellIndex) => (
                       <td key={`${cellIndex}-${cell}`} style={cellStyle}>
-                        {inline(cell)}
+                        {inline(cell, term)}
                       </td>
                     ))}
                   </tr>
@@ -275,7 +404,7 @@ export function Markdown({ text, baseLevel = 3 }: { text: string; baseLevel?: nu
 
         return (
           <p key={key} style={{ margin: '0 0 16px' }}>
-            {inline(block.text)}
+            {inline(block.text, term)}
           </p>
         );
       })}
