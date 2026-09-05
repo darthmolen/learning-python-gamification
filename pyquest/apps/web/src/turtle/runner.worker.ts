@@ -3,6 +3,7 @@ import harnessSource from './harness.py?raw';
 import turtleSource from './turtle.py?raw';
 import type { TurtleOp } from './protocol.ts';
 import { stdinFrom } from './stdin.ts';
+import { streamingStdout } from './stdout.ts';
 
 /**
  * Learner Python, off the main thread.
@@ -59,7 +60,15 @@ interface PyodideApi {
 type LoadPyodide = (options: { indexURL: string }) => Promise<PyodideApi>;
 
 let pyodide: PyodideApi | null = null;
-let stdout = '';
+
+/**
+ * The console, for the life of the worker.
+ *
+ * Module-scoped because `setStdout` is installed once, inside the memoized `boot()`. Each run ends
+ * the stream with `take()` rather than clearing a string, which is what keeps a character split
+ * across the end of one run from surfacing at the top of the next.
+ */
+const console_ = streamingStdout();
 
 async function boot(): Promise<PyodideApi> {
   if (pyodide !== null) return pyodide;
@@ -102,15 +111,13 @@ async function boot(): Promise<PyodideApi> {
    *
    * `write` takes the bytes as Python emits them, so what reaches the console is what the program
    * actually wrote — no line buffer to strand it, and no synthesised `\n` that Python never sent.
-   * `{ stream: true }` because a multi-byte character can be split across two writes.
+   *
+   * The decoding lives in `stdout.ts`, extracted for the reason `stdin.ts` was: it holds state
+   * across writes, and state that outlives a run leaks into the next one. This hook is installed
+   * **once**, because `boot()` memoizes the interpreter — so the decoder behind it is shared by
+   * every run, and ending the stream between them is not optional. See `stdout.ts`.
    */
-  const decoder = new TextDecoder();
-  api.setStdout({
-    write: (buffer) => {
-      stdout += decoder.decode(buffer, { stream: true });
-      return buffer.length;
-    },
-  });
+  api.setStdout({ write: (buffer) => console_.write(buffer) });
 
   pyodide = api;
   return api;
@@ -118,7 +125,9 @@ async function boot(): Promise<PyodideApi> {
 
 async function run(code: string, filename: string, stdin: string): Promise<RunResult> {
   const api = await boot();
-  stdout = '';
+  // Anything left from a previous run, discarded before this one writes a byte. `boot()` may have
+  // just printed nothing at all, but a run that was killed mid-character did not.
+  console_.take();
 
   /*
    * A fresh queue per run, which is what makes pressing Run twice with a different number work
@@ -168,7 +177,9 @@ async function run(code: string, filename: string, stdin: string): Promise<RunRe
     ops = [];
   }
 
-  return { kind: 'result', ops, stdout, error };
+  // `take()` rather than reading a variable: it ends the stream, so a character the program cut in
+  // half is flushed into *this* result instead of waiting to corrupt the next one.
+  return { kind: 'result', ops, stdout: console_.take(), error };
 }
 
 export interface RunFailure {
