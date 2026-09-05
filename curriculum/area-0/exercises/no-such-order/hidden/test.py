@@ -1,6 +1,6 @@
 """Hidden tests for a0-no-such-order. Spec §6.3: these never reach the browser.
 
-Broken sigil 5 from session 3, promoted to a fix-it quest. The starter says
+Session 3's fix-it exercise, promoted to a quest. The starter says
 `turtle.forwrd(100)`. Python finds `turtle` immediately and then finds no such
 order on it — which is why this is not the NameError that The Typo raised.
 

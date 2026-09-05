@@ -13,17 +13,26 @@
  * spreading the object and hoping `.strict()` catches the rest.
  */
 
-import { medalsFor, type Area, type ContentItem, type Medal, type Verifier } from '@pyquest/content';
+import {
+  MEDALS,
+  medalsFor,
+  parseGlossary,
+  type Area,
+  type ContentItem,
+  type Medal,
+  type Verifier,
+} from '@pyquest/content';
 import {
   type AreaCard,
   type AreaView,
   type CampaignView,
+  type ConceptView,
+  type MedalDescription,
   type MedalSlot,
   type PlayerProgress,
   type PublicVerifier,
   type QuestView,
   type TomeArea,
-  type TomeConcept,
 } from '@pyquest/contract';
 import {
   IllegalModifierSetError,
@@ -74,6 +83,26 @@ function heldOn(progress: PlayerProgress, questId: string): Medal[] {
  * A slot whose combination §5.12 forbids is omitted rather than priced at zero. The engine throws
  * `IllegalModifierSetError` for Conjured beside Ironman; a zero would render as "take it, it pays
  * nothing", which is a different and false statement about a move that is not available at all.
+ *
+ * **A slot that would pay a negative is omitted for the same reason, and that one reached a
+ * browser.** Conjured is −5 DC, so on `a0-name-tag` — DC 5, the lowest in the campaign — a player
+ * holding Cleared and Idiomatic is already priced at DC 8 and paid 16. Adding Conjured puts the
+ * effective DC at 3, `effectiveDC` clamps that up to the floor of 5, and the total falls to 10.
+ * §5.10 says a medal "pays the difference", and the difference is −6.
+ *
+ * `MedalSlotSchema.xp` is a non-negative `CountSchema`, so the view did not render wrongly — it
+ * threw, and `GET /quests/a0-name-tag` answered 500. Both players `seedHousehold` writes hold
+ * that pair, so a quest in the first area was unreachable for the whole household.
+ *
+ * Dropping it is the honest answer rather than flooring it at zero: §5.10 reads a zero as a brag,
+ * a medal earned for depth nothing required, and this is the opposite — an offer that cannot be
+ * taken, because XP already awarded is never clawed back (`progress.ts` on `xpAwarded`: "re-pricing
+ * history reports a figure the player was never paid"). The Quest screen already says what an
+ * absent slot means, and for this case it says the true thing: "not with a medal you hold."
+ *
+ * Whether Conjured should be *offerable* after Cleared at all is a spec question — you cannot
+ * retroactively have had help — and it is recorded in
+ * `planning/backlog/feature_no-way-to-claim-a-medal_2026-09-02.md` rather than decided here.
  */
 export function medalSlots(item: ContentItem, held: readonly Medal[]): MedalSlot[] {
   const slots: MedalSlot[] = [];
@@ -84,11 +113,12 @@ export function medalSlots(item: ContentItem, held: readonly Medal[]): MedalSlot
   for (const medal of medalsFor(item)) {
     if (held.includes(medal)) continue;
     try {
-      slots.push({
-        medal,
-        effectiveDC: effectiveDC(item.dc, [...held, medal]),
-        xp: medalDelta(kind, item.dc, held, medal),
-      });
+      const xp = medalDelta(kind, item.dc, held, medal);
+      // Not an offer. See the note above: a medal that would pay less than he has already been
+      // given is not a move he can make, and pricing it at zero would say it was.
+      if (xp < 0) continue;
+
+      slots.push({ medal, effectiveDC: effectiveDC(item.dc, [...held, medal]), xp });
     } catch (error) {
       if (error instanceof IllegalModifierSetError) continue;
       throw error;
@@ -121,7 +151,7 @@ export function questView(
     kind: item.kind,
     area: item.area,
     dc: item.dc,
-    concepts: [...item.concepts],
+    concepts: conceptViews(content, item.concepts),
     requires: [...item.requires],
     status,
     brief: content.read(item.brief),
@@ -182,20 +212,127 @@ export function areaView(
 }
 
 /**
- * The Tome: concepts by area, and nothing else.
+ * An area's lesson, and whether it is a draft.
+ *
+ * `lesson.md` wins over `lesson.draft.md`, which is the precedence `apps/field-manual/src/build.ts`
+ * already states: "promoting a lesson is a rename." Mirroring it rather than inventing a second
+ * rule is the point — the two publishers of the same prose must not disagree about which file is
+ * the real one.
+ *
+ * An area with neither returns nothing at all, and the screen says the teaching is unwritten.
+ * That is `build.ts`'s rule as well: "an area with neither is an area whose teaching is unwritten,
+ * and the page says so rather than pretending."
+ */
+function areaLesson(content: ContentRoot, area: Area): { lesson?: string; lessonIsDraft: boolean } {
+  const finished = `area-${area}/lesson.md`;
+  if (content.exists(finished)) return { lesson: content.read(finished), lessonIsDraft: false };
+
+  const draft = `area-${area}/lesson.draft.md`;
+  if (content.exists(draft)) return { lesson: content.read(draft), lessonIsDraft: true };
+
+  return { lessonIsDraft: false };
+}
+
+/**
+ * One area's definitions, keyed by concept id.
+ *
+ * Read per request, for the same reason `areaLesson` is: a definition is prose the DM fixes
+ * between sessions, and reading it at boot would mean a container restart to correct a typo the
+ * learner is looking at. Eight small files behind a route that is already reading a lesson from
+ * the same directory.
+ *
+ * An area with no `glossary.md` yields an empty map rather than an error. The validator has the
+ * same rule and says why: areas are authored one at a time and the file arrives with the
+ * teaching, so demanding it everywhere would fail an area whose lesson is not written yet.
+ */
+function areaGlossary(content: ContentRoot, area: Area): ReadonlyMap<string, string> {
+  const file = `area-${area}/glossary.md`;
+  return content.exists(file) ? parseGlossary(content.read(file)) : new Map();
+}
+
+/**
+ * A concept id, dressed for a screen: its label, and its definition when one is written.
+ *
+ * The join lives here rather than in the SPA because the API already holds the concept table.
+ * The alternative that was nearly shipped is worth naming — the Quest screen fetching the whole
+ * Tome in order to label one chip — and it is worse in the way that matters: it puts a screen's
+ * correctness at the mercy of a second request it does not otherwise need.
+ *
+ * **Absent means unwritten, and the field is left off rather than emptied.** §5.1a's honesty rule
+ * is the same one the tilde on an estimated total keeps: a blank string would render as a
+ * definition that says nothing, which is a worse lie than admitting there is none.
+ */
+function conceptViews(content: ContentRoot, ids: readonly string[]): ConceptView[] {
+  const glossaries = new Map<Area, ReadonlyMap<string, string>>();
+
+  return ids.map((id) => {
+    const concept = CONCEPTS.find((candidate) => candidate.id === id);
+    // An id with no concept cannot happen — `validate:content` refuses it — but the label has to
+    // come from somewhere if it ever does, and the id is the honest fallback.
+    const label = concept?.label ?? id;
+    if (concept === undefined) return { id, label };
+
+    let glossary = glossaries.get(concept.area);
+    if (glossary === undefined) {
+      glossary = areaGlossary(content, concept.area);
+      glossaries.set(concept.area, glossary);
+    }
+
+    const definition = glossary.get(id);
+    return definition === undefined ? { id, label } : { id, label, definition };
+  });
+}
+
+/**
+ * What each medal is, from `game/medals.md`.
+ *
+ * Game text on a route of its own — `MedalsSchema` in the contract argues why it is not a field
+ * on `MedalSlot`. The file's headings are medal ids, exactly as the glossary's are concept ids,
+ * so the same parser reads it: one rule for what a heading is, in the one module that owns it.
+ *
+ * **No `game/` yields no medals, and that is the supported answer.** Deleting the overlay has to
+ * leave the curriculum standing (CLAUDE.md), and a route that threw here would make the SPA a
+ * second casualty of a deletion the test suite performs on purpose.
+ */
+export function medalsView(content: ContentRoot): MedalDescription[] {
+  const markdown = content.readGame('medals.md');
+  if (markdown === undefined) return [];
+
+  const described = parseGlossary(markdown);
+
+  return MEDALS.flatMap((medal) => {
+    const description = described.get(medal);
+    // A medal the file does not describe is left out rather than given an empty string. The
+    // screen draws its card either way; what it must not do is print a heading over nothing.
+    return description === undefined ? [] : [{ medal, description }];
+  });
+}
+
+/**
+ * The Tome: concepts by area, and the lesson that teaches them.
  *
  * Not player-scoped and carrying no unlocked state. The syllabus is content and content is the
  * same for everyone (§6.7); the SPA holds the player's areas from `/campaign` and derives what is
  * open from the two, which is a presentation decision and therefore the UI's.
+ *
+ * The lesson is content by the same test, which is why it belongs here rather than on a
+ * player-scoped route: every player reads the same page, and §6.8's promise that "every page is
+ * open from day one" is only true if nothing about the reader is consulted to serve it.
  */
-export function tomeAreas(): TomeArea[] {
-  const byArea = new Map<Area, TomeConcept[]>();
+export function tomeAreas(content: ContentRoot): TomeArea[] {
+  const byArea = new Map<Area, string[]>();
   for (const concept of CONCEPTS) {
     const listed = byArea.get(concept.area) ?? [];
-    listed.push({ id: concept.id, label: concept.label });
+    listed.push(concept.id);
     byArea.set(concept.area, listed);
   }
   return [...byArea.entries()]
-    .map(([area, concepts]) => ({ area, concepts }))
+    .map(([area, ids]) => ({
+      area,
+      // The same join the quest view uses, so the two routes cannot disagree about what a word
+      // means — which they could, and silently, when each did its own lookup.
+      concepts: conceptViews(content, ids),
+      ...areaLesson(content, area),
+    }))
     .sort((a, b) => a.area - b.area);
 }

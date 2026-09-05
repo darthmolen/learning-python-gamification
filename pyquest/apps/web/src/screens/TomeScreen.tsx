@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { CampaignView, Tome as TomeContent } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
@@ -6,7 +6,8 @@ import { getCampaign, getTome } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
-import { Eyebrow, Mono } from '../shell/ui';
+import { ConceptList, Eyebrow, Mono } from '../shell/ui';
+import { Markdown } from '../tome/Markdown';
 
 /**
  * The Tome as a rail destination: **the whole field manual, open.**
@@ -45,14 +46,43 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
   const navigate = useNavigate();
   const [selected, setSelected] = useState(0);
 
-  /** One row per area: the name content knows, and the concept count the syllabus knows. */
-  const syllabus = campaign.areas.map((card) => ({
-    area: card.area,
-    identity: card.identity,
-    concepts: content.areas.find((a) => a.area === card.area)?.concepts.length ?? 0,
-  }));
+  /**
+   * One row per area: the name content knows, and the syllabus and lesson the Tome knows.
+   *
+   * **The concepts travel as the list, not as its length.** This was `page?.concepts.length ?? 0`,
+   * which was all the screen needed while it only printed a number — and it is exactly how a
+   * count and a list come to disagree later, because nothing structural stops the two being fed
+   * separately. A syllabus that says seventeen beside a list of twelve is worse than one that
+   * says nothing, since it looks authoritative. One source, counted where it is printed.
+   */
+  const syllabus = campaign.areas.map((card) => {
+    const page = content.areas.find((a) => a.area === card.area);
+    return {
+      area: card.area,
+      identity: card.identity,
+      concepts: page?.concepts ?? [],
+      lesson: page?.lesson,
+      lessonIsDraft: page?.lessonIsDraft ?? false,
+    };
+  });
 
   const entry = syllabus[selected];
+
+  /**
+   * Every concept in the Tome, not just this area's.
+   *
+   * **Area-scoped would break on the first real lesson.** `curriculum/area-3/lesson.draft.md`
+   * already writes `print` and `range` — Area 0 and Area 1 concepts in an Area 3 lesson, which is
+   * exactly what a curriculum that builds on itself looks like. Worse, `validate:content` would
+   * pass them, because it checks the registry rather than the area: a cross-area mark would
+   * validate green and render dead, and nobody would find out from a test.
+   *
+   * The whole response is already in hand, so the lookup costs one map.
+   */
+  const term = useMemo(() => {
+    const byId = new Map(content.areas.flatMap((a) => a.concepts.map((c) => [c.id, c] as const)));
+    return (id: string) => byId.get(id);
+  }, [content]);
 
   /*
    * Derived from what actually has weeks, not from a constant. ADR 0002 wanted `max(weeks.to)`
@@ -165,7 +195,7 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
                     </Mono>
                   </span>
                   <Mono style={{ display: 'block', fontSize: '10px', color: '#4a5361', marginLeft: '22px' }}>
-                    {`${item.concepts} concepts`}
+                    {`${item.concepts.length} concepts`}
                   </Mono>
                 </button>
               );
@@ -192,8 +222,8 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
             </h2>
             <p style={{ margin: '0 0 4px', color: color.secondary }}>
               {entry.identity === undefined
-                ? `${entry.concepts} concepts · everything below is on the Boss ${entry.area} specification.`
-                : `Weeks ${entry.identity.weeks.from}–${entry.identity.weeks.to} · ${entry.concepts} concepts · everything below is on the Boss ${entry.area} specification.`}
+                ? `${entry.concepts.length} concepts · everything below is on the Boss ${entry.area} specification.`
+                : `Weeks ${entry.identity.weeks.from}–${entry.identity.weeks.to} · ${entry.concepts.length} concepts · everything below is on the Boss ${entry.area} specification.`}
             </p>
             <div style={{ height: '1px', background: color.border, margin: '24px 0' }} />
 
@@ -202,14 +232,47 @@ function Manual({ campaign, content }: { campaign: CampaignView; content: TomeCo
             </p>
 
             {/*
-              * The manual's sections, prose and code samples are authored content the API has yet
-              * to serve — there is no contract shape for a Tome page. The syllabus above is real;
-              * this is honest about not being.
+              * The words the header just counted.
+              *
+              * **Above the lesson, because an area's vocabulary is its index.** The count sits two
+              * lines up; the terms belong with it rather than past a full page of teaching, and a
+              * reader who came here to look one word up should not have to read the area to find
+              * it. As terms it is three rows — nine to seventeen per area — and only one
+              * definition is open at a time, so the lesson is pushed down rather than buried.
+              *
+              * `expandable` is the same control the Quest screen's chips are, deliberately. Two
+              * screens doing the same job with two interactions is how they start behaving
+              * differently, and this one is already tested against the Tome's own rules: no
+              * dialog, no scrim, in flow, nothing underneath unmounted.
+              *
+              * An area the syllabus does not carry renders nothing here rather than an empty
+              * heading — `payloads.ts` declines to invent a blurb for the same reason.
               */}
-            <Mono style={{ display: 'block', lineHeight: 1.7 }}>
-              The written manual for this area is content the API has yet to serve. The syllabus
-              beside it is real, and every area in it is open.
-            </Mono>
+            {entry.concepts.length > 0 && (
+              <div style={{ margin: '0 0 24px' }}>
+                <Eyebrow style={{ marginBottom: '8px' }}>Vocabulary</Eyebrow>
+                <ConceptList concepts={entry.concepts} label="Vocabulary" expandable />
+              </div>
+            )}
+
+            {/*
+              * The teaching itself, from `curriculum/area-N/lesson.md`. An area with none says so
+              * rather than showing an empty page — the same honesty §5.1a asks of the tilde, and
+              * the rule `apps/field-manual/src/build.ts` already keeps for the same prose.
+              */}
+            {entry.lessonIsDraft && (
+              <Mono style={{ display: 'block', marginBottom: '18px', lineHeight: 1.7, color: color.badge }}>
+                This lesson is a draft. It was written ahead of the sessions that will correct it.
+              </Mono>
+            )}
+            {entry.lesson === undefined ? (
+              <Mono style={{ display: 'block', lineHeight: 1.7 }}>
+                The lesson for this area is not written yet. The syllabus beside it is real, and
+                every area in it is open.
+              </Mono>
+            ) : (
+              <Markdown text={entry.lesson} term={term} />
+            )}
           </div>
         </div>
       </div>

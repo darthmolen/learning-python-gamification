@@ -1,0 +1,9 @@
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |api| tests/glossary-wire.test.ts > the medals route > answers with an empty list when game/ is absent, rather than failing
+Error: no game/
+ ❯ medalsView src/views.ts:299:37
+    297| export function medalsView(content: ContentRoot): MedalDescription[] {
+    298|   const markdown = content.readGame('medals.md');
+    299|   if (markdown === undefined) throw new Error("no game/");
+       |                                     ^

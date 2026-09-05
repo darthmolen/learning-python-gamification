@@ -1,6 +1,6 @@
 """Never Closed — the error that arrives before the program starts.
 
-Broken sigil 3, from session 3. Something is missing on one line and Python
+You met this one in session 3. Something is missing on one line and Python
 never gets as far as running anything.
 
 Two things to notice before you fix it, and neither is the missing bracket:

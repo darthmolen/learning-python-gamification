@@ -22,7 +22,9 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
-import { conceptArea } from './concepts.ts';
+import { CONCEPTS, conceptArea, isKnownConcept } from './concepts.ts';
+import { parseGlossary } from './glossary.ts';
+import { parseMarks } from './marks.ts';
 import {
   parseContentItem,
   parseAreaManifest,
@@ -47,7 +49,9 @@ export type ValidationRule =
   | 'missing-file'
   | 'concept-above-area'
   | 'missing-area-manifest'
-  | 'pace-in-lesson';
+  | 'pace-in-lesson'
+  | 'glossary-gap'
+  | 'unknown-mark';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -383,6 +387,8 @@ export function checkContent(source: ContentSource): ContentSet {
   issues.push(...conceptAreaIssues(items, byId(records), locate));
   issues.push(...manifestIssues(items, manifests, byId(records), locate));
   issues.push(...paceIssues(roots));
+  issues.push(...glossaryIssues(roots));
+  issues.push(...markIssues(roots));
 
   issues.sort(
     (a, b) => a.file.localeCompare(b.file) || (a.line ?? 0) - (b.line ?? 0) || a.rule.localeCompare(b.rule),
@@ -604,6 +610,61 @@ const prose = (markdown: string): string =>
  * `mandala-brief.md` says "next week is the boss" three quarters of the way down, and it is just
  * as false for a learner who took a fortnight over the rehearsal.
  */
+/**
+ * Every `[[mark]]` names a concept the registry knows.
+ *
+ * A mark is a reference to a concept id, so it lives under the rule CLAUDE.md already states:
+ * "authored content is validated against `concepts.ts`. If a concept id changes, content breaks —
+ * that is `validate:content` doing its job."
+ *
+ * **This one earns the check more than the others, because a mistyped id fails silently at the
+ * reader.** A dangling `requires` locks a quest and somebody notices within a session. A mark
+ * naming `whlie` renders as the word "whlie" in ordinary prose: the definition the author meant
+ * to offer is simply never offered, the page looks finished, and nothing anywhere says otherwise.
+ *
+ * Scoped by `readsAsLesson`, the predicate ADR 0006 already defined — lessons and briefs, never
+ * session plans or DM guides. Reusing it rather than declaring a second scope is the point: two
+ * predicates that disagree about what a learner reads is the drift `parseGlossary` was extracted
+ * to prevent, one syntax later.
+ *
+ * The area is deliberately **not** checked. A lesson may name a concept from an earlier area —
+ * `area-3/lesson.draft.md` already writes `print` and `range` — and that is what a curriculum
+ * building on itself looks like. Whether it may refer *forward* is `concept-above-area`'s
+ * question about quests, and this rule does not reopen it.
+ */
+function markIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const trees = roots.curriculum === roots.game ? [roots.curriculum] : [roots.curriculum, roots.game];
+  const issues: ContentIssue[] = [];
+
+  for (const root of trees) {
+    if (!existsSync(root)) continue;
+    const files = readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+      .map((entry) => toPosix(join(entry.parentPath, entry.name).slice(root.length + 1)))
+      .filter(readsAsLesson)
+      .sort();
+
+    for (const file of files) {
+      const text = readFileSync(join(root, file), 'utf8');
+
+      for (const mark of parseMarks(text)) {
+        if (isKnownConcept(mark.id)) continue;
+
+        issues.push({
+          file,
+          // The line, because a lesson runs to hundreds of them and the id is three characters.
+          line: text.slice(0, mark.start).split('\n').length,
+          rule: 'unknown-mark',
+          message: `\`[[${mark.id}]]\` is not a concept`,
+          fix: 'use an id from packages/content/src/concepts.ts, add the concept there if the curriculum really teaches it, or write `\\[[` for a literal',
+        });
+      }
+    }
+  }
+
+  return issues;
+}
+
 function paceIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
   const trees = roots.curriculum === roots.game ? [roots.curriculum] : [roots.curriculum, roots.game];
   const issues: ContentIssue[] = [];
@@ -629,6 +690,76 @@ function paceIssues(roots: { curriculum: string; game: string }): ContentIssue[]
             fix: 'say it in sequence — "next session", "by the end of this area", "the first time you go looking" — or, if the duration is the subject rather than the reader\'s pace, mark the line `<!-- pace-ok: why -->`',
           });
         }
+      });
+    }
+  }
+
+  return issues;
+}
+
+/**
+ * Every concept an area teaches has a definition, and every definition names a real concept.
+ *
+ * CLAUDE.md draws this edge already: authored content is validated against `concepts.ts`, and a
+ * changed id has to break content rather than drift from it. A glossary is the sharpest case,
+ * because the id is not merely referenced — it is the key the definition hangs on.
+ *
+ * Three ways to drift, all silent without this:
+ *
+ * * a concept with no definition is a chip the learner clicks and gets nothing from;
+ * * a misspelled heading is the same failure, with a definition nobody will ever reach;
+ * * a real concept defined in the wrong area's file puts the word on a page he opens before he
+ *   has met it, which is the mistake `concept-above-area` already refuses for quests.
+ *
+ * **An area with no `glossary.md` is not an issue.** Areas are authored one at a time and the
+ * file arrives with the teaching; a rule that demanded it everywhere would fail an area whose
+ * lesson has not been written yet, which is the state `build.ts` is careful to allow.
+ *
+ * Medals live in `game/` and are deliberately not checked here. Deleting `game/` has to leave a
+ * curriculum that still validates, so a curriculum rule may not depend on a file in it.
+ */
+function glossaryIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const issues: ContentIssue[] = [];
+  const areas = new Set(CONCEPTS.map((concept) => concept.area));
+
+  for (const area of [...areas].sort()) {
+    const file = `area-${area}/glossary.md`;
+    const path = join(roots.curriculum, file);
+    if (!existsSync(path)) continue;
+
+    // `parseGlossary` rather than a regex here. The API and the Field Manual read this same file,
+    // and a heading rule written three times is three chances to disagree about what a heading
+    // is — silently, because each of them would still pass its own tests. `glossary.ts` says why
+    // a fenced `##` is the case that makes the difference.
+    const defined = [...parseGlossary(readFileSync(path, 'utf8')).keys()];
+
+    const expected = CONCEPTS.filter((concept) => concept.area === area).map((c) => c.id);
+    const missing = expected.filter((id) => !defined.includes(id));
+
+    if (missing.length > 0) {
+      issues.push({
+        file,
+        rule: 'glossary-gap',
+        message: `no definition for ${missing.join(', ')}`,
+        fix: `add a \`## <id>\` section for each, or move the concept in concepts.ts if it belongs to another area`,
+      });
+    }
+
+    for (const heading of defined) {
+      if (expected.includes(heading)) continue;
+
+      const elsewhere = CONCEPTS.find((concept) => concept.id === heading);
+      issues.push({
+        file,
+        rule: 'glossary-gap',
+        message:
+          elsewhere === undefined
+            ? `\`${heading}\` is not a concept`
+            : `\`${heading}\` is a concept of area ${elsewhere.area}, not area ${area}`,
+        fix:
+          elsewhere === undefined
+            ? 'use an id from packages/content/src/concepts.ts, or add the concept there if the curriculum really teaches it'
+            : `move the section to area-${elsewhere.area}/glossary.md`,
       });
     }
   }

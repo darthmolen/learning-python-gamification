@@ -1,6 +1,6 @@
 """The Typo — read the error before you fix it.
 
-Broken sigil 1, from session 3. It is broken on purpose and the fix is one
+You met this one in session 3. It is broken on purpose and the fix is one
 character, which is not the point. The point is what Python says on the way
 down: the NAME of the error and the LINE it happened on.
 

@@ -39,9 +39,15 @@ describe('the route table', () => {
    * Twenty-first: `GET /api/players/:playerId/journal/template`, added 2026-09-01. The Journal's
    * copy-paste template is authored curriculum that differs per area, so it is served rather than
    * shipped in the SPA — a copy in a React component is content duplicated into a screen.
+   *
+   * Twenty-second: `GET /api/medals`, added 2026-09-03. What a medal *is* comes from
+   * `game/medals.md`, and it is a route rather than a field on `MedalSlot` because a description
+   * is the same for every quest and every player while a slot is this quest's price for this
+   * player. It answers with an empty list when `game/` is absent, which is what keeps deleting the
+   * overlay a degradation rather than an outage.
    */
-  it('carries the twenty-one routes the plan names', () => {
-    expect(API_ROUTES).toHaveLength(21);
+  it('carries the twenty-two routes the plan names', () => {
+    expect(API_ROUTES).toHaveLength(22);
   });
 
   /**
@@ -101,6 +107,10 @@ describe('the route table', () => {
    * plan's whole objective is that sentence. `/api/players` is the DM's roster, deliberately
    * household-wide. The three `/api/session` routes have no player yet; that is what they are for.
    *
+   * `/api/medals` joins `/api/tome` as the second content route with no player in it, and for
+   * the identical reason: what a medal *is* is the same for everyone. §6.7 puts content in git
+   * and progress in Postgres, and both of these read only the first.
+   *
    * The list stays exhaustive so that adding a sixth is a decision somebody makes here, on
    * purpose, rather than a route that quietly serves two households from one URL.
    */
@@ -111,6 +121,7 @@ describe('the route table', () => {
     expect(unscoped).toEqual([
       '/api/jobs/:jobId',
       '/api/me',
+      '/api/medals',
       '/api/players',
       '/api/players',
       '/api/session',
@@ -307,7 +318,7 @@ describe('the public verifier', () => {
       kind: 'quest',
       area: 0,
       dc: 5,
-      concepts: ['print'],
+      concepts: [{ id: 'print', label: 'print', definition: 'Puts a value on the screen.' }],
       requires: [],
       status: 'available',
       brief: '# The Name Tag',
@@ -377,14 +388,32 @@ describe('the composite views', () => {
 
   it('returns concepts by area from the Tome and no progress at all (plan v3)', () => {
     const tome = {
-      areas: [{ area: 0, concepts: [{ id: 'print', label: 'print' }] }],
+      areas: [
+        { area: 0, concepts: [{ id: 'print', label: 'print' }], lesson: '# First Light', lessonIsDraft: false },
+      ],
     };
     expect(TomeSchema.safeParse(tome).success).toBe(true);
     expect(
       TomeSchema.safeParse({
-        areas: [{ area: 0, concepts: [], unlocked: true }],
+        areas: [{ area: 0, concepts: [], unlocked: true, lessonIsDraft: false }],
       }).success,
     ).toBe(false);
+  });
+
+  /**
+   * An unwritten lesson is absent, never an empty string. `''` would render as a page that
+   * silently teaches nothing, where absence makes the screen say the teaching is unwritten —
+   * §5.1a's honesty rule, which is the whole reason the field is optional rather than defaulted.
+   */
+  it('lets an area carry no lesson, but not an empty one, and always says whether it is a draft', () => {
+    const withoutLesson = { areas: [{ area: 0, concepts: [], lessonIsDraft: false }] };
+    expect(TomeSchema.safeParse(withoutLesson).success).toBe(true);
+
+    const empty = { areas: [{ area: 0, concepts: [], lesson: '', lessonIsDraft: false }] };
+    expect(TomeSchema.safeParse(empty).success).toBe(false);
+
+    const noFlag = { areas: [{ area: 0, concepts: [], lesson: '# First Light' }] };
+    expect(TomeSchema.safeParse(noFlag).success).toBe(false);
   });
 
   it('ships the party view with an empty xpSources, which this plan declined to compute', () => {

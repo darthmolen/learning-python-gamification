@@ -31,6 +31,27 @@ def run_program(source: str, filename: str) -> str | None:
     linecache.cache[filename] = (len(source), None, source.splitlines(keepends=True), filename)
 
     try:
+        return _execute(source, filename)
+    finally:
+        # CPython flushes stdout when the interpreter exits, and this stands in for
+        # `python his_file.py`, so it has to as well.
+        #
+        # This is Python's own buffer, and it is one of two that used to strand a learner's
+        # output. `print("side", end=" ")` sits in it until something forces it out; a program
+        # that then raised showed him a traceback and none of what he had printed on the way to
+        # it. Area 0 teaches `print` before it teaches anything else, so "what I printed did not
+        # appear" is the worst possible first lesson about the tool.
+        #
+        # The other buffer is on the JavaScript side and is not reachable from here --
+        # `runner.worker.ts` had to stop asking Pyodide for stdout a line at a time. Neither fix
+        # covers the other: this one was verified by removing it and watching `end=""` vanish
+        # again with the worker already correct.
+        sys.stdout.flush()
+
+
+def _execute(source: str, filename: str) -> str | None:
+    """Compile and run, reporting a failure the way CPython prints one."""
+    try:
         code = compile(source, filename, "exec")
     except SyntaxError:
         # A SyntaxError never ran, so it has no stack worth showing — CPython prints the file,

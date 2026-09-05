@@ -75,3 +75,23 @@ select {
   font: inherit;
   color: inherit;
 }
+
+/*
+ * The quest row's hover and focus, and the second reason this file is CSS.
+ *
+ * The app styles everything with inline `style` props, which have no `:hover` and no
+ * `:focus-visible` — there is no expression for "when the pointer is over this" in a style
+ * object. The whole row is a link now, and a target that big with no reaction to the pointer
+ * reads as a panel rather than as something to press.
+ *
+ * A rule, not a property: `tokens.test.ts` holds `:root`'s custom properties to `palette` in
+ * both directions, and nothing here declares one.
+ */
+a[data-row='quest']:hover {
+  background: var(--crumb-bar) !important;
+}
+
+a[data-row='quest']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}

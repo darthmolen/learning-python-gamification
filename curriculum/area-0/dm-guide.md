@@ -232,7 +232,7 @@ advance taught nobody anything.
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | Types quotes at the input prompt | They are thinking in code at a moment that is not code | "What did it store? Print it and look at every character." |
-| `forward(answer)` raises TypeError | input always returns str. Always | "You have met this exact error before. Which broken sigil was it? What was wrong there?" |
+| `forward(answer)` raises TypeError | input always returns str. Always | "You have met this exact error before. Which quest was it? What was wrong there?" (The Wrong Kind Of Thing.) |
 | Missing the `f`, so the braces print literally | One character | "Read that line out loud, character by character, and compare it to the one above." |
 | Puts quotes inside the braces | A reasonable guess about what braces hold | "What's inside the braces — the name, or text? What is Python being asked to work out?" |
 | Crashes when they type "big" | Correct behavior, and they cannot fix it yet | "Is that your bug or the user's? What would you *want* to happen? Hold that thought until Area 1." |

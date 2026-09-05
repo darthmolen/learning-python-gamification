@@ -21,7 +21,12 @@ export interface AreaView {
   readonly lessonIsDraft?: boolean;
   /** The DM's guide, rendered. Present only in the `dm` build — never emitted then hidden. */
   readonly teachingAid?: string;
-  readonly concepts: readonly { readonly id: string; readonly label: string }[];
+  readonly concepts: readonly {
+    readonly id: string;
+    readonly label: string;
+    /** The glossary entry, already rendered. Absent when the area has no `glossary.md` yet. */
+    readonly definition?: string;
+  }[];
   readonly exercises: readonly { readonly title: string; readonly body: string; readonly concepts: readonly string[] }[];
 }
 
@@ -193,10 +198,34 @@ ${a.lesson}
   vocabulary, and nobody has written the teaching down. Saying so is more useful than a page
   that looks finished.</p></div>`;
 
+  /**
+   * The vocabulary, as a definition list rather than a row of tags.
+   *
+   * `<dl>` because that is what this is — a term and its meaning — and the markup saying so is
+   * what lets a screen reader announce the pair. The tag row it replaces was honest when the
+   * words were all the site had; with definitions behind them it would have been a list of
+   * headings pretending to be labels.
+   *
+   * **The definition is inside `<dd class="brief">`, and that class is load-bearing.**
+   * `no-game.test.ts` sweeps the published HTML for scoring vocabulary and excludes author prose,
+   * on its own stated rule: "the rule is that **the generator** adds no scoring vocabulary — not
+   * that the curriculum may never use a word." Area 5 teaches inheritance with `class Boss(Enemy)`,
+   * so the sweep would fail on an author's Python example. A glossary definition is author prose
+   * by exactly the same argument as a brief, and wears the same class to say so.
+   */
   const concepts =
     a.concepts.length > 0
       ? `<h2>What this area teaches</h2>
-  <ul class="tags">${a.concepts.map((c) => `<li>${escape(c.label)}</li>`).join('')}</ul>`
+  <dl class="glossary">${a.concepts
+    .map(
+      (c) =>
+        `<dt>${escape(c.label)}</dt>${
+          c.definition === undefined
+            ? '<dd class="gap">Not defined yet. The word is on the syllabus; the glossary entry is not written.</dd>'
+            : `<dd class="brief">${c.definition}</dd>`
+        }`,
+    )
+    .join('')}</dl>`
       : '';
 
   const exercises =

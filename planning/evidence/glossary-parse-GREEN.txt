@@ -1,0 +1,8 @@
+ RUN  v4.1.11 C:/dev/learning-python-gamification/pyquest
+
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  20:23:38
+   Duration  154ms (transform 25ms, setup 0ms, import 37ms, tests 9ms, environment 0ms)
+

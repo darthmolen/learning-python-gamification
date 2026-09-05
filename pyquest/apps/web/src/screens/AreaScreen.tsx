@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import type { AreaView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
@@ -6,9 +6,9 @@ import { getArea } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
-import { formatTotal } from '../present/index.ts';
+import { byDifficulty, formatTotal } from '../present/index.ts';
 import { Breadcrumbs } from '../shell/Breadcrumbs';
-import { Cube, Display, Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
+import { ConceptList, Cube, Display, Eyebrow, MedalSlots, Mono, Panel, RiskWarning } from '../shell/ui';
 
 /**
  * One page holding the three things about a place: the brief, its five quests, and its boss.
@@ -23,6 +23,44 @@ const STATUS_MARK: Readonly<Record<string, string>> = {
   available: '◇',
   locked: '·',
 };
+
+/**
+ * A quest row: an anchor when it can be entered, an identically-shaped `div` when it cannot.
+ *
+ * A locked quest renders the same box rather than a disabled link, so nothing shifts when one
+ * unlocks and there is still no link for a keyboard to land on. `data-row` is the hook for the
+ * hover and focus treatment in `index.css` — the one thing an inline style cannot express.
+ */
+function QuestRow({
+  status,
+  to,
+  label,
+  children,
+}: {
+  status: string;
+  to: string;
+  label: string;
+  children: ReactNode;
+}) {
+  const style: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '13px',
+    padding: '14px 16px',
+    background: status === 'cleared' ? '#1a2119' : color.panel,
+    borderLeft: `2px solid ${status === 'cleared' ? color.accent : 'transparent'}`,
+    color: 'inherit',
+    textDecoration: 'none',
+  };
+
+  if (status === 'locked') return <div style={style}>{children}</div>;
+
+  return (
+    <Link data-row="quest" to={to} aria-label={label} style={style}>
+      {children}
+    </Link>
+  );
+}
 
 export function AreaScreen() {
   const playerId = usePlayer();
@@ -43,7 +81,12 @@ function Area({ view }: { view: AreaView }) {
   const identity = view.identity;
   const progress = view.progress;
   const boss = view.boss;
-  const quests = view.quests;
+  /*
+   * Cheapest first. The engine hands these over in the order content loaded them, which is the
+   * order their YAML files sit on disk — see `byDifficulty`, which carries the argument for
+   * deciding it here rather than there.
+   */
+  const quests = byDifficulty(view.quests);
   /* An area whose manifest carries no weeks or blurb has no identity to send. Its number is
    * still its name, and that is better than a title invented to fill the space. */
   const title = identity?.title ?? `Area ${area}`;
@@ -111,34 +154,49 @@ function Area({ view }: { view: AreaView }) {
                  * diamonds read out in sequence.
                  */
                 aria-label={`${quest.title}, DC ${quest.dc}, ${quest.status}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '13px',
-                  padding: '14px 16px',
-                  background: quest.status === 'cleared' ? '#1a2119' : color.panel,
-                  borderLeft: `2px solid ${quest.status === 'cleared' ? color.accent : 'transparent'}`,
-                }}
               >
-                <span aria-hidden="true" style={{ color: color.muted, fontSize: '13px', width: '12px' }}>
-                  {STATUS_MARK[quest.status]}
-                </span>
-                <div style={{ flexGrow: 1, minWidth: 0 }}>
-                  {quest.status === 'locked' ? (
-                    <div style={{ fontWeight: 600, color: color.muted }}>{quest.title}</div>
-                  ) : (
-                    <Link
-                      to={`/area/${area}/quest/${quest.id}`}
-                      style={{ fontWeight: 600, color: color.fg, textDecoration: 'none' }}
-                    >
+                {/*
+                  * The whole row is the link, not the title inside it.
+                  *
+                  * It was the title alone, which left the padding, the concepts, the DC and the
+                  * pips inert — a target that looks like a row and behaves like two words. And it
+                  * stays an anchor rather than an `onClick` on the `<li>`: middle-click,
+                  * ctrl-click, Tab and Enter are not click events, and a handler would take all
+                  * four away in exchange for the same navigation.
+                  *
+                  * `aria-label` keeps its accessible name the quest's title. Without it the name
+                  * is computed from everything inside — title, concepts, DC, five medal labels —
+                  * and the link announces as a paragraph.
+                  */}
+                <QuestRow
+                  status={quest.status}
+                  to={`/area/${area}/quest/${quest.id}`}
+                  label={quest.title}
+                >
+                  <span aria-hidden="true" style={{ color: color.muted, fontSize: '13px', width: '12px' }}>
+                    {STATUS_MARK[quest.status]}
+                  </span>
+                  <div style={{ flexGrow: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, color: quest.status === 'locked' ? color.muted : color.fg }}>
                       {quest.title}
-                    </Link>
-                  )}
-                  <Mono style={{ display: 'block' }}>{quest.concepts.join(' · ')}</Mono>
-                </div>
-                <RiskWarning dc={quest.dc} />
-                <Mono style={{ fontSize: '12px', width: '46px', textAlign: 'right' }}>{`DC ${quest.dc}`}</Mono>
-                <MedalSlots held={quest.medals} />
+                    </div>
+                    {/*
+                      * Terms, not a reference. `QuestCard.concepts` is bare ids and stays that
+                      * way: this row is one `<a>` so the whole thing is a target, and a chip that
+                      * expanded would be a `<button>` inside it — nested interactive content, and
+                      * two controls wearing one shape on a screen whose job is choosing a quest.
+                      * The definitions are one click away, on the quest itself.
+                      */}
+                    <ConceptList
+                      concepts={quest.concepts.map((id) => ({ id, label: id }))}
+                      label={`Concepts for ${quest.title}`}
+                      style={{ marginTop: '5px' }}
+                    />
+                  </div>
+                  <RiskWarning dc={quest.dc} />
+                  <Mono style={{ width: '50px', textAlign: 'right' }}>{`DC ${quest.dc}`}</Mono>
+                  <MedalSlots held={quest.medals} />
+                </QuestRow>
               </li>
             ))}
           </ul>

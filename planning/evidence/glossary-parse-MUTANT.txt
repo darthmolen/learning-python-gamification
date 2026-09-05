@@ -1,0 +1,22 @@
+  [
+    "alpha",
++   "not a heading",
+    "beta",
+  ]
+
+ ❯ packages/content/tests/glossary.test.ts:68:32
+     66|     );
+     67|
+     68|     expect([...parsed.keys()]).toEqual(['alpha', 'beta']);
+       |                                ^
+     69|     expect(parsed.get('alpha')).toContain('## not a heading');
+     70|     expect(parsed.get('alpha')).toContain('Still alpha.');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  20:23:39
+   Duration  149ms (transform 22ms, setup 0ms, import 32ms, tests 9ms, environment 0ms)
+

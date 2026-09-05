@@ -69,8 +69,13 @@ both the player and DM seats (§5.11). Roles are not people.
   activity, not the object.
 - **Labels never change with state.** "Take it cold" was false on a screen showing three
   quests cleared.
-- **No pop-overs.** The Tome expands in place and pushes the work down; nothing is
-  covered and nothing is lost.
+- **No pop-overs over work.** Anything that would cover the editor, a brief, or a form expands
+  in place and pushes the work down; nothing is covered and nothing is lost. Reference material
+  over *prose* may float — the Tome's inline glossary does — and it must be dismissible without
+  losing your place. The rule protects the learner's **work**, which is §6.8's own argument: "if
+  looking something up costs a learner the code in his editor, he stops looking things up." A
+  reader in the Tome has no editor on screen; the Quest screen does, and it renders glossary
+  marks as plain words for exactly that reason.
 
 ## How to work
 

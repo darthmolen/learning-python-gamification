@@ -29,7 +29,33 @@ every `C:\Users` occurrence is a placeholder in a teaching example (`C:\Users\yo
 
 ## Known Scope
 
-One sentence, in one file. Something like:
+**Not one sentence. Seventeen, and they are not all the same problem.** The sweep this stub
+recommends was run on 2026-09-04 and the stub was understating itself — whoever picks this up
+should know that before promising a one-line fix.
+
+Three categories, and only the first is unambiguous:
+
+1. **A person named where a role belongs** — `dm-guide.md:4`, "the DM seat … is his father".
+   The lexicon violation exactly: *roles are not people*. One sentence, and the rewrite below is
+   right for it.
+2. **Warmth addressed to the learner** — "your dad's machine", "Dad writes here", "your dad will
+   ask you for it in two weeks". Second person, in session plans, journal templates and exercise
+   starters across areas 0 and 1. The lexicon governs **roles**, not whether a curriculum written
+   for one household may be affectionate to the child reading it. Rewriting these would make the
+   curriculum colder, and that is a voice decision for the DM rather than one the table settles.
+3. **Third person about the learner** — `dm-guide.md:367` "his father's answers",
+   `session-1-what-a-repository-is.md:89` "his name is about to start appearing". Between the
+   two: written *about* the learner rather than *to* them, in files that publish.
+
+The `"his name"` occurrences in `dm-guide.md:60` and `:419` are placeholders inside command
+examples — the same false positive the original scan noted for the `C:\Users\you\...` paths.
+They are correct and should stay.
+
+**This is why it did not fold into the inline-glossary plan on 2026-09-04.** It looked adjacent —
+same lane, same publisher, prose in the same directories — and it is not the same kind of work.
+That plan renders; this one decides how the curriculum talks about a family.
+
+The original scope, which remains right for category 1:
 
 > In Kitchen Table mode (spec §5.11) the DM seat is held by a player who also holds the peer
 > seat.

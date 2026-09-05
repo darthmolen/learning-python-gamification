@@ -3,10 +3,16 @@
 `curriculum/area-0/README.md` picked this one because it verifies cleanly: feed stdin,
 assert on stdout, and the f-string receipt is exactly checkable.
 
-Every run feeds a different number, which is the whole test. A submission that types the
-perimeter passes at 150 and fails at 40, and a submission that converts `answer` four
+Every run feeds a different number, which is the whole test. A submission that types 150
+into the receipt passes once and fails twice, and a submission that converts `answer` four
 times still passes — that is a style point for the DM to raise, not something a hidden
-test should fail somebody for.
+test should fail somebody for. Naming the turn angle is optional in the brief and is not
+checked here at all: a quest must not fail somebody for declining something it called
+optional.
+
+**The perimeter is deliberately not here.** "Compute it, do not type it" is the whole of
+`the-perimeter`, a quest of its own in this area, and asking for it twice made this one
+about arithmetic when it is about `input()` handing back a `str`.
 
 `turtle` is stubbed. The runner is `python:3.14-alpine` (§6.6) with neither tkinter nor a
 display, so the real module would fail at import before any assertion ran.
@@ -72,13 +78,13 @@ def run(typed: str) -> tuple[TurtleSpy, str]:
     return spy, captured.getvalue()
 
 
-RECEIPT = re.compile(r"side\s+(\d+)\s*,\s*perimeter\s+(\d+)")
+RECEIPT = re.compile(r"side\s+length\s*:\s*(\d+)")
 
 
-def receipt(out: str) -> tuple[int, int]:
+def receipt(out: str) -> int:
     match = RECEIPT.search(out)
-    assert match, f"no line matching `side <n>, perimeter <n>` in output:\n{out}"
-    return int(match.group(1)), int(match.group(2))
+    assert match, f"no line matching `side length: <n>` in output:\n{out}"
+    return int(match.group(1))
 
 
 def test_it_converts_before_drawing() -> None:
@@ -101,28 +107,22 @@ def test_it_converts_before_drawing() -> None:
 
 def test_the_receipt_reports_what_was_typed() -> None:
     _, out = run("150")
-    side, _ = receipt(out)
-    assert side == 150
+    assert receipt(out) == 150
 
 
-def test_the_perimeter_is_computed_not_typed() -> None:
-    """600 is right at 150 and wrong at 40. This is the one that catches a typed answer."""
-    _, out = run("40")
-    side, perimeter = receipt(out)
-    assert side == 40, f"receipt says side {side} after 40 was typed"
-    assert perimeter == 160, (
-        f"perimeter {perimeter} did not follow the input — it looks typed, not computed"
+def test_the_receipt_is_built_not_typed() -> None:
+    """`side length: 150` is right once and wrong twice. This catches a typed receipt."""
+    spy, out = run("40")
+    side = receipt(out)
+    assert side == 40, (
+        f"receipt says side length {side} after 40 was typed — it looks typed, not built "
+        "from the answer"
     )
-
-
-def test_the_square_follows_the_input_too() -> None:
-    spy, _ = run("40")
     assert spy.firsts("forward") == [40.0, 40.0, 40.0, 40.0]
 
 
 def test_it_still_works_for_a_third_number() -> None:
     """Two data points can be luck. Three is a pattern."""
     spy, out = run("7")
-    side, perimeter = receipt(out)
-    assert (side, perimeter) == (7, 28)
+    assert receipt(out) == 7
     assert spy.firsts("forward") == [7.0, 7.0, 7.0, 7.0]

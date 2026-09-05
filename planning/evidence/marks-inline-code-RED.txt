@@ -1,0 +1,9 @@
+     × is a control, and keeps the code text exactly 39ms
+     × opens the same definition the chip would 2ms
+     × lights up every occurrence, not the first 6ms
+     × matches a bare call, because `print()` is the same word 4ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "print"
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "print"
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "print()"
+      Tests  4 failed | 4 passed | 17 skipped (25)

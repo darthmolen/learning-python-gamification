@@ -260,3 +260,84 @@ describe('the report a human reads at nine in the evening', () => {
     expect(report).toMatch(/ok|pass|clean|no problems/i);
   });
 });
+
+/**
+ * The glossary, checked against the registry that names the concepts.
+ *
+ * CLAUDE.md already draws this edge: "authored content is validated against
+ * `packages/content/src/concepts.ts`. If a concept id changes, content breaks — that is
+ * `validate:content` doing its job." A definition is authored content and a concept id is the
+ * key it hangs on, so the two can drift in three ways and every one of them is silent.
+ *
+ * A missing definition is a chip a learner clicks and gets nothing from. A misspelled heading is
+ * the same failure wearing a definition nobody will ever see. And a concept defined in the wrong
+ * area's file puts the word on a page he reaches before he has met it.
+ */
+/**
+ * A `[[mark]]` names a concept id, so it is validated exactly as every other reference to one is.
+ *
+ * CLAUDE.md draws the edge: "authored content is validated against `concepts.ts`. If a concept id
+ * changes, content breaks — that is `validate:content` doing its job." A mark is the newest way to
+ * write that reference and the easiest to get wrong, because a mistyped id fails **silently at
+ * the reader**: the mark resolves to nothing, the word renders as ordinary prose, and the learner
+ * never learns there was a definition they were meant to be offered.
+ *
+ * The fixture also holds two marks the rule must ignore — one fenced, one in an inline code span.
+ * A lesson teaching this syntax has to be able to print it, and a validator that could not tell
+ * the example from the thing would make that page unwritable.
+ */
+describe('a glossary mark', () => {
+  const marks = () => byRule(validateContent(broken('unknown-mark')), 'unknown-mark');
+
+  it('refuses an id the concept registry has never heard of', () => {
+    const bad = marks();
+    expect(bad).toHaveLength(1);
+    expect(bad[0]?.file).toBe('area-1/lesson.md');
+    expect(bad[0]?.message).toContain('whlie');
+  });
+
+  it('names the line, because a lesson is long and an id is three characters', () => {
+    expect(marks()[0]?.line).toBe(6);
+  });
+
+  it('says what to do, rather than only what is wrong', () => {
+    expect(marks()[0]?.fix).toMatch(/concepts\.ts/);
+  });
+
+  it('leaves the real concepts alone', () => {
+    const messages = marks().map((i) => i.message).join(' ');
+    expect(messages).not.toContain('[[if]]');
+    expect(messages).not.toContain('range');
+  });
+
+  it('ignores a mark inside a fence or a code span, so the syntax can be documented', () => {
+    const messages = marks().map((i) => i.message).join(' ');
+    expect(messages).not.toContain('not-a-concept');
+    expect(messages).not.toContain('also-not-a-concept');
+  });
+});
+
+describe('the glossary', () => {
+  const issues = () => byRule(validateContent(broken('glossary-gap')), 'glossary-gap');
+
+  it('names every concept of the area that has no definition', () => {
+    const missing = issues().find((i) => i.message.includes('no definition'));
+    expect(missing?.file).toBe('area-1/glossary.md');
+    // Eight of Area 1's ten are undefined in the fixture; the message has to name them, not count.
+    expect(missing?.message).toContain('for');
+    expect(missing?.message).toContain('range');
+    expect(missing?.message).not.toContain('elif');
+  });
+
+  it('refuses a heading the concept registry has never heard of', () => {
+    const unknown = issues().find((i) => i.message.includes('whlie'));
+    expect(unknown?.file).toBe('area-1/glossary.md');
+    expect(unknown?.fix).toContain('concepts.ts');
+  });
+
+  /** `dict` is real, and it is Area 3's. Defining it here is a different mistake from a typo. */
+  it('refuses a real concept defined in the wrong area', () => {
+    const misplaced = issues().find((i) => i.message.includes('dict'));
+    expect(misplaced?.message).toContain('area 3');
+  });
+});

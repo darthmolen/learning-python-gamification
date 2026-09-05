@@ -227,6 +227,24 @@ describe('the reads', () => {
     expect(response.body).not.toContain('unlocked');
   });
 
+  /**
+   * The syllabus was concepts and nothing else, so the SPA's Tome could only list labels while
+   * `curriculum/area-N/lesson.md` — the actual teaching — was readable by the static Field Manual
+   * alone. This is that prose reaching the route that claims to be the field manual.
+   */
+  it('carries each area lesson, and says which ones are still drafts', async () => {
+    const response = await authed(app, TOKEN, { method: 'GET', url: '/api/tome' });
+    const tome = TomeSchema.parse(response.json());
+
+    const first = tome.areas.find((a) => a.area === 0);
+    expect(first?.lesson).toContain('By the end of this area');
+    expect(first?.lessonIsDraft).toBe(false);
+
+    // Areas 3–7 carry `lesson.draft.md` only, and the reader is told rather than left to guess.
+    expect(tome.areas.find((a) => a.area === 3)?.lessonIsDraft).toBe(true);
+    expect(tome.areas.find((a) => a.area === 3)?.lesson).toBeTruthy();
+  });
+
   it('serves the party with an empty xpSources rather than an absent one', async () => {
     const response = await authed(app, TOKEN, { method: 'GET', url: `/api/players/${ADA}/party` });
     expect(response.statusCode).toBe(200);

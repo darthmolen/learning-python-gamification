@@ -93,14 +93,22 @@ export const me: unknown = {
 
 export const campaign: unknown = { playerId: PLAYER_ID, areas: AREA_CARDS };
 
-/** The Area screen's cards. Ids and concepts are real — they exist in `content/`. */
+/**
+ * The Area screen's cards. Ids and concepts are real — they exist in `content/`.
+ *
+ * **Deliberately not in DC order.** They used to be, by accident, which made the fixture unable
+ * to tell a screen that sorts from a screen that does not — `screens.test.tsx` asserts the
+ * rendered order, and against an already-sorted list that assertion passes either way. The API
+ * hands these over in content-load order, so a fixture that arrives pre-sorted is also the less
+ * faithful stub.
+ */
 const QUESTS: Readonly<Record<number, unknown[]>> = {
   3: [
-    { id: 'a3-inventory-lists', title: 'The Inventory', dc: 10, concepts: ['list', 'iteration'], medals: ['cleared', 'idiomatic'], status: 'cleared' },
-    { id: 'a3-recipe-book', title: 'The Recipe Book', dc: 12, concepts: ['dict', 'dict-methods', 'iteration'], medals: ['cleared'], status: 'cleared' },
-    { id: 'a3-the-smelter', title: 'The Smelter', dc: 14, concepts: ['dict', 'iteration'], medals: ['cleared'], status: 'cleared' },
-    { id: 'a3-the-enchanter', title: 'The Enchanter', dc: 18, concepts: ['dict-methods', 'list'], medals: [], status: 'available' },
     { id: 'a3-the-trading-hall', title: 'The Trading Hall', dc: 20, concepts: ['dict', 'list', 'iteration'], medals: [], status: 'locked' },
+    { id: 'a3-recipe-book', title: 'The Recipe Book', dc: 12, concepts: ['dict', 'dict-methods', 'iteration'], medals: ['cleared'], status: 'cleared' },
+    { id: 'a3-the-enchanter', title: 'The Enchanter', dc: 18, concepts: ['dict-methods', 'list'], medals: [], status: 'available' },
+    { id: 'a3-inventory-lists', title: 'The Inventory', dc: 10, concepts: ['list', 'iteration'], medals: ['cleared', 'idiomatic'], status: 'cleared' },
+    { id: 'a3-the-smelter', title: 'The Smelter', dc: 14, concepts: ['dict', 'iteration'], medals: ['cleared'], status: 'cleared' },
   ],
 };
 
@@ -138,6 +146,34 @@ for side in range(4):
 turtle.done()
 `;
 
+/**
+ * Definitions for the concepts the offline fixtures name.
+ *
+ * Real prose rather than lorem, and shorter than the authored glossary, because what the offline
+ * screen has to exercise is the *expander* — a chip that opens, pushes the work down, and closes.
+ * A one-word definition would leave the layout untested at the size it actually renders at.
+ *
+ * **`iteration` is deliberately missing**, and `dict-methods` too. An area authored later has no
+ * glossary yet, and §5.1a's honesty rule says the chip reports that rather than opening onto
+ * nothing. Offline is the easiest place to look at that branch, which is the same argument the
+ * tome fixture makes for Area 1 having no lesson.
+ */
+const DEFINITIONS: Readonly<Record<string, string>> = {
+  dict: 'A mapping from keys to values. `inventory["rope"]` asks the question the key names, and\ngets back whatever was filed under it.',
+  list: 'An ordered collection. The order is the point: `inventory[0]` is the first slot, not the\nzeroth thing you own.',
+  indexing: 'Reaching one item by its position. Counting starts at zero, which is the source of\nexactly one off-by-one error per person per lifetime.',
+  print: 'Puts a value on the screen. The first thing that proves a program ran at all.',
+  variables: 'A name bound to a value, so the value can be referred to later by something a\nreader understands.',
+  if: 'Runs a block only when a condition holds. Everything a program decides, it decides here.',
+  else: 'The branch taken when the `if` above it was not.',
+};
+
+const conceptsWith = (ids: readonly string[]): readonly unknown[] =>
+  ids.map((id) => {
+    const definition = DEFINITIONS[id];
+    return definition === undefined ? { id, label: id } : { id, label: id, definition };
+  });
+
 export const questView = (questId: string): unknown => {
   const card = (QUESTS[3] as { id: string; title: string; dc: number; concepts: string[]; medals: string[]; status: string }[])
     .find((q) => q.id === questId);
@@ -149,7 +185,7 @@ export const questView = (questId: string): unknown => {
     kind: 'quest',
     area: 3,
     dc: card.dc,
-    concepts: card.concepts,
+    concepts: conceptsWith(card.concepts),
     requires: [],
     status: card.status,
     brief: `# ${card.title}\n\nThe brief is authored markdown, read from the content root.\n`,
@@ -284,11 +320,110 @@ export const party: unknown = {
  * anything the registry does not know, and it caught this fixture inventing `conditionals` on
  * the first run. Area 1's condition concept is `if`.
  */
+const AREA_0_LESSON = `# First Light
+
+By the end of this area you will have typed a line that draws a square, given things
+names, and read an error message on purpose.
+
+## The first line
+
+\`\`\`python
+import turtle
+
+turtle.forward(100)
+turtle.done()
+\`\`\`
+
+Three lines and a window opens with a line drawn across it. The dot matters:
+\`turtle.forward\` means **the \`forward\` that belongs to \`turtle\`**.
+`;
+
+/**
+ * Area 3's lesson carries three glossary marks, and the first one is the interesting case.
+ *
+ * `[[print]]` is an **Area 0** concept marked in an **Area 3** lesson — a cross-area reference,
+ * which is what a curriculum that builds on itself looks like and what an area-scoped lookup
+ * would silently fail to resolve. The real `curriculum/area-3/lesson.draft.md` already writes
+ * `print` and `range` for the same reason, so the fixture is not inventing a shape.
+ *
+ * `[[iteration]]` is the fixture's concept with no definition, so the offline app can show what an
+ * unwritten glossary entry looks like without waiting for an area to be authored.
+ */
+const AREA_3_LESSON = `# Collections
+
+A [[list]] holds things in order, and the order is the point. You already know how to
+[[print]] one.
+
+- \`inventory[0]\` is the first slot, not the zeroth thing you own.
+- \`len(inventory)\` counts them.
+
+Walking one is [[iteration|going through it]], one item at a time.
+`;
+
+/**
+ * Area 1 carries concepts and no lesson on purpose. Offline is where the "unwritten" branch is
+ * easiest to look at, and a fixture where every area is written would leave the screen's honest
+ * empty state to be discovered in production.
+ */
 export const tome: unknown = {
   areas: [
-    { area: 0, concepts: [{ id: 'print', label: 'print' }, { id: 'variables', label: 'variables' }] },
-    { area: 1, concepts: [{ id: 'if', label: 'if' }, { id: 'else', label: 'else' }] },
-    { area: 3, concepts: [{ id: 'list', label: 'list' }, { id: 'indexing', label: 'indexing' }] },
+    {
+      area: 0,
+      concepts: conceptsWith(['print', 'variables']),
+      lesson: AREA_0_LESSON,
+      lessonIsDraft: false,
+    },
+    {
+      area: 1,
+      concepts: conceptsWith(['if', 'else']),
+      lessonIsDraft: false,
+    },
+    {
+      area: 3,
+      /**
+       * `iteration` carries no definition, deliberately — it is absent from `DEFINITIONS` above.
+       * Area 1 having no lesson is the same argument at area scale: offline is where the honest
+       * "unwritten" branch is easiest to look at, and a fixture where every word is defined would
+       * leave the Tome's empty state to be discovered in production.
+       */
+      concepts: conceptsWith(['list', 'indexing', 'iteration']),
+      lesson: AREA_3_LESSON,
+      lessonIsDraft: true,
+    },
+  ],
+};
+
+/**
+ * What each medal is — `game/medals.md`, offline.
+ *
+ * Four of the five the Quest screen draws, and `conjured` left out on purpose. That is what puts
+ * the "a card with no description" branch in front of anyone running the app with no stack behind
+ * it, and the route allows exactly that state: a medal `game/medals.md` does not describe is
+ * omitted rather than given an empty string. It is also the state *every* card is in when `game/`
+ * is not installed at all, which is the deletion CLAUDE.md requires to stay survivable.
+ *
+ * `time-attack` is absent for a different reason and is not the case above: `DEFAULT_MEDALS` is
+ * five long, so the screen never draws a sixth card at all.
+ */
+export const medals: unknown = {
+  medals: [
+    {
+      medal: 'cleared',
+      description:
+        '**The tests pass.** The only medal progression cares about: three cleared quests\nunlock the area’s boss.',
+    },
+    {
+      medal: 'ironman',
+      description: 'Done without running it until the end. Raises the DC, and pays the difference.',
+    },
+    {
+      medal: 'idiomatic',
+      description: 'Ruff and pyright clean — the standard this repository holds itself to.',
+    },
+    {
+      medal: 'teach-back',
+      description: 'You explained it to somebody else and they could then do it.',
+    },
   ],
 };
 

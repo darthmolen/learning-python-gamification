@@ -151,7 +151,11 @@ const KNOWN_DISAGREEMENTS: readonly string[] = [
   // Four blurbs are paraphrases rather than the manifests' text — the same comment claims
   // "Nothing here invents content", and for these four it does. Areas 3 and 5 match exactly.
   'area 1: identity.blurb — fixture "Loops and conditions, and the shapes they draw.", API "Turtle becomes generative art. Loops repeat and conditions choose."',
-  'area 3: quests — fixture [a3-inventory-lists, a3-recipe-book, a3-the-smelter, a3-the-enchanter, a3-the-trading-hall], API []',
+  // The fixture's order was shuffled on purpose on 2026-09-03, and the change is recorded here
+  // rather than smoothed over: the Area screen sorts by DC now, so a fixture that arrived in DC
+  // order could not tell a screen that sorts from one that does not. The disagreement itself is
+  // unchanged — area 3 has no authored quests, so the API sends none.
+  'area 3: quests — fixture [a3-the-trading-hall, a3-recipe-book, a3-the-enchanter, a3-inventory-lists, a3-the-smelter], API []',
   'area 4: identity.blurb — fixture "Naming a thing is how you stop repeating it.", API "Pygame Zero and a game loop. A long script becomes functions worth naming."',
   'area 6: identity.blurb — fixture "Files, APIs, and data that did not come from you.", API "Save the world, share a seed, call a live API. Data outlives the program."',
   'area 7: identity.blurb — fixture "Tests, review, and code somebody else can read.", API "Tests, types and the debugger. Read unfamiliar code, then open a pull request."',

@@ -12,7 +12,14 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CONCEPTS, checkContent, contentRootsFrom, formatIssues } from '@pyquest/content';
+import {
+  CONCEPTS,
+  checkContent,
+  contentRootsFrom,
+  formatIssues,
+  parseGlossary,
+  stripMarks,
+} from '@pyquest/content';
 import { marked } from 'marked';
 import { renderArea, renderIndex, type AreaView } from './render.ts';
 
@@ -64,7 +71,19 @@ function readBrief(curriculumRoot: string, relative: string): string {
  */
 function briefBody(markdown: string): string {
   const withoutTitle = markdown.replace(/^#\s+.*\r?\n/, '');
-  return marked.parse(withoutTitle, { async: false });
+  /**
+   * Marks become their display text before `marked` ever sees them.
+   *
+   * `[[print]]` is not Markdown, and `marked` does not ignore syntax it does not know — it prints
+   * it. Without this line a lesson marked up for the Tome would publish literal double brackets to
+   * a static site whose entire claim is that the curriculum stands on its own.
+   *
+   * **Stripping rather than rendering, and the site loses nothing by it.** This is HTML with no
+   * script; there is no hover to have. The same page already prints every definition in full,
+   * under "What this area teaches" — so the reader who wants the word has it two screens up,
+   * which is more than the SPA gives them.
+   */
+  return marked.parse(stripMarks(withoutTitle), { async: false });
 }
 
 export function buildSite({ contentRoot, outDir, audience = 'learner' }: BuildOptions): AreaView[] {
@@ -110,10 +129,31 @@ ${formatIssues(issues, roots)}`,
         const guide = areaProse(roots.curriculum, manifest.area, 'dm-guide.md');
         return guide ? { teachingAid: briefBody(guide) } : {};
       })(),
-      concepts: CONCEPTS.filter((c) => c.area === manifest.area).map((c) => ({
-        id: c.id,
-        label: c.label,
-      })),
+      /**
+       * The vocabulary, defined rather than merely listed.
+       *
+       * The site listed 95 words and defined none of them, which is a glossary's exact opposite:
+       * a reader who does not know the word learns from the list only that they should. The
+       * definitions come from the same `parseGlossary` the validator uses, so a heading this site
+       * renders is a heading `validate:content` checked.
+       *
+       * An area with no `glossary.md` yields no definitions and the term still prints. That is
+       * `lesson.md`'s rule applied to a shorter piece of prose — an area whose teaching is not
+       * written says so rather than being left out of the site.
+       */
+      concepts: (() => {
+        const defined = (() => {
+          const markdown = areaProse(roots.curriculum, manifest.area, 'glossary.md');
+          return markdown === undefined ? new Map<string, string>() : parseGlossary(markdown);
+        })();
+
+        return CONCEPTS.filter((c) => c.area === manifest.area).map((c) => {
+          const definition = defined.get(c.id);
+          return definition === undefined
+            ? { id: c.id, label: c.label }
+            : { id: c.id, label: c.label, definition: briefBody(definition) };
+        });
+      })(),
       /**
        * Exercises only. A boss is the game's word for an assessment and this site does not have
        * assessments — it has the work. Anything that is not an exercise is left out rather than

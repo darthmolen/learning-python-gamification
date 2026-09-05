@@ -1,0 +1,12 @@
+     × names the concepts of the area it opens on 111ms
+     × lists exactly as many terms as the header counts 51ms
+     × opens a definition under the term, leaving the lesson on the screen 60ms
+     × says a word is undefined rather than opening onto nothing 92ms
+     × changes the list when another area is opened 111ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+TestingLibraryElementError: Unable to find an accessible element with the role "list" and name "Vocabulary"
+TestingLibraryElementError: Unable to find an accessible element with the role "list" and name "Vocabulary"
+TestingLibraryElementError: Unable to find an accessible element with the role "list" and name "Vocabulary"
+TestingLibraryElementError: Unable to find an accessible element with the role "list" and name "Vocabulary"
+TestingLibraryElementError: Unable to find an accessible element with the role "list" and name "Vocabulary"
+      Tests  5 failed | 1 passed (6)

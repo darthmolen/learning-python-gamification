@@ -1,6 +1,6 @@
 import { DEFAULT_MEDALS } from '@pyquest/content/browser';
 import { describe, expect, it } from 'vitest';
-import { formatPayout, formatTotal, isRisky, medalSlots, sinceSubmitted } from './index.ts';
+import { byDifficulty, formatPayout, formatTotal, isRisky, medalSlots, sinceSubmitted } from './index.ts';
 
 /**
  * The decisions §5.1 says the engine deliberately does not make.
@@ -78,13 +78,22 @@ describe('medal slots', () => {
 });
 
 /**
- * §5.10: a medal that pays no XP "reads as a brag, not as a zero." Rendering `0 xp` beside a
- * thing he chose to go back and earn tells him it was worth nothing, which is the opposite of
- * what the medal is for.
+ * §5.10 says a medal paying no XP "reads as a brag, not as a zero", and the diagnosis is right
+ * while the word is not: a bare `0 xp` beside something he went back to earn does say it was
+ * worth nothing. But **"brag" claims praise, and a zero is never praise** — it is the arithmetic
+ * saying the price was already paid by a medal he holds.
+ *
+ * The word survived in no call site. `journalPayout` refuses it because §5.6's zero means an
+ * empty entry; `DefendScreen` refuses it because a concept let through is not a boast; and this
+ * one was found on a real screen, where clearing a quest that already held Idiomatic offered
+ * "cleared · brag" — congratulating him for the medal that is not even elective.
+ *
+ * "no extra xp" keeps §5.10's point, which is that the base was paid rather than that the work
+ * counted for nothing, and claims nothing on his behalf.
  */
 describe('a zero payout', () => {
-  it('reads as a brag rather than a zero', () => {
-    expect(formatPayout(0)).toBe('brag');
+  it('says the base was already paid rather than claiming a boast', () => {
+    expect(formatPayout(0)).toBe('no extra xp');
   });
 
   it('leaves a real payout as a number', () => {
@@ -120,5 +129,41 @@ describe('how long a sign-off has been waiting', () => {
    */
   it('does not run backwards when the clocks disagree', () => {
     expect(sinceSubmitted('2026-08-31T08:00:00.000Z', at('2026-08-30T22:00:00.000Z'))).toBe('today');
+  });
+});
+
+/**
+ * The order the Area screen lists quests in, and why it is a decision at all.
+ *
+ * It was the order content happened to load in — which is the order the YAML files sit in on
+ * disk, which is their filenames. `queries.ts` calls that "authored order", but nothing in
+ * content can express an order, so nobody authored it. Area 0 came out alphabetical by accident
+ * and read as though it meant something.
+ *
+ * The engine is right to refuse this sort: §5.2 hands the choice to the player and a ranking
+ * baked into the data would be the engine taking it back. But an arbitrary order is not
+ * neutrality, it is noise wearing neutrality's clothes — so the order is chosen here, where
+ * CLAUDE.md puts every other presentation decision.
+ */
+describe('the order quests are listed in', () => {
+  const q = (title: string, dc: number) => ({ title, dc });
+
+  it('puts the cheapest first, because that is the only honest reading of a free choice', () => {
+    const listed = byDifficulty([q('The Trading Hall', 20), q('The Recipe Book', 12), q('The Smelter', 14)]);
+    expect(listed.map((quest) => quest.title)).toEqual(['The Recipe Book', 'The Smelter', 'The Trading Hall']);
+  });
+
+  /** Six of Area 0's ten quests share a DC. Ties have to land somewhere stable, or the list
+   * reshuffles between renders for no reason a reader could name. */
+  it('breaks a tie by title rather than by whatever order it was handed', () => {
+    const listed = byDifficulty([q('Out Of Line', 8), q('Never Closed', 8), q('The Perimeter', 8)]);
+    expect(listed.map((quest) => quest.title)).toEqual(['Never Closed', 'Out Of Line', 'The Perimeter']);
+  });
+
+  /** A screen that sorted in place would reorder the caller's array as a side effect. */
+  it('leaves what it was given alone', () => {
+    const given = [q('The Trading Hall', 20), q('The Recipe Book', 12)];
+    byDifficulty(given);
+    expect(given.map((quest) => quest.title)).toEqual(['The Trading Hall', 'The Recipe Book']);
   });
 });

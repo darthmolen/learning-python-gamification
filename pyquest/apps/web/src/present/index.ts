@@ -29,6 +29,29 @@ export const isRisky = (dc: number): boolean => dc >= RISKY_DC;
 export const formatTotal = (total: number, estimated: boolean): string =>
   estimated ? `~${total}` : String(total);
 
+/**
+ * The order the Area screen lists quests in: cheapest first, ties by title.
+ *
+ * **The list used to be in no order at all.** `availableQuests` returns them "in authored
+ * order", but content has no way to express an order, so what arrives is the order the manifests
+ * load in — their filenames. Area 0's ten came out alphabetical by accident, which reads as
+ * though somebody chose it.
+ *
+ * The engine is right to refuse to sort. Its own comment says a ranking there "would be the
+ * engine nudging a choice the spec hands to him", and §5.2 does hand it to him: any three unlock
+ * the boss and he picks which. But an accidental order is not neutrality — it is noise that
+ * looks like a decision, and the screen already says out loud that the choice is his.
+ *
+ * So this is a presentation decision and it lives where CLAUDE.md puts them. DC is the one axis
+ * the player can already see on every row, which makes the order self-evident rather than
+ * something he has to be told: the list explains itself.
+ *
+ * Ties by title because six of Area 0's ten share a DC, and a tie broken by input order
+ * reshuffles whenever content loading does.
+ */
+export const byDifficulty = <T extends { dc: number; title: string }>(quests: readonly T[]): T[] =>
+  [...quests].sort((a, b) => a.dc - b.dc || a.title.localeCompare(b.title));
+
 export interface MedalSlot {
   medal: Medal;
   held: boolean;
@@ -51,13 +74,26 @@ export const medalSlots = (held: readonly string[]): MedalSlot[] =>
   DEFAULT_MEDALS.map((medal) => ({ medal, held: held.includes(medal) }));
 
 /**
- * §5.10: a medal that pays no XP "reads as a brag, not as a zero."
+ * A payout of nothing, said without claiming anything.
  *
- * Rendering `0 xp` beside something he went back and earned on purpose tells him it counted for
- * nothing. The medal is elective depth; the whole reason it pays nothing is that it was not
- * required, and the word has to carry that.
+ * §5.10 asks for a medal paying no XP to "read as a brag, not as a zero", and the diagnosis is
+ * right: a bare `0 xp` beside something he went back to earn tells him it counted for nothing.
+ * **The word was wrong, though, and it took a real screen to see it.** Clearing a quest that
+ * already held Idiomatic offered "cleared · brag" — praise, for the one medal that is not even
+ * elective, in the one case where the zero means the arithmetic already paid.
+ *
+ * A zero is never praise. It happens when the medal does not raise the effective DC past what a
+ * medal he already holds had raised it to, so the base was bought and there is no difference
+ * left to pay. "no extra xp" says exactly that and claims nothing on his behalf.
+ *
+ * **The word survived in no call site**, which is the real evidence. `journalPayout` below
+ * refuses it because §5.6's zero means an empty entry, and `DefendScreen` refuses it because a
+ * concept let through is not a boast. This was the third.
+ *
+ * §5.10's sentence now disagrees with the screen. The spec is the document of record and this is
+ * a presentation decision, so the divergence is recorded rather than quietly kept.
  */
-export const formatPayout = (xp: number): string => (xp === 0 ? 'brag' : `${xp} xp`);
+export const formatPayout = (xp: number): string => (xp === 0 ? 'no extra xp' : `${xp} xp`);
 
 /**
  * §5.6's ten XP an entry — and **zero is not a brag here.**

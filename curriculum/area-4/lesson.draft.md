@@ -25,7 +25,7 @@ everywhere.
 The line that *calls* it is the one that makes it happen. Defining a function runs nothing;
 it only teaches Python what the name means.
 
-## Parameters are the holes you leave
+## [[parameters|Parameters]] are the holes you leave
 
 `size` is a **parameter** — a blank the caller fills in. `draw_square(100)` passes `100` as
 the **argument**. The words are worth keeping straight: the parameter is in the definition,
@@ -65,7 +65,7 @@ Compare `draw_shape(6, 40, 3, True)` with
 month later without opening the definition. Use names once a call has more than two
 arguments.
 
-## return hands something back
+## [[return]] hands something back
 
 ```python
 def area_of_square(size):
@@ -91,7 +91,7 @@ total = add(2, 3)       # total is None, because add returned nothing
 Printing and returning are different. Printing shows a human. Returning hands it to the
 program.
 
-## Scope — what a function can see
+## [[scope|Scope]] — what a function can see
 
 ```python
 def counter():
@@ -121,7 +121,7 @@ def bigger(size):
 Possible, but be careful. A function that reads things you did not pass it is a function
 you cannot understand from its own call.
 
-## Pure and side-effecting
+## [[pure-vs-side-effecting|Pure and side-effecting]]
 
 Two kinds of function, and knowing which you are writing is most of the skill.
 
@@ -145,7 +145,7 @@ place things can go wrong in a way that is hard to see.
 **Keep them apart.** Work out the answer in a pure function; do the changing in a small
 function next to it. When something is wrong you will know which half to look at.
 
-## docstrings
+## [[docstrings]]
 
 ```python
 def draw_shape(sides, size=100):
@@ -160,7 +160,7 @@ A string on the first line of a function is its documentation. `help(draw_shape)
 Write one when the *why* is not obvious from the code. Do not write one that repeats the
 name — `"""Draws a shape."""` on `draw_shape` is noise.
 
-## Refactoring a long script
+## [[refactoring-a-script|Refactoring a long script]]
 
 This is the real work of the area, and it has a method:
 

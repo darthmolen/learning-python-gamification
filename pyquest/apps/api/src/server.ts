@@ -52,6 +52,7 @@ import {
   SignoffAwardSchema,
   SignoffRequestSchema,
   SubmitRequestSchema,
+  MedalsSchema,
   TomeSchema,
   type ApiErrorCode,
   type JobResult,
@@ -112,7 +113,7 @@ import {
   attemptDetail,
   type Writable,
 } from './store.ts';
-import { areaView, campaignView, questView, tomeAreas } from './views.ts';
+import { areaView, campaignView, medalsView, questView, tomeAreas } from './views.ts';
 
 /**
  * The storage state a client sees.
@@ -1034,7 +1035,18 @@ export function buildServer(options: ServerOptions): FastifyInstance {
    * The Tome — content, and only content
    * ------------------------------------------------------------------------------------- */
 
-  app.get('/api/tome', async () => TomeSchema.parse({ areas: tomeAreas() }));
+  app.get('/api/tome', async () => TomeSchema.parse({ areas: tomeAreas(content) }));
+
+  /* ---------------------------------------------------------------------------------------
+   * The medals — game text, and only game text
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * Unauthenticated and unscoped, like the Tome beside it: what a medal *is* does not depend on
+   * who is asking or on what they have earned. `medalsView` answers with an empty list when
+   * `game/` is absent, so this route degrades with the overlay instead of failing with it.
+   */
+  app.get('/api/medals', async () => MedalsSchema.parse({ medals: medalsView(content) }));
 
   /* ---------------------------------------------------------------------------------------
    * Sign-offs — §6.3, §5.11

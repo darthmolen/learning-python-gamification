@@ -129,7 +129,7 @@ The boundary is where the mistakes live. `while length > 20` and `while length >
 differ by exactly one go round. Before you run a loop, work out on paper how many times
 it should go. Then check.
 
-## Choosing
+## [[if|Choosing]]
 
 ```python
 if length > 100:
@@ -194,7 +194,7 @@ for row in range(5):
 The inner loop runs **completely** for every single pass of the outer one. Five rows of
 five is twenty-five, not ten.
 
-That multiplication is where nesting gets its power and its danger. Two nested loops of
+That multiplication is where [[nesting]] gets its power and its danger. Two nested loops of
 a thousand each is a million passes, and a computer will do that without complaint while
 you wonder why nothing is happening.
 
@@ -215,7 +215,7 @@ print(total)      # 55
 ```
 
 **Set something up before the loop, change it a little on every pass, read it after.**
-That is the accumulator.
+That is the [[accumulator-pattern|accumulator]].
 
 The three parts are all necessary and each has its own failure. Put `total = 0` *inside*
 the loop and it resets every pass, so you end up with the last number rather than the

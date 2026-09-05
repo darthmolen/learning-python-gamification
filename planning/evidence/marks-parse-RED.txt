@@ -1,0 +1,12 @@
+       | ^
+     18|
+     19| describe('parseMarks', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  07:30:55
+   Duration  139ms (transform 17ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+

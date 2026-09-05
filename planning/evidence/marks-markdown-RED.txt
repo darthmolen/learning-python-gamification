@@ -1,0 +1,7 @@
+     × renders display text and no brackets when given no lookup 4ms
+     × renders a control when given a lookup 6ms
+     × renders the author display text on the control, not the id 4ms
+     × falls back to display text for an id the lookup does not know 1ms
+     × does not split a table row when a mark carries a pipe 3ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  5 failed | 12 passed (17)

@@ -43,7 +43,7 @@ print("done")
 # 1. Run it and answer 5 and 120. Then 12 and 40. Then 3 and 200.
 #
 # 2. Run it and answer "seven" to the first question. Read the error. You have
-#    seen it before -- which broken sigil was it in Area 0? What was wrong
+#    seen it before -- which quest was it in Area 0? What was wrong
 #    there, and is it the same thing wrong here?
 #
 # 3. Run it and answer 1. Then 0. One of those crashes and one of those does
