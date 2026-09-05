@@ -28,7 +28,7 @@ It works. Now add a second player and watch what happens — every variable doub
 function grows an argument, and nothing stops you passing player one's health with player
 two's inventory.
 
-## A class is a shape for a thing
+## A [[class]] is a shape for a thing
 
 ```python
 class Player:
@@ -51,7 +51,7 @@ actual player made from that description. `Player("Sam")` builds one.
 it for you, and `self.health = 20` means *this particular player's health*. Two players have
 two healths and they cannot be confused, because each one lives on its own object.
 
-## Attributes are what it knows
+## [[attributes|Attributes]] are what it knows
 
 ```python
 sam.health = 17
@@ -63,7 +63,7 @@ print(sam.name)
 `turtle.forward` in Area 0 — the thing on the right belongs to the thing on the left. It
 always meant this.
 
-## Methods are what it can do
+## [[methods|Methods]] are what it can do
 
 ```python
 class Player:
@@ -113,7 +113,7 @@ print(sam)          # Player('Sam', health=20)
 Write one on every class you make. It costs two lines and it pays for itself the first time
 you print a list of them.
 
-## Instance versus class
+## [[instance-vs-class|Instance versus class]]
 
 ```python
 class Player:
@@ -129,7 +129,7 @@ each instance.
 The rule of thumb: **if it varies between instances, it goes in `__init__`.** If it is the
 same for every instance ever, it can live on the class.
 
-## Composition — objects made of objects
+## [[composition|Composition]] — objects made of objects
 
 ```python
 class Inventory:
@@ -153,7 +153,7 @@ sam.inventory.add("torch")
 A player **has** an inventory. That is composition, and it is the tool you will reach for
 almost every time.
 
-## Inheritance — lightly
+## [[inheritance|Inheritance]] — lightly
 
 ```python
 class Block:

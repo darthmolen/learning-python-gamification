@@ -1,0 +1,7 @@
+     × refuses an id the concept registry has never heard of 10ms
+     × names the line, because a lesson is long and an id is three characters 3ms
+     × says what to do, rather than only what is wrong 2ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+AssertionError: expected [] to have a length of 1 but got +0
+AssertionError: expected undefined to be 6 // Object.is equality
+      Tests  3 failed | 2 passed | 26 skipped (31)

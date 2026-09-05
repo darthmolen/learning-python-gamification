@@ -175,3 +175,47 @@ None. Definitions have been on `/api/tome` since 2026-09-03.
    chip list already the answer there?
 4. Is stripping marks the right Field Manual behavior, or should the published site render the
    definition inline â€” a `<dfn>` with a `title`, say â€” since it has no hover machinery?
+
+---
+
+## Plan Review
+
+**Reviewed:** 2026-09-04 07:20
+**Reviewer:** Claude Code (plan-review-intake)
+
+### Strengths
+- The rule conflict is confronted rather than smuggled: the no-pop-over amendment is quoted verbatim, scoped by the §6.8 reason rather than the letter, and given a stated revert path if the DM declines.
+- The rejected alternative was measured, not hand-waved; the decision record is auditable.
+- "Both renderers change in this plan, or neither does" identifies the real failure mode and orders Phase 2 to gate the dangerous one first.
+- The families table is correctly placed in the SPA rather than concepts.ts; grouping is presentation, and the plan says so with the right justification.
+- Files Expected to Change pairs every file with its covering test, and Track: main / disjointness is satisfied.
+
+### Issues
+
+#### Critical (Must Address Before Implementation)
+1. **The lookup is area-scoped; cross-area marks will resolve to nothing at runtime and alidate:content will not catch it.** TomeAreaSchema carries concepts for one area only, and the current screen wiring hands the renderer a single area. The plan never states whether the lookup is per-area or whole-Tome. Add a success criterion for a mark referencing an earlier area's concept, or explicitly choose a whole-Tome lookup.
+2. **The Quest screen renders lesson prose through Markdown and is not in the file table.** If the lookup is optional and only TomeScreen passes it, a marked lesson opened from the Quest screen will print literal [[print]] on the learner's work surface. Either QuestScreen.tsx changes too, or the plan must state that unresolved marks are stripped to display text everywhere.
+
+#### Important (Should Address)
+1. **The amended rule is violated by the Quest screen's own Tome.** The plan's no-pop-over carveout does not account for the in-place Tome living above the editor on that screen. Decide whether cards are suppressed there or the downward flip is forbidden.
+2. **Question 3 (marks in briefs) is not answerable at review time.** The validator currently sweeps briefs with lessons, so Phase 1 needs a declared file predicate rather than an open question.
+3. **Pipe syntax collides with both table parsers.** A mark with | inside a table cell will split the row. The plan needs either a forbid, an escape rule, or a parser order that handles marks first.
+4. **A marked concept with no definition is unspecified.** The plan needs a decided fallback for missing definitions and for family members that only partially exist.
+5. **RED/mutant discipline is stated only for Phase 1.** The testing protocol should be repeated for the later phases as well.
+
+#### Minor (Consider)
+1. No escape hatch for a literal [[ in prose.
+2. Two copies of this plan exist, which may drift once review edits land.
+3. "the eight lessons" in Phase 4 is looser than the file glob and should name the actual subset in scope.
+
+### Recommendations
+- Decide and write down the lookup scope, the file predicate, and the fallback for unresolved marks before Phase 1.
+- Add QuestScreen.tsx and Tome.test.tsx to the file table, with a test that the Quest screen's Tome renders marks and does not cover the editor.
+- Add success criteria for a cross-area mark, a table-cell mark, a missing-definition mark, and the Quest screen containing no literal [[.
+- Restate the RED ? GREEN ? mutant requirement per phase.
+- Close the open question about [[id|words]] rather than leaving it to review.
+
+### Assessment
+**Implementable as written?** With fixes
+
+**Reasoning:** The plan is strong on the rule amendment and the two-renderer trap, but the concept lookup scope is undefined against an area-scoped contract, and the Quest screen — the surface the rule was written to protect — is not yet covered. Both are design decisions that need to be pinned down before implementation.

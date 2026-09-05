@@ -6,7 +6,7 @@ This area is about **data that outlives the program** — saving a world so it i
 tomorrow, sharing a seed with somebody else, and asking a machine on the other side of the
 internet a question.
 
-## Reading a file
+## [[file-read|Reading a file]]
 
 ```python
 from pathlib import Path
@@ -24,7 +24,7 @@ running on, and a file that works on yours will fail on someone else's the first
 contains a character outside plain English. This is the single most common cross-machine
 file bug.
 
-## Writing a file
+## [[file-write|Writing a file]]
 
 ```python
 (here / "scores.txt").write_text("Sam 400\n", encoding="utf-8")
@@ -57,7 +57,7 @@ Use `with` every time you open a file. There is no case where the manual form is
 
 The modes: `"r"` read, `"w"` write from scratch, `"a"` append to the end.
 
-## JSON — structure that survives
+## [[json-format|JSON]] — structure that survives
 
 A text file is fine for a line of text. The moment you want to save a *dict*, you need a
 format:
@@ -82,7 +82,7 @@ it a method that returns a plain dict — and one that builds a player back from
 
 That pairing is worth naming. It is the shape of every save system you will ever write.
 
-## CSV — rows and columns
+## [[csv|CSV]] — rows and columns
 
 ```python
 import csv
@@ -157,7 +157,7 @@ py -3.14 world.py --help
 of the file. **A program with `--help` is one somebody else can run** without reading your
 source — which is the cold clone from Area 2, made routine.
 
-## Dependencies
+## [[dependencies|Dependencies]]
 
 ```bash
 pip install requests

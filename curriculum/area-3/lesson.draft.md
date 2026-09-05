@@ -5,7 +5,7 @@ becomes something you actually care about,
 because **an inventory is a list, a crafting recipe is a dict, and a block palette is a
 set.** The mapping is not a metaphor. It is what those things are.
 
-## A list is things in order
+## A [[list]] is things in order
 
 ```python
 inventory = ["dirt", "stone", "torch"]
@@ -59,7 +59,7 @@ A tuple is a list that cannot change. Round brackets instead of square. You use 
 the *shape* is the meaning: a coordinate is always three numbers, and a coordinate that
 could grow a fourth would be a bug rather than a feature.
 
-## A dict is things by name
+## A [[dict]] is things by name
 
 A list answers "what is at position 3?". A dict answers "what is the recipe for a torch?",
 which is the question you actually have.
@@ -97,7 +97,7 @@ for item, count in recipe.items():
 `.items()` hands you both halves at once. `.keys()` and `.values()` give you one each,
 when only one is what you need.
 
-## A set is things without duplicates
+## A [[set]] is things without duplicates
 
 ```python
 palette = {"stone", "stone", "dirt"}
@@ -138,7 +138,7 @@ min(counts), max(counts)
 Note that `sorted()` **returns a new list** and `list.sort()` **changes the one you have**.
 Two ways to do it, and picking the wrong one is a bug you will write at least once.
 
-## Collections inside collections
+## [[nested-structures|Collections inside collections]]
 
 This is where it gets real, and where it gets confusing:
 
@@ -160,7 +160,7 @@ the end — the middle:
 print(chest["row2"])        # ['torch', 'torch'] — now the next step is obvious
 ```
 
-## Breakpoints
+## [[breakpoints|Breakpoints]]
 
 By now `print` is not enough, and this is the point in the year where you stop guessing.
 

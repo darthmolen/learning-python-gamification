@@ -7,7 +7,7 @@ what programming actually is once you are not alone.
 At the end of it you open the repository that runs all of this, read it, and change
 something in it.
 
-## pytest
+## [[pytest]]
 
 You have been checking your programs by running them and looking. That does not scale, and
 it does not survive you changing something later.
@@ -47,7 +47,7 @@ The stronger move: once it passes, **break the code on purpose** and confirm the
 notices. Then put it back. If the suite stays green while the code is wrong, the suite is
 decoration.
 
-## The debugger
+## [[debugger|The debugger]]
 
 Area 3 gave you `breakpoint()`. Now use it as the first move rather than the last.
 
@@ -64,7 +64,7 @@ The habit worth building: when something is wrong, **do not add three prints and
 Stop on the line before and look at what is actually there. It is faster and it answers
 questions you did not know to ask.
 
-## Type hints
+## [[type-hints|Type hints]]
 
 ```python
 def take_damage(self, amount: int) -> None:
@@ -86,7 +86,7 @@ goes in. And a checker like `pyright`, which reads them and tells you about mist
 caller must deal with that. Most of the crashes you have had this year were a `None` where
 something was expected.
 
-## Comprehensions
+## [[comprehensions|Comprehensions]]
 
 ```python
 names = [block.name for block in world]
@@ -106,7 +106,7 @@ Same thing. The comprehension is better when it fits on one line and reads as a 
 **When it needs two conditions and a nested loop, write the loop** — a comprehension nobody
 can read is worse than four plain lines.
 
-## Generators
+## [[generators|Generators]]
 
 ```python
 def blocks_in(world):
@@ -131,7 +131,7 @@ change was wrong — undo it and make a smaller one.
 Without tests, refactoring is a leap. With them it is a series of steps you can check. That
 is why this area puts them in this order.
 
-## Performance intuition
+## [[performance-intuition|Performance intuition]]
 
 ```python
 import time
@@ -152,7 +152,7 @@ with consequences.
 Checking `if x in my_list` inside a loop is the usual culprit — a list has to look through
 everything, a set does not. That is what Area 3's sets were for.
 
-## Branches and pull requests
+## [[branches|Branches]] and [[pull-requests|pull requests]]
 
 Area 2 gave you `git branch`. Now use it the way it is meant to be used.
 

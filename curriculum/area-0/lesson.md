@@ -60,10 +60,10 @@ drawing. It is how you find out what the computer actually thinks, as opposed to
 you assumed.
 
 That sounds dull. It is the single most useful thing in this document. When a program
-does something you did not expect, the fastest way to find out why is to print the
+does something you did not expect, the fastest way to find out why is to [[print]] the
 thing you are unsure about.
 
-## Variables — giving something a name
+## [[variables|Variables]] — giving something a name
 
 ```python
 length = 100
@@ -140,7 +140,7 @@ print(int(sides) + 1)     # works
 most common mistakes in this whole area, and the error message says so plainly once you
 know how to read it.
 
-## f-strings — putting values inside text
+## [[f-strings]] — putting values inside text
 
 ```python
 name = "Sam"
@@ -160,7 +160,7 @@ print(name + " drew a shape with " + str(sides) + " sides")
 Both work, but the first one reads more easily, which is a huge plus once the code you write
 gets complicated.
 
-## Reading an error
+## [[reading-errors|Reading]] an error
 
 This is a skill, not a personality trait, and it is the most valuable thing you could learn
 right now.
