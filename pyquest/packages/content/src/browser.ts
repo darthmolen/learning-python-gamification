@@ -25,6 +25,15 @@ export {
   type Concept,
 } from './concepts.ts';
 
+/**
+ * Marks are pure string work — no `node:` anything — and the SPA is the surface that renders them
+ * as controls rather than stripping them, so this entry is where it reaches them from.
+ */
+export { parseMarks, stripMarks, type Mark } from './marks.ts';
+
+/** Pure string work too. The SPA suite reads the authored glossaries through it. */
+export { parseGlossary } from './glossary.ts';
+
 export {
   AREAS,
   AreaManifestSchema,

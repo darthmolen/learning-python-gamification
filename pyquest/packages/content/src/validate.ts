@@ -22,8 +22,9 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
-import { CONCEPTS, conceptArea } from './concepts.ts';
+import { CONCEPTS, conceptArea, isKnownConcept } from './concepts.ts';
 import { parseGlossary } from './glossary.ts';
+import { parseMarks } from './marks.ts';
 import {
   parseContentItem,
   parseAreaManifest,
@@ -49,7 +50,8 @@ export type ValidationRule =
   | 'concept-above-area'
   | 'missing-area-manifest'
   | 'pace-in-lesson'
-  | 'glossary-gap';
+  | 'glossary-gap'
+  | 'unknown-mark';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -386,6 +388,7 @@ export function checkContent(source: ContentSource): ContentSet {
   issues.push(...manifestIssues(items, manifests, byId(records), locate));
   issues.push(...paceIssues(roots));
   issues.push(...glossaryIssues(roots));
+  issues.push(...markIssues(roots));
 
   issues.sort(
     (a, b) => a.file.localeCompare(b.file) || (a.line ?? 0) - (b.line ?? 0) || a.rule.localeCompare(b.rule),
@@ -607,6 +610,61 @@ const prose = (markdown: string): string =>
  * `mandala-brief.md` says "next week is the boss" three quarters of the way down, and it is just
  * as false for a learner who took a fortnight over the rehearsal.
  */
+/**
+ * Every `[[mark]]` names a concept the registry knows.
+ *
+ * A mark is a reference to a concept id, so it lives under the rule CLAUDE.md already states:
+ * "authored content is validated against `concepts.ts`. If a concept id changes, content breaks —
+ * that is `validate:content` doing its job."
+ *
+ * **This one earns the check more than the others, because a mistyped id fails silently at the
+ * reader.** A dangling `requires` locks a quest and somebody notices within a session. A mark
+ * naming `whlie` renders as the word "whlie" in ordinary prose: the definition the author meant
+ * to offer is simply never offered, the page looks finished, and nothing anywhere says otherwise.
+ *
+ * Scoped by `readsAsLesson`, the predicate ADR 0006 already defined — lessons and briefs, never
+ * session plans or DM guides. Reusing it rather than declaring a second scope is the point: two
+ * predicates that disagree about what a learner reads is the drift `parseGlossary` was extracted
+ * to prevent, one syntax later.
+ *
+ * The area is deliberately **not** checked. A lesson may name a concept from an earlier area —
+ * `area-3/lesson.draft.md` already writes `print` and `range` — and that is what a curriculum
+ * building on itself looks like. Whether it may refer *forward* is `concept-above-area`'s
+ * question about quests, and this rule does not reopen it.
+ */
+function markIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const trees = roots.curriculum === roots.game ? [roots.curriculum] : [roots.curriculum, roots.game];
+  const issues: ContentIssue[] = [];
+
+  for (const root of trees) {
+    if (!existsSync(root)) continue;
+    const files = readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+      .map((entry) => toPosix(join(entry.parentPath, entry.name).slice(root.length + 1)))
+      .filter(readsAsLesson)
+      .sort();
+
+    for (const file of files) {
+      const text = readFileSync(join(root, file), 'utf8');
+
+      for (const mark of parseMarks(text)) {
+        if (isKnownConcept(mark.id)) continue;
+
+        issues.push({
+          file,
+          // The line, because a lesson runs to hundreds of them and the id is three characters.
+          line: text.slice(0, mark.start).split('\n').length,
+          rule: 'unknown-mark',
+          message: `\`[[${mark.id}]]\` is not a concept`,
+          fix: 'use an id from packages/content/src/concepts.ts, add the concept there if the curriculum really teaches it, or write `\\[[` for a literal',
+        });
+      }
+    }
+  }
+
+  return issues;
+}
+
 function paceIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
   const trees = roots.curriculum === roots.game ? [roots.curriculum] : [roots.curriculum, roots.game];
   const issues: ContentIssue[] = [];
