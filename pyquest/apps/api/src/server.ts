@@ -52,7 +52,9 @@ import {
   SignoffAwardSchema,
   SignoffRequestSchema,
   SubmitRequestSchema,
+  HowToSchema,
   MedalsSchema,
+  PracticeTickSchema,
   TomeSchema,
   type ApiErrorCode,
   type JobResult,
@@ -108,7 +110,9 @@ import {
   pendingSignoffs,
   playerRoles,
   recordAttempt,
+  practiceProgress,
   recordReview,
+  setPracticeCompleted,
   resolveSignoff,
   attemptDetail,
   type Writable,
@@ -618,7 +622,14 @@ export function buildServer(options: ServerOptions): FastifyInstance {
     '/api/players/:playerId/areas/:area',
     async (request) => {
       const progress = await progressFor(db, request.params.playerId);
-      const view = areaView(content, progress, asArea(request.params.area));
+      /**
+       * Read separately from `progress` and passed alongside it, because `PlayerProgress` is
+       * the bundle the engine consumes and the engine must never see a practice tick. Nothing
+       * is gated on one, and a tick that reached the engine is a tick that could start
+       * deciding something.
+       */
+      const ticks = await practiceProgress(db, request.params.playerId);
+      const view = areaView(content, progress, asArea(request.params.area), ticks);
       if (view === undefined) throw notFound(`area ${request.params.area}`);
       return AreaViewSchema.parse(view);
     },
@@ -895,6 +906,49 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   );
 
   /* ---------------------------------------------------------------------------------------
+   * The practice spine — the learner's own tick
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * Tick or untick one practice.
+   *
+   * **Nothing reads this back except the checkbox that wrote it.** No quest is gated on it, no
+   * boss unlock consults it, and it is deliberately absent from the bundle handed to the
+   * engine — §5.2 lets him clear any three quests he chooses, ADR 0002 refuses any pace
+   * judgement, and the Tome promises every page is open from day one. It is scaffolding
+   * (ADR 0004), and the durable record of a practice having happened is his journal entry.
+   *
+   * Idempotent in both directions: ticking twice is the same fact stated twice, and unticking
+   * something never ticked is not an error. That is what lets the UI treat it as a checkbox
+   * rather than as a transaction it has to reason about.
+   *
+   * The practice number is not validated against content on purpose. The spine lives in git
+   * and this database holds no content (§6.7); a row naming a practice that was later
+   * renumbered is stale data, not a corruption, and it simply stops matching a row on screen.
+   */
+  app.post<{ Params: { playerId: string; area: string; practiceN: string } }>(
+    '/api/players/:playerId/areas/:area/practices/:practiceN',
+    async (request) => {
+      const { playerId } = request.params;
+      await progressFor(db, playerId);
+
+      const area = Number(request.params.area);
+      const practiceN = Number(request.params.practiceN);
+      if (!Number.isInteger(area) || area < 0 || area > 7 || !Number.isInteger(practiceN) || practiceN < 1) {
+        throw new ApiFailure('verifier-failed', 'an area is 0–7 and a practice number is 1 or more');
+      }
+
+      const parsed = PracticeTickSchema.safeParse(request.body);
+      if (!parsed.success) {
+        throw new ApiFailure('verifier-failed', 'a practice tick is { completed: boolean } and nothing else');
+      }
+
+      await setPracticeCompleted(db, playerId, area, practiceN, parsed.data.completed);
+      return PracticeTickSchema.parse({ completed: parsed.data.completed });
+    },
+  );
+
+  /* ---------------------------------------------------------------------------------------
    * The Party screen — §5.8
    * ------------------------------------------------------------------------------------- */
 
@@ -1047,6 +1101,21 @@ export function buildServer(options: ServerOptions): FastifyInstance {
    * `game/` is absent, so this route degrades with the overlay instead of failing with it.
    */
   app.get('/api/medals', async () => MedalsSchema.parse({ medals: medalsView(content) }));
+
+  /* ---------------------------------------------------------------------------------------
+   * How-to — the page that explains the rest of them
+   * ------------------------------------------------------------------------------------- */
+
+  /**
+   * Unauthenticated and unscoped for the same reason as the two above: how the thing works is
+   * the same for everybody, and a learner who cannot work out how to sign in is exactly the
+   * learner this page is for.
+   *
+   * `content.howTo()` reads the curriculum's sections and then the overlay's. With `game/`
+   * deleted the second half is simply missing and the page still reads correctly, because with
+   * no game there is nothing to explain about playing one.
+   */
+  app.get('/api/how-to', async () => HowToSchema.parse({ sections: content.howTo() }));
 
   /* ---------------------------------------------------------------------------------------
    * Sign-offs — §6.3, §5.11

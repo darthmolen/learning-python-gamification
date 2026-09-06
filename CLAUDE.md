@@ -53,12 +53,21 @@ repository and reads them. **Do not reintroduce the old ones.**
 | Use | Never |
 |---|---|
 | Area (0–7) | Tier |
+| Practice — the unit of work | Session, for the unit of work |
+| Session — the evening, attendance, the §5.9 streak | Practice, for a calendar sitting |
 | Invasion | Patrol |
 | Defend | Muster |
 | Journal | Chronicle |
 | Party | Board, Levels |
 | Tome | Learn, Codex |
 | `peer` / `dm` | `parent`, `son` as roles |
+
+**Practice and session are different objects, not synonyms** (ADR 0007). A practice is an
+amount of work — numbered, ordered, untimed. A session is an evening, and it is what §5.9's
+streak counts. One practice usually fits one session and sometimes takes two, which is the
+sentence the split exists to make sayable. "Session 3" also fails ADR 0006's own test as a
+*name*: it asserts a sitting, so a learner who took two evenings is told by the noun that he
+is behind.
 
 The current arrangement is **Kitchen Table mode**: one household, the parent holding
 both the player and DM seats (§5.11). Roles are not people.

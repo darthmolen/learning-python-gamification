@@ -1,0 +1,14 @@
+# The mistake: `exercises/the-sigil/` exists and no practice claims it. This is the drift
+# that leaves an area README proposing quests that already shipped — work authored into the
+# tree and never placed in the sequence, so no learner is ever told to do it.
+area: 1
+practices:
+  - n: 1
+    title: The Loop That Draws
+    exercises: []
+  - n: 2
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+  - n: 3
+    title: Carrying A Number
+    exercises: [the-countdown]

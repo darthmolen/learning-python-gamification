@@ -1,0 +1,50 @@
+# The spine of Area 0 — the order the work is done in, stored rather than described.
+#
+# A practice is the unit of work; a session is the unit of time (ADR 0007). The numbers here
+# are the numbers the practice plans and the briefs already use; what is new is that something
+# can now read them. Before this file the relation lived in three notations across three areas
+# and in none of them at once — a README table, a `### The quest` section, and, in this area,
+# prose proposing quests that had already shipped.
+#
+# `exercises` names slugs under `exercises/`, never the practice plan files. The learner never
+# opens a plan; they are DM-voiced and written for somebody running a calendar.
+#
+# **Practice 1 is empty and that is the truth about it.** Practice 1's three drills are
+# delivered at the table and have no brief and no hidden test. Half of a real area looks like
+# this, and the Area screen says so rather than showing a gap.
+area: 0
+practices:
+  - n: 1
+    title: First Light
+    exercises: []
+
+  - n: 2
+    title: Names For Things
+    exercises: [the-perimeter]
+
+  # The six broken sigils, promoted to fix-it quests. The seventh, `b7_no_error_at_all.py`,
+  # is deliberately not among them: its win condition is that the learner *says what is
+  # wrong*, which no hidden test can check.
+  - n: 3
+    title: The Broken Sigil
+    exercises:
+      - the-typo
+      - the-wrong-kind
+      - never-closed
+      - out-of-line
+      - no-such-order
+      - not-a-number
+
+  - n: 4
+    title: Four Kinds Of Thing
+    exercises: [the-type-lab]
+
+  - n: 5
+    title: The Machine Asks
+    exercises: [ask-and-draw, name-tag]
+
+  # Boss 0. `exercises/first-light/` holds the boss specification, which is why the area's
+  # own title appears as a slug here.
+  - n: 6
+    title: The Commission
+    exercises: [first-light]

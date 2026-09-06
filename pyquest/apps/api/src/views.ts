@@ -205,10 +205,40 @@ export function areaView(
   content: ContentRoot,
   progress: PlayerProgress,
   area: Area,
+  /**
+   * Ticked practices, passed separately rather than folded into `progress`.
+   *
+   * `PlayerProgressSchema` is the bundle the *engine* consumes, and the engine must never
+   * consume this: nothing is gated on a practice, and a tick that reached the engine is a tick
+   * that could start deciding something. Defaulting to empty keeps every existing caller — and
+   * every fixture — correct without a database.
+   */
+  completed: readonly { area: number; practiceN: number }[] = [],
 ): AreaView | undefined {
   const card = areaCard(content, progress, area);
   if (card === undefined) return undefined;
-  return { ...card, playerId: progress.playerId, quests: availableQuests(content.items, progress, area) };
+
+  const ticked = new Set(completed.filter((c) => c.area === area).map((c) => c.practiceN));
+
+  return {
+    ...card,
+    playerId: progress.playerId,
+    quests: availableQuests(content.items, progress, area),
+    /**
+     * The spine, already carrying its derived Practice -> Quest edge from `checkContent`. An
+     * area with no `practices.yml` yields an empty list and the screen omits the panel, which
+     * is the same degradation the lesson and the glossary already have.
+     */
+    practices: content.practices
+      .filter((practice) => practice.area === area)
+      .map((practice) => ({
+        n: practice.n,
+        title: practice.title,
+        exercises: [...practice.exercises],
+        quests: [...practice.quests],
+        completed: ticked.has(practice.n),
+      })),
+  };
 }
 
 /**

@@ -28,6 +28,46 @@ export interface AreaView {
     readonly definition?: string;
   }[];
   readonly exercises: readonly { readonly title: string; readonly body: string; readonly concepts: readonly string[] }[];
+  /**
+   * The spine: every practice in order, each carrying the exercises it teaches.
+   *
+   * **This is what the page was missing.** `exercises` above was built from
+   * `items.filter(kind === 'quest')`, so the published manual's "the work" *was the scored
+   * subset* — the same blind spot as the app, on the one surface a confused learner could go
+   * and consult instead. Practices that carry no brief-bearing exercise were invisible here,
+   * and they are a fifth of the authored curriculum.
+   *
+   * Empty for an area whose `practices.yml` is not authored yet, which is areas 3 to 7 today.
+   */
+  readonly practices: readonly {
+    readonly n: number;
+    readonly title: string;
+    /**
+     * True when this practice claims work the site does not publish — a boss specification.
+     * The row still appears, because a gap in the sequence is the failure the spine exists to
+     * end, but the reason it is empty is stated rather than left to look like an oversight.
+     */
+    readonly withheld: boolean;
+    /**
+     * Exercises this practice shares with an earlier one, named rather than reprinted.
+     * `a1-the-polygon-engine` is built from practices 1 and 2 together, so practice 2 says it
+     * continues that work instead of repeating a brief the reader has just read.
+     */
+    readonly continues: readonly string[];
+    readonly exercises: readonly { readonly title: string; readonly body: string; readonly concepts: readonly string[] }[];
+  }[];
+}
+
+/**
+ * One how-to section, rendered.
+ *
+ * The learner build carries the curriculum's sections only; the DM build carries the overlay's
+ * as well, because the DM runs both halves and needs the vocabulary to explain the second.
+ */
+export interface HowToView {
+  readonly id: string;
+  readonly title: string;
+  readonly body: string;
 }
 
 const STYLE = `
@@ -119,6 +159,42 @@ ${body}
 </body>
 </html>
 `;
+}
+
+/**
+ * `how-to.html` — how this works, for the reader of the manual.
+ *
+ * The learner build carries the curriculum's sections and the DM build carries the overlay's
+ * too. That is the same split `teachingAid` already makes and for the same reason: the
+ * difference is whether the section is *rendered at all*, never whether it is visible.
+ */
+export function renderHowTo(sections: readonly HowToView[], noindex = false): string {
+  const body =
+    sections.length > 0
+      ? sections
+          .map(
+            (s) => `  <section class="ex">
+    <h2>${escape(s.title)}</h2>
+    <div class="brief">
+${s.body}
+    </div>
+  </section>`,
+          )
+          .join('\n')
+      : `  <div class="gap"><p style="margin:0">Nothing is authored here yet.</p></div>`;
+
+  return page(
+    'How this works — The Field Manual',
+    `<header><div class="head-in">
+  <div class="eyebrow"><a href="index.html">The Field Manual</a></div>
+  <h1 class="disp">How this works</h1>
+  <p class="lede">What a practice is, what an exercise is, and the order they come in.</p>
+</div></header>
+<div class="wrap">
+${body}
+</div>`,
+    noindex,
+  );
 }
 
 const weeksLabel = (a: AreaView): string =>
@@ -228,21 +304,61 @@ ${a.lesson}
     .join('')}</dl>`
       : '';
 
-  const exercises =
-    a.exercises.length > 0
-      ? `<h2>The exercises</h2>
-${a.exercises
-  .map(
-    (e) => `  <section class="ex">
+  const exercise = (e: {
+    readonly title: string;
+    readonly body: string;
+    readonly concepts: readonly string[];
+  }): string => `  <section class="ex">
     <h3>${escape(e.title)}</h3>
     <ul class="tags">${e.concepts.map((c) => `<li>${escape(c)}</li>`).join('')}</ul>
     <div class="brief">
 ${e.body}
     </div>
+  </section>`;
+
+  /**
+   * The work, in the order it is done, which is the practice spine.
+   *
+   * A practice with no exercises is printed rather than skipped, and that is the entire change:
+   * it is DM-delivered work, it is a fifth of the authored curriculum, and a manual that listed
+   * only the brief-bearing ones was quietly telling the reader that the rest did not exist.
+   *
+   * An area with no spine authored falls back to the flat list, so areas 3 to 7 keep the page
+   * they have today rather than losing one while their `practices.yml` is unwritten.
+   */
+  const work =
+    a.practices.length > 0
+      ? `<h2>The work</h2>
+${a.practices
+  .map(
+    (p) => `  <section class="practice">
+    <h3>${escape(`${String(p.n)}. ${p.title}`)}</h3>
+${
+  p.continues.length > 0
+    ? `    <div class="gap"><p style="margin:0">Continues ${p.continues
+        .map((t) => escape(t))
+        .join(' and ')}, above.</p></div>`
+    : ''
+}
+${
+  p.exercises.length > 0
+    ? p.exercises.map(exercise).join('\n')
+    : p.continues.length > 0
+      ? ''
+      : p.withheld
+      ? `    <div class="gap"><p style="margin:0">The closing piece of this area is set by
+    whoever is teaching it — a specification and a blank file, rather than a starter to
+    finish. It is not printed here.</p></div>`
+      : `    <div class="gap"><p style="margin:0">Worked at the table, out loud, with somebody
+    else. There is no file for this one and it still counts.</p></div>`
+}
   </section>`,
   )
   .join('\n')}`
-      : `<h2>The exercises</h2>
+      : a.exercises.length > 0
+        ? `<h2>The exercises</h2>
+${a.exercises.map(exercise).join('\n')}`
+        : `<h2>The exercises</h2>
   <div class="gap"><p style="margin:0">Not written yet. This area has its shape — a title, a
   place in the year, and the ideas above — and no exercises so far. Saying so is more useful
   than an empty page that looks finished.</p></div>`;
@@ -258,7 +374,7 @@ ${e.body}
   ${concepts}
   ${lesson}
   ${teachingAid(a)}
-  ${exercises}
+  ${work}
 </div>`,
     noindex,
   );

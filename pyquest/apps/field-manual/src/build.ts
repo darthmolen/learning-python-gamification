@@ -9,7 +9,7 @@
  * published while the API is unfinished — §6.7 puts content in git, and this reads git.
  */
 
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -21,7 +21,7 @@ import {
   stripMarks,
 } from '@pyquest/content';
 import { marked } from 'marked';
-import { renderArea, renderIndex, type AreaView } from './render.ts';
+import { renderArea, renderHowTo, renderIndex, type AreaView, type HowToView } from './render.ts';
 
 /**
  * Who the build is for.
@@ -50,6 +50,34 @@ export interface BuildOptions {
 function areaProse(curriculumRoot: string, area: number, file: string): string | undefined {
   const path = join(curriculumRoot, `area-${area}`, file);
   return existsSync(path) ? readFileSync(path, 'utf8') : undefined;
+}
+
+/**
+ * The how-to sections under one root, in filename order.
+ *
+ * A missing directory is a return value rather than a fault, the same way `areaProse` treats an
+ * unwritten lesson: `game/` may not be installed at all, and a curriculum whose how-to is not
+ * authored yet is early rather than broken.
+ */
+function howToUnder(root: string): HowToView[] {
+  const dir = join(root, 'how-to');
+  if (!existsSync(dir)) return [];
+
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => entry.name)
+    .sort()
+    .map((name) => {
+      const raw = readFileSync(join(dir, name), 'utf8');
+      // The `# ` heading is the section's title, and `briefBody` strips it from the body so the
+      // page does not print the same words twice — the rule the area pages already follow.
+      const heading = /^#\s+(.+?)\s*$/m.exec(raw)?.[1];
+      return {
+        id: name.replace(/\.md$/, ''),
+        title: heading ?? name.replace(/\.md$/, ''),
+        body: briefBody(raw),
+      };
+    });
 }
 
 /**
@@ -88,7 +116,7 @@ function briefBody(markdown: string): string {
 
 export function buildSite({ contentRoot, outDir, audience = 'learner' }: BuildOptions): AreaView[] {
   const roots = contentRootsFrom(contentRoot);
-  const { items, manifests, issues } = checkContent(roots);
+  const { items, manifests, practices, issues } = checkContent(roots);
 
   // The validator is the gate, not this. If content is broken, say so here rather than
   // publishing a site built from it.
@@ -166,6 +194,66 @@ ${formatIssues(issues, roots)}`,
           body: briefBody(readBrief(roots.curriculum, item.brief)),
           concepts: [...item.concepts],
         })),
+      /**
+       * The spine, and the fix for what this file's own `exercises` field got wrong.
+       *
+       * `exercises` above is `items.filter(kind === 'quest')` — so what this site called "the
+       * work" was the *scored subset*, and every practice carrying no brief-bearing exercise
+       * was invisible. That is a fifth of the authored curriculum, and it was missing from the
+       * one surface a confused learner could consult instead of the app.
+       *
+       * Practices arrive from `checkContent` with their exercise slugs already validated, so
+       * this maps slugs to briefs and does not re-derive anything.
+       */
+      /**
+       * An exercise built from two practices prints once, under the first that claims it.
+       *
+       * `a1-the-polygon-engine` is made from practices 1 and 2 together and
+       * `a1-the-growing-spiral` from 7 and 8 — the many-to-many case is real curriculum, not an
+       * edge. Printing the brief twice would pad the manual with a page the reader has already
+       * read; naming it in the later practice keeps the sequence honest without the repetition.
+       */
+      practices: ((printed: Set<string>) =>
+        practices
+        .filter((practice) => practice.area === manifest.area)
+        .map((practice) => {
+          const claimed = practice.exercises.map((slug) => ({
+            slug,
+            brief: `area-${manifest.area}/exercises/${slug}/BRIEF.md`,
+          }));
+          const resolved = claimed.map((c) => ({
+            ...c,
+            item: items.find((i) => i.brief === c.brief),
+          }));
+
+          /**
+           * A boss is withheld here, and `tests/no-game.test.ts` is what says so: "this site
+           * does not have assessments — it has the work", and a boss specification published
+           * beside the exercises would be the game leaking in under a different label.
+           *
+           * The practice still appears. Dropping the row instead would put a gap in the
+           * sequence, which is the exact failure the spine exists to end — and the reader is
+           * told the closing piece is set by the person teaching rather than left to guess.
+           */
+          const publishable = resolved.filter((r) => r.item?.kind !== 'boss');
+          const fresh = publishable.filter((r) => !printed.has(r.slug));
+          const repeats = publishable.filter((r) => printed.has(r.slug));
+          for (const r of fresh) printed.add(r.slug);
+
+          return {
+            n: practice.n,
+            title: practice.title,
+            withheld: publishable.length < resolved.length,
+            continues: repeats.map((r) => r.item?.title ?? r.slug),
+            exercises: fresh.map((r) => ({
+              // A slug the overlay does not score still has a brief, and the title falls back
+              // to the slug so the section is never nameless.
+              title: r.item?.title ?? r.slug,
+              body: briefBody(readBrief(roots.curriculum, r.brief)),
+              concepts: r.item === undefined ? [] : [...r.item.concepts],
+            })),
+          };
+        }))(new Set<string>()),
     }));
 
   rmSync(outDir, { recursive: true, force: true });
@@ -176,6 +264,24 @@ ${formatIssues(issues, roots)}`,
    */
   const noindex = audience === 'dm';
   writeFileSync(join(outDir, 'index.html'), renderIndex(areas, noindex), 'utf8');
+
+  /**
+   * How this works, for whoever is reading this build.
+   *
+   * The learner gets the curriculum's sections. The DM gets the overlay's as well, because the
+   * DM runs both halves — the practices *and* the game keeping score on part of them — and has
+   * to be able to explain the second to somebody who has just asked what a quest is.
+   *
+   * `game/how-to/` absent is a supported state and yields the learner's page for both, which is
+   * the deletion test applied to prose: with no game there is nothing to explain about playing
+   * one, and the page is shorter rather than broken.
+   */
+  const howTo = [
+    ...howToUnder(roots.curriculum),
+    ...(audience === 'dm' ? howToUnder(roots.game) : []),
+  ];
+  writeFileSync(join(outDir, 'how-to.html'), renderHowTo(howTo, noindex), 'utf8');
+
   for (const area of areas) {
     writeFileSync(join(outDir, `area-${area.area}.html`), renderArea(area, noindex), 'utf8');
   }

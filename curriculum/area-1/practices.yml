@@ -1,0 +1,52 @@
+# The spine of Area 1. See area-0/practices.yml for what this file is and why it exists.
+#
+# **This area is where many-to-many stops being hypothetical.** `the-polygon-engine` is built
+# from Practice 1's and Practice 2's drills together, and `the-growing-spiral` from Practice 7's
+# and Practice 8's. A rule of one practice per exercise would reject this area on the day it
+# was written, which is why the validator does not have one.
+#
+# Three practices carry no exercise, and area-1/README.md records why for each: Practice 6's
+# six broken loops stay DM-delivered, Practice 9's mandala is a lab rather than an assessment,
+# and both lose their point when automated.
+area: 1
+practices:
+  - n: 1
+    title: The Loop That Draws
+    exercises: [the-polygon-engine]
+
+  - n: 2
+    title: Any Shape You Like
+    exercises: [the-polygon-engine]
+
+  - n: 3
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+
+  - n: 4
+    title: Two Roads
+    exercises: [the-first-half]
+
+  - n: 5
+    title: And, Or, Not
+    exercises: [the-gatekeeper]
+
+  - n: 6
+    title: The Broken Loop
+    exercises: []
+
+  - n: 7
+    title: A Loop Inside A Loop
+    exercises: [the-growing-spiral]
+
+  - n: 8
+    title: Carrying A Number
+    exercises: [the-growing-spiral]
+
+  - n: 9
+    title: The Mandala
+    exercises: []
+
+  # Boss 1.
+  - n: 10
+    title: The Sigil
+    exercises: [the-sigil]

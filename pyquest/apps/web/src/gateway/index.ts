@@ -17,8 +17,12 @@ import {
   SignoffRequestSchema,
   TokenGrantSchema,
   MedalsSchema,
+  HowToSchema,
+  PracticeTickSchema,
   TomeSchema,
   type Account,
+  type HowTo,
+  type PracticeTick,
   type AreaView,
   type CampaignView,
   type DrillOutcome,
@@ -252,6 +256,36 @@ export const getTome = (): Promise<Tome> => get('/api/tome', TomeSchema, () => f
  */
 export const getMedals = (): Promise<Medals> =>
   get('/api/medals', MedalsSchema, () => fixtures.medals);
+
+/**
+ * The HOW-TO sections, curriculum first and then the overlay's.
+ *
+ * A short list is a legitimate answer and a one-section list is the state with `game/` deleted.
+ * The screen stacks whatever arrives rather than expecting two.
+ */
+export const getHowTo = (): Promise<HowTo> =>
+  get('/api/how-to', HowToSchema, () => fixtures.howTo);
+
+/**
+ * Tick or untick one practice.
+ *
+ * Offline this resolves without doing anything, and that is the honest stub: with no API there
+ * is nowhere to keep the tick, and the alternative — pretending it stuck until the next reload
+ * quietly dropped it — is worse than a checkbox that visibly does not persist.
+ */
+export async function setPracticeCompleted(
+  playerId: string,
+  area: number,
+  practiceN: number,
+  completed: boolean,
+): Promise<PracticeTick> {
+  const path = `/api/players/${playerId}/areas/${String(area)}/practices/${String(practiceN)}`;
+  if (apiBase() === undefined) return PracticeTickSchema.parse({ completed });
+
+  const response = await send(path, PracticeTickSchema.parse({ completed }));
+  if (!response.ok) throw new Error(`${path} answered ${String(response.status)}`);
+  return PracticeTickSchema.parse(await response.json());
+}
 
 /**
  * §5.6's entries: what he wrote, joined to the commits that were paid for.

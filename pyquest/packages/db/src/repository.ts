@@ -240,6 +240,13 @@ export async function sessions(client: Queryable): Promise<Session[]> {
   return parseRows('sessions', SessionSchema, rows);
 }
 
+/*
+ * Practice ticks are read and written in `apps/api/src/store.ts`, beside `recordReview`, not
+ * here. They are never part of `playerProgress` — that bundle is what the engine consumes, and
+ * nothing is gated on a practice — so a reader here would have exactly one caller in the API
+ * and would be a second implementation of a query that already exists there.
+ */
+
 /** Bounties, newest first — §5.8's board reads top-down and the newest posting is the live one. */
 export async function bounties(client: Queryable): Promise<Bounty[]> {
   const { rows } = await client.query(

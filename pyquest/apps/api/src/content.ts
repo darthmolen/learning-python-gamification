@@ -17,8 +17,8 @@
  * `npm run validate:content` runs. Two validators would be two answers.
  */
 
-import { existsSync, readFileSync } from 'node:fs';
-import { isAbsolute, relative, resolve, sep } from 'node:path';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import {
   checkContent,
   formatIssues,
@@ -26,6 +26,7 @@ import {
   type AreaManifest,
   type ContentIssue,
   type ContentItem,
+  type LoadedPractice,
   contentRootsFrom,
 } from '@pyquest/content';
 import type { ScaledXpKind } from '@pyquest/engine';
@@ -100,10 +101,38 @@ export class ContentPathError extends Error {
  * of that mistake is a map screen that gets slower as the curriculum gets longer — which is to
  * say, as the project succeeds.
  */
+/**
+ * One section of the HOW-TO page, read from a markdown file.
+ *
+ * `source` is on the wire because the page groups by it and because it is the honest label:
+ * the curriculum half survives the game being deleted and the overlay half does not.
+ */
+export interface HowToSection {
+  readonly id: string;
+  readonly title: string;
+  readonly body: string;
+  readonly source: 'curriculum' | 'game';
+}
+
 export interface ContentRoot {
   readonly root: string;
   readonly items: readonly ContentItem[];
   readonly manifests: readonly AreaManifest[];
+  /**
+   * The practice spine, area by area, with the Practice -> Quest edge already joined.
+   *
+   * It arrives from `checkContent` rather than being assembled here, so the API, the SPA and
+   * the Field Manual all read one derivation instead of three that agree until they do not.
+   */
+  readonly practices: readonly LoadedPractice[];
+  /**
+   * The how-to sections, curriculum first and then the overlay's.
+   *
+   * Ordering is the whole argument: learn before play, which is both the pedagogical order and
+   * the lane order. With `game/` deleted the second half is simply absent and the page still
+   * reads — there is no game to explain.
+   */
+  howTo(): readonly HowToSection[];
   /** One item by id, or `undefined`. Quest ids in progress rows are resolved through this. */
   item(id: string): ContentItem | undefined;
   manifest(area: Area): AreaManifest | undefined;
@@ -178,7 +207,7 @@ export function loadContentRoot(base: string): ContentRoot {
     );
   }
 
-  const { items, manifests, issues } = checkContent(roots);
+  const { items, manifests, practices, issues } = checkContent(roots);
 
   if (issues.length > 0) {
     // `roots`, not `absolute`: the report resolves each file against the tree it was read
@@ -189,10 +218,42 @@ export function loadContentRoot(base: string): ContentRoot {
   const byId = new Map(items.map((item) => [item.id, item]));
   const byArea = new Map(manifests.map((manifest) => [manifest.area, manifest]));
 
+  /**
+   * Read one root's `how-to/` directory. Absent is a return value rather than a fault, the same
+   * way `readGame` treats a missing overlay — deleting `game/` is a supported state, and a
+   * curriculum with no how-to page authored yet is an early one rather than a broken one.
+   */
+  const sectionsUnder = (dir: string, source: 'curriculum' | 'game'): HowToSection[] => {
+    const at = join(dir, 'how-to');
+    if (!existsSync(at)) return [];
+
+    return readdirSync(at, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+      .map((entry) => entry.name)
+      .sort()
+      .map((name) => {
+        const body = readFileSync(join(at, name), 'utf8');
+        // The `# ` heading is the section's title, and the body below it is what renders. A
+        // file with no heading falls back to its own name rather than printing untitled prose.
+        const heading = /^#\s+(.+?)\s*$/m.exec(body)?.[1];
+        return {
+          id: name.replace(/\.md$/, ''),
+          title: heading ?? name.replace(/\.md$/, ''),
+          body: heading === undefined ? body : body.replace(/^#\s+.+?\s*$/m, '').trimStart(),
+          source,
+        };
+      });
+  };
+
   return {
     root: absolute,
     items,
     manifests,
+    practices,
+    howTo: () => [
+      ...sectionsUnder(roots.curriculum, 'curriculum'),
+      ...sectionsUnder(roots.game, 'game'),
+    ],
     item: (id) => byId.get(id),
     manifest: (area) => byArea.get(area),
     /**

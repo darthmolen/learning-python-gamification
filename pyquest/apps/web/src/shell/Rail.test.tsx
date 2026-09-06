@@ -12,15 +12,22 @@ const renderAt = (path: string) =>
   );
 
 /**
- * §6.8: six rail destinations, "true wherever you are standing, so they are always one click
- * away and never nested". The count is load-bearing — a seventh would mean something was
- * promoted out of a place it belongs to, and a fifth would mean something is unreachable.
+ * §6.8's rail carries what is "true wherever you are standing, so they are always one click
+ * away and never nested". The count is load-bearing in one direction only: a fifth would mean
+ * something became unreachable.
+ *
+ * The seventh is HOW-TO, and it is admitted rather than excepted (ADR 0008). The rule the
+ * original six were counted against is that nothing belonging to a *place* may be promoted out
+ * of it — which is why Quests is a section of an area rather than a rail item. HOW-TO belongs
+ * to no place: no parent area, no parent screen, nothing to be promoted out of. And confusion
+ * is the one thing in this product that is location-independent, which is the strongest claim
+ * any rail item can make to being true wherever you are standing.
  */
 describe('the rail', () => {
-  it('offers exactly the six overland destinations, in artboard order', () => {
+  it('offers the overland destinations in artboard order, with HOW-TO last', () => {
     renderAt('/map');
     const names = screen.getAllByRole('link').map((a) => a.textContent);
-    expect(names).toEqual(['Map', 'Tome', 'Defend', 'Party', 'Journal', 'Console']);
+    expect(names).toEqual(['Map', 'Tome', 'Defend', 'Party', 'Journal', 'Console', 'How-To']);
   });
 
   it('points each destination at its own route', () => {
@@ -34,13 +41,14 @@ describe('the rail', () => {
     expect(href('Party')).toBe('/party');
     expect(href('Journal')).toBe('/journal');
     expect(href('Console')).toBe('/console');
+    expect(href('How-To')).toBe('/how-to');
   });
 
   it('marks where you are standing, and only there', () => {
     renderAt('/defend');
     expect(screen.getByRole('link', { name: 'Defend' })).toHaveAttribute('aria-current', 'page');
 
-    for (const name of ['Map', 'Tome', 'Party', 'Journal', 'Console']) {
+    for (const name of ['Map', 'Tome', 'Party', 'Journal', 'Console', 'How-To']) {
       expect(screen.getByRole('link', { name })).not.toHaveAttribute('aria-current');
     }
   });
