@@ -1,13 +1,13 @@
 ---
 kind: plan
-status: queued
+status: in-progress
 track: area-3
 date: 2026-08-28
 ---
 
 # Area 3 — Collections
 
-**Status:** Planned
+**Status:** In progress
 **Track:** area-3
 **Date:** 2026-08-28
 **Author:** Claude (Opus 5)
@@ -59,6 +59,16 @@ it.
 - [ ] **Everything educational lands under `curriculum/area-3/`** — sessions, drills, briefs,
       starters and hidden tests. `game/area-3/quests/` gets the quest YAML and nothing else.
       `rm -rf game/` must still leave Area 3 valid and publishable
+- [ ] **The glossary and the marks stay valid** — added 2026-09-06, after
+      `feature_the-lesson-defines-its-own-words_2026-09-04` landed two validator rules this
+      plan predates. `glossary-gap`: every concept `concepts.ts` assigns to area 3 needs a
+      `## <id>` section in `curriculum/area-3/glossary.md`, and every heading there must be a
+      concept of *this* area. `unknown-mark`: every `[[id]]` in a lesson or a brief must name
+      a real concept. Area 3 satisfies both today — all seventeen are defined — so this
+      criterion is about not breaking them. **Marks are lesson-and-brief syntax only.**
+      Session plans, the DM guide and the area README are not lesson-shaped and must not
+      carry `[[marks]]`; the validator does not scan them, so a mark there would render as
+      literal brackets to a reader
 
 ## Approach
 
@@ -331,6 +341,14 @@ block cap and where it came from — all in `curriculum/area-3/README.md`. Journ
 continue — committed and pushed now, since Area 2a shipped that. Report the status line to
 `main` for `curriculum/README.md` rather than editing the index.
 
+**No `journal/` directory, following Area 2 — corrected 2026-09-06.** This plan's file list
+originally said `journal/**`, which was the Area 0 and Area 1 layout. Area 2 dropped it
+deliberately and argued it in its README: the learner's `journal.md` moved into *their* own
+repository at session 2a-2, and duplicating `TEMPLATE.md` into every area would produce eight
+copies of one file that must never disagree. Area 0's template and first-entry prompt remain
+the only copies. Journal *prompts* still appear in each session plan's Beat 5, which is where
+a DM actually reads them; only the directory goes.
+
 ## Dependencies / Prerequisites
 
 - [x] **`feature_world-shim_2026-08-28.md` is complete** — closed to `planning/completed/`,
@@ -362,8 +380,8 @@ educational is in `curriculum/` and the game's overlay is `game/`.
   `hidden-tests` artifact and §6.3 confines that to Areas 0–1
 - `curriculum/area-3/lesson.md` — **promoted from `lesson.draft.md`**, not written fresh.
   The draft is live now; this plan earns the rename
-- `curriculum/area-3/reference/**`, `journal/**`, `dm-guide.md`, `README.md`, `verify.py` —
-  new, the Area 0 layout
+- `curriculum/area-3/reference/**`, `dm-guide.md`, `README.md`, `verify.py` — new. The Area 0
+  layout **minus `journal/`**, which Area 2 dropped on purpose; see Phase 5
 - `curriculum/area-3/area.yml` — **held, not created.** It exists and carries the spec's
   title, weeks and blurb. This plan flips `authoring: partial` to `complete` when the five
   quests exist, which is an edit to one word
@@ -425,3 +443,123 @@ failure this repository keeps finding.
 which concepts carry which sessions. None of that depends on directory names and none of it
 has been weakened by the move. Rewriting prose that is still correct would have buried the two
 changes that matter.
+
+---
+
+## Status — 2026-09-06, Phases 1 and 2a
+
+**Working record, not a close.** Sessions 8–13 and all seven content items remain.
+
+### Done
+
+| Phase | State |
+|---|---|
+| 1 — DM guide, and the spine | **complete** — `dm-guide.md` covers sessions 1–7; the spine is `README.md`'s session table, fixing all thirteen titles, concepts and quest beats before the second half is written |
+| 2a — sessions 1–7 and their drills | **complete** — seven session plans, fifteen drills, two reference solutions |
+| 3 — `verify.py` | **complete, and pulled forward** — see below |
+| 4 — the content items | not started |
+| 5 — README, board | README authored; the status line still has to be reported to `main` |
+
+### The one deviation from the phase order, and why
+
+**`verify.py` was built before the drills rather than after them.** The plan puts it in
+Phase 3, after both halves of Phase 2. Writing twenty-odd drill files against no harness
+would have shipped them unverified, which this plan's own success criteria forbid —
+*"`verify.py` asserts the placement count rather than trusting the author's arithmetic"* and
+*"a rule nothing checks is a wish."* Each drill was then verified as it was written.
+
+That decision was vindicated within the hour, for a reason nobody planned: see below.
+
+### Verification actually performed
+
+```console
+$ cd curriculum/area-3 && py -3.14 verify.py
+17 of 17 exercises behaved as tagged.
+EXIT: 0
+
+$ py -3.14 -m ruff check curriculum/area-3/
+All checks passed!
+
+$ cd pyquest && npm run validate:content
+OK  no problems found -- 23 items across 8 areas
+EXIT: 0
+
+$ cd pyquest && npx vitest run
+Test Files  71 passed (71)
+Tests  1128 passed | 1 skipped (1129)
+```
+
+The deletion test (`packages/content/tests/two-roots.test.ts`,
+`apps/field-manual/tests/published.test.ts`) passes: `rm -rf game/` still leaves Area 3
+validating and publishing. `apps/field-manual/tests/draft.test.ts` confirms Area 3 is still
+labelled a draft, which it must be until session 13 exists.
+
+**All six of the harness's checks were seen to fail against seeded mutants before being
+trusted** — `planning/evidence/area-3-verify-RED-and-MUTANT.txt`, with
+`area-3-verify-NOTES.txt` recording the one mutant that correctly survives and why.
+
+**`pyright` reports four and all four are wanted**, argued in `curriculum/area-3/README.md`:
+three are `import world` failing to resolve for a checker pointed at the repository root
+(the shim is copied beside the learner's own files, and all seventeen run), and one is the
+deliberate `TypeError` in `s7e2_it_will_not_change.py`. No `# pyright: ignore` pragmas in
+learner-facing drills.
+
+### Where the plan turned out to be wrong, or incomplete
+
+1. **Three shipped harnesses had silently stopped measuring anything.** Not this plan's
+   fault and not in its scope, but found while looking for a harness to model Area 3's on.
+   Commit `80e41a3` moved every drill from `exercises/session-<n>/` to
+   `sessions/session-<n>/` and no `verify.py` had its `SEARCH` tuple updated. Measured:
+   area-0 reported **2 of 22** against a README claiming 19 of 19; area-1 **5 of 15**
+   against 35 of 35; area-2 **0 of 2** against 13 of 13. Sixty drill files across three
+   areas were checked by nothing.
+
+   Fixed here, on the user's instruction, as one line per file. All three came back to
+   exactly the numbers their READMEs already claimed, so **no README needed editing — the
+   documentation was right and the gates had drifted away from it.** Evidence in
+   `planning/evidence/verify-search-drift-{BEFORE,GREEN-and-MUTANT}.txt`, including a
+   mutant that correctly survives because computed values are the hidden tests' job.
+
+   This is the failure this repository keeps naming — *"a check you have not seen fail is
+   worth nothing"* — and it had reached the checks themselves.
+
+2. **The in-process `placed.clear()` contract was not needed.** Phase 3's step 4 specifies
+   resetting shim module state between exercises. Areas 0–2 run each file in a subprocess
+   and Area 3 does the same, so isolation is free and there is no shared state to clear.
+   The rest of the named mechanism — patch `world.start` *before* importing, assert on the
+   placement record — is unchanged and load-bearing. The ordering especially: an exercise's
+   `from world import place, start` binds whatever `world.start` is at that instant, so
+   patching afterwards would bind the real one and block forever on `app.run()`.
+
+3. **`# min-blocks:` was added to the tag vocabulary**, mirroring Area 1's `# min-strokes:`.
+   Default 0, because plenty of Area 3 exercises are about a list and place nothing at all.
+   Without it, an off-by-one in a loop that builds a row is invisible to the harness.
+
+4. **The block cap needed reframing, not renumbering.** The cap stands at ~5,000, but the
+   shim plan's measurement found framerate was never the binding constraint — 8,000 blocks
+   still renders at 178 fps. Startup is what degrades, at about a millisecond a block. The
+   harness's failure message therefore reports the cost in **seconds**, and `README.md` and
+   `dm-guide.md` both argue it that way, because an author who believes the cap is about
+   smoothness will reason wrongly about what they can spend.
+
+5. **Ruff and the curriculum genuinely conflict in two places**, resolved with `# noqa` plus
+   a stated reason, following `area-0/exercises/the-type-lab`'s precedent. `PLR1730` would
+   rewrite session 5's teaching loop into `max()` — using the answer to demonstrate not
+   needing the answer. `UP003`/`UP034` would delete the parentheses in `type((5))` that are
+   the entire demonstration.
+
+### What is still open, and who owns it
+
+- **Sessions 8–13, and the seven content items.** This track.
+- **`scaffold.ts` is stale** — it still writes the pre-split flat layout, so
+  `npm run new:quest` will misplace Area 3's files. Hand-author the YAML or fix the
+  scaffolder; the fix is Lane A's.
+- **`pyquest/apps/api/tests/fixtures-agree.test.ts` will fail when Area 3 quests land.** It
+  hard-codes five invented `a3-` ids that do not match this plan's matrix. Cross-track, and
+  named here so it is not discovered at Phase 4.
+- **Boss 3 is gated.** `planning/backlog/feature_area-4-functions_2026-08-28.md`: *"the
+  Pygame Zero spike promotes earlier and separately: before Boss 3 is authored."*
+- **Two stale files owned elsewhere**, filed as reminders: `curriculum/README.md`'s Area 3
+  row still says "blocked on the shim's measurement" (`main`), and
+  `curriculum/lib/README.md` still carries the "cap has not been placed on the scaling
+  curve" warning box (the shim plan). Both were true until 2026-08-31.

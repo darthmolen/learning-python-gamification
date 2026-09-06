@@ -1,0 +1,45 @@
+# What the Area 3 mutants proved, and the one that "passed"
+
+Companion to `area-3-verify-RED-and-MUTANT.txt`. Captured 2026-09-06.
+
+| Mutant | Seeded fault | Caught by |
+|---|---|---|
+| m1 | `# concepts:` names `def`, an Area 4 id | the areas 0–3 registry |
+| m2 | a 80×80 nested loop places 6,400 blocks | the block cap |
+| m3 | places 6 blocks, never calls `start()` | the start-called assert |
+| m4 | `from ursina import Entity` | the raw-Ursina ban |
+| m5 | `# dc: 99` | spec 5.1's 5–30 scale |
+| m6 | tagged `ok`, prints nothing, places nothing | the observable-trace check |
+
+## m4 reads as PASS on its own row, and that is the design
+
+`m4_reaches_past_the_shim.py` runs cleanly and exits zero, so the behavior
+column says `PASS`. It is then failed by the shim ban on a separate line, and
+the run exits 1.
+
+That separation is deliberate and worth keeping. **Nothing about m4's behavior
+is wrong** — it does exactly what it says, without crashing. What is wrong is
+its *vocabulary*: spec §4 measured that 9 of 9 engine-touching lines a learner
+would write are things they have not earned, and the shim exists to be a
+validating boundary rather than a style preference. Folding the ban into the
+behavior column would have implied the file misbehaved, which would teach the
+next author to look for a runtime symptom that does not exist.
+
+## The cap message reports seconds, not just a count
+
+    placed 6400 blocks, over the 5000 cap -- that is 6.4s of startup
+
+The shim plan's measurement found that framerate was never the binding
+constraint — 8,000 blocks still renders at 178 fps on the target laptop. What
+degrades is startup, at roughly a millisecond a block, paid once before anything
+appears. An author who reads "the cap is about fps" reasons wrongly about what
+they can spend, so the failure message states the cost in the units that
+actually bite.
+
+## What no mutant could prove
+
+There is no mutant for "an unknown block kind reaches the placement record",
+because `place()` raises `ValueError` at the moment it is called, naming the
+seven kinds it knows. A check for it in the harness would be unreachable code
+dressed as diligence. Recorded here so the next author does not add one and
+mistake it for coverage.

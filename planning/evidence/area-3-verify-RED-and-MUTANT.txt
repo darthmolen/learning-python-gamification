@@ -1,0 +1,29 @@
+Area 3 verify.py -- RED and the six seeded mutants
+Captured 2026-09-06, Python 3.14.6, Windows 11, ursina 8.3.0.
+
+RED, before any exercise existed:
+    $ py -3.14 verify.py
+    no exercises found -- that is not a pass, it is a missing tree
+    EXIT: 1
+
+A harness that met an empty tree and printed a reassuring '0 of 0' would be
+worse than useless, so it refuses and exits non-zero.
+
+THE SIX MUTANTS, each seeded under sessions/_mutants/ and deleted after:
+
+
+_mutants
+  FAIL  m1_concept_from_area_4.py          concepts not in the areas 0-3 registry: ['def']
+  FAIL  m2_over_the_block_cap.py           placed 6400 blocks, over the 5000 cap -- that is 6.4s of startup before anything appears
+  FAIL  m3_never_calls_start.py            placed 6 blocks and never called start(), so it draws nothing
+  PASS  m4_reaches_past_the_shim.py        clean, 0 blocks placed, 0 characters printed
+  FAIL  m5_dc_off_the_scale.py             `# dc: 99` is off the 5-30 scale (spec 5.1)
+  FAIL  m6_claims_ok_but_leaves_no_trace.py ran clean, printed nothing and placed nothing
+
+raw Ursina, past the shim -- spec 4 says every one of these is
+vocabulary the learner has not earned:
+  FAIL  sessions\_mutants\m4_reaches_past_the_shim.py: from ursina
+
+1 of 6 exercises behaved as tagged.
+1 file(s) reached past the shim. The cap is 5000 blocks.
+EXIT: 1
