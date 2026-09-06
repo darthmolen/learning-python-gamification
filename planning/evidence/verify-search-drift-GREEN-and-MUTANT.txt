@@ -1,0 +1,70 @@
+verify.py SEARCH drift — the fix, and the proof the restored gates can fail
+Captured 2026-09-06, Python 3.14.6, Windows 11.
+
+THE FIX
+
+One line in each of curriculum/area-{0,1,2}/verify.py:
+
+    -SEARCH = (ROOT / "exercises", ROOT / "reference")
+    +SEARCH = (ROOT / "sessions", ROOT / "reference")
+
+`exercises/` is dropped rather than added to. Starters are deliberately
+incomplete and carry no tags; hidden tests are pytest files. Neither was ever in
+the count, which the arithmetic in the BEFORE capture confirms.
+
+GREEN — all three restored to exactly what their READMEs already claimed
+
+    $ cd curriculum/area-0 && py -3.14 verify.py
+    19 of 19 exercises behaved as tagged.
+
+    $ cd curriculum/area-1 && py -3.14 verify.py
+    35 of 35 exercises behaved as tagged.
+
+    $ cd curriculum/area-2 && py -3.14 verify.py
+    13 of 13 runnable exercises behaved as tagged.
+    1 file(s) were NOT run: they belong to a project with its own requirements.txt,
+    8 walkthroughs are NOT covered here -- there is nothing to execute in them.
+
+No README needed editing. Area 2's skip count (1) and walkthrough count (8) also
+came back to what its README documents.
+
+MUTANTS — a restored gate that has not been seen to fail is still worth nothing
+
+Seeded against curriculum/area-1/sessions/session-8/s8e1_carrying_a_number.py,
+each reverted immediately after.
+
+  A. `total_ink = total_ink + length` -> `total_ink = length`
+     RESULT: PASS, 35 of 35. NOT CAUGHT — and this is correct.
+     The stroke count and exit status are identical; only the arithmetic is
+     wrong. That is the exact bug this file teaches in its own task 4: "The
+     picture is identical. The number is wrong. Nothing complains." Computed
+     values are the hidden tests' job, not this harness's, and area-1's plan
+     says so: "Every hidden test asserts on a computed value, never on a
+     picture." Recorded here because a mutant that SHOULD survive is as much a
+     statement of a harness's scope as one that should not.
+
+  B. `sides = 9` -> `sides = 4`   (the signature Area 1 off-by-one)
+     RESULT: CAUGHT.
+     FAIL  s8e1_carrying_a_number.py   ran clean but drew 4 strokes, needs at least 9
+     34 of 35 exercises behaved as tagged.
+
+  C. `# concepts:` gains `list`, an Area 3 id on an Area 1 file
+     RESULT: CAUGHT.
+     FAIL  s8e1_carrying_a_number.py   concepts not in the Area 0-1 registry: ['list']
+     34 of 35 exercises behaved as tagged.
+
+B and C are the two checks Area 3's harness inherits — the floor on what a file
+must actually do, and the registry check on what it claims to teach. Both were
+watched to fail before being trusted.
+
+AFTER REVERT
+
+    $ git status --short
+     M curriculum/area-0/verify.py
+     M curriculum/area-1/verify.py
+     M curriculum/area-2/verify.py
+
+    $ cd curriculum/area-1 && py -3.14 verify.py
+    35 of 35 exercises behaved as tagged.
+
+Three one-line changes, no curriculum content touched.

@@ -1,0 +1,49 @@
+verify.py SEARCH drift — the three shipped harnesses had stopped measuring
+Captured 2026-09-06, Python 3.14.6, Windows 11, on `main` at 40f5ae6.
+
+WHAT HAPPENED
+
+Commit 80e41a3 ("curriculum-foundation phase 4: drills live with the session
+that teaches them") moved every drill file from `exercises/session-<n>/` to
+`sessions/session-<n>/`. No verify.py had its SEARCH tuple updated. All three
+kept searching:
+
+    SEARCH = (ROOT / "exercises", ROOT / "reference")
+
+which after the move holds only `starter/unfinished.py` and `hidden/test.py` —
+neither of which carries the header tags this harness checks, and neither of
+which was ever meant to be run by it.
+
+The failures were loud, not silent. Every run printed rows like
+
+    FAIL  unfinished.py    no `# expect:` tag
+    FAIL  test.py          no `# expect:` tag
+
+The gates were shouting on every invocation. What went unread was the count on
+the last line, which each area README still quoted from before the move.
+
+MEASURED BEFORE THE FIX
+
+    area-0   README claims 19 of 19   harness reported   2 of 22
+    area-1   README claims 35 of 35   harness reported   5 of 15
+    area-2   README claims 13 of 13   harness reported   0 of 2
+
+60 drill files across areas 0-2 were being checked by nothing:
+17 in area-0, 30 in area-1, 13 in area-2.
+
+Area 2's third number was wrong too — it reported 0 walkthroughs where its
+README documents 8, because `w*.md` is globbed out of the same SEARCH tuple.
+
+THE ARITHMETIC THAT IDENTIFIED THE CAUSE
+
+Each README's claimed number is exactly the drills plus the reference solutions,
+which is what SEARCH used to reach:
+
+    area-0   17 drills + 2 reference = 19    matches "19 of 19"
+    area-1   30 drills + 5 reference = 35    matches "35 of 35"
+    area-2   13 drills + 0 reference = 13    matches "13 of 13"
+
+So the READMEs were correct and the harnesses had drifted away from them. That
+is the opposite of the usual direction and is the reason this survived: nobody
+was reading a number that had gone wrong, they were reading a number that had
+gone stale while still being true.
