@@ -102,6 +102,16 @@ const DIRECTORY: Readonly<Record<string, readonly string[]>> = {
   'reminder/open': ['planning/reminders'],
   'reminder/done': ['planning/reminders/completed', 'planning/reminders'],
   'reminder/dropped': ['planning/reminders/completed', 'planning/reminders'],
+  // A review copy moves through four folders on its way round the pipeline, and `open` covers
+  // three of them: the queue, the reviewer's hands, and the return leg. Only `completed/` means
+  // finished. Without these, `review` was the one kind with no placement rule at all — which is
+  // the kind most likely to be left in the wrong folder, because something moves it four times.
+  'review/open': [
+    'planning/needs-review',
+    'planning/needs-review/in-progress',
+    'planning/needs-review/reviewed',
+  ],
+  'review/done': ['planning/needs-review/completed'],
   'wave/open': ['planning/waves'],
   'wave/done': ['planning/waves'],
 }

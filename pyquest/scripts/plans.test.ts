@@ -141,6 +141,32 @@ describe('the rules that stop the board lying', () => {
     expect(rules([d])).toContain('directory');
   });
 
+  it('holds review documents to a directory too', () => {
+    // `review` was in the kind vocabulary but absent from the directory map, so a review copy
+    // could sit anywhere in the tree and the validator would pass it — the one kind with no
+    // placement rule, which is also the kind most likely to be dropped in the wrong folder by a
+    // pipeline that moves files between four of them.
+    const d = doc('planning/completed/2026-09-03-some-review.md', {
+      kind: 'review',
+      status: 'done',
+      date: '2026-09-03',
+    });
+    expect(rules([d])).toContain('directory');
+  });
+
+  it('accepts a review anywhere the review pipeline legitimately puts it', () => {
+    // needs-review/ is the queue, reviewed/ is the return leg, and both mean "not finished".
+    const open = ['planning/needs-review', 'planning/needs-review/reviewed'].map((dir) =>
+      doc(`${dir}/2026-09-03-some-review.md`, { kind: 'review', status: 'open', date: '2026-09-03' }),
+    );
+    const done = doc('planning/needs-review/completed/2026-09-03-other-review.md', {
+      kind: 'review',
+      status: 'done',
+      date: '2026-09-03',
+    });
+    expect(checkPlans([...open, done])).toEqual([]);
+  });
+
   it('makes the filename prefix agree with the status', () => {
     const d = doc('planning/backlog/feature_x_2026-09-04.md', {
       ...STUB,

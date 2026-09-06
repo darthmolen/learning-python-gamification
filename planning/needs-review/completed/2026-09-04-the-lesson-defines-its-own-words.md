@@ -190,7 +190,7 @@ None. Definitions have been on `/api/tome` since 2026-09-03.
 **Reviewer:** Claude Code (plan-review-intake)
 
 ### Strengths
-- The rule conflict is confronted rather than smuggled: the no-pop-over amendment is quoted verbatim, scoped by the �6.8 reason rather than the letter, and given a stated revert path if the DM declines.
+- The rule conflict is confronted rather than smuggled: the no-pop-over amendment is quoted verbatim, scoped by the §6.8 reason rather than the letter, and given a stated revert path if the DM declines.
 - The rejected alternative was measured, not hand-waved; the decision record is auditable.
 - "Both renderers change in this plan, or neither does" identifies the real failure mode and orders Phase 2 to gate the dangerous one first.
 - The families table is correctly placed in the SPA rather than concepts.ts; grouping is presentation, and the plan says so with the right justification.
@@ -224,4 +224,4 @@ None. Definitions have been on `/api/tome` since 2026-09-03.
 ### Assessment
 **Implementable as written?** With fixes
 
-**Reasoning:** The plan is strong on the rule amendment and the two-renderer trap, but the concept lookup scope is undefined against an area-scoped contract, and the Quest screen � the surface the rule was written to protect � is not yet covered. Both are design decisions that need to be pinned down before implementation.
+**Reasoning:** The plan is strong on the rule amendment and the two-renderer trap, but the concept lookup scope is undefined against an area-scoped contract, and the Quest screen — the surface the rule was written to protect — is not yet covered. Both are design decisions that need to be pinned down before implementation.
