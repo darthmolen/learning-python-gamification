@@ -1,12 +1,13 @@
 ---
 kind: stub
-status: open
+status: promoted
 date: 2026-08-28
+promoted_to: area-4-functions_2026-09-06
 ---
 
 # Area 4 — Functions and Decomposition
 
-**Status:** Backlog
+**Status:** Promoted 2026-09-06 to planning/feature_area-4-functions_2026-09-06.md
 **Track:** area-4
 **Date Discovered:** 2026-08-28
 **Discovered During:** the Lane B planning session that produced
@@ -59,3 +60,10 @@ learner arrives at it.
 
 **The Pygame Zero spike promotes earlier and separately: before Boss 3 is authored.** It is a
 gate, not a phase, and a gate discovered late is the expensive kind.
+
+**Both promotions happened on 2026-09-06**, ahead of the trigger rather than on it, because
+the spike wants to run while Area 3 is still teaching:
+
+- the area itself to `planning/feature_area-4-functions_2026-09-06.md`
+- the gate to `planning/feature_pygame-zero-viability-spike_2026-09-06.md`, on its own track,
+  exactly as this section asked
