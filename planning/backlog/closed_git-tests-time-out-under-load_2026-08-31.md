@@ -1,3 +1,10 @@
+---
+kind: stub
+status: closed
+date: 2026-08-31
+closed_by: the-git-tests-stop-flaking_2026-08-31
+---
+
 # The git-backed api tests time out under full-suite load
 
 **Status:** Closed 2026-09-01 — fixed by `planning/completed/feature_the-git-tests-stop-flaking_2026-08-31.md`

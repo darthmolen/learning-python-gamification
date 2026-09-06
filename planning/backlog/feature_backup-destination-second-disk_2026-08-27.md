@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-27
+---
+
 # The Backup Destination Is Not Yet a Second Disk
 
 **Status:** Backlog

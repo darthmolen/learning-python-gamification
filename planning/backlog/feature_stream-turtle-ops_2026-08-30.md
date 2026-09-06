@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-30
+---
+
 # A Stopped Program Loses The Drawing It Was Making
 
 **Status:** Backlog

@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-29
+---
+
 # The Contract Modules the Lane A Tracks Cannot Share
 
 **Status:** Planned

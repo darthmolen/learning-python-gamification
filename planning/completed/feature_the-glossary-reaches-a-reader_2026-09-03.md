@@ -1,3 +1,12 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-09-03
+completed: 2026-09-03
+promoted_from: the-glossary-reaches-a-reader_2026-09-03
+---
+
 # The Glossary Reaches A Reader
 
 **Status:** Completed 2026-09-03

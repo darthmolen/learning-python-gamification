@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-28
+---
+
 # Roles, Modes, and Who Holds the DM Seat
 
 **Status:** Backlog

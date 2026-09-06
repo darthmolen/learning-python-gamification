@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-08-27
+completed: 2026-08-28
+---
+
 # Phase 0 + Area 0 — Foundation, then UI Design
 
 **Status:** Planned

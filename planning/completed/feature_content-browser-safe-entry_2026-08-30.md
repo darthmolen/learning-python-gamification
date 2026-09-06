@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: content-wire
+date: 2026-08-30
+completed: 2026-08-30
+---
+
 # The Content Package Cannot Be Bundled For A Browser
 
 **Status:** Completed

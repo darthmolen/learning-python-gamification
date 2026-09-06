@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: content-wire
+date: 2026-08-29
+completed: 2026-08-29
+---
+
 # The Content Surface, So the SPA Stops Inventing Curriculum
 
 **Status:** Completed

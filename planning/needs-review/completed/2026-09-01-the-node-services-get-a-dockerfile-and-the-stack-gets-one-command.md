@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-09-01
+---
+
 # The node services get a Dockerfile, and the stack gets one command
 
 **Status:** Planned — queued for review before execution

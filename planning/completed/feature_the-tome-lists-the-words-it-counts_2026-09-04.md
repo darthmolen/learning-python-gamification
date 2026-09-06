@@ -1,3 +1,12 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-09-04
+completed: 2026-09-04
+promoted_from: the-tome-lists-the-words-it-counts_2026-09-03
+---
+
 # The Tome Lists The Words It Counts
 
 **Status:** Completed 2026-09-04

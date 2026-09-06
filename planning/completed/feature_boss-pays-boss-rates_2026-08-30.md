@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: engine
+date: 2026-08-30
+completed: 2026-08-30
+---
+
 # The Boss Pays Boss Rates
 
 **Status:** Completed

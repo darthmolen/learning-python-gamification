@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: field-manual
+date: 2026-08-30
+completed: 2026-08-31
+---
+
 # The Field Manual — the curriculum, published without the game
 
 **Status:** Completed

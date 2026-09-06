@@ -1,3 +1,12 @@
+---
+kind: plan
+status: completed
+track: infra
+date: 2026-09-01
+completed: 2026-09-01
+promoted_from: compose-services-cannot-start-on-windows_2026-08-29
+---
+
 # The node services get a Dockerfile, and the stack gets one command
 
 **Status:** Completed

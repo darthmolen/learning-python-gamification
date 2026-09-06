@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-29
+---
+
 # Offline Behaviour, Which Is Really Eventual Consistency
 
 **Status:** Backlog

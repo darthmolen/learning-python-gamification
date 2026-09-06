@@ -1,11 +1,15 @@
+---
+kind: reminder
+status: done
+category: follow-up
+audience: dm
+subject: tooling
+date: 2026-08-30
+plan: field-manual_2026-08-30
+---
+
 # Turn on GitHub Pages for the repository, with GitHub Actions as the source
 
-**Category:** follow-up
-**Audience:** dm
-**Subject:** tooling
-**Raised:** 2026-08-30
-**Plan:** `planning/**/feature_field-manual_2026-08-30.md`
-**Status:** done
 **Closed:** 2026-08-31 — this was turned on but it wanted some kind of workflow. the setting was turned on though.
 
 ## What to do

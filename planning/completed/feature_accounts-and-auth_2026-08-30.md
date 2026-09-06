@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: auth
+date: 2026-08-30
+completed: 2026-09-01
+---
+
 # Accounts, And Who Is Allowed To Ask
 
 **Status:** Completed

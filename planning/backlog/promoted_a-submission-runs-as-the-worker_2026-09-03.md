@@ -1,3 +1,10 @@
+---
+kind: stub
+status: promoted
+date: 2026-09-03
+promoted_to: a-submission-runs-as-the-worker_2026-09-03
+---
+
 # A Submission Runs As The Worker, And The Worker Owns The Spool
 
 **Status:** Promoted 2026-09-03 to planning/feature_a-submission-runs-as-the-worker_2026-09-03.md

@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-28
+---
+
 # Area 2 — The Scribe's Rite, and Escape the Sandbox
 
 **Status:** Planned

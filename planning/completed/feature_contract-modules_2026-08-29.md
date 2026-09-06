@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-08-29
+completed: 2026-08-29
+---
+
 # The Contract Modules the Lane A Tracks Cannot Share
 
 **Status:** Completed

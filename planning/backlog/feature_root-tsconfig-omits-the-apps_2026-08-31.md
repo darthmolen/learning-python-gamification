@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-31
+---
+
 # `tsc -b` Compiles No Application Code
 
 **Status:** Backlog

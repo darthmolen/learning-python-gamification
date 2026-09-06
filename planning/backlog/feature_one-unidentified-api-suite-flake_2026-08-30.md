@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-30
+---
+
 # An unidentified flake in the api suite, seen once in fifteen runs
 
 **Status:** Backlog

@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-31
+---
+
 # The DM guide says "his father", and it is now published
 
 **Status:** Backlog

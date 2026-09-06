@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-27
+---
+
 # Gitea Is Not Yet Reachable From the Son's Laptop
 
 **Status:** Backlog

@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-28
+---
+
 # Area 6 — Data and the Outside World
 
 **Status:** Backlog

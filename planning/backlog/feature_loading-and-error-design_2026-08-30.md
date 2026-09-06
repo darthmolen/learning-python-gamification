@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-30
+---
+
 # The Loading And Error States Nobody Designed
 
 **Status:** Backlog

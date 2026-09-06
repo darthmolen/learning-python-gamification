@@ -1,11 +1,15 @@
+---
+kind: reminder
+status: done
+category: decide
+audience: dm
+subject: progress data
+date: 2026-08-31
+plan: journal-text-has-no-column_2026-08-29
+---
+
 # Decide whether the Journal's system of record is Postgres or the son's git repository
 
-**Category:** decide
-**Audience:** dm
-**Subject:** progress data
-**Raised:** 2026-08-31
-**Plan:** `planning/**/feature_journal-text-has-no-column_2026-08-29.md`
-**Status:** done
 **Closed:** 2026-08-31 — Ruled B, markdown in git. The reason given was better than either option as written: the Journal teaches the CHANGELOG habit and a scrum-shaped reflection, and markdown outlives the game. "If we strand it in the db, it dies with the game." Unregenerable meant obsolescence, not backup. Ruling written into the backlog item; the four-prompt and commit_sha mismatches both dissolve under it.
 
 ## What to do

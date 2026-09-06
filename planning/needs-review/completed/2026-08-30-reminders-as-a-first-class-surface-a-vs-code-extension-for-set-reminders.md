@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-30
+---
+
 # Reminders as a First-Class Surface — a VS Code Extension for `set-reminders`
 
 **Status:** Planned

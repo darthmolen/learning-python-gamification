@@ -1,3 +1,9 @@
+---
+kind: wave
+status: open
+date: 2026-08-29
+---
+
 # Wave 3 — The Application
 
 **Status:** Open — eight plans landed, three running, nothing blocked on hardware

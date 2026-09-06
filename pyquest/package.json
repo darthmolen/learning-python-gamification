@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty && npm run typecheck --workspaces --if-present",
     "validate:content": "npm run validate:content --workspace @pyquest/content --",
-    "new:quest": "npm run new:quest --workspace @pyquest/content --"
+    "new:quest": "npm run new:quest --workspace @pyquest/content --",
+    "validate:plans": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/validate-plans.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

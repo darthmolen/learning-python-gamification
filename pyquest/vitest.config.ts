@@ -118,6 +118,21 @@ export default defineConfig({
        * `node`, because there is no DOM here and never will be: the api is the half of the
        * system that must not care what a screen looks like.
        */
+      /**
+       * `pyquest/scripts` — the repository's own tooling, which lives above the workspaces
+       * because what it checks (`planning/`) is not a workspace. Collected by name rather than
+       * left to the `packages` glob, which stops at `packages/`: a suite no project collects does
+       * not fail, it is silently absent.
+       */
+      {
+        resolve: { alias },
+        test: {
+          name: 'scripts',
+          include: ['scripts/**/*.{test,spec}.ts'],
+          exclude,
+          environment: 'node',
+        },
+      },
       {
         resolve: { alias },
         test: {

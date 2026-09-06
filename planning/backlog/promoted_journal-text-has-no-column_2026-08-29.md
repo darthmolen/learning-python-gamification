@@ -1,3 +1,10 @@
+---
+kind: stub
+status: promoted
+date: 2026-08-29
+promoted_to: journal-reads-from-git_2026-08-31
+---
+
 # The Journal Has Nowhere to Put the Journal
 
 **Status:** Promoted 2026-08-31 to planning/in-progress/feature_journal-reads-from-git_2026-08-31.md

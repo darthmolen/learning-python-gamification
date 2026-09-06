@@ -1,3 +1,10 @@
+---
+kind: stub
+status: promoted
+date: 2026-08-30
+promoted_to: seed-a-test-household_2026-08-31
+---
+
 # A Seeded Household For End-To-End Testing
 
 **Status:** Promoted 2026-08-31 to planning/completed/feature_seed-a-test-household_2026-08-31.md

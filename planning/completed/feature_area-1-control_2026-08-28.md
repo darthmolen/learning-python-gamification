@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: area-1
+date: 2026-08-28
+completed: 2026-08-29
+---
+
 # Area 1 — Control
 
 **Status:** Completed

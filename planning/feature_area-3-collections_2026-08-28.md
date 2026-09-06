@@ -1,3 +1,10 @@
+---
+kind: plan
+status: queued
+track: area-3
+date: 2026-08-28
+---
+
 # Area 3 — Collections
 
 **Status:** Planned

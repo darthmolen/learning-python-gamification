@@ -67,7 +67,17 @@ export function parseGlossary(markdown: string): Map<string, string> {
     definitions.set(current, body.join('\n').replace(/^\n+/, '').replace(/\s+$/, ''));
   };
 
-  for (const line of markdown.split('\n')) {
+  /**
+   * `\r?\n`, because the authored glossaries are CRLF on Windows and `.gitattributes`
+   * deliberately does not renormalize the repository.
+   *
+   * Splitting on `\n` alone left a `\r` on the end of every interior line and at the *start* of
+   * every body — `close()` trims `^\n+`, which a `\r\n` walks straight past. The definitions were
+   * served with it, and `real-definitions.test.tsx` failed looking for opening words in a DOM that
+   * had normalized them away. Three readers share this parser; each would otherwise strip the same
+   * character, and the one that forgot would be the one nobody noticed.
+   */
+  for (const line of markdown.split(/\r?\n/)) {
     const fenceAt = FENCE.exec(line);
     if (fenceAt !== undefined && fenceAt !== null) {
       const rail = fenceAt[1] as string;

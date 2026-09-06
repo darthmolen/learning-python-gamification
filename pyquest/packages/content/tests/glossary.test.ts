@@ -31,6 +31,35 @@ describe('parseGlossary', () => {
     expect(parsed.get('beta')).toBe('The second.');
   });
 
+  it('reads a CRLF file, because the authored glossaries are CRLF on this machine', () => {
+    /**
+     * `curriculum/area-0/glossary.md` has CRLF line terminators, and `.gitattributes`
+     * deliberately does not renormalize the repository. Splitting on `\n` alone left a trailing
+     * `\r` on every interior line of every definition.
+     *
+     * It reached a browser. `real-definitions.test.tsx` renders the *authored* entries and then
+     * looks for their opening words in the DOM — and the DOM has no `\r`, so five entries failed
+     * to be found in text that plainly contained them. The parser is the right place to fix it:
+     * three readers share it, and each would otherwise have to strip the same character.
+     */
+    const parsed = parseGlossary(
+      ['## alpha', '', 'One.', '', 'Two.', '', '## beta', '', 'Other.', ''].join('\r\n'),
+    );
+
+    expect([...parsed.keys()]).toEqual(['alpha', 'beta']);
+    expect(parsed.get('alpha')).toBe('One.\n\nTwo.');
+    expect(parsed.get('alpha')).not.toContain('\r');
+    expect(parsed.get('beta')).not.toContain('\r');
+  });
+
+  it('carries no carriage return out of the real area-0 glossary', () => {
+    // The authored file, not a literal. The unit case above can be satisfied by a parser that
+    // handles a shape the curriculum does not actually have.
+    for (const [id, definition] of parseGlossary(glossary(0))) {
+      expect(definition, `${id} carries a carriage return`).not.toContain('\r');
+    }
+  });
+
   it('keeps everything up to the next heading, blank lines and all', () => {
     const parsed = parseGlossary(
       ['## alpha', '', 'One.', '', 'Two.', '', '## beta', '', 'Other.', ''].join('\n'),

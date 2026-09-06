@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: world-shim
+date: 2026-08-28
+completed: 2026-08-31
+---
+
 # The `world.py` Shim — Promote the Spike to Shipping Code
 
 **Status:** Completed

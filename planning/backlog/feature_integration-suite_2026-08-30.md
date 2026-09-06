@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-30
+---
+
 # The Tests That Would Have Caught The Ones The Tests Missed
 
 **Status:** Backlog

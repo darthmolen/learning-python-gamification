@@ -1,3 +1,10 @@
+---
+kind: stub
+status: closed
+date: 2026-08-31
+closed_reason: ruled by the DM, and nothing needs building.
+---
+
 # The DM's reply, when it becomes a Gitea comment
 
 **Status:** Dropped 2026-08-31 — ruled by the DM, and nothing needs building.

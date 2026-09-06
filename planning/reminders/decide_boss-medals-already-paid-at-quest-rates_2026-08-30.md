@@ -1,11 +1,14 @@
-# Decide what to do about any boss medal already written at quest rates
+---
+kind: reminder
+status: open
+category: decide
+audience: dm
+subject: progress data
+date: 2026-08-30
+plan: boss-pays-boss-rates_2026-08-30
+---
 
-**Category:** decide
-**Audience:** dm
-**Subject:** progress data
-**Raised:** 2026-08-30
-**Plan:** `planning/completed/feature_boss-pays-boss-rates_2026-08-30.md`
-**Status:** open
+# Decide what to do about any boss medal already written at quest rates
 
 ## What to do
 

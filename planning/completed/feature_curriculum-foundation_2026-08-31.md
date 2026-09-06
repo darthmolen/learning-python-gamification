@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: curriculum-foundation
+date: 2026-08-31
+completed: 2026-08-31
+---
+
 # Curriculum Foundation — educational first, game second, in the tree itself
 
 **Status:** Completed

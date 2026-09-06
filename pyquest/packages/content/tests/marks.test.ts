@@ -70,6 +70,45 @@ describe('parseMarks', () => {
   });
 });
 
+describe('CRLF, and why this parser must NOT be split on /\\r?\\n/', () => {
+  /**
+   * `parseGlossary` beside it *was* changed to `/\r?\n/`, and doing the same here would be a bug.
+   *
+   * A mark's `start` and `end` index into the **original** markdown — `stripMarks` slices it with
+   * them, and `glossaryIssues` counts newlines up to `start` for a line number. `overProse`
+   * advances by `line.length + 1`, so on a CRLF source the `\r` has to stay on `line` for that
+   * arithmetic to land. Split it away and every offset drifts by one per preceding line, which
+   * shows up as marks rendering one character short — silently, and further from the top of the
+   * file the worse it gets.
+   *
+   * So: CRLF is asserted here through the round trip rather than through the offsets, because the
+   * round trip is what the readers actually do.
+   */
+  const source = ['A line with [[print]] in it.', '', 'And [[input]] on line three.', ''];
+
+  it('finds the same marks whether the source is LF or CRLF', () => {
+    const lf = parseMarks(source.join('\n'));
+    const crlf = parseMarks(source.join('\r\n'));
+
+    expect(lf.map((m) => m.id)).toEqual(['print', 'input']);
+    expect(crlf.map((m) => m.id)).toEqual(lf.map((m) => m.id));
+    expect(crlf.map((m) => m.text)).toEqual(lf.map((m) => m.text));
+  });
+
+  it('offsets still point at the mark they name, on a CRLF source', () => {
+    const markdown = source.join('\r\n');
+
+    for (const mark of parseMarks(markdown)) {
+      // The slice the readers take. If the offsets drifted, this is the character it loses.
+      expect(markdown.slice(mark.start, mark.end)).toBe(`[[${mark.id}]]`);
+    }
+  });
+
+  it('strips to the same prose, line endings apart', () => {
+    expect(stripMarks(source.join('\r\n'))).toBe(stripMarks(source.join('\n')).replaceAll('\n', '\r\n'));
+  });
+});
+
 describe('stripMarks', () => {
   it('replaces each mark with its display text', () => {
     expect(stripMarks('Use [[print]] and [[str|strings]].')).toBe('Use print and strings.');

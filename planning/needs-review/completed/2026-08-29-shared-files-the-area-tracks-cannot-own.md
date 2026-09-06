@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-29
+---
+
 # Shared Files the Area Tracks Cannot Own
 
 **Status:** Planned

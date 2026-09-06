@@ -1,11 +1,14 @@
-# Finish the VS Code profile: work §4's checklist and re-export over the file
+---
+kind: reminder
+status: open
+category: follow-up
+audience: dm
+subject: hardware
+date: 2026-08-31
+plan: area-2-scribes-rite-and-sandbox_2026-08-28
+---
 
-**Category:** follow-up
-**Audience:** dm
-**Subject:** hardware
-**Raised:** 2026-08-31
-**Plan:** `planning/**/feature_area-2-scribes-rite-and-sandbox_2026-08-28.md`
-**Status:** open
+# Finish the VS Code profile: work §4's checklist and re-export over the file
 
 ## What to do
 

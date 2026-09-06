@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-28
+---
+
 # The Engine Query Layer, and the Shared Contract
 
 **Status:** Planned

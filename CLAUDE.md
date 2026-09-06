@@ -89,9 +89,20 @@ both the player and DM seats (§5.11). Roles are not people.
   is graded against is the standard the repo holds itself to.
 - TypeScript work: `typescript-pro`. The SPA: `react-specialist`.
 - **Planning is kanban** (`plan-workflow`): plans live in `planning/`, move to
-  `in-progress/`, end in `completed/` with a Status block. Every plan declares a
-  `**Track:**` — `main` unless a sub-agent owns it — and `in-progress/` holds one plan
-  per track, with disjoint `Files Expected to Change`.
+  `in-progress/`, end in `completed/` with a Status block — or in `not-implemented/`,
+  the second terminal state, for a plan that built nothing. `blocked/`, `backlog/`,
+  `reminders/`, `waves/`, `evidence/` and `needs-review/` are the rest of the board.
+- **Every planning document declares itself in frontmatter, and `npm run validate:plans`
+  checks it.** `kind` (plan · stub · reminder · review · wave) and `status` from that
+  kind's closed vocabulary, plus whatever the status requires — a `completed:` date, a
+  `blocked_on:`, a `promoted_to:`. The directory and the filename prefix have to agree
+  with the status, and `in-progress/` still holds one plan per `track:`.
+  **Frontmatter with no validator is markdown with more punctuation**; status used to
+  live in the path, the filename and a prose line at once, written 24 different ways.
+- **A cross-reference is a name, never a path**: `promoted_to: seed-a-test-household_2026-08-31`,
+  which is the filename minus its status prefix and `.md`. Documents move constantly, so a
+  stored path is wrong the moment its target does; a name is not. A reference resolving to
+  zero or to more than one document is a validation error naming every candidate.
 - **Run every npm command from `pyquest/`.** Use `py -3.14`, never `python` — it is 3.12
   in PowerShell and 3.14 in Git Bash on this machine.
 - Prefer the Bash tool over PowerShell here; PowerShell is slow in this environment.

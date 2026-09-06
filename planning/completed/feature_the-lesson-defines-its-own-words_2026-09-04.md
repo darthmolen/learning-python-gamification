@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-09-04
+completed: 2026-09-04
+---
+
 # The Lesson Defines Its Own Words
 
 **Status:** Completed 2026-09-04
