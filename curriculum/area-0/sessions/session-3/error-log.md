@@ -1,5 +1,9 @@
 # The Error Log
 
+**A sigil is a symbol you draw** — a shape that means something, like a crest on a shield
+or a mark on a map. The seven programs tonight each draw one, and every one of them is
+broken on purpose.
+
 Fill one row per broken sigil, **before** you fix it.
 
 Write the error's name exactly as Python wrote it — capital letters and all. `NameError`,
