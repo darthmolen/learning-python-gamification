@@ -69,6 +69,9 @@ function overProse(markdown: string, visit: (chunk: string, offset: number) => v
   let fence: string | undefined;
   let offset = 0;
 
+  // NOT `/\r?\n/`, unlike `parseGlossary` beside it — see the CRLF block in `marks.test.ts`.
+  // A mark's offsets index into the original markdown, and this advances by `line.length + 1`,
+  // so the `\r` has to stay on `line` or every offset drifts one per preceding line.
   for (const line of markdown.split('\n')) {
     const fenceAt = FENCE.exec(line);
     if (fenceAt !== null) {
