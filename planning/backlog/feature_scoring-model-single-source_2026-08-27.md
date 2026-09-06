@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-27
+---
+
 # The Scoring Model Needs One Authoritative Source
 
 **Status:** Backlog

@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: engine
+date: 2026-08-28
+completed: 2026-08-29
+---
+
 # The Engine Query Layer, and the Shared Contract
 
 **Status:** Completed

@@ -1,3 +1,12 @@
+---
+kind: plan
+status: completed
+track: db
+date: 2026-08-31
+completed: 2026-08-31
+promoted_from: seed-a-test-household_2026-08-30
+---
+
 # A Seeded Household For End-To-End Testing
 
 **Status:** Completed

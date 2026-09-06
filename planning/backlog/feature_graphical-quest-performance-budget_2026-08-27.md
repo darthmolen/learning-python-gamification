@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-27
+---
+
 # Standing Performance Budget for Graphical Quests
 
 **Status:** Backlog

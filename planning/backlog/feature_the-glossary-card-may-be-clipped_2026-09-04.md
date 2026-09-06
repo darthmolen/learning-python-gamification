@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-09-04
+---
+
 # The Glossary Card May Be Clipped, And No Test Can See It
 
 **Status:** Backlog

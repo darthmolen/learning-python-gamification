@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-28
+---
+
 # Area 7 — Craft
 
 **Status:** Backlog

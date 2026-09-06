@@ -1,7 +1,21 @@
+---
+kind: plan
+status: queued
+track: main
+date: 2026-09-03
+promoted_from: a-submission-runs-as-the-worker_2026-09-03
+---
+
 # A Submission Runs As The Worker, And The Worker Owns The Spool
 
 **Status:** Planned — revised after review, queued for execution
 **Revision:** 2 — 2026-09-03, after `planning/needs-review/completed/2026-09-03-a-submission-runs-as-the-worker-and-the-worker-owns-the-spool.md`
+**Second review waived — the DM's call, 2026-09-06.** Revision 2 rebuilt the whole privilege model
+after the first review, so a second pass was offered and declined: **execute as it stands.** The
+argument for declining is that revision 2 is not reasoning, it is five measured spikes — the
+capability table, the `/proc` read, the DAC-override matrix and the cleanup failure were each run
+against `pyquest-runner:local` and their output is quoted in the plan. The evidence is the review.
+Recorded here so that nobody re-opens the question at execution time and re-queues the work
 **Track:** `main`
 **Date:** 2026-09-03
 **Author:** Claude (Opus 5)

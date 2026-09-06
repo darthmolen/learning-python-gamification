@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-09-02
+---
+
 # Five Medals Are Priced And None Can Be Claimed
 
 **Status:** Backlog

@@ -1,3 +1,10 @@
+---
+kind: stub
+status: promoted
+date: 2026-09-03
+promoted_to: the-tome-lists-the-words-it-counts_2026-09-04
+---
+
 # The Tome Lists The Words It Counts
 
 **Status:** Promoted 2026-09-04 to planning/completed/feature_the-tome-lists-the-words-it-counts_2026-09-04.md

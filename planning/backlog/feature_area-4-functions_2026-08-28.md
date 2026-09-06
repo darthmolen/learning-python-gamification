@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-28
+---
+
 # Area 4 — Functions and Decomposition
 
 **Status:** Backlog

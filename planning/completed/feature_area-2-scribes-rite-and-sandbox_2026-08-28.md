@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: area-2
+date: 2026-08-28
+completed: 2026-08-31
+---
+
 # Area 2 — The Scribe's Rite, and Escape the Sandbox
 
 **Status:** Completed

@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: area-0
+date: 2026-08-28
+completed: 2026-08-31
+---
+
 # Area 0 Quest Backfill
 
 **Status:** Completed

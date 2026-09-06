@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: infra
+date: 2026-08-31
+completed: 2026-08-31
+---
+
 # The Stack Runs End To End
 
 **Status:** Complete

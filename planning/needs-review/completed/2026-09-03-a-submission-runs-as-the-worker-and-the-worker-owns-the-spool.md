@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-09-03
+---
+
 # A Submission Runs As The Worker, And The Worker Owns The Spool
 
 **Status:** Planned â€” queued for review before execution
@@ -484,8 +490,8 @@ Two stubs to file in `planning/backlog/` during Phase 7, so that neither is left
 
 ### Strengths
 - The spike section is the plan's best asset: the `cap_add`/bounding-set finding, the `/proc/<worker>/environ` leak, and the `os._exit(0)` forgery are measured, not asserted, and each changes scope rather than decorating it.
-- Threat model is stated before scope, and the out-of-scope item (a submission cheating its own job) is argued from §5.12 rather than hidden.
-- Named mutants (1–4) with the specific expected red, and the explicit discrimination around whether the spool mode or uid drop is doing the work, is exactly `test-filter-development`.
+- Threat model is stated before scope, and the out-of-scope item (a submission cheating its own job) is argued from ï¿½5.12 rather than hidden.
+- Named mutants (1ï¿½4) with the specific expected red, and the explicit discrimination around whether the spool mode or uid drop is doing the work, is exactly `test-filter-development`.
 - Catching the `runner-tests` missing `/spool` mount trap before writing the tests, and making it Phase 1, is the right ordering.
 - Phase 6 is correctly identified as severable, and the trade table gives a reviewer a concrete thing to reject.
 

@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-31
+---
+
 # An area card with no manifest — the test that authored content outgrew
 
 **Status:** Backlog

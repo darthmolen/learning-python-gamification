@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-08-29
+completed: 2026-08-29
+---
+
 # The Compose File the Lane A Tracks Cannot Own
 
 **Status:** Completed

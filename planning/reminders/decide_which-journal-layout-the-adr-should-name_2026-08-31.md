@@ -1,11 +1,15 @@
+---
+kind: reminder
+status: open
+category: decision
+audience: dm
+subject: curriculum
+date: 2026-08-31
+plan: journal-reads-from-git_2026-08-31
+---
+
 # Correct ADR 0004's two references to `journal.md`, or rule that the curriculum changes instead
 
-**Category:** decision
-**Audience:** dm
-**Subject:** curriculum
-**Raised:** 2026-08-31
-**Plan:** `planning/**/feature_journal-reads-from-git_2026-08-31.md`
-**Status:** done
 **Closed:** 2026-08-31 — Ruled for one `journal.md` with a dated heading per entry, and the
 curriculum moved rather than the code. Neither of the two layouts on the table won: the DM's
 answer was a third one. ADR 0004 needs no correction after all.

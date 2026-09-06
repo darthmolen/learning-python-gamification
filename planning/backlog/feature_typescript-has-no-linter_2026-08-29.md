@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-29
+---
+
 # TypeScript Has No Linter, and the Learner Is Graded on One
 
 **Status:** Backlog

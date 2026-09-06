@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: spa
+date: 2026-08-28
+completed: 2026-09-01
+---
+
 # The SPA
 
 **Status:** Completed 2026-09-01 — nine of ten criteria; the tenth needs a browser, see Status

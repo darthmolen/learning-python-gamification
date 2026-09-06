@@ -1,3 +1,12 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-08-27
+completed: 2026-08-29
+promoted_from: ursina-tier3-spike_2026-08-26
+---
+
 # Ursina Pinning and Upgrade Policy
 
 **Status:** Complete -- 2026-08-29

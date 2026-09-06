@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-09-02
+completed: 2026-09-02
+---
+
 # The Quest And Area Screens Say What They Know
 
 **Status:** Completed

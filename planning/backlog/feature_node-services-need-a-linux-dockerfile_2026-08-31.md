@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-31
+---
+
 # The Node Services Cannot Start On A Windows Host
 
 **Status:** Backlog

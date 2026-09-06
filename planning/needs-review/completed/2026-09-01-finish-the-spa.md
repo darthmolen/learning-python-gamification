@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-09-01
+---
+
 # Finish the SPA
 
 ## Context

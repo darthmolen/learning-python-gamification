@@ -1,3 +1,10 @@
+---
+kind: stub
+status: promoted
+date: 2026-09-03
+promoted_to: the-glossary-reaches-a-reader_2026-09-03
+---
+
 # The Glossary Reaches A Reader
 
 **Status:** Promoted 2026-09-03 to planning/completed/feature_the-glossary-reaches-a-reader_2026-09-03.md

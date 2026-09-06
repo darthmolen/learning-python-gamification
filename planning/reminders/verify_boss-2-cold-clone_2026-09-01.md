@@ -1,11 +1,14 @@
-# Run Boss 2's cold clone, and record which step it lands on
+---
+kind: reminder
+status: open
+category: verify
+audience: dm
+subject: session
+date: 2026-08-31
+plan: area-2-scribes-rite-and-sandbox_2026-08-28
+---
 
-**Category:** verify
-**Audience:** dm
-**Subject:** session
-**Raised:** 2026-08-31
-**Plan:** `planning/**/feature_area-2-scribes-rite-and-sandbox_2026-08-28.md`
-**Status:** open
+# Run Boss 2's cold clone, and record which step it lands on
 
 ## What to do
 

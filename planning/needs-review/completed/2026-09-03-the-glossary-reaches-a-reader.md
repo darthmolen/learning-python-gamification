@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-09-03
+---
+
 # The Glossary Reaches A Reader
 
 **Status:** Backlog
@@ -104,7 +110,7 @@ and `TomeScreen.tsx`, `pyquest/apps/field-manual/src/build.ts` and `render.ts`.
 3. **No delivery path for game/medals.md to the browser.** The SPA cannot read disk. The plan does not say whether medal text arrives via a new API field, a new endpoint, or build-time bundling, nor what happens when game/ is absent.
 
 #### Important (Should Address)
-1. **An unresolved design fork sits inside an in-progress plan.** "Decide this before writing the component" leaves ConceptList's onSelect — and therefore items 1 and 2 — undetermined.
+1. **An unresolved design fork sits inside an in-progress plan.** "Decide this before writing the component" leaves ConceptList's onSelect ï¿½ and therefore items 1 and 2 ï¿½ undetermined.
 2. **Plan-format conventions not met.** CLAUDE.md requires every plan to declare a **Track:** and a Files Expected to Change section. This plan has neither.
 3. **Fence-aware parsing silently changes validator behavior.** Today's regex treats any line-start ##  as a heading; a fence-aware parseGlossary will stop counting ## inside code blocks. The plan should state the expected delta and that alidate:content stays green.
 4. **No RED-then-mutant step.** CLAUDE.md mandates captured failure output plus a seeded mutant per check. The Tests section lists assertions but no verification protocol.

@@ -1,6 +1,11 @@
+---
+kind: reminder
+status: open
+date: 2026-09-01
+---
+
 # Check the editor's keyboard escape hatch in a real browser
 
-**Raised:** 2026-09-01
 **Raised by:** the SPA accessibility sweep (`planning/in-progress/feature_spa_2026-08-28-v2.md`, Phase 4)
 **Needs:** a person, a browser, and about two minutes
 **Blocks:** the plan's "every screen operable by keyboard" criterion being fully honest

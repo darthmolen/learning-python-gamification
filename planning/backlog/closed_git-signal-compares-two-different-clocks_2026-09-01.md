@@ -1,3 +1,10 @@
+---
+kind: stub
+status: closed
+date: 2026-09-01
+closed_by: accounts-and-auth_2026-08-30
+---
+
 # git-signal compares two different clocks
 
 **Status:** Fixed 2026-09-01 in `planning/in-progress/feature_accounts-and-auth_2026-08-30.md`

@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-30
+---
+
 # Accounts, And Who Is Allowed To Ask
 
 **Status:** Planned

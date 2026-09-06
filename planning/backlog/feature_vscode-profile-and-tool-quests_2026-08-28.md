@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-28
+---
+
 # The Stripped VS Code Profile, and Tool Quests
 
 **Status:** Backlog — fully specified by Area 2 Phase 3; closes when that ships

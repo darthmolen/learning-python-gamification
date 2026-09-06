@@ -1,3 +1,12 @@
+---
+kind: plan
+status: completed
+track: api
+date: 2026-08-31
+completed: 2026-08-31
+promoted_from: journal-text-has-no-column_2026-08-29
+---
+
 # The Journal Reads From Git
 
 **Status:** Completed

@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: spa
+date: 2026-09-01
+completed: 2026-09-01
+---
+
 # The Console's account panel
 
 **Status:** Completed

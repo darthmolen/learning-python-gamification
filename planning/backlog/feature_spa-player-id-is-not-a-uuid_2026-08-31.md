@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-31
+---
+
 # The SPA's Player Id Is Not A UUID
 
 **Status:** Backlog

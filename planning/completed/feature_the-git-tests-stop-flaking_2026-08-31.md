@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: flakes
+date: 2026-08-31
+completed: 2026-09-01
+---
+
 # The Git Tests Stop Flaking
 
 **Status:** Completed

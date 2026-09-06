@@ -1,3 +1,10 @@
+---
+kind: stub
+status: closed
+date: 2026-08-31
+closed_by: git-signal-compares-two-different-clocks_2026-09-01
+---
+
 # server.gitsignal.test.ts fails intermittently
 
 **Status:** Superseded 2026-09-01 by `planning/backlog/feature_git-signal-compares-two-different-clocks_2026-09-01.md`

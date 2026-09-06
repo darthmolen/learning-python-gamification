@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: main
+date: 2026-08-26
+completed: 2026-08-27
+---
+
 # Ursina Tier 3 Vocabulary Ceiling Spike
 
 **Status:** Complete — 2026-08-27

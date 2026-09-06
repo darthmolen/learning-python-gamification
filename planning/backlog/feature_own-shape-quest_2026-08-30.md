@@ -1,3 +1,9 @@
+---
+kind: stub
+status: open
+date: 2026-08-30
+---
+
 # A Quest Where He Makes His Own Shape
 
 **Status:** Backlog

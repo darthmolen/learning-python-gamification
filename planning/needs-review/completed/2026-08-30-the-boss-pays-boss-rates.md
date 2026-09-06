@@ -1,3 +1,9 @@
+---
+kind: review
+status: done
+date: 2026-08-30
+---
+
 # The Boss Pays Boss Rates
 
 **Status:** Planned

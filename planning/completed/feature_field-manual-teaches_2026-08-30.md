@@ -1,3 +1,11 @@
+---
+kind: plan
+status: completed
+track: field-manual
+date: 2026-08-30
+completed: 2026-08-30
+---
+
 # The Field Manual Teaches — a body, not a table of contents
 
 **Status:** Superseded

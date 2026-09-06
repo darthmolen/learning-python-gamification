@@ -1,3 +1,10 @@
+---
+kind: stub
+status: closed
+date: 2026-08-29
+closed_reason: Closed — delivered 2026-08-30 as
+---
+
 # Nothing Prices a Boss Medal
 
 **Status:** Closed — delivered 2026-08-30 as
