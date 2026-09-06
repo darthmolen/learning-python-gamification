@@ -356,6 +356,19 @@ def main() -> int:
     print(f"\n{len(files) - failures} of {len(files)} exercises behaved as tagged.")
     if reached:
         print(f"{len(reached)} file(s) reached past the shim. The cap is {BLOCK_CAP} blocks.")
+
+    # Session 8's debugger rung is a thing done in an editor, and there is nothing in
+    # "set a breakpoint and read the Variables panel" for a harness to execute. Area 2's
+    # harness earned this rule: a run that silently ignores what it cannot cover is worse
+    # than one that says so out loud, because the number at the bottom then means less
+    # than the reader thinks. So the count is printed rather than the walkthroughs being
+    # quietly skipped.
+    walkthroughs = sorted(f for d in SEARCH if d.exists() for f in d.rglob("w*.md"))
+    if walkthroughs:
+        print(
+            f"{len(walkthroughs)} walkthrough(s) are NOT covered here -- there is nothing to"
+            "\nexecute in them. They are audited by a person who followed them."
+        )
     return 1 if failures or reached else 0
 
 

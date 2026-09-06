@@ -7,10 +7,9 @@ Read this before session 1. §2 has to be done before session 1 and takes an eve
 own. §3 is the one section worth rereading mid-area, because it is the section that stops
 you designing something the shim cannot do.
 
-This guide covers **sessions 1–7**, which are lists through tuples. Sessions 8–13 — dicts,
-sets, nested structures and the breakpoints rung — arrive with the second half of the
-authoring and this guide grows a second stall section then. What is here is complete for
-the half it covers; nothing in sessions 1–7 waits on it.
+This guide covers **sessions 1–12** — lists through nested structures. Session 13 is Boss 3
+and is gated on the Pygame Zero spike; `README.md` says why. Nothing in sessions 1–12 waits
+on it.
 
 ---
 
@@ -285,6 +284,112 @@ The immovability is a promise to whoever reads it later — which by Area 7 is t
 **`tuple` is the thinnest concept in this area and it is allowed to be.** One session, one
 idea, and no quest of its own. Do not pad it. If the session runs short, that is what the
 choice board is for.
+
+### Session 8 — Things By Name
+
+**`KeyError` on a typo, and the message is no help.** It names the key and stops. What they
+want to know is what *was* in the dict, which it does not say.
+
+> "Read the error. What does it tell you, and what do you actually need to know? Where could
+> you find that out?"
+
+That gap is the argument for the breakpoint, so do not close it by printing the dict for
+them.
+
+**Looping a dict gives only the keys.** Expected, and it is next session's material.
+
+> "What did you get? What did you want?"
+
+**The Run and Debug panel is not there.** This is a setup problem, not a learner problem —
+see the session plan's *What has to be true*. Fix it quickly and move on.
+
+**`breakpoint()` runs and they freeze at the prompt.**
+
+> "It is waiting for you. Type `p` and the name of anything in the program."
+
+### Session 9 — The Recipe
+
+**`for name, amount in recipe:` without `.items()`.** The unpacking error is not obvious.
+
+> "What does looping a dict give you? How many things is that, per go round?"
+
+**`.get` handing back `None`, breaking three lines later.**
+
+> "What did `.get` hand back? What did you then do with it?"
+
+**`.keys()` printed raw looks strange** — `dict_keys([...])`.
+
+> "It is not a list. Can you loop it? Can you index it? Try both."
+
+**Sorting a dict by value.** Genuinely hard, and the file says so. Do not rescue it.
+
+> "What is `sorted` comparing when you hand it a dict?"
+
+**And the one to watch for after task 2:** `.get` used everywhere, including on keys that
+should always exist. That hides a broken recipe book instead of reporting it.
+
+> "If the stick were missing from this recipe, would you want to know?"
+
+### Session 10 — A Bag With No Order
+
+**The set that did not keep its order.**
+
+> "What order did you expect? Where would a set have got that order from?"
+
+**`{}` made a dict.**
+
+> "Print its type. What did you get, and what did you want?"
+
+**A list inside a set fails.** This is the session's best question.
+
+> "A set promises no duplicates. If the thing inside it could change after it went in, could
+> it still promise that?"
+
+**"Why not just use a list and check `in`?"** The right question.
+
+> "How many things does the list have to look at to answer that? How many does the set?"
+
+**Do not lead with performance.** A set is the shape for *which ones*, not "the fast one". A
+learner who picks it for speed picks it where order mattered.
+
+### Session 11 — What Am I Missing
+
+**`have - need` when they wanted `need - have`.**
+
+> "Read your line out loud as a sentence. Which one is the thing you are looking for?"
+
+**Expecting a list back from a subtraction.**
+
+> "What type did you get? Does it have an order? Should you rely on it?"
+
+**Reaching for a set when the amounts matter.**
+
+> "Your set says you need flint. How much flint?"
+
+**The counting loop's first pass.**
+
+> "What is `counts.get(thing, 0)` when the thing has never been seen? Now add one."
+
+### Session 12 — A Recipe Book
+
+**One bracket too few, or one too many.**
+
+> "What did the first bracket hand you? Print just that."
+
+**A `KeyError` at the second level, read as an error at the first.**
+
+> "Which bracket failed? How can you tell from the message?"
+
+**A list indexed by name.**
+
+> "What kind of thing is `world['chests']`? What do you index one of those with?"
+
+**Lost entirely.** This is the one to answer with the tool rather than the question:
+
+> "Set a breakpoint on that line and look at it."
+
+Four sessions ago that would have been a new idea. Here it is the answer, and it is the
+first time the debugger is the fastest way out rather than an exercise.
 
 ---
 

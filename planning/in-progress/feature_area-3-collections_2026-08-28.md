@@ -184,6 +184,33 @@ breakpoint, which stops at the moment `KeyError` is raised with the whole invent
 screen.** That is Area 0's *errors are readable* promise made interactive, three areas later,
 on a bug this area produces naturally. Build a session around it.
 
+> **Corrected 2026-09-06 — the paragraph above is wrong, and the session was authored
+> against the correction.** The exception breakpoint belongs to `debugger` at **Area 7**, not
+> to `breakpoints` at Area 3. The split was settled on 2026-08-29 (`c90202e`) and is recorded
+> in `tools/vscode/README.md` under *The concept ids, settled*:
+>
+> > `breakpoints` is registered at **area 3** — stepping and the Variables panel. `debugger`
+> > stays at **area 7** for the deep pass: conditional breakpoints, exception breakpoints,
+> > logpoints, the call stack. Two concepts, two passes, per §3 principle 7.
+> >
+> > … It belongs to `debugger` at Area 7, not to `breakpoints` at Area 3, and **Area 7's
+> > author should be told so.**
+>
+> Building session 8 around break-on-raise would have authored Area 7 material into Area 3 —
+> and tagging it honestly would have failed `concept-above-area`, which is the validator
+> working as designed rather than an obstacle.
+>
+> **What session 8 teaches instead:** setting a breakpoint, stepping, and reading the
+> Variables panel — with a `KeyError` on a dict as the bug being *hunted*. The KeyError is
+> still the vehicle; the break-on-raise feature is not. `a3-set-a-breakpoint` is unaffected,
+> because its `peer-signoff` win condition is already the Area 3 half: the DM watches them
+> set a breakpoint and step to the failing line.
+>
+> **Area 7's author is hereby told**, per the instruction above: the exception breakpoint is
+> the strongest debugger feature for this curriculum, and Area 3 session 8 leaves it a
+> ready-made example — `s8e2_the_key_that_is_not_there.py` raises exactly the `KeyError`
+> worth stopping on.
+
 **The `breakpoints` prerequisite is satisfied.** `main` landed it on 2026-08-29 —
 `planning/completed/feature_shared-index-and-concepts_2026-08-29.md`, commits `d3eb9f7`
 (spec §4) and `c90202e` (the registry) — and it was proved in both directions before that
@@ -563,3 +590,94 @@ learner-facing drills.
   row still says "blocked on the shim's measurement" (`main`), and
   `curriculum/lib/README.md` still carries the "cap has not been placed on the scaling
   curve" warning box (the shim plan). Both were true until 2026-08-31.
+
+---
+
+## Status — 2026-09-06, Phase 2b (sessions 8–12)
+
+**Working record. Session 13 — Boss 3 — is gated, not forgotten.**
+
+### Done
+
+Sessions 8–12 authored: five session plans, eleven drills, one walkthrough. Area 3 now has
+twelve of thirteen sessions and **all seventeen concepts are taught**.
+
+| Session | Introduces | Drills |
+|---|---|---|
+| 8 — Things By Name | `dict`, `breakpoints` | `s8e1`, `s8e2`, `s8e3`, `w8_the_variables_panel.md` |
+| 9 — The Recipe | `dict-methods` | `s9e1`, `s9e2` |
+| 10 — A Bag With No Order | `set` | `s10e1`, `s10e2` |
+| 11 — What Am I Missing | — | `s11e1`, `s11e2` |
+| 12 — A Recipe Book | `nested-structures` | `s12e1`, `s12e2` |
+
+### Verification actually performed
+
+```console
+$ cd curriculum/area-3 && py -3.14 verify.py
+28 of 28 exercises behaved as tagged.
+1 walkthrough(s) are NOT covered here -- there is nothing to execute in them.
+
+$ py -3.14 -m ruff check curriculum/area-3/
+All checks passed!
+
+$ cd pyquest && npm run validate:content     OK, 23 items across 8 areas
+$ cd pyquest && npm run validate:plans       OK, 117 documents
+```
+
+Marks discipline, US spelling and singular-*they* re-checked across the new files; all
+three clean. The spelling grep is run without a leading `\b` so it catches `frame_colour`.
+
+### The correction that shaped session 8
+
+**The plan told me to build session 8 around the exception breakpoint. That was wrong**, and
+the correction is recorded in place in *The VS Code rung* above. `tools/vscode/README.md`
+settled the split on 2026-08-29: `breakpoints` is Area 3 — stepping and the Variables panel
+— and `debugger` keeps conditional breakpoints, **exception breakpoints**, logpoints and the
+call stack for Area 7. Building the session as instructed would have authored Area 7
+material into Area 3, and tagging it honestly would have failed `concept-above-area`.
+
+Session 8 instead teaches setting a breakpoint, stepping, and reading the Variables panel,
+with a `KeyError` on a dict as the bug being hunted. `w8_the_variables_panel.md` closes by
+naming the feature they do *not* get yet and saying when it arrives, which turns a
+limitation into a road marker.
+
+Per that file's own instruction — *"Area 7's author should be told so"* — the record now
+says it, and `s8e2_the_key_that_is_not_there.py` is left as a ready-made example.
+
+### Where the plan turned out to be wrong, or incomplete
+
+1. **`# stdin:` had to feed pdb twice, and the first attempt failed silently.**
+   `s8e3_stop_and_look.py` calls `breakpoint()` inside a two-pass loop, so the program stops
+   twice. Feeding one `c` left pdb reading an empty stdin at the second stop and the file
+   failed with **no error text at all** — the emptiest failure the harness has produced. The
+   tag carries a comment saying so, because the next author will hit it.
+
+2. **`verify.py` gained walkthrough reporting.** Session 8's debugger rung is done in an
+   editor and there is nothing in it to execute. Area 2's harness earned the rule — a run
+   that silently ignores what it cannot cover makes its own bottom line mean less than the
+   reader thinks — so the count is printed rather than skipped.
+
+3. **Five ruff conflicts across the area, not two.** Sessions 10, 11 and 8 added three more,
+   all the same shape: a duplicate set item that *is* the demonstration, `sorted(...)[0]`
+   shown deliberately as the wrong answer, and `breakpoint()` itself. All carry `# noqa`
+   plus a reason. One near-miss worth recording: a scripted replacement put the `breakpoint`
+   pragma on the docstring's example line instead of the code, which would have shipped a
+   lint directive inside prose a week-nine learner reads. Caught by grepping every pragma
+   and checking it sat on a code line.
+
+4. **`pyright` is now five, not four.** One more `import world`, from `s10e2`. The README
+   tracks the count against the four drills that build a world.
+
+### What is still open
+
+- **Session 13 — Boss 3.** Gated on `feature_pygame-zero-viability-spike_2026-09-06.md`,
+  which needs the learner's laptop for one sitting. `README.md` has a section arguing the
+  gate so a reader does not mistake it for an omission.
+- **Session 8's delivery** needs the Run and Debug view restorable on the target machine —
+  `tools/vscode/` still records the Area 2 strip as pending verification. Authoring is not
+  blocked; the session plan says what to check and what to say if the strip was never
+  applied.
+- **The seven content items**, and the two Phase 4 hazards already named: `scaffold.ts`
+  writes the pre-split layout, and `fixtures-agree.test.ts` hard-codes five invented `a3-`
+  ids that do not match the matrix.
+- **`lesson.draft.md` stays a draft.** Twelve sessions is not thirteen.

@@ -23,18 +23,18 @@ that are deliberately not in it.
 
 ## Authoring status
 
-**Partially authored. Sessions 1–7 are complete; sessions 8–13 are not written.**
+**Partially authored. Sessions 1–12 are complete; session 13 — Boss 3 — is gated.**
 
 | Part | State |
 |---|---|
 | `area.yml` | **complete** — title, weeks, blurb, `authoring: partial` |
 | `glossary.md` | **complete** — all seventeen concepts defined |
 | `lesson.draft.md` | **a draft, deliberately** — see below |
-| `dm-guide.md` | **complete for sessions 1–7**; §4 grows a second stall section with 8–13 |
+| `dm-guide.md` | **complete for sessions 1–7**; §4 grows a second stall section with 8–12 |
 | `verify.py` | **complete**, and proven against six seeded mutants |
-| Sessions 1–7 and their drills | **complete** |
-| Sessions 8–13 and their drills | **not started** |
-| `reference/` | **complete for sessions 1–7** |
+| Sessions 1–12 and their drills | **complete** — 28 files, 12 plans, 1 walkthrough |
+| Session 13 — Boss 3 | **gated** on the Pygame Zero spike; see below |
+| `reference/` | **complete for sessions 1–7**; sessions 8–12 check themselves |
 | `exercises/` — seven briefs | **not started** |
 | `game/area-3/quests/` — seven YAML | **not started** |
 
@@ -47,6 +47,31 @@ its own harnesses, which had silently stopped measuring anything at all.
 
 `area.yml` stays `authoring: partial` until the five quests exist. `estimatedQuests: 5` is
 §5.2's rule of five, not a count of anything written, and the UI renders it with a tilde.
+
+---
+
+## Why session 13 is not written
+
+**Boss 3 is gated, and the gate is deliberate rather than an omission.**
+
+`planning/backlog/promoted_area-4-functions_2026-08-28.md` set it, and
+`planning/feature_pygame-zero-viability-spike_2026-09-06.md` now carries it:
+
+> the Pygame Zero spike promotes earlier and separately: **before Boss 3 is authored.** It is
+> a gate, not a phase, and a gate discovered late is the expensive kind.
+
+Area 4's vehicle is Pygame Zero. If it will not install under the pinned Python 3.14, or
+will not open a window on the learner's laptop, Area 4's vehicle changes — and Boss 3 is the
+last thing before Area 4 and the piece that hands over to it. Authoring the handover before
+knowing what it hands over to is how six weeks get thrown away.
+
+The spike needs the learner's laptop for one sitting. **Nothing else in this area waits on
+it**; sessions 1–12 are complete and deliverable, which is eleven weeks of material.
+
+There is a second, smaller gate on **session 8** and it does not block authoring, only
+delivery: the Run and Debug view has to be restorable in their editor. `tools/vscode/`
+records the Area 2 strip as pending verification on the target machine. Session 8's *What
+has to be true* section says what to check and what to say if the strip was never applied.
 
 ---
 
@@ -169,9 +194,8 @@ question it was built for.
 
 ## Concept coverage
 
-Seventeen concepts. **Twelve are taught in the seven sessions that exist**; the remaining
-five arrive with sessions 8–13 and are listed here so the gap is a stated fact rather than
-something a reader has to derive.
+Seventeen concepts. **All seventeen are now taught.** Session 13 introduces nothing — a boss
+resurfaces the area rather than adding to it.
 
 | Concept | Session | Where | Shipped? |
 |---|---|---|---|
@@ -187,15 +211,22 @@ something a reader has to derive.
 | `sorted` | 5 | `s5e3_tidy_it_up.py` | yes |
 | `slicing` | 6 | `s6e1_the_hotbar.py` | yes |
 | `tuple` | 7 | `s7e1_a_coordinate.py` | yes |
-| `dict` | 8 | — | **not yet** |
-| `breakpoints` | 8 | — | **not yet** |
-| `dict-methods` | 9 | — | **not yet** |
-| `set` | 10 | — | **not yet** |
-| `nested-structures` | 12 | — | **not yet** |
+| `dict` | 8 | `s8e1_things_by_name.py` | yes |
+| `breakpoints` | 8 | `s8e3_stop_and_look.py`, `w8_the_variables_panel.md` | yes |
+| `dict-methods` | 9 | `s9e1_the_recipe.py`, `s9e2` | yes |
+| `set` | 10 | `s10e1_a_bag_with_no_order.py`, `s10e2` | yes |
+| `nested-structures` | 12 | `s12e1_a_recipe_book.py`, `s12e2` | yes |
 
-**The thinnest of the twelve is `tuple`**, at one drill and no quest, and §Why this order
-argues that it should be. The next thinnest is `min`, which shares a file with `max`
-because the two are one idea asked in opposite directions.
+**The thinnest is `tuple`**, at one drill and no quest, and *Why this order* argues that it
+should be. The next thinnest is `min`, which shares a file with `max` because the two are
+one idea asked in opposite directions.
+
+**`breakpoints` is taught as stepping and the Variables panel, and not as the exception
+breakpoint.** That split was settled on 2026-08-29 and is recorded in
+`tools/vscode/README.md`: `breakpoints` is Area 3, and `debugger` — conditional breakpoints,
+exception breakpoints, logpoints, the call stack — stays at Area 7. Session 8 hunts a
+`KeyError` with a breakpoint; it does not teach break-on-raise. The queued plan said
+otherwise and has been corrected in place.
 
 ---
 
@@ -235,18 +266,19 @@ row is ten blocks; the largest thing here is a 20 × 20 floor.
 py -3.14 verify.py
 ```
 
-Last run: **17 of 17**, on Python 3.14.6, Windows 11. `ruff check curriculum/area-3/`
+Last run: **28 of 28**, on Python 3.14.6, Windows 11. `ruff check curriculum/area-3/`
 passes.
 
-**`pyright` reports four, and all four are wanted.** Recorded here rather than suppressed,
+**`pyright` reports five, and all five are wanted.** Recorded here rather than suppressed,
 because Area 1 lives with three of its own for the same reason and hiding them would make
 the next author think this area had none.
 
-- **Three × `Import "world" could not be resolved`**, in the files that build a world. The
+- **Four × `Import "world" could not be resolved`**, in the files that build a world. The
   shim is at `curriculum/lib/world.py` and is *copied* next to the learner's own files, so
-  `import world` resolves exactly where it matters and all seventeen files run. It does not
+  `import world` resolves exactly where it matters and all twenty-eight files run. It does not
   resolve for a type checker pointed at the repository root, which is a fact about where
-  pyright was standing rather than about the code.
+  pyright was standing rather than about the code. The count tracks the number of drills that
+  build a world: `s1e1`, `s1e2`, `s7e1`, `s10e2`.
 - **One × `"__setitem__" method not defined on type "tuple[...]"`**, at
   `s7e2_it_will_not_change.py:39`. That line is `spawn[0] = 99`, the file is called *It Will
   Not Change*, and `# expect: TypeError` is in its header. Pyright has read the program
@@ -292,8 +324,9 @@ area-3/
   lesson.draft.md    the teaching body, published as a draft until session 13 exists
   verify.py          headless; asserts placements, never opens a window
   sessions/
-    session-1-the-row-of-blocks.md      … through session-7
+    session-1-the-row-of-blocks.md      … through session-12
     session-1/  s1e1_a_row_of_blocks.py, …   drills live beside the session
+    session-8/  … and w8_the_variables_panel.md, the one walkthrough in the area
   reference/         worked answers. Datamine payloads under §5.5, not handouts
 ```
 
@@ -302,5 +335,9 @@ and Area 0's `TEMPLATE.md` is still the only copy; eight copies of one file that
 disagree is not a layout, it is a liability. Journal prompts live in each session plan's
 Beat 5, which is where a DM actually reads them.
 
-**No `exercises/` yet**, and no `game/area-3/`. Both arrive with the quest items in the
-second half of the authoring.
+**One walkthrough, in session 8.** The debugger rung is a thing done in an editor and there
+is nothing in "set a breakpoint and read the Variables panel" for a harness to execute, so
+`verify.py` reports it as uncovered rather than skipping it silently — Area 2's harness
+earned that rule. It is audited by a person who followed it.
+
+**No `exercises/` yet**, and no `game/area-3/`. Both arrive with the quest items.
