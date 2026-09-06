@@ -18,34 +18,35 @@ services:
     # what the learner's laptop reaches over the LAN (§6.4); development stays on the host with
     # `npm run dev`.
     #
-    # `VITE_API_URL` is a BUILD arg, not an environment variable, because Vite substitutes it into
-    # the bundle at build time. Setting it under `environment:` would do nothing, silently. See
-    # `apps/web/Dockerfile`.
+    # No build args, and their absence is the design. This used to pass
+    # `VITE_API_URL: http://localhost:${API_PORT:-3081}`, which Vite inlined into the bundle — so
+    # the SPA served to the learner's laptop told HIS browser to call HIS localhost (§6.4 puts the
+    # api on one machine and his code on another). The image now serves the api on its own origin
+    # through `apps/web/Caddyfile`, so there is no address to pass and nothing to keep in sync.
     build:
       context: ../../pyquest
       dockerfile: apps/web/Dockerfile
-      args:
-        VITE_API_URL: "http://localhost:${API_PORT:-3081}"
     image: pyquest-web:local
     container_name: pyquest-web
-    # Nothing here says how to serve. `apps/web/Dockerfile` ends in `serve --single`, and the
-    # `--single` is load-bearing: `/area/3/quest/a3-recipe-book` is a real URL the learner can
-    # reload or bookmark, and a static server without a history fallback answers 404 to every
-    # client-side route.
+    # Comes back when the daemon does -- see `compose/api.yml`. This is the one the learner opens, so
+    # a web container that stays down after a reboot is the whole stack being absent as far as he can
+    # tell, however healthy everything behind it is.
+    restart: unless-stopped
+    # Nothing here says how to serve. `apps/web/Caddyfile` does: it serves /srv, proxies `/api/*` to
+    # `api:3081`, and falls back to index.html so `/area/3/quest/a3-recipe-book` survives a reload.
     #
-    # The command, working_dir and VITE_API_URL environment entry that stood here are gone with
-    # the dev server. The last of those is the one to be careful about: it is a BUILD arg now,
-    # because Vite inlines it into the bundle. Left under `environment:` it would have been read
-    # by nothing and changed nothing, which is the quietest way to be wrong.
     # No `depends_on: api`, and the reason is a compose rule rather than a design choice.
     #
     # `api` lives in the `api` profile and this lives in `web`, and compose refuses a dependency
     # on a service whose profile is not also active — `service "web" depends on undefined service
     # "api"`. Declaring it here would make `--profile web` alone an invalid project.
     #
-    # The relationship is real all the same: the SPA fetches from the api and reports failed
-    # resources without it. That makes it a *startup ordering* concern, which is
-    # `infra/start-full.cmd`'s job — it brings up both, in order, and waits for health.
+    # The relationship is stronger than it was — this container now PROXIES to the api rather than
+    # merely serving a client that calls it — but the shape is unchanged: both sit on the project
+    # network, so the DNS name `api` resolves whenever both run, and startup ordering is
+    # `infra/start-full.cmd`'s job. With the api down, `/api/*` answers 502 and the SPA reports
+    # failed resources, which is the same outage it always had and a great deal easier to read than
+    # the CORS error it used to produce.
     ports:
       # 3082, reserved for this service before it existed.
       - "${WEB_PORT:-3082}:3082"

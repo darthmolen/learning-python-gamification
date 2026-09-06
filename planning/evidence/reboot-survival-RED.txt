@@ -1,0 +1,21 @@
+RED — the stack does not survive a Docker daemon restart
+Captured 2026-09-06, before any change.
+
+$ docker inspect -f '... restart policy and exit state ...' <each container>
+
+CONTAINER          STATUS    EXIT   FINISHED                         RESTART
+pyquest-postgres   running   0      2026-09-06T11:34:17.551659336Z   unless-stopped
+pyquest-gitea      running   0      2026-09-06T11:34:17.551622423Z   unless-stopped
+pyquest-api        exited    255    2026-09-06T11:34:17.551604746Z   no
+pyquest-runner     exited    255    2026-09-06T11:34:17.551632884Z   no
+pyquest-web        exited    255    2026-09-06T11:34:17.551604649Z   no
+
+READING:
+  api, runner and web exited at the SAME timestamp with exit 255 -- that is the Docker
+  daemon stopping, not a crash. postgres and gitea survived the same event because they
+  carry restart=unless-stopped. The other three carry restart=no.
+
+  The api was healthy up to the instant it stopped:
+
+{"level":30,"time":1788694352496,"pid":1,"hostname":"f70f5e76a6cf","reqId":"req-aww","req":{"method":"GET","url":"/health","host":"127.0.0.1:3081","remoteAddress":"127.0.0.1","remotePort":60946},"msg":"incoming request"}
+{"level":30,"time":1788694352496,"pid":1,"hostname":"f70f5e76a6cf","reqId":"req-aww","res":{"statusCode":200},"responseTime":0.17925900220870972,"msg":"request completed"}

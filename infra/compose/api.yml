@@ -53,6 +53,15 @@ services:
       dockerfile: apps/api/Dockerfile
     image: pyquest-api:local
     container_name: pyquest-api
+    # Comes back when the daemon does. On 2026-09-06 this service, `runner` and `web` all exited 255
+    # at the same instant -- the daemon stopping -- and stayed down, while postgres and gitea
+    # returned because only they carried a policy. The api's last log line was a healthy /health 200.
+    #
+    # The policy is applied by the DAEMON at startup and owes nothing to profiles: `profiles` decides
+    # what the compose CLI acts on, not what the daemon resumes. It is also baked into the
+    # container's HostConfig at CREATE time, so changing this line needs `bounce.cmd api` -- a plain
+    # restart keeps the old policy and a correct-looking compose file.
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -80,8 +89,19 @@ services:
       # any other route, which is the point.
       - runner_spool:/spool
     ports:
-      # 3081, reserved for this service before it existed.
-      - "${API_PORT:-3081}:3081"
+      # 3081, reserved for this service before it existed — and bound to LOOPBACK, the way postgres
+      # already is.
+      #
+      # It used to bind every interface "because §6.4 puts the son's browser on another machine".
+      # That stopped being true when `web` became the api's front door: the learner's browser
+      # reaches the api at `/api/*` on port 3082 and the proxy hop happens on the Docker network,
+      # so nothing outside this machine has any reason to dial 3081. What is left is `curl`,
+      # `npm run e2e` and the smoke suite, all of which run here.
+      #
+      # This narrows the api's exposure without narrowing what anyone can do. It does NOT affect
+      # the web container: it resolves `api:3081` over the project network, which is a different
+      # path entirely from a published host port.
+      - "127.0.0.1:${API_PORT:-3081}:3081"
 
   runner:
     profiles: ["api"]
@@ -89,6 +109,10 @@ services:
       context: ../../pyquest/apps/runner
     image: pyquest-runner:local
     container_name: pyquest-runner
+    # Same reason as the api: it stopped with the daemon and did not come back. A submission that
+    # arrives while the runner is down sits in the spool unclaimed, which looks to the learner like
+    # Submit silently doing nothing.
+    restart: unless-stopped
     # §6.6: untrusted Python. No network at all, a hard memory cap, a process ceiling, and a
     # read-only root filesystem with exactly one writable directory that lives in memory and
     # vanishes with the container. These are the constraints that make running a child's
@@ -127,6 +151,11 @@ services:
       context: ../../pyquest/apps/runner
     image: pyquest-runner:local
     container_name: pyquest-runner-tests
+    # A job, and the "no" is written down rather than left to the default -- the same call
+    # `migrate.yml` makes for the same reason. This suite exits 0 when it passes, so a restart policy
+    # would run it forever; and `no` sitting silently beside three siblings that were deliberately
+    # given a policy is how the next person adds a fourth by pattern-matching.
+    restart: "no"
     network_mode: "none"
     mem_limit: 512m
     pids_limit: 256

@@ -1,0 +1,102 @@
+GREEN and MUTANT — restart policies (Phase 1)
+Plan: the-stack-comes-back-after-a-reboot_2026-09-06
+Captured 2026-09-06.
+
+RED is in reboot-survival-RED.txt: api, runner and web all exited 255 at the same
+instant with restart=no, while postgres and gitea returned.
+
+
+-------------------------------------------------------------------------------
+A TEST THAT WAS WRONG RATHER THAN THE CODE
+-------------------------------------------------------------------------------
+
+The first RED run reported five failures, not three:
+
+  FAIL  pyquest-api has restart=no - it will not survive a reboot
+  FAIL  pyquest-runner has restart=no - it will not survive a reboot
+  FAIL  pyquest-web has restart=no - it will not survive a reboot
+  FAIL  pyquest-runner-tests has restart=
+absent - a job that restarts is a boot loop
+  FAIL  pyquest-migrate has restart=
+absent - a job that restarts is a boot loop
+
+The last two are the assertion being wrong. `runner-tests` and `migrate` are
+`run --rm` jobs, so no container exists -- which is a PASS, not a boot loop.
+
+`docker inspect` on a container that does not exist prints an empty line to
+STDOUT *and* exits non-zero, so
+
+    POLICY=$(docker inspect -f '...' "$c" 2>/dev/null || echo absent)
+
+captures "\nabsent", which matches no `case` arm. Note the wrapped output above:
+the newline is visible in the RED transcript itself.
+
+Fixed by reading, squeezing whitespace, then deciding:
+
+    policy_of() {
+      docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' "$1" 2>/dev/null | tr -d '[:space:]'
+    }
+
+After the fix, against the UNCHANGED compose files:
+
+  pyquest-api            no
+  pyquest-runner         no
+  pyquest-web            no
+  pyquest-runner-tests   (none/missing)
+  pyquest-migrate        (none/missing)
+
+Three real failures, two correct passes. That is the honest RED.
+
+
+-------------------------------------------------------------------------------
+GREEN
+-------------------------------------------------------------------------------
+
+$ docker compose --profile api --profile web config | grep -E "^  [a-z-]+:|restart:"
+  api:
+    restart: unless-stopped
+  gitea:
+    restart: unless-stopped
+  postgres:
+    restart: unless-stopped
+  runner:
+    restart: unless-stopped
+  runner-tests:
+    restart: "no"
+  web:
+    restart: unless-stopped
+
+$ docker compose --profile api up -d --force-recreate --no-deps api runner
+ Container pyquest-api  Recreated
+ Container pyquest-runner  Started
+
+  pyquest-api      unless-stopped
+  pyquest-runner   unless-stopped
+
+`--force-recreate` is required and is not ceremony: the policy is baked into the
+container's HostConfig at CREATE time, so editing the compose file and
+restarting leaves the old policy behind a correct-looking file. That is exactly
+why the assertion reads `docker inspect` and not `docker compose config`.
+
+
+-------------------------------------------------------------------------------
+MUTANT — the api's policy removed, the runner's left alone
+-------------------------------------------------------------------------------
+
+$ perl -0pi -e 's/(container_name: pyquest-api\n)(?:.*?\n)*?    restart: unless-stopped\n/$1/' compose/api.yml
+$ docker compose --profile api up -d --force-recreate --no-deps api
+
+  FAIL  pyquest-api has restart=no - it will not survive a reboot
+  PASS  pyquest-runner comes back with the daemon (restart=unless-stopped)
+  FAIL  pyquest-web has restart=no - it will not survive a reboot
+
+CAUGHT. The api flipped to FAIL and the runner stayed PASS, so the check is
+reading each container rather than reporting a single shared answer -- which is
+the failure mode `start-full.cmd`'s own wait_healthy comment records having had.
+
+(web is still FAIL here on purpose: its container is recreated in Phase 3, when
+the image changes to Caddy. It goes green there.)
+
+$ cp /tmp/api.yml.bak compose/api.yml     # restored
+  pyquest-api      unless-stopped
+  pyquest-runner   unless-stopped

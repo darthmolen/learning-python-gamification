@@ -11,17 +11,24 @@
 # time anybody needs the real thing. Development stays on the host with `npm run dev`, which is
 # where it already happened.
 #
-# ## The one consequence worth knowing before you debug it
+# ## The api's address is not in this image, and there is nowhere to put one
 #
-# **`VITE_API_URL` is read at BUILD time, not at run time.** Vite substitutes `import.meta.env`
-# into the bundle, so the api's address is baked into these files. Changing it means rebuilding
-# this image — `infra/bounce.cmd web` — not restarting the container. Setting it as a runtime
-# environment variable in compose would do nothing at all, silently, which is exactly the kind of
-# nothing that costs an evening.
+# This used to carry `ARG VITE_API_URL`, baked into the bundle at build time. It was
+# `http://localhost:3081`, which is correct in exactly one browser: the one on the machine running
+# the stack. §6.4 puts the api on one machine and the learner's code on another, so the SPA served
+# to his laptop told HIS browser to call HIS localhost. No value could be right for both machines.
 #
-# `apps/web/src/gateway/index.ts` treats an ABSENT `VITE_API_URL` as "answer from fixtures", so a
-# build with no value produces a working offline SPA rather than a broken online one. That is a
-# reasonable default and a poor surprise, hence the ARG below being explicit.
+# The fix is not a better value. It is no value: the SPA calls `/api/...` — relative — and the
+# `Caddyfile` in this directory proxies `/api/*` to the api over the Docker network. One origin, so
+# the browser resolves the api's address to whatever host it already used to reach this page. One
+# image is then correct on localhost, on the LAN name, on a raw address and on a real domain over
+# https, all at once, with nothing configured.
+#
+# **`VITE_API_LIVE` below is a boolean, not an address, and the distinction is the point.**
+# Fixtures-versus-live is a property of the BUILD, which is what build-time env is for; an address
+# is a property of the environment, and this image expresses none. `apps/web/src/gateway/index.ts`
+# treats it as absent everywhere except here, so `npm run dev` and `vitest` keep answering from
+# fixtures exactly as they did before.
 
 FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS build
 
@@ -45,8 +52,10 @@ COPY tsconfig.base.json tsconfig.json ./
 # their `exports` to `dist/`.
 RUN npx tsc -b
 
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+# Not an ARG: there is no per-environment value to pass in. Every real build of this image talks to
+# a real api, and every build that should answer from fixtures is one nobody runs here — `npm run
+# dev` and `vitest`, where this is simply unset.
+ENV VITE_API_LIVE=true
 RUN npm run build --workspace @pyquest/web
 
 # ---------------------------------------------------------------------------------------------
@@ -56,25 +65,22 @@ RUN npm run build --workspace @pyquest/web
 # TypeScript, no source and no lockfile — nothing but static assets and a server. That is a
 # smaller thing to keep correct for 48 weeks, and it is the difference between shipping a build
 # and shipping a build environment.
+#
+# Caddy rather than `serve`, and it is not a preference. `serve --single` gave the SPA its history
+# fallback and nothing else; this container also has to be the api's front door, so that the browser
+# reaches both on one origin and the bundle needs no address. `serve` cannot proxy. The Caddyfile
+# keeps the history fallback verbatim — see the `try_files` line there.
 # ---------------------------------------------------------------------------------------------
-FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+FROM caddy:2-alpine@sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648
 
-WORKDIR /srv
-
-# `serve` rather than nginx: one dependency, and `--single` gives the SPA's client-side router the
-# history fallback it needs. A route like `/area/3/quest/a3-recipe-book` is a real URL the learner
-# can reload or bookmark, and a static server without a fallback answers 404 to every one of them.
-RUN npm install --global --no-fund --no-audit serve@14.2.4
-
+COPY apps/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /workspace/apps/web/dist/ /srv/
-
-RUN adduser -D -u 10004 web
-USER web
 
 EXPOSE 3082
 
+# Serving the index IS this container's health: it has no health route, and a static server that
+# cannot serve its own index is not serving anything. The proxy half is asserted from outside, by
+# `infra/smoke.sh` step 4e — a healthcheck that only ever talks to itself cannot notice that the
+# route to the api is broken.
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
   CMD wget --quiet --spider http://127.0.0.1:3082/ || exit 1
-
-# A static server has no health route, so serving the index IS its health — see the healthcheck.
-CMD ["serve", "--single", "--listen", "tcp://0.0.0.0:3082", "/srv"]

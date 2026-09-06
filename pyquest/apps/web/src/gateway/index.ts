@@ -60,17 +60,33 @@ import { Unauthenticated, forgetToken, rememberToken, storedToken } from './sess
  */
 
 /**
- * Where the API lives, or nothing.
+ * Whether there is an API to talk to — and if so, nothing about where it is.
  *
- * With no `VITE_API_URL` the gateway answers from fixtures, which is how the app runs with no
- * stack behind it and how `vitest run --project web` stays hermetic. It is not a mock layer
- * pretending to be a server: the fixtures go through the same parsers, so a fixture that drifts
- * from the contract fails a test rather than rendering.
+ * **The api's address is not in this bundle, and there is nowhere to put one.** Every path below
+ * already begins `/api/`, which the browser resolves against the origin that served the page. Open
+ * the SPA at `localhost:3082`, at the machine's LAN name, at a raw address, or one day at a real
+ * domain over https, and the api call follows automatically — one build, every environment, nothing
+ * configured. The web container proxies `/api/*` to the api over the Docker network, so the port
+ * the api listens on is never on any wire a browser can see. See `apps/web/Caddyfile`.
+ *
+ * That is why this returns an empty string rather than an origin. It is not a placeholder for a
+ * value that failed to arrive; it is the statement that the address is the page's own.
+ *
+ * `VITE_API_LIVE` is a **boolean**, and the distinction is the whole design. Fixtures-versus-live
+ * is a property of the *build*, which is what build-time env is for; an address is a property of
+ * the environment, and this one has none. Absent — `npm run dev`, `vitest` — the gateway answers
+ * from fixtures, which is how the app runs with no stack behind it and how `vitest run --project
+ * web` stays hermetic. It is not a mock layer pretending to be a server: the fixtures go through
+ * the same parsers, so a fixture that drifts from the contract fails a test rather than rendering.
+ *
+ * The predecessor was `VITE_API_URL`, baked in at build time, which meant the SPA served to the
+ * learner's laptop told his browser to call *his* localhost. §6.4 puts the api on one machine and
+ * the code on another; an address chosen at build time cannot be right for both.
  */
-const apiBase = (): string | undefined => {
-  const configured = import.meta.env['VITE_API_URL'] as string | undefined;
-  return configured === undefined || configured === '' ? undefined : configured;
-};
+const SAME_ORIGIN = '';
+
+const apiBase = (): string | undefined =>
+  import.meta.env['VITE_API_LIVE'] === 'true' ? SAME_ORIGIN : undefined;
 
 /**
  * `stub` is a thunk, not a value. A fixture that throws — asking for an area outside the
@@ -96,7 +112,7 @@ function authHeaders(): Record<string, string> {
 /**
  * A POST that does not need a token, for the only two routes that do not have one yet.
  *
- * It does not fall back to fixtures. With no `VITE_API_URL` the app is running on fixtures and
+ * It does not fall back to fixtures. Without `VITE_API_LIVE` the app is running on fixtures and
  * nobody has to sign in at all, so reaching here without an api is a caller bug rather than an
  * offline mode — and inventing a token would let a screen believe it was signed in.
  */
@@ -106,7 +122,7 @@ async function postOpen<T>(
   schema: { parse: (raw: unknown) => T },
 ): Promise<T> {
   const base = apiBase();
-  if (base === undefined) throw new Error(`${path} needs an api, and VITE_API_URL is not set`);
+  if (base === undefined) throw new Error(`${path} needs an api, and this build runs on fixtures`);
 
   const response = await fetch(`${base}${path}`, {
     method: 'POST',
@@ -276,7 +292,7 @@ export const getJournalTemplate = (playerId: string): Promise<JournalTemplate> =
 /**
  * Is there an api at all?
  *
- * With no `VITE_API_URL` the app answers from fixtures, and **nobody signs in** — there is no
+ * Without `VITE_API_LIVE` the app answers from fixtures, and **nobody signs in** — there is no
  * server to hold a credential and no token to get. `SessionProvider` reads this so that the
  * fixture app is signed in *synchronously*, rather than flashing a sign-in screen it would then
  * dismiss on the next tick.
@@ -348,7 +364,7 @@ export async function getMe(): Promise<Account | undefined> {
  */
 async function send(path: string, body: unknown): Promise<Response> {
   const base = apiBase();
-  if (base === undefined) throw new Error(`${path} needs an api, and VITE_API_URL is not set`);
+  if (base === undefined) throw new Error(`${path} needs an api, and this build runs on fixtures`);
 
   const response = await fetch(`${base}${path}`, {
     method: 'POST',

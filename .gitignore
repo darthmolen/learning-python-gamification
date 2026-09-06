@@ -20,3 +20,7 @@ dist-*/
 # Scratch space for reading other people's repositories -- a learner's clone lands here
 # so it can be read without its history becoming part of THIS repository's history.
 research/
+
+# Boot-time transcripts from infra/autostart.cmd. Two generations, rewritten every
+# sign-in -- a record for the person debugging this morning, not history.
+infra/logs/

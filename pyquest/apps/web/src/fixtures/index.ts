@@ -1,7 +1,7 @@
 /**
  * Stub payloads, shaped exactly like the endpoints they stand in for.
  *
- * These are what the gateway answers with when no `VITE_API_URL` is set, which is how the app
+ * These are what the gateway answers with when `VITE_API_LIVE` is not set, which is how the app
  * runs with no stack behind it and how the test gate stays hermetic. They are **not** a mock
  * layer: every one goes through the same `.parse()` a real response does, so a fixture that
  * drifts from the contract fails a test instead of rendering.
@@ -28,7 +28,7 @@
  * no uuid literal lives in `apps/web` outside the fixtures, and this is inside them.
  *
  * The values are `packages/db/src/seed.ts`'s, so the offline app and a seeded database describe
- * the same household — which is what makes switching `VITE_API_URL` on and off a change of source
+ * the same household — which is what makes switching `VITE_API_LIVE` on and off a change of source
  * rather than a change of story.
  */
 export const PLAYER_ID = '5eed0000-0000-4000-8000-000000000001';

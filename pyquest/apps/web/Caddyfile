@@ -1,0 +1,52 @@
+# The web container: it serves the built SPA and it is the api's front door.
+#
+# ## Why a proxy rather than a static server
+#
+# The SPA and the api answer on ONE origin, and that is what makes the bundle environment-agnostic.
+# `apps/web/src/gateway/index.ts` builds every request as `/api/...` — a relative URL — so the
+# browser resolves it against whatever host was used to load the page. localhost, the machine's LAN
+# name, a raw address, a real domain over https: all correct, simultaneously, from one image, with
+# nothing configured anywhere.
+#
+# The predecessor baked `VITE_API_URL=http://localhost:3081` into the bundle at build time. §6.4
+# puts the api on one machine and the learner's code on another, so that build told HIS browser to
+# call HIS localhost. No value could have been right for both machines, which is why the answer is
+# not a better value but no value.
+#
+# `api:3081` below is Docker's internal DNS name and the container-internal port. It is NOT
+# `${API_PORT}` — that only publishes a host port for `curl` and the e2e suite. The port the api
+# listens on never appears on a wire the browser can see, so there is nothing to communicate and
+# nothing to keep in sync.
+#
+# ## Two consequences worth knowing before debugging this
+#
+# **No `uri strip_prefix`.** The api registers its own routes under `/api/` already — see
+# `apps/api/src/server.ts`, where every route but `/health` begins `/api/`. Stripping the prefix
+# here would turn `/api/tome` into `GET /tome` and earn a 404 from a healthy api.
+#
+# **The fallback below answers 200 to everything.** That is what a client-side router needs, and it
+# means a broken `handle /api/*` does not look broken: delete that block and `/api/tome` falls
+# through to `try_files`, which returns index.html with a 200. A check that reads status codes calls
+# that a pass. `infra/smoke.sh` step 4e therefore asserts the CONTENT TYPE of the answer, never its
+# status — the only question is who replied, the api or the file server.
+
+:3082
+
+root * /srv
+
+# The api's front door. Ordered first: `handle` blocks are mutually exclusive and evaluated in
+# order, so this must win before the catch-all below claims the path.
+handle /api/* {
+	reverse_proxy api:3081
+}
+
+# Everything else is the SPA, including routes that exist only in the browser.
+#
+# `try_files {path} /index.html` is the history fallback that `serve --single` used to provide, and
+# it is load-bearing for the same reason it always was: `/area/3/quest/a3-recipe-book` is a real URL
+# the learner can reload or bookmark, and a static server without a fallback answers 404 to every
+# client-side route.
+handle {
+	try_files {path} /index.html
+	file_server
+}

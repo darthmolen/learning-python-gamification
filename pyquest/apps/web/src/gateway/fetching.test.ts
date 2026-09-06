@@ -12,9 +12,17 @@ import { PLAYER_ID } from '../fixtures/index.ts';
  *
  * `vi.stubEnv` works because the base URL is read per call rather than at module load. That is
  * the only reason this file can exist, and it is why the read stayed a function.
+ *
+ * **The URLs below are relative, and that is the assertion.** The SPA is served from the same
+ * origin as the api, so `/api/players/…` resolves against whatever host the browser used to load
+ * the page — localhost, the LAN name, a raw address, all of them at once and none of them written
+ * down. An absolute URL appearing here again would mean an address got baked back into the bundle.
+ *
+ * `VITE_API_LIVE` is a boolean rather than an address. Fixtures-versus-live is a property of the
+ * *build*; an address is a property of the environment, and there is no longer anywhere to put one.
  */
 const withApi = (): void => {
-  vi.stubEnv('VITE_API_URL', 'http://localhost:8080');
+  vi.stubEnv('VITE_API_LIVE', 'true');
 };
 
 const answers = (body: unknown, init: { ok?: boolean; status?: number } = {}): void => {
@@ -50,7 +58,7 @@ describe('when an API is configured', () => {
     await getCampaign(PLAYER_ID);
 
     expect(fetch).toHaveBeenCalledWith(
-      `http://localhost:8080/api/players/${PLAYER_ID}/campaign`,
+      `/api/players/${PLAYER_ID}/campaign`,
       expect.objectContaining({ headers: { accept: 'application/json' } }),
     );
   });
@@ -131,7 +139,7 @@ describe('submitting', () => {
     await submitQuest(PLAYER_ID, 'a3-recipe-book', { type: 'hidden-tests', code: 'x = 1' });
 
     expect(fetch).toHaveBeenCalledWith(
-      `http://localhost:8080/api/players/${PLAYER_ID}/quests/a3-recipe-book/submit`,
+      `/api/players/${PLAYER_ID}/quests/a3-recipe-book/submit`,
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ type: 'hidden-tests', code: 'x = 1' }),
@@ -181,7 +189,7 @@ describe('polling a job', () => {
     await getJob('41');
 
     expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/jobs/41',
+      '/api/jobs/41',
       expect.objectContaining({ headers: expect.objectContaining({ accept: 'application/json' }) }),
     );
   });
@@ -219,7 +227,7 @@ describe('recording a drill', () => {
     await postDrill(PLAYER_ID, 'dict', { repelled: true });
 
     expect(fetch).toHaveBeenCalledWith(
-      `http://localhost:8080/api/players/${PLAYER_ID}/defend/dict`,
+      `/api/players/${PLAYER_ID}/defend/dict`,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ repelled: true }) }),
     );
   });
@@ -271,7 +279,7 @@ describe('the sign-off queue', () => {
     await getSignoffs();
 
     expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/signoffs',
+      '/api/signoffs',
       expect.objectContaining({ headers: { accept: 'application/json' } }),
     );
   });
@@ -306,7 +314,7 @@ describe('resolving a sign-off', () => {
     await postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true });
 
     expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/signoffs/att-8f21c0',
+      '/api/signoffs/att-8f21c0',
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ by: PLAYER_ID, granted: true }),
@@ -334,7 +342,7 @@ describe('resolving a sign-off', () => {
     await postSignoff('att-8f21c0', { by: PLAYER_ID, granted: true });
 
     expect(fetch).toHaveBeenCalledWith(
-      'http://localhost:8080/api/signoffs/att-8f21c0',
+      '/api/signoffs/att-8f21c0',
       expect.objectContaining({
         headers: expect.objectContaining({ authorization: 'Bearer tok-console-1' }),
       }),

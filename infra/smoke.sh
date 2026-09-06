@@ -360,6 +360,104 @@ else
 fi
 
 # =============================================================================
+step "4d. every long-running service is set to come back on its own"
+# =============================================================================
+# smoke.sh's header says compose files are configuration and unit-testing YAML
+# measures nothing. This is not YAML asserting about itself. It is the property
+# that decided a real outage: on 2026-09-06 the api, runner and web all exited
+# 255 at the same instant -- the Docker daemon stopping -- and only postgres and
+# gitea came back, because only they carried a restart policy. The api's last
+# log line was a healthy /health 200. Nothing noticed until somebody opened the
+# SPA and found it empty.
+#
+# `docker inspect` reads the policy baked into the container's HostConfig at
+# CREATE time, NOT the value sitting in the compose file. That is exactly why
+# this asks the container: editing web.yml and forgetting `--force-recreate`
+# leaves a running container with the old policy and a compose file that looks
+# correct to any reader.
+dc --profile web up -d web >/dev/null 2>&1 || true
+
+# `docker inspect` on a container that does not exist prints an empty line to
+# STDOUT and fails, so `$(inspect || echo absent)` yields a value with a leading
+# newline that matches nothing. That is not hypothetical: it failed both job
+# checks below on the first RED run, reporting a boot loop on two containers
+# that did not exist. Read the value, then squeeze the whitespace, then decide.
+policy_of() {
+  docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' "$1" 2>/dev/null | tr -d '[:space:]'
+}
+
+for svc in api runner web; do
+  POLICY=$(policy_of "pyquest-$svc")
+  [ -z "$POLICY" ] && POLICY=missing
+  if [ "$POLICY" = "unless-stopped" ]; then
+    ok "pyquest-$svc comes back with the daemon (restart=$POLICY)"
+  else
+    bad "pyquest-$svc has restart=$POLICY - it will not survive a reboot"
+  fi
+done
+
+# The jobs must NOT have one, and their absence is asserted rather than assumed.
+# `migrate` exits 0 when the schema is current and `runner-tests` exits 0 when
+# the suite passes; a restart policy on either is a boot loop that looks like a
+# busy stack from the outside. Both are `run --rm`, so usually no container
+# exists at all -- which is a pass, not a gap.
+for job in runner-tests migrate; do
+  POLICY=$(policy_of "pyquest-$job")
+  [ -z "$POLICY" ] && POLICY=absent
+  case "$POLICY" in
+    no|absent|"") ok "pyquest-$job is a job and carries no restart policy ($POLICY)" ;;
+    *)            bad "pyquest-$job has restart=$POLICY - a job that restarts is a boot loop" ;;
+  esac
+done
+
+# =============================================================================
+step "4e. the SPA and the api share one origin (spec 6.4)"
+# =============================================================================
+# ASSERT ON THE BODY, NEVER ON THE STATUS.
+#
+# The Caddyfile ends in `try_files {path} /index.html` so a deep link like
+# /area/3/quest/a3-recipe-book survives a reload. That fallback means EVERY
+# unmatched path answers **200 with the SPA shell** -- so deleting the whole
+# `handle /api/*` block leaves a server that still responds 200 to every api
+# call, and anything checking status codes calls that a pass. The only question
+# worth asking is who answered.
+#
+# `/api/tome` rather than `/health`: the api namespaces its routes under /api/
+# and leaves /health outside, so /api/health does not exist. Unauthenticated it
+# answers 401 with a JSON body, which is a fine probe -- a 401 from the api
+# proves the hop just as well as a 200 would, and needs no token to set up. The
+# assertion is on the content type, so it survives the day that route opens up.
+WEB_HTTP=${WEB_PORT:-3082}
+
+PROXY_CT=$(curl -s -o /dev/null -w '%{content_type}' "http://localhost:$WEB_HTTP/api/tome" 2>/dev/null || echo none)
+PROXY_BODY=$(curl -s "http://localhost:$WEB_HTTP/api/tome" 2>/dev/null | head -c 120)
+case "$PROXY_CT" in
+  application/json*)
+    ok "GET :$WEB_HTTP/api/tome is answered by the api, over the SPA's own origin ($PROXY_CT)" ;;
+  *)
+    bad "GET :$WEB_HTTP/api/tome was answered by the web server, not the api (type=$PROXY_CT body=$PROXY_BODY)" ;;
+esac
+
+# The other half of the same Caddyfile. Without the fallback every client-side
+# route 404s on reload, which is the bug `serve --single` existed to prevent.
+FALLBACK=$(curl -fsS "http://localhost:$WEB_HTTP/area/3/quest/a3-recipe-book" 2>/dev/null || echo '')
+if echo "$FALLBACK" | grep -qi '<!doctype html'; then
+  ok "a deep link still returns the SPA shell - the history fallback survived"
+else
+  bad "a deep link did not return the SPA shell - the history fallback is gone"
+fi
+
+# Nothing in the shipped bundle may name the api's address. This is the check
+# that stays true only while there is nothing to bake: it caught the original
+# VITE_API_URL and it is what a future reintroduction would trip.
+BAKED=$(docker exec pyquest-web sh -c 'grep -rl "3081" /srv/ 2>/dev/null' || echo '')
+if [ -z "$BAKED" ]; then
+  ok "no api address in the built bundle - there is nothing to configure"
+else
+  bad "the api's port is baked into the bundle: $BAKED"
+fi
+
+# =============================================================================
 step "5. backup.sh produces a readable dated tarball (spec 6.9)"
 # =============================================================================
 rm -rf "$SMOKE_DEST"; mkdir -p "$SMOKE_DEST"
