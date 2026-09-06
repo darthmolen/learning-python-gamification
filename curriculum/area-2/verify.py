@@ -46,7 +46,7 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).parent
-SEARCH = (ROOT / "exercises", ROOT / "reference")
+SEARCH = (ROOT / "sessions", ROOT / "reference")
 
 # Mirrors the area 0, 1 and 2 entries of packages/content/src/concepts.ts. Kept
 # here as a literal on purpose: this directory must stay runnable with nothing
