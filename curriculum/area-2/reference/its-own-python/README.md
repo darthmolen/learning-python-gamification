@@ -4,7 +4,7 @@ A program that draws a word very large. It cannot run without a package, which i
 only interesting thing about it.
 
 **This is the DM's worked copy of the `a2-its-own-python` quest** (`curriculum/area-2` →
-session 7). It is a Datamine payload, not a handout: the rules for unlocking one are in
+Practice 7). It is a Datamine payload, not a handout: the rules for unlocking one are in
 `../README.md`.
 
 ## Run it
@@ -52,11 +52,11 @@ $ py -3.14 -c "import sys; print(sys.executable)"
 
 **`py -3.14` asks for a version, and the environment is not a version.** So the habit that
 keeps him safe for six weeks is the exact habit that breaks the moment he activates a
-venv, and `pip install` under the wrong one of those is the most common way session 7
+venv, and `pip install` under the wrong one of those is the most common way Practice 7
 goes wrong.
 
 There is one way to be sure and it is the same one every time:
-`py -3.14 sessions/session-7/which_python.py`, or the shorter version he should learn by
+`py -3.14 practices/practice-7/which_python.py`, or the shorter version he should learn by
 heart —
 
 ```

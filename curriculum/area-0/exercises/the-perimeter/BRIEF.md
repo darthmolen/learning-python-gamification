@@ -1,6 +1,6 @@
 # The Perimeter
 
-You drew this rectangle in session 2, and it is still written the way session 2 warned you
+You drew this rectangle in Practice 2, and it is still written the way Practice 2 warned you
 about: the size is typed into four separate orders. Change it and you have to find every
 one. Miss one and the shape does not close.
 

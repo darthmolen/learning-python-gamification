@@ -120,7 +120,7 @@ def check(path):
     if expect not in err:
         return False, f"expected {expect}, got:\n" + err.strip()[-400:]
     headline = [ln for ln in err.strip().splitlines() if ln.startswith(expect)]
-    # The line number is reported because reference/session-3-answers.md quotes
+    # The line number is reported because reference/practice-3-answers.md quotes
     # these tracebacks verbatim, and editing a docstring silently shifts them.
     # Drift there is invisible until the DM reads the wrong number aloud.
     # Match only frames naming THIS file -- the harness's own frame is in there too.

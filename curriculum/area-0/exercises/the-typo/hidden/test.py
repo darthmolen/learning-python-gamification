@@ -1,6 +1,6 @@
 """Hidden tests for a0-the-typo. Spec §6.3: these never reach the browser.
 
-Session 3's fix-it exercise, promoted to a quest. The starter says
+Practice 3's fix-it exercise, promoted to a quest. The starter says
 `turtel.left(90)`, Python cannot find anything under that name, and the
 NameError names the line it gave up on.
 
@@ -146,7 +146,7 @@ def test_the_corner_is_still_turned_the_line_was_fixed_not_deleted() -> None:
     """The half of this quest a "did it run" check cannot see.
 
     Deleting the broken line silences the NameError and loses the corner with it. That is
-    the answer session 3 exists to rule out, and this is where it gets ruled out.
+    the answer Practice 3 exists to rule out, and this is where it gets ruled out.
     """
     spy, _ = attempt()
     assert spy.times("left", "lt") == 1, (

@@ -44,7 +44,7 @@ why.
 
 ## Anything clever will fail this
 
-Two lines of `print` pass. That is deliberate. Session 5's subject is not the program, it
+Two lines of `print` pass. That is deliberate. Practice 5's subject is not the program, it
 is the fact that a program is a file and a file is somewhere.
 
 ## When you are stuck

@@ -1,6 +1,6 @@
 # Never Closed
 
-You met this one in session 3. Something is missing on one line, and Python never gets as
+You met this one in Practice 3. Something is missing on one line, and Python never gets as
 far as running anything at all.
 
 That is the interesting part. Notice two things before you fix it, and neither one is the

@@ -25,14 +25,14 @@ Gitea.** A reader with those three things and a USB stick can deliver every sess
 
 ## Authoring status
 
-**Authored in full. One thing outstanding, and it holds delivery of session 6 rather than
+**Authored in full. One thing outstanding, and it holds delivery of Practice 6 rather than
 the area.**
 
 | Part | State |
 |---|---|
 | `dm-guide.md` | **complete**, covering all eight sessions |
-| Sessions 1–4 (2a) and their exercises | **complete** |
-| Sessions 5–8 (2b) and their exercises | **complete** |
+| Practices 1–4 (2a) and their exercises | **complete** |
+| Practices 5–8 (2b) and their exercises | **complete** |
 | `reference/` payloads for 2b | **complete** — the worked venv project and the traceback answer key |
 | `verify.py` | **complete**, 13 of 13 |
 | `tools/vscode/README.md` — install, checklist, full ladder | **complete** |
@@ -49,7 +49,7 @@ next machine gets the same partial strip.
 
 It is carried as `planning/reminders/follow-up_re-export-the-vscode-profile_2026-09-01.md`.
 
-**It does not block session 6, and session 6 says what to do about it.** Hide the five by
+**It does not block Practice 6, and Practice 6 says what to do about it.** Hide the five by
 hand and run the session. What the session cannot survive is stock VS Code with every
 panel showing, which is the thing the profile exists to reject.
 
@@ -61,14 +61,14 @@ a machine.
 
 ## Read in this order
 
-1. **`dm-guide.md`** — the load-bearing document, as in Area 0. Read it before session 1.
-   §3 (settle the remote) has to be done before session 4, and §7 (the cold clone) before
+1. **`dm-guide.md`** — the load-bearing document, as in Area 0. Read it before Practice 1.
+   §3 (settle the remote) has to be done before Practice 4, and §7 (the cold clone) before
    Boss 2.
-2. **`tools/vscode/README.md`** — before session 6, and its checklist worked on his
+2. **`tools/vscode/README.md`** — before Practice 6, and its checklist worked on his
    laptop well before that.
-3. **`sessions/session-1-what-a-repository-is.md`** — then one per session, on the night.
+3. **`practices/practice-1-what-a-repository-is.md`** — then one per session, on the night.
 4. **`exercises/README.md`** — how the walkthroughs and the Python files fit together.
-5. **`reference/session-8-answers.md`** — before session 8, and never in front of him. It
+5. **`reference/practice-8-answers.md`** — before Practice 8, and never in front of him. It
    is the traceback answer key, and it exists so that you can stay quiet.
 
 ---
@@ -86,45 +86,45 @@ a machine.
 | 7 | 2b | **Its Own Python** | `venv`, `pip` | `running-scripts` | `w7`, `which_python.py` |
 | 8 | 2b | **Read The Stack** | `tracebacks`, `main-guard` | `reading-errors`, `venv` | `w8`, six `.py` |
 
-**The 2a/2b boundary sits between 4 and 5, and it is a real one.** Session 4 ends with his
-code on another machine; session 5 starts with the question of where a file lives. But it
-is **not a directory boundary** — one area, one `sessions/`, one `exercises/`, one
+**The 2a/2b boundary sits between 4 and 5, and it is a real one.** Practice 4 ends with his
+code on another machine; Practice 5 starts with the question of where a file lives. But it
+is **not a directory boundary** — one area, one `practices/`, one `exercises/`, one
 `verify.py`, one DM guide. `concepts.ts` says the two halves share an area number and a
 boss, and `AREAS` is a flat `0..7`; the a/b split is prose in spec §4 and nothing more.
 
-**Sessions 1–4 need no Python at all**, which is why 2a survives Gitea being down.
+**Practices 1–4 need no Python at all**, which is why 2a survives Gitea being down.
 
 ### Why this order
 
 **Git comes before the toolchain, not after.** The obvious ordering is the other way —
 teach him to run files properly, then teach him to save them. It is wrong here for one
 reason: §5.6 says the Journal *becomes* committed and pushed, and the Journal is already
-five weeks old by week six. Session 2a-2 is where sixteen entries of his own writing
+five weeks old by week six. Practice 2a-2 is where sixteen entries of his own writing
 become the first commit in his repository, and that beat gets weaker every week it is
 delayed. Files on disk can wait a fortnight. A habit that is quietly failing to become
 what the spec says it is cannot.
 
-**Session 2 plants a trap and session 3 springs it.** He writes bad commit messages,
+**Practice 2 plants a trap and Practice 3 springs it.** He writes bad commit messages,
 unimproved, on purpose, and four days later cannot read his own log. That bill arriving in
 his own handwriting is worth more than any rule about commit messages given in advance.
 The dm guide says explicitly not to intervene.
 
-**Session 4 is the weakest-looking and is scheduled as the strongest.** A successful push
+**Practice 4 is the weakest-looking and is scheduled as the strongest.** A successful push
 prints four boring lines. Its real beat is step 5 of the walkthrough — cloning his own
 repository into an empty folder and running a file out of it — and that step is also the
 rehearsal for Boss 2. It is the one step in the area that must not be cut for time.
 
-**Session 6 could be first and is sixth.** Installing VS Code in session 1 would cost an
-evening for nothing: sessions 1–4 have no Python to edit. Area 0's guide already says
+**Practice 6 could be first and is sixth.** Installing VS Code in Practice 1 would cost an
+evening for nothing: Practices 1–4 have no Python to edit. Area 0's guide already says
 Notepad is sufficient and that VS Code is Area 2b vocabulary.
 
-**Session 6 is also the one session with no quest, and that is a decision.** Five quests
+**Practice 6 is also the one session with no quest, and that is a decision.** Five quests
 plus a boss is the shape of an area (§5.2), and `vscode` is tagged by Boss 2, which tags
 all fourteen concepts. Inventing an assessment for "he opened a folder" would be a quest
 built to fill a row in a table. The editor is a tool he uses for six more areas; the
 proof that he can use it is every session after this one.
 
-**Session 8 is the boss rehearsal, and both halves of it are in the boss.** A traceback is
+**Practice 8 is the boss rehearsal, and both halves of it are in the boss.** A traceback is
 what he will be reading when the cold clone fails on the dm's machine, and
 `if __name__ == "__main__"` is item 3 on the boss brief by name. That is why `main-guard`
 is taught one session before it pays rather than in Area 4 where importing becomes
@@ -135,11 +135,11 @@ routine.
 If the calendar bites:
 
 - **Merge 1 and 2.** `git init` and the first commit are one evening if he is quick, and
-  session 1's `.git` spelunk moves to the choice board.
+  Practice 1's `.git` spelunk moves to the choice board.
 - **Merge 6 into 5.** Import the profile at the end of the files-on-disk session and let
-  VS Code be the tool he uses in session 7 rather than a session of its own.
-- **Never cut session 4 and never cut session 8.** Session 4 is the only rehearsal for
-  Boss 2, and session 8 is the traceback lesson the boss will demand.
+  VS Code be the tool he uses in Practice 7 rather than a session of its own.
+- **Never cut Practice 4 and never cut Practice 8.** Practice 4 is the only rehearsal for
+  Boss 2, and Practice 8 is the traceback lesson the boss will demand.
 
 ---
 
@@ -147,13 +147,13 @@ If the calendar bites:
 
 Worth stating because it is the clearest example of §3 principle 7 in the campaign.
 
-- **Area 0, session 3:** `reading-errors`, in the REPL and in tiny files. One or two frames.
-- **Area 1, session 6:** the same skill against loop errors.
-- **Area 2b, session 8:** `tracebacks`, and it is a genuinely different object.
+- **Area 0, Practice 3:** `reading-errors`, in the REPL and in tiny files. One or two frames.
+- **Area 1, Practice 6:** the same skill against loop errors.
+- **Area 2b, Practice 8:** `tracebacks`, and it is a genuinely different object.
 
 The traceback changes shape once the code is in a file with a name and a line number and
 an import — and **this is the first time a stack has more than one frame that matters.**
-Session 8 tags a new concept id rather than resurfacing the old one because what he is
+Practice 8 tags a new concept id rather than resurfacing the old one because what he is
 reading is not the same thing he learned to read in week two.
 
 ---
@@ -236,7 +236,7 @@ demonstrate is exactly the half a program demonstrates.
 `str`, which cost him a `TypeError` in week two, and he is asked to **prove** it rather
 than remember it.
 
-**Session 8's chain is three files for one mistake.** `top_frame` imports `middle_frame`
+**Practice 8's chain is three files for one mistake.** `top_frame` imports `middle_frame`
 imports `bottom_frame`, and only the last of them is wrong. Run them in that order and the
 same error arrives at one frame, then two, then three, with an identical last line every
 time — **the error never moves, only the distance to it does.** `the_library_floor.py` is
@@ -294,14 +294,14 @@ one-line-per-walkthrough summary.
 | `w8_read_the_stack.md` | ☐ | | |
 
 **Unticked, deliberately.** They were authored against the commands they teach, and
-authoring is not following. Whoever first runs session 1 ticks the first line.
+authoring is not following. Whoever first runs Practice 1 ticks the first line.
 
 ---
 
 ## The Journal, and where it goes
 
 Area 0 started the Journal in week 1 rather than week 3, recorded the deviation openly,
-and said the git half would arrive here. **It does, in session 2**, and it is that
+and said the git half would arrive here. **It does, in Practice 2**, and it is that
 session's hook rather than a footnote at the end of it.
 
 His `journal.md` **moves** into *his* repository and becomes its first commit — one file,
@@ -312,7 +312,7 @@ template and the first-entry script are Area 0's and are still the only copies. 
 never disagree.
 
 The scoring is unchanged — ten XP an entry, paid for substance rather than existence
-(§5.6) — with two additions in `dm-guide.md` §6: the session-4 entry names the remote, and
+(§5.6) — with two additions in `dm-guide.md` §6: the practice-4 entry names the remote, and
 the Boss 2 entry records the cold clone, pass or fail, with the machine named.
 
 From here the dm's replies become comments in Gitea when Gitea exists, and turn into code
@@ -366,23 +366,23 @@ area-2/
   README.md              this file
   dm-guide.md            how to run a session; the remote decision; the cold clone
   verify.py              runs the runnable exercises; says what it does not cover
-  sessions/              one plan per session, in delivery order (all eight)
+  practices/              one plan per session, in delivery order (all eight)
   exercises/
-    session-1/  w1_the_folder_that_remembers.md, still_works.py
-    session-2/  w2_the_first_commit.md, motto.py, gitignore.txt
-    session-3/  w3_the_log_as_a_story.md, streak.py
-    session-4/  w4_push_and_prove_it.md, receipt.py
-    session-5/  w5_where_the_file_actually_goes.md, where_am_i.py
-    session-6/  w6_a_real_editor.md, the_dot_on_the_tab.py
-    session-7/  w7_its_own_python.md, which_python.py
-    session-8/  w8_read_the_stack.md, and six .py -- the three-file chain,
+    practice-1/  w1_the_folder_that_remembers.md, still_works.py
+    practice-2/  w2_the_first_commit.md, motto.py, gitignore.txt
+    practice-3/  w3_the_log_as_a_story.md, streak.py
+    practice-4/  w4_push_and_prove_it.md, receipt.py
+    practice-5/  w5_where_the_file_actually_goes.md, where_am_i.py
+    practice-6/  w6_a_real_editor.md, the_dot_on_the_tab.py
+    practice-7/  w7_its_own_python.md, which_python.py
+    practice-8/  w8_read_the_stack.md, and six .py -- the three-file chain,
                 the library floor, and the main-guard pair
   reference/             Datamine payloads. Nothing for 2a, and it says why
     its-own-python/  the worked venv project: main.py, requirements.txt, README.md
-    session-8-answers.md   every traceback in session 8, captured verbatim
+    practice-8-answers.md   every traceback in Practice 8, captured verbatim
 ```
 
 No `journal/`. See **The Journal, and where it goes** above.
 
 No `vscode-profile/` either — the profile and its ladder live at `tools/vscode/`,
-with every other thing a machine needs installed on it. Session 6 points there.
+with every other thing a machine needs installed on it. Practice 6 points there.

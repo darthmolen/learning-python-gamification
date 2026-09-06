@@ -1,9 +1,9 @@
-"""Datamine payload — s8e3 choices b and c: two stop conditions, and a receipt.
+"""Datamine payload — p8e3 choices b and c: two stop conditions, and a receipt.
 
 Unlocks: s8e3_the_ink_budget.py, choices (b) and (c).
 
 The stall in (b) is two reasons to stop and only one `while` line.
-The move is `or` -- session 5 -- inside the condition, and the reason nobody
+The move is `or` -- Practice 5 -- inside the condition, and the reason nobody
 reaches for it is that `or` has so far only appeared inside `if`. A condition
 is a condition wherever it sits, and saying that out loud is usually enough.
 
@@ -65,7 +65,7 @@ print("---------------------------------")
 #
 # Those two sentences describe the same loop and they use opposite words,
 # because one is about carrying on and the other is about stopping. Make them
-# say both. That swap has a name and it is the same one from s5e1 task 3.
+# say both. That swap has a name and it is the same one from p5e1 task 3.
 
 
 turtle.done()

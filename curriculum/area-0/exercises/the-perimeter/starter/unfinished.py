@@ -1,7 +1,7 @@
 """The Perimeter — write the number once, compute the rest.
 
-This is the rectangle from session 2, and it is already wrong in the way
-session 2 warned you about: the size is typed into four different orders, so
+This is the rectangle from Practice 2, and it is already wrong in the way
+Practice 2 warned you about: the size is typed into four different orders, so
 changing it means finding and editing every one. Miss one and it does not close.
 
 Run:  py -3.14 solution.py

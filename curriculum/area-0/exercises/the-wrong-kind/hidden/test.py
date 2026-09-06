@@ -1,6 +1,6 @@
 """Hidden tests for a0-the-wrong-kind. Spec §6.3: these never reach the browser.
 
-Session 3's fix-it exercise, promoted to a quest. The starter says
+Practice 3's fix-it exercise, promoted to a quest. The starter says
 `turtle.forward("100")`, and a turtle cannot walk a piece of text.
 
 The stub reproduces that refusal rather than accepting the str quietly — see

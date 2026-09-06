@@ -3,7 +3,7 @@
 input("...") always hands back a str. Always. Even when they typed 150.
 If you want a number, you have to say so.
 
-This one is broken on purpose, the same way it broke in session 5. Run it
+This one is broken on purpose, the same way it broke in Practice 5. Run it
 before you change anything, and read what falls out.
 
 There are two ways to run it. In the browser, press Run and put your answer in

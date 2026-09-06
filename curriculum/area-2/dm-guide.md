@@ -1,7 +1,7 @@
 # Area 2 — DM Guide
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11) that
-is his father, who is also a player. Read this once before session 1, and come back to
+is his father, who is also a player. Read this once before Practice 1, and come back to
 §4 mid-session, on your phone, while he is staring at `fatal: not a git repository`.
 
 Area 0's guide is still the base document — the keyboard rule, the 90-second rule, the
@@ -9,7 +9,7 @@ Socratic ladder, Datamine. Nothing here replaces any of it. This guide carries o
 is different about Area 2, and **two things are different enough to change how you run a
 session.**
 
-**First: for four sessions there is almost no Python.** Sessions 1–4 are git, typed at a
+**First: for four sessions there is almost no Python.** Practices 1–4 are git, typed at a
 terminal. That looks like a step backwards and he may say so. It is not, and §5.7 says
 why in one line: the reward for Boss 2 is *the real toolchain*. Everything he has built
 so far has been trapped on one laptop. These three weeks are how it gets off.
@@ -18,7 +18,7 @@ so far has been trapped on one laptop. These three weeks are how it gets off.
 drew a wrong square. In Area 2 a wrong line means his file is not in the clone, on your
 machine, in front of you, and there is nothing he can do about it from where he is
 sitting. That is the whole point (§2.3, §3 principle 8) and it is also genuinely
-uncomfortable. Say out loud, in session 1, that this is coming.
+uncomfortable. Say out loud, in Practice 1, that this is coming.
 
 ---
 
@@ -41,7 +41,7 @@ learned that git is magic, which is the exact belief this area exists to destroy
 
 ---
 
-## 2. Setup, once, before session 1
+## 2. Setup, once, before Practice 1
 
 On the learner's machine:
 
@@ -65,11 +65,11 @@ git config --global core.editor "notepad"
 
 **Do all four with him watching, and let him type them.** The first two are the reason
 his name appears in `git log`, which is the reason `git log` is interesting to him at all
-in session 3. The third stops git printing a paragraph of advice about `master` every
+in Practice 3. The third stops git printing a paragraph of advice about `master` every
 time he runs `git init`. The fourth means that when git opens an editor he did not ask
 for — and it will — he gets one he can close.
 
-`core.editor "notepad"` is a deliberate downgrade from vim, and it holds until session 6
+`core.editor "notepad"` is a deliberate downgrade from vim, and it holds until Practice 6
 gives him VS Code. On a Mac or Linux box use `nano`. Whatever you choose, **make sure you
 know how to save and quit in it**, because you will be asked at 7:40pm.
 
@@ -86,9 +86,9 @@ This holds for the whole of Area 2 and it is not a temporary shortcut.
 
 ---
 
-## 3. Settle the remote before session 4
+## 3. Settle the remote before Practice 4
 
-**This is a five-minute decision and it must be made before session 4 starts, not during
+**This is a five-minute decision and it must be made before Practice 4 starts, not during
 it.** He needs *a* remote to learn `push`. Three options, in order of preference. All
 three teach `git push` identically; they differ only in drama.
 
@@ -127,7 +127,7 @@ git push -u origin main
 
 Everything about `push` behaves exactly as it does against a server. What it cannot do is
 Boss 2, because the boss needs a second machine. **Option C is a legal way to teach
-session 4 and is not a legal way to fight Boss 2.** If you end up here, plan how the
+Practice 4 and is not a legal way to fight Boss 2.** If you end up here, plan how the
 repository reaches your machine before week 8 — a stick, a share, or Gitea finally coming
 up.
 
@@ -147,12 +147,12 @@ appears somewhere he did not put it.
 
 Written in the order you will hit them. Each is a real prediction.
 
-*Sessions 5–8 are 2b. Their stalls were written here before their session plans were, and
+*Practices 5–8 are 2b. Their stalls were written here before their session plans were, and
 the session plans agree with them line for line — each one closes with the same predicted
 stalls, in the same words. All eight session plans now exist; `README.md` carries the
 authoring status of everything else.*
 
-### Session 1 — What A Repository Is
+### Practice 1 — What A Repository Is
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -167,27 +167,27 @@ authoring status of everything else.*
 find it with `git status`, and undo it himself. It is a free mistake tonight and an
 expensive one in week thirty.
 
-### Session 2 — The First Commit
+### Practice 2 — The First Commit
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | Commits without adding, then says nothing happened | He has not met the staging area yet | "Read what git just said to you, all of it. It used the word 'nothing'. Nothing *what*?" |
 | Cannot see why `add` and `commit` are two commands | Genuinely the least obvious thing in 2a | "You changed four files tonight. Two are finished and two are a mess. Which ones do you want in the save?" |
 | `git add .` for everything, forever | It works, and it will bite him at Boss 2 | "What did that just add? How would you find out? Is there anything in this folder you would not want on my machine?" |
-| Commit messages are `stuff`, `stuff2`, `asdf` | Speed | "In six weeks you are going to read this list to work out what you did. Read that one back as if it were six weeks from now." *(Then let it ship. Session 3 collects the bill.)* |
+| Commit messages are `stuff`, `stuff2`, `asdf` | Speed | "In six weeks you are going to read this list to work out what you did. Read that one back as if it were six weeks from now." *(Then let it ship. Practice 3 collects the bill.)* |
 | Git opens vim because he forgot `-m` | The classic | "You are inside a text editor you did not ask for. It is called vim. Type colon, q, exclamation mark, enter." *(Then `git commit -m "message"`, and say that `-m` means 'message'.)* |
 | `Please tell me who you are` | The §2 config was skipped | Do the two `git config --global` lines, with him typing. |
 | Wants to commit `.venv` or `__pycache__` | Nothing is wrong; this is `.gitignore` arriving on cue | "How many files is that? Did you write any of them? Should something you did not write be in your save?" |
 
-**Let him get wrong:** the commit messages. This is a planted trap and session 3 springs
+**Let him get wrong:** the commit messages. This is a planted trap and Practice 3 springs
 it. Do not improve his messages tonight.
 
-### Session 3 — The Log As A Story
+### Practice 3 — The Log As A Story
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
 | `git log` opens a pager and he cannot get out | It is `less`, and nobody guesses this | "Press q. Just q." *(Then teach `git log --oneline` and never mention the pager again.)* |
-| His own log is unreadable | Session 2's trap, landing | "You wrote these four days ago. Which one added the staircase? …Right. What would you have had to write to know?" |
+| His own log is unreadable | Practice 2's trap, landing | "You wrote these four days ago. Which one added the staircase? …Right. What would you have had to write to know?" |
 | Thinks a branch is a copy of the folder | The most common wrong model, and nearly harmless | "Watch the folder while you switch. Did the number of files change? Where did the other version go?" |
 | **Detached HEAD** after checking out a commit hash | He followed his curiosity, which is correct | "Read the whole message git printed. It told you what happened and it told you how to get back. Which line is the instruction?" *(`git switch main`. Nothing is lost. Say that part first.)* |
 | A merge he did not ask for, and an editor opens | `git merge` opens the editor for the merge message | "That is git asking you to name what you just did. Close the editor and keep the message it suggested." |
@@ -197,7 +197,7 @@ it. Do not improve his messages tonight.
 **Let him get wrong:** the branch-is-a-copy model. It survives all of Area 2 without
 hurting anything, and Area 7 is where it gets corrected properly.
 
-### Session 4 — Push, And It Is Somewhere Else
+### Practice 4 — Push, And It Is Somewhere Else
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -208,14 +208,14 @@ hurting anything, and Area 7 is where it gets corrected properly.
 | "It says everything is up to date, but I changed it" | He edited and did not commit | "Push sends commits. Is your change a commit yet? What does `git status` say?" |
 | Not impressed | Fair. A successful push prints four boring lines | Do not sell it. **Show it.** Clone it back into a fresh folder in front of him and open the file. |
 
-**The move that makes session 4 land** is not the push. It is cloning his repository into
+**The move that makes Practice 4 land** is not the push. It is cloning his repository into
 an empty directory afterwards, in front of him, and opening his own file out of it. Until
 he sees a second copy appear from nothing, `push` is four lines of terminal output.
 
 **Let him get wrong:** forgetting to commit before pushing. It is the most common real
 mistake in the whole of git, and the fix is a sentence he should say out loud himself.
 
-### Session 5 — Where A File Actually Goes
+### Practice 5 — Where A File Actually Goes
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -225,7 +225,7 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 | Uses `python` instead of `py -3.14` | Two interpreters, one machine | "Which Python did that use? What could you print that would tell you?" |
 | Wants to double-click the file | Entirely reasonable | "Try it. What happened to the window? Now run it the other way. Which one let you read the error?" |
 
-### Session 6 — A Real Editor
+### Practice 6 — A Real Editor
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -235,7 +235,7 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 | Wants back the parts the profile removed | Good. That is the ladder, and it starts in Area 3 | "Which one, and what would you use it for? Write that down — you unlock them by needing them." *(See `tools/vscode/README.md`.)* |
 | Hunts for a Run button | There is one, and this year it is a trap | "Run it in the terminal. Then press the button. Which of those told you which Python it used?" |
 
-### Session 7 — Its Own Python
+### Practice 7 — Its Own Python
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -245,7 +245,7 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 | Committed `.venv` | Very common, and the reason `.gitignore` exists | "How many files did that commit? Did you write any of them? Could you rebuild all of them from one line?" |
 | "Why not just install it normally?" | The best question of 2b | "What happens to this project when another project wants a different version of the same thing? Where would that fight happen?" |
 
-### Session 8 — Read The Stack
+### Practice 8 — Read The Stack
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -261,27 +261,27 @@ mistake in the whole of git, and the fix is a sentence he should say out loud hi
 Three questions at the start of each session, out loud, no computer, nothing looked up
 (§5.4). Two minutes. Retrieval, not recognition.
 
-**Session 2:** What is a repository, in your own words? · What did `git init` actually
+**Practice 2:** What is a repository, in your own words? · What did `git init` actually
 create? · Which folder is your repository — how would you prove it?
 
-**Session 3:** What are the two commands that make a save? · Why are they two commands
+**Practice 3:** What are the two commands that make a save? · Why are they two commands
 rather than one? · What does `git status` tell you that you cannot see by looking at the
 folder?
 
-**Session 4:** What is in `git log`? · What is a branch, in your own words? · What would a
+**Practice 4:** What is in `git log`? · What is a branch, in your own words? · What would a
 commit message have to say to be useful to you in November?
 
-**Session 5:** What does `push` send — files, or something else? · Where does it send them?
+**Practice 5:** What does `push` send — files, or something else? · Where does it send them?
 · What happens if you push without committing first?
 
-**Session 6:** What has to be true about where you are standing for `py -3.14 thing.py` to
+**Practice 6:** What has to be true about where you are standing for `py -3.14 thing.py` to
 work? · What is the difference between the REPL and a file? · Name two ways to find out
 which directory you are in.
 
-**Session 7:** What did the editor take away that a normal VS Code has? · What is the dot
+**Practice 7:** What did the editor take away that a normal VS Code has? · What is the dot
 on the tab? · How do you open a terminal in the folder you are editing?
 
-**Session 8:** What is a venv, in one sentence? · How do you find out which Python is
+**Practice 8:** What is a venv, in one sentence? · How do you find out which Python is
 running? · Why is `.venv` in `.gitignore`?
 
 **Week 9, opening Area 3:** three of the above at random, plus one from Area 0. Say out
@@ -291,7 +291,7 @@ loud that you are doing it on purpose.
 
 ## 6. The Journal migration, and scoring it
 
-**Session 2 is where the Journal stops being a folder and becomes history.** §5.6 defines
+**Practice 2 is where the Journal stops being a folder and becomes history.** §5.6 defines
 the Journal as committed and pushed; until tonight only the first half of that sentence
 has been true, and Area 0's README recorded the deviation openly rather than hiding it.
 Tonight it closes.
@@ -324,7 +324,7 @@ curriculum's own copies stay where they are.
 Ten XP per entry, paid for substance rather than existence (§5.6). The rubric in Area 0's
 guide §6 still stands. Two additions for this area:
 
-- **The session-4 entry should name the remote** — which of the three options you used,
+- **The practice-4 entry should name the remote** — which of the three options you used,
   and what actually appeared where. That is the entry he will want in week thirty when he
   moves to Gitea or to GitHub.
 - **The Boss 2 entry records the cold clone, pass or fail**, and names the machine. See

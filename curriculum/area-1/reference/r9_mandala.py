@@ -1,6 +1,6 @@
 """Datamine payload — a complete, honest Area 1 mandala.
 
-Unlocks: session 9, and ONLY after two real attempts and a written sentence.
+Unlocks: Practice 9, and ONLY after two real attempts and a written sentence.
 
 Show this one whole, or not at all. A half-revealed mandala is worse than none,
 because the half they get is always the half they already had.

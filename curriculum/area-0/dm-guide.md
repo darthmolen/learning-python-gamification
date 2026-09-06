@@ -13,7 +13,7 @@ principle 6 says *answers are never given, Socratic questions only*, and this gu
 exists because "ask a Socratic question" is not usable advice at seven o'clock on a
 Tuesday when they are frustrated and you are tired.
 
-Read this once before session 1. Come back to §4 mid-session, on your phone, while they
+Read this once before Practice 1. Come back to §4 mid-session, on your phone, while they
 are staring at a traceback.
 
 ---
@@ -75,7 +75,7 @@ program. That is normal and correct.
 
 **The window vanishes instantly.** They deleted or never reached `turtle.done()`, or the
 program crashed before it. If it crashed there is red text in the terminal, which is
-session 3 arriving early. Read it with them.
+Practice 3 arriving early. Read it with them.
 
 ---
 
@@ -159,7 +159,7 @@ identifies you being visibly stuck and visibly wrong as the highest-value mechan
 the whole design: *a child who has never seen a competent adult get stuck concludes
 that being stuck means being stupid.*
 
-Session 3 has an exercise where they plant bugs for you to find. **Actually get one
+Practice 3 has an exercise where they plant bugs for you to find. **Actually get one
 wrong.** Not theatrically. Really try, in front of them, really fail, and then really
 find it. Twenty years of professional experience is worth nothing to them as a claim and
 everything as a demonstration.
@@ -171,7 +171,7 @@ everything as a demonstration.
 Written in the order you will hit them. Each is a real prediction, not a completeness
 exercise.
 
-### Session 1 — First Light
+### Practice 1 — First Light
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -185,7 +185,7 @@ exercise.
 `right` are from their own point of view rather than the turtle's. Do not pre-empt this.
 The confusion is a one-run fix and the moment it lands they own it.
 
-### Session 2 — Names For Things
+### Practice 2 — Names For Things
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -196,10 +196,10 @@ The confusion is a one-run fix and the moment it lands they own it.
 | Names everything `a`, `b`, `c` | Speed, and it is about to cost them | "In two weeks, opening this file cold — will you know what `b` was?" |
 
 **Let them get wrong:** the last one. Let them ship a file full of `a` and `b`, then
-open it at the start of session 4 and ask them what `b` was. They will not know. That is worth
+open it at the start of Practice 4 and ask them what `b` was. They will not know. That is worth
 more than any amount of being told.
 
-### Session 3 — The Broken Sigil
+### Practice 3 — The Broken Sigil
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -212,7 +212,7 @@ more than any amount of being told.
 **Let them get wrong:** all of it. This is the one session where being wrong is the
 deliverable. Do not rescue anything for the first two minutes of any of the seven.
 
-### Session 4 — Four Kinds Of Thing
+### Practice 4 — Four Kinds Of Thing
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -220,14 +220,14 @@ deliverable. Do not rescue anything for the first two minutes of any of the seve
 | `"100" + "100"` giving `100100` feels wrong | Plus is not one operation | "What does + do to two pieces of text? What would 'glue them together' produce?" |
 | `100 / 4` giving `25.0` feels wrong | True division always produces a float | "Is 25.0 the same number as 25? Is it the same *kind* of thing? Which of those questions matters here?" |
 | `int("12.5")` crashing feels unfair | It genuinely is a little unfair | "Read the error. It says base 10. What did you hand it? Is that a whole number written down?" |
-| Bored by types | Reasonable. Types are the least visual thing in Area 0 | Skip ahead to the drawing half. Types land in session 5 under pressure. |
+| Bored by types | Reasonable. Types are the least visual thing in Area 0 | Skip ahead to the drawing half. Types land in Practice 5 under pressure. |
 
 **Let them get wrong:** every prediction on the type lab. The file asks for thirteen
 written predictions before running. Do not correct a single one before they run it. A
 prediction they wrote down and got wrong is the whole mechanism; a prediction you fixed in
 advance taught nobody anything.
 
-### Session 5 — The Machine Asks
+### Practice 5 — The Machine Asks
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -242,7 +242,7 @@ and `try`, which are Areas 1 and 5. Let it stand as an open wound. Write it into
 Journal under *what I would do differently*. Coming back in week 22 to fix a bug they
 logged in week 2 is worth planning for.
 
-### Session 6 — The Commission
+### Practice 6 — The Commission
 
 | Stall | What is actually wrong | What to ask |
 |---|---|---|
@@ -263,19 +263,19 @@ looked up. Two minutes.
 They must be *retrieval*, not recognition. "What does `int` do?" is retrieval. "Does
 `int` convert text to a number?" is a yes-or-no they can guess.
 
-**Session 2:** What does `print` do that the drawing doesn't? · The turtle starts facing
+**Practice 2:** What does `print` do that the drawing doesn't? · The turtle starts facing
 which way? · What is `turtle.done()` for?
 
-**Session 3:** What does `side = side + 20` do, in two steps? · Why use a name instead of
+**Practice 3:** What does `side = side + 20` do, in two steps? · Why use a name instead of
 the number? · What does `print` show you that the picture can't?
 
-**Session 4:** Name three errors you caused on purpose. · Which line of a traceback do you
+**Practice 4:** Name three errors you caused on purpose. · Which line of a traceback do you
 read first? · What was wrong with b7?
 
-**Session 5:** Four kinds of thing — name them. · What does `100 / 4` give, and what kind
+**Practice 5:** Four kinds of thing — name them. · What does `100 / 4` give, and what kind
 is it? · What does `"5" + "5"` give?
 
-**Session 6:** What kind of thing does `input` always hand back? · What does the `f` in
+**Practice 6:** What kind of thing does `input` always hand back? · What does the `f` in
 front of a string do? · Why did the program crash when you typed "big"?
 
 **Week 3, opening Area 1:** three of the above at random. Say out loud that you are doing
@@ -287,7 +287,7 @@ it on purpose and why. They should know retrieval is a mechanism, not a quiz.
 
 Ten XP per entry, and spec §5.6 is explicit that it is **paid for substance rather than
 existence**. An entry that says "did turtle, it was fine" pays nothing. Say so once, in
-session 1, before the first entry, so a zero is never a surprise.
+Practice 1, before the first entry, so a zero is never a surprise.
 
 Substance means specific. One test: could a stranger reading the entry tell which
 session it was, without the date?
@@ -337,6 +337,6 @@ flinching. Everything else in this area is a vehicle for that.
 
 The spec's diagnosis of every platform in the field (§2.3) is that they teach syntax and
 not building, and the seam they all fail at is the moment the learner leaves the sandbox
-and meets a real error on a real machine. They meet one in session 1 and seven more in
-session 3, on purpose, at a point where the stakes are a drawing of a square. That is
+and meets a real error on a real machine. They meet one in Practice 1 and seven more in
+Practice 3, on purpose, at a point where the stakes are a drawing of a square. That is
 the plan.

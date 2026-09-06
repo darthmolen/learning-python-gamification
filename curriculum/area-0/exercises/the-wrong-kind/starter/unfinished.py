@@ -1,6 +1,6 @@
 """The Wrong Kind Of Thing — 100 and "100" are not the same thing.
 
-You met this one in session 3. On the page those two look almost identical.
+You met this one in Practice 3. On the page those two look almost identical.
 Python does not think they are alike at all, and it says so.
 
 Run it first. Read what falls out. Then fix it.
