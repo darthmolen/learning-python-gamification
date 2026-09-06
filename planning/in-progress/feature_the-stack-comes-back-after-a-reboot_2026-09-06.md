@@ -163,6 +163,27 @@ Phase 3's mutant is the one to be careful about. `try_files {path} /index.html` 
 unmatched path returns the SPA with a 200, so a broken proxy looks like a working server. The
 assertion has to be on the response **body**, never the status.
 
+## Progress — 2026-09-06
+
+| Phase | State | Evidence |
+|---|---|---|
+| 1. Restart policies | done | `reboot-survival-RED.txt`, `reboot-survival-GREEN-and-MUTANT.txt` |
+| 2. Gateway base | done | RED 21/23 failing → GREEN 388 passing; mutant (absolute origin) failed 7 URL assertions |
+| 3. The proxy | done | Caddy serves and proxies; mutant returned `status=200 type=text/html` |
+| 4. `autostart.cmd` | done | Ran against a fully removed stack (`down`), brought all five back healthy |
+| 4b. `install-autostart.ps1` | written, **not yet run elevated** | worktree guard verified (exit 2); `.env` port parsing verified |
+| 5. End to end | **not started** | needs a real reboot, then the learner's laptop |
+
+**The firewall is the open blocker.** `192.168.4.102:3082` times out today while Docker binds
+`0.0.0.0:3082` correctly, so it is Windows Firewall and nothing else. Until `install-autostart.ps1`
+runs from an elevated shell, success criteria 4 and 6 stay unticked and the LAN half of this plan
+is unverified.
+
+One thing was found by making the mistake rather than predicting it: the first run of
+`install-autostart.ps1` wrote a Startup shortcut pointing into `.claude/worktrees/autostart`, which
+is deleted when the branch merges. The shortcut would have outlived its target and failed weeks
+later with nothing on screen to explain it. The script now refuses to install from a worktree.
+
 ## Dependencies
 
 None outside this repository. Docker Desktop already auto-starts.
