@@ -13,6 +13,18 @@ illegible failure quietly destroys a learner's belief that the machine is knowab
 error message is not the machine telling them off. It is the machine telling them where
 to look, in more detail than any human would bother with.
 
+**Say what a sigil is before anything else, in one sentence.** Tonight is the first time
+the word appears, it appears seven times, and it is on every file they open. Left
+unexplained it is just a noise they read past.
+
+> "A sigil is a symbol you draw — a shape that means something. A crest on a shield, a mark
+> on a map."
+
+That is the whole explanation and it is enough for tonight. **The word gets sharper in Area
+1**, where the boss is called The Sigil and is not a drawing at all but a *machine that
+makes them*, one that never draws the same one twice. Do not say that part now; it is the
+second pass, and §3 principle 7 says nothing is taught once. Tonight a sigil is a shape.
+
 **The framing, said out loud at the start, in these words:**
 
 > "Every error you will ever get is the computer trying to help you. It is not angry and
