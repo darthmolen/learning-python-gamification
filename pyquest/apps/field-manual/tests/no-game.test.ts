@@ -10,7 +10,7 @@
  * is not the question; what it published is.
  */
 
-import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -150,4 +150,76 @@ describe('every referenced brief is rendered', () => {
     // silently skips a brief it cannot read, this is what notices.
     expect(all).toContain('the size is typed into four separate orders');
   });
+});
+
+/**
+ * The work, in the order it is done — including the work that carries no scored exercise.
+ *
+ * This is the hole that started the plan this suite belongs to. `exercises` was built from
+ * `items.filter(kind === 'quest')`, so the published manual's "the work" *was the scored
+ * subset*, and every practice delivered at the table was invisible here as well as in the app.
+ * A learner who went looking for what he had missed found the same list that had confused him.
+ */
+describe('the manual publishes the practice spine', () => {
+  const area1 = pages.find((p) => p.file === 'area-1.html')?.html ?? '';
+
+  it('names every practice in order, not just the ones carrying a quest', () => {
+    const numbered = [...area1.matchAll(/<h3>(\d+)\.\s([^<]+)<\/h3>/g)].map((m) => m[1]);
+    expect(numbered).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
+  });
+
+  it('says so when a practice is worked at the table rather than leaving a gap', () => {
+    // Practices 6 and 9 of area 1 carry no exercise, and `area-1/README.md` records why: the
+    // broken loops and the mandala are DM-delivered and lose their point when automated.
+    expect(area1).toContain('Worked at the table');
+  });
+
+  /**
+   * The boss stays out, and `renders exactly the exercises, and no boss` above is what enforces
+   * it. What this checks is the other half: the practice claiming it still appears, so the
+   * sequence has no hole where its last row should be.
+   */
+  it('keeps the closing practice in the sequence without publishing its specification', () => {
+    expect(area1).toContain('10. The Sigil');
+    expect(area1).toContain('closing piece of this area is set by');
+  });
+});
+
+/**
+ * The deletion test, applied to the export.
+ *
+ * `two-roots.test.ts` proves the curriculum still *validates* with `game/` deleted. The DM build
+ * now also *reads* from the overlay — `game/how-to/` — which is a new dependency in the
+ * direction CLAUDE.md guards, so validating is no longer enough. This proves it still publishes.
+ */
+describe('the site builds with the overlay deleted', () => {
+  it('publishes the curriculum, and a how-to with nothing to say about a game', () => {
+    const alone = resolve(here, '..', 'dist-no-overlay-fixture');
+    rmSync(alone, { recursive: true, force: true });
+    mkdirSync(alone, { recursive: true });
+    // `__pycache__` is most of the tree by file count and none of it by meaning. Copying it
+    // put this test over the default timeout under a full-suite run.
+    cpSync(join(contentRoot, 'curriculum'), join(alone, 'curriculum'), {
+      recursive: true,
+      filter: (src) => !src.includes('__pycache__'),
+    });
+    // No game/ at all. Not an empty directory — absent, which is the state a clone of the
+    // curriculum alone would be in.
+
+    const outDir = resolve(here, '..', 'dist-no-overlay');
+    expect(() => buildSite({ contentRoot: alone, outDir })).not.toThrow();
+
+    const howTo = readFileSync(join(outDir, 'how-to.html'), 'utf8');
+    expect(howTo).toContain('What a practice is');
+    expect(howTo).not.toContain('How to play');
+
+    // The spine is the curriculum's own, so it survives intact rather than emptying out.
+    const area1Alone = readFileSync(join(outDir, 'area-1.html'), 'utf8');
+    expect(area1Alone).toContain('10. The Sigil');
+
+    rmSync(alone, { recursive: true, force: true });
+    rmSync(outDir, { recursive: true, force: true });
+    // Copies a tree and builds a site twice over. The default 5s is a unit-test budget and this
+    // is not a unit test.
+  }, 30_000);
 });

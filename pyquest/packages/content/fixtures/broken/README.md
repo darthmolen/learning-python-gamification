@@ -15,6 +15,10 @@ is worth exactly what it refuses, and these are what it refuses.
 | `no-area-manifest/` | content in an area with no manifest, so §5.1a has no denominator |
 | `malformed-yaml/` | an unclosed flow sequence — will not parse at all |
 | `many-problems/` | four different problems at once, pinning that one run reports them all |
+| `practice-missing-exercise/` | the spine lists `ghost`, and `exercises/ghost/` does not exist |
+| `unclaimed-exercise/` | `exercises/the-sigil/` exists and no practice claims it, so nothing ever puts it in front of a learner |
+| `practice-numbering/` | the practices run 1, 2, 4 — either one is unwritten or a renumbering is half done |
+| `game-vocabulary/` | a curriculum how-to page using the game's words, including `boss_fight.py`, which a naive `\b` boundary cannot see |
 
 `many-problems/` is also the fixture to run by hand when judging whether the report is any good:
 

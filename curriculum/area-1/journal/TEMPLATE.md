@@ -49,7 +49,7 @@ three and the one worth the most.
 
 Also the place for things you could not fix yet. Write those down properly --
 what you wanted to happen, and what happened instead. Your Area 0 note about
-the program crashing on a silly answer got fixed in session 5 of this area.
+the program crashing on a silly answer got fixed in Practice 5 of this area.
 That is what these are for.
 -->
 

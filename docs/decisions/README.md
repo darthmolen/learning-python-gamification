@@ -51,3 +51,5 @@ as much as to `Area` over `Tier`.
 | [0004](0004-ceremony-earns-its-place-by-outliving-the-game.md) | Ceremony earns its place by outliving the game; its artifact belongs to the learner | Accepted |
 | [0005](0005-a-heading-names-what-follows-it.md) | A heading names what follows it and is not an argument for reading on | Accepted |
 | [0006](0006-the-game-owns-pace-the-lesson-owns-teaching.md) | The game owns pace, the lesson owns teaching — prose places the reader in the sequence, never on the calendar | Accepted |
+| [0007](0007-a-practice-is-the-unit-of-work.md) | A practice is the unit of work, a session is the unit of time | Accepted |
+| [0008](0008-the-rail-admits-what-belongs-to-no-place.md) | The rail admits what belongs to no place | Accepted |

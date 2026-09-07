@@ -3,7 +3,7 @@
 Six answers, each a value rather than an opinion, which is why this exercise verifies
 cleanly — `curriculum/area-0/README.md` picked it for exactly that reason.
 
-Nothing here imports turtle, but the submission may: the starter's own session-4 exercise
+Nothing here imports turtle, but the submission may: the starter's own practice-4 exercise
 drew a triangle, and a learner who copies from it will bring the import along. The runner
 is `python:3.14-alpine` (§6.6) with neither tkinter nor a display, so turtle is stubbed
 here too rather than left to fail.

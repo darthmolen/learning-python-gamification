@@ -305,6 +305,58 @@ export async function recordReview(
   );
 }
 
+/**
+ * One player's ticked practices.
+ *
+ * A read living in the API's store rather than in `@pyquest/db`'s repository, because its only
+ * caller is the area route and it is never part of the bundle handed to the engine. Keeping it
+ * out of `playerProgress` is the point: nothing is gated on a practice, and a tick that reached
+ * the engine is a tick that could start deciding something.
+ */
+export async function practiceProgress(
+  client: Writable,
+  playerId: string,
+): Promise<{ area: number; practiceN: number }[]> {
+  const { rows } = await client.query(
+    `SELECT area AS "area", practice_n AS "practiceN"
+       FROM practice_progress
+      WHERE player_id = $1
+      ORDER BY area, practice_n`,
+    [playerId],
+  );
+  return rows as { area: number; practiceN: number }[];
+}
+
+/**
+ * Tick or untick one practice.
+ *
+ * `ON CONFLICT DO NOTHING` rather than an upsert: ticking twice is the same fact stated twice
+ * and the first `completed_at` is the true one. Unticking something never ticked deletes
+ * nothing and is not an error. Idempotent in both directions is what lets the UI treat this as
+ * a checkbox rather than as a transaction it has to reason about.
+ */
+export async function setPracticeCompleted(
+  client: Writable,
+  playerId: string,
+  area: number,
+  practiceN: number,
+  completed: boolean,
+): Promise<void> {
+  if (completed) {
+    await client.query(
+      `INSERT INTO practice_progress (player_id, area, practice_n)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (player_id, area, practice_n) DO NOTHING`,
+      [playerId, area, practiceN],
+    );
+    return;
+  }
+  await client.query(
+    `DELETE FROM practice_progress WHERE player_id = $1 AND area = $2 AND practice_n = $3`,
+    [playerId, area, practiceN],
+  );
+}
+
 /** Clear a §5.5 forced review once its concept has been drilled. */
 export async function clearForcedReviews(
   client: Writable,

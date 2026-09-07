@@ -1,6 +1,6 @@
 # No Such Order
 
-You met this one in session 3. It is close to The Typo, and it is **not** the same
+You met this one in Practice 3. It is close to The Typo, and it is **not** the same
 error. Working out why is the quest.
 
 Both files misspell exactly one word. In The Typo, Python could not find the thing on the

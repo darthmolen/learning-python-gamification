@@ -21,11 +21,11 @@ becomes a satisfying way to postpone teaching a child Python*.
 ## Read in this order
 
 1. **`dm-guide.md`** — how the session shape changes, the Socratic phrasings for every
-   stall predicted here, and the invasion drills. Read this before session 1. It is the
+   stall predicted here, and the invasion drills. Read this before Practice 1. It is the
    load-bearing document.
-2. **`sessions/session-1-the-loop-that-draws.md`** — then one per session, on the night.
-3. **`reference/session-6-answers.md`** — before session 6. Not during.
-4. **`journal/entry-07-prompt.md`** — at the end of session 1.
+2. **`practices/practice-1-the-loop-that-draws.md`** — then one per session, on the night.
+3. **`reference/practice-6-answers.md`** — before Practice 6. Not during.
+4. **`journal/entry-07-prompt.md`** — at the end of Practice 1.
 
 ---
 
@@ -33,16 +33,16 @@ becomes a satisfying way to postpone teaching a child Python*.
 
 | # | Title | Introduces | Resurfacing | Files |
 |---|---|---|---|---|
-| 1 | **The Loop That Draws** | `for`, `range` | `print`, `variables`, `int` | `s1e1`–`s1e3` |
-| 2 | **Any Shape You Like** | `range` (three-arg) | `for`, `variables`, `int`, `float`, `input` | `s2e1`–`s2e3` |
-| 3 | **The Loop That Does Not Stop** | `while`, `comparison-operators` | `for`, `variables`, `bool` | `s3e1`–`s3e4` |
-| 4 | **Two Roads** | `if`, `else` | `comparison-operators`, `bool`, `for`, `range` | `s4e1`–`s4e3` |
-| 5 | **And, Or, Not** | `boolean-operators`, `elif` | `if`, `else`, `bool`, `input` | `s5e1`–`s5e3` |
+| 1 | **The Loop That Draws** | `for`, `range` | `print`, `variables`, `int` | `p1e1`–`p1e3` |
+| 2 | **Any Shape You Like** | `range` (three-arg) | `for`, `variables`, `int`, `float`, `input` | `p2e1`–`p2e3` |
+| 3 | **The Loop That Does Not Stop** | `while`, `comparison-operators` | `for`, `variables`, `bool` | `p3e1`–`p3e4` |
+| 4 | **Two Roads** | `if`, `else` | `comparison-operators`, `bool`, `for`, `range` | `p4e1`–`p4e3` |
+| 5 | **And, Or, Not** | `boolean-operators`, `elif` | `if`, `else`, `bool`, `input` | `p5e1`–`p5e3` |
 | 6 | **The Broken Loop** | — (errors, second pass) | `while`, `for`, `range`, `reading-errors` | `b1`–`b6`, `error-log.md` |
-| 7 | **A Loop Inside A Loop** | `nesting` | `for`, `range`, `if`, `else` | `s7e1`–`s7e3` |
-| 8 | **Carrying A Number** | `accumulator-pattern` | `variables`, `for`, `while`, `int`, `float` | `s8e1`–`s8e3` |
-| 9 | **The Mandala** | — | `nesting`, `accumulator-pattern`, all | `mandala-brief.md`, `s9_mandala_lab.py` |
-| 10 | **The Sigil** | — | all nineteen | `sigil-brief.md`, `s10_sigil_starter.py` |
+| 7 | **A Loop Inside A Loop** | `nesting` | `for`, `range`, `if`, `else` | `p7e1`–`p7e3` |
+| 8 | **Carrying A Number** | `accumulator-pattern` | `variables`, `for`, `while`, `int`, `float` | `p8e1`–`p8e3` |
+| 9 | **The Mandala** | — | `nesting`, `accumulator-pattern`, all | `mandala-brief.md`, `p9_mandala_lab.py` |
+| 10 | **The Sigil** | — | all nineteen | `sigil-brief.md`, `p10_sigil_starter.py` |
 
 ### Why this order
 
@@ -52,19 +52,19 @@ Area 0 established that failure is *scheduled* rather than stumbled into, and th
 discipline applies here: the hang gets its own session, with the escape hatch taught
 before it happens.
 
-**`while` before `if`, and session 3 is where `while True:` happens on purpose.** They
-are going to write it this month whether or not anybody plans for it. Session 3 makes it
+**`while` before `if`, and Practice 3 is where `while True:` happens on purpose.** They
+are going to write it this month whether or not anybody plans for it. Practice 3 makes it
 a lesson with a Ctrl-C at the end rather than an ambush on a Tuesday night. This mirrors
-Area 0's session 3, which taught tracebacks at the exact moment they already had a
+Area 0's Practice 3, which taught tracebacks at the exact moment they already had a
 grievance.
 
 **`if` arrives when a loop needs to branch, not before.** A conditional with nothing to
 condition on is the "tour of types before you need a type" mistake Area 0 explicitly
-refused. By session 4 they have a loop with a counter in it, so *"the first six sides are
+refused. By Practice 4 they have a loop with a counter in it, so *"the first six sides are
 red"* is a thing they actually want.
 
-**Session 6 is errors, second pass.** §3 principle 7: nothing is taught once and
-abandoned. Area 0 session 3 taught reading a traceback. Session 6 here teaches the loop
+**Practice 6 is errors, second pass.** §3 principle 7: nothing is taught once and
+abandoned. Area 0 Practice 3 taught reading a traceback. Practice 6 here teaches the loop
 failures that produce **no traceback at all** — the off-by-one, the condition that is never
 false, the loop that runs zero times, the shape whose turns add up to 350.
 
@@ -75,26 +75,26 @@ they do when there is no message and they are the only detector in the room.
 
 **Nesting before the accumulator.** Nesting is visual and instantly rewarding — a loop
 inside a loop is a mandala. The accumulator is abstract and lands far better once they
-have watched a shape grow, so session 8 gives it a job (a spiral whose side length increases)
+have watched a shape grow, so Practice 8 gives it a job (a spiral whose side length increases)
 rather than a definition.
 
-**Session 8 sits after session 6 on purpose.** The accumulator's two signature bugs — the
+**Practice 8 sits after Practice 6 on purpose.** The accumulator's two signature bugs — the
 total reset inside the loop, and `total = length` instead of `total = total + length` —
 are both silent, and the second one leaves the picture completely unchanged. They need
-session 6's habit before they need the pattern.
+Practice 6's habit before they need the pattern.
 
-**Session 9 is the boss rehearsal**, exactly as Area 0's session 6 was, and session 10 is
+**Practice 9 is the boss rehearsal**, exactly as Area 0's Practice 6 was, and Practice 10 is
 the boss itself.
 
 ### Compressing to eight sessions
 
 The plan says ten. If the calendar bites:
 
-- **Merge 1 and 2.** Keep `s1e3`'s polygon engine and `s2e1`'s five predictions; `s2e2`
+- **Merge 1 and 2.** Keep `p1e3`'s polygon engine and `p2e1`'s five predictions; `p2e2`
   goes to their own time.
-- **Merge 4 into 5.** Session 5 teaches the same material under more pressure anyway.
-- **Never cut session 3, session 6, or session 9.** Session 3 is where the hang gets
-  taught, session 6 is the area's actual subject, and session 9 is the only rehearsal
+- **Merge 4 into 5.** Practice 5 teaches the same material under more pressure anyway.
+- **Never cut Practice 3, Practice 6, or Practice 9.** Practice 3 is where the hang gets
+  taught, Practice 6 is the area's actual subject, and Practice 9 is the only rehearsal
   Boss 1 gets.
 
 ---
@@ -134,8 +134,8 @@ against the Area 0 and Area 1 entries of `pyquest/packages/content/src/concepts.
 | `s8e1_carrying_a_number.py` | 8 | 12 | `accumulator-pattern`, `for`, `range`, `variables`, `int`, `float`, `print` |
 | `s8e2_the_growing_spiral.py` | 8 | 16 | `accumulator-pattern`, `for`, `range`, `variables`, `int`, `float`, `print` |
 | `s8e3_the_ink_budget.py` | 8 | 16 | `accumulator-pattern`, `while`, `comparison-operators`, `variables`, `int`, `float`, `print` |
-| `s9_mandala_lab.py` | 9 | 18 | `nesting`, `accumulator-pattern`, `for`, `range`, `if`, `else`, `comparison-operators`, `variables`, `int`, `float`, `print` |
-| `s10_sigil_starter.py` | 10 | 20 | all nineteen |
+| `p9_mandala_lab.py` | 9 | 18 | `nesting`, `accumulator-pattern`, `for`, `range`, `if`, `else`, `comparison-operators`, `variables`, `int`, `float`, `print` |
+| `p10_sigil_starter.py` | 10 | 20 | all nineteen |
 
 ### All ten Area 1 concepts are covered
 
@@ -153,8 +153,8 @@ against the Area 0 and Area 1 entries of `pyquest/packages/content/src/concepts.
 | `boolean-operators` | 3 |
 
 **`elif` and `boolean-operators` are the thinnest, at three exercises each, and that is
-honest rather than an oversight.** Both arrive in session 5 and both live almost entirely
-inside it: `s5e1`, `s5e2`, `s5e3`, and then the boss starter. Area 0 said the same thing
+honest rather than an oversight.** Both arrive in Practice 5 and both live almost entirely
+inside it: `p5e1`, `p5e2`, `p5e3`, and then the boss starter. Area 0 said the same thing
 about `bool` at three exercises, for a related reason.
 
 The reason here is different from Area 0's, and worth stating rather than glossing.
@@ -166,7 +166,7 @@ genuinely needs them — the color ladder, the gatekeeper's three bands — and 
 collections work is where they get busy, because a rule about a list is where "either of
 these, but not that one" starts happening for real.
 
-`s5e1` and `s5e2` are therefore deliberately dense for their session: the `or 1 or 2`
+`p5e1` and `p5e2` are therefore deliberately dense for their session: the `or 1 or 2`
 trap, the unreachable rung, and the `and`/`or` swap are all in there, because three
 exercises have to carry both concepts properly.
 
@@ -184,7 +184,7 @@ schedules retrieval off them.
 | `reading-errors` | 8 | | | |
 
 **`str` at two is the one that needed watching**, and it is why `dm-guide.md` §5 drills it
-in sessions 4 and 10 rather than leaving it to the exercises. Area 1 is about numbers, so
+in Practices 4 and 10 rather than leaving it to the exercises. Area 1 is about numbers, so
 strings only genuinely occur where `input` does. The invasion coverage table in the DM
 guide exists for exactly this: nineteen concepts across ten sessions is more than prose
 can be trusted with.
@@ -198,10 +198,10 @@ will later read. They are set against the D&D scale as it reads for **this learn
 three** — with two weeks of Area 0 behind them — not against Python difficulty in the
 abstract.
 
-- **8** — one idea, and the surprise is the point. `s1e1`, `s1e2`, `b3`.
+- **8** — one idea, and the surprise is the point. `p1e1`, `p1e2`, `b3`.
 - **10–12** — two ideas at once, or one idea plus a prediction they will get wrong.
-- **14–16** — they have to decide something, not just type something. `s5e2`, `s7e3`,
-  `s8e2`.
+- **14–16** — they have to decide something, not just type something. `p5e2`, `p7e3`,
+  `p8e2`.
 - **18** — a build with a blank half. `s9`.
 - **20** — the boss.
 
@@ -230,12 +230,12 @@ Unlike Area 0, this area's content items exist. Five quests and Boss 1 in `conte
 
 | Item | DC | Verifier | From |
 |---|---|---|---|
-| `a1-the-polygon-engine` | 10 | `hidden-tests` | `s1e3` + `s2e3` |
-| `a1-the-countdown` | 12 | `hidden-tests` | `s3e1` |
-| `a1-the-first-half` | 12 | `hidden-tests` | `s4e2` |
-| `a1-the-gatekeeper` | 14 | `hidden-tests` | `s5e3` |
-| `a1-the-growing-spiral` | 16 | `hidden-tests` | `s7e1` + `s8e2` |
-| `a1-the-sigil` | 20 | `peer-signoff` | session 10 |
+| `a1-the-polygon-engine` | 10 | `hidden-tests` | `p1e3` + `p2e3` |
+| `a1-the-countdown` | 12 | `hidden-tests` | `p3e1` |
+| `a1-the-first-half` | 12 | `hidden-tests` | `p4e2` |
+| `a1-the-gatekeeper` | 14 | `hidden-tests` | `p5e3` |
+| `a1-the-growing-spiral` | 16 | `hidden-tests` | `p7e1` + `p8e2` |
+| `a1-the-sigil` | 20 | `peer-signoff` | Practice 10 |
 
 **Every hidden test asserts on a computed value, never on a picture.** `turtle` is replaced
 by a recording stand-in, so the assertions are about the side count, the turn angle, the
@@ -249,7 +249,7 @@ ask which. The YAML says so where the field would go.
 
 ### What was deliberately not made a quest
 
-**Session 6's six broken loops.** They would make excellent fix-it quests — starter is the
+**Practice 6's six broken loops.** They would make excellent fix-it quests — starter is the
 broken file, test is that it behaves — and that is exactly the problem. Three of the six
 are *silent*, and the win condition for those is that **they say what is wrong**, which no
 test can check. A quest that accepted "it ran" would accept deleting the loop, which is
@@ -263,7 +263,7 @@ deletes the only part that teaches.
 converts an exercise about making something into an exercise about guessing what the
 author had in mind — the failure §2.3 diagnoses in the puzzle platforms.
 
-**Session 9's mandala.** It is the boss rehearsal and it is judged by looking. Making it a
+**Practice 9's mandala.** It is the boss rehearsal and it is judged by looking. Making it a
 quest would give Boss 1 two sign-offs and no rehearsal.
 
 ### One note for whoever wires the pipeline
@@ -318,8 +318,8 @@ The stroke count itself is inherited from Area 0 and is real: an untouched turtl
 already holds four Tk items, because the cursor is itself a drawing, so the harness counts
 pen-down moves instead of canvas items.
 
-`reference/session-6-answers.md` quotes the broken loops' tracebacks with line numbers.
-**Editing a docstring in `session-6/` shifts them.** Re-run the harness after any edit
+`reference/practice-6-answers.md` quotes the broken loops' tracebacks with line numbers.
+**Editing a docstring in `practice-6/` shifts them.** Re-run the harness after any edit
 there and check the numbers still match.
 
 **Use `py -3.14` explicitly.** On the DM's machine `python` is 3.12 in PowerShell and
@@ -334,11 +334,11 @@ area-1/
   README.md                this file
   dm-guide.md              how to run a session; predicted stalls; the invasion drills
   verify.py                runs every exercise and checks it against its own tags
-  sessions/                one plan per session, in delivery order
+  practices/                one plan per session, in delivery order
   exercises/               the .py files the learner actually runs
-    session-6/error-log.md      the table they fill in while finding silent bugs
-    session-9/mandala-brief.md  the boss rehearsal
-    session-10/sigil-brief.md   Boss 1
+    practice-6/error-log.md      the table they fill in while finding silent bugs
+    practice-9/mandala-brief.md  the boss rehearsal
+    practice-10/sigil-brief.md   Boss 1
   journal/
     TEMPLATE.md            the entry to paste into his journal.md. Four prompts
     entry-07-prompt.md     what changes at entry 07, and how to score it

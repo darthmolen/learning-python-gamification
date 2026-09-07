@@ -1,0 +1,16 @@
+# The mistake: practice 3 lists `ghost`, and there is no `exercises/ghost/`. A slug that
+# resolves to nothing is the spine pointing at work that does not exist.
+area: 1
+practices:
+  - n: 1
+    title: The Loop That Draws
+    exercises: []
+  - n: 2
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+  - n: 3
+    title: Carrying A Number
+    exercises: [ghost]
+  - n: 4
+    title: The Sigil
+    exercises: [the-sigil]

@@ -7,11 +7,11 @@ own repository. One entry per session, newest at the bottom, each one starting w
 heading copied from `../TEMPLATE.md`:
 
 ```markdown
-## 2026-08-31 — Session 01
+## 2026-08-31 — Practice 01
 ```
 
-**Ruled 2026-08-31.** The earlier layout was one file per session in here — `session-01.md`,
-`session-02.md` and so on — and it was changed for the learner rather than for the code. "Which
+**Ruled 2026-08-31.** The earlier layout was one file per session in here — `practice-01.md`,
+`practice-02.md` and so on — and it was changed for the learner rather than for the code. "Which
 file do I write in tonight?" now has one answer, the same every week, and there is no numbering
 to keep track of and no file to name.
 

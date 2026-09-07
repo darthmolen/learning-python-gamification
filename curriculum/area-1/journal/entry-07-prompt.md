@@ -1,6 +1,6 @@
 # Journal — entry 07, and the beat that is new
 
-Read the first section out loud at the end of session 1. Thirty seconds. It never needs
+Read the first section out loud at the end of Practice 1. Thirty seconds. It never needs
 reading again. The rest of this file is for you.
 
 ---
@@ -29,7 +29,7 @@ than existence** (§5.6), your reply written underneath the same evening. The te
 `../../area-0/dm-guide.md` §6.
 
 **The numbering continues rather than restarting.** There is one Journal, it runs for the
-whole year, and session 07 is session 07. Since 2026-08-31 that is one *file* as well as one
+whole year, and Practice 07 is Practice 07. Since 2026-08-31 that is one *file* as well as one
 Journal, so it is now visible rather than asserted — he scrolls back through Area 0 without
 opening anything, which is exactly what the pre-boss re-read asks him to do.
 
@@ -91,7 +91,7 @@ boss plan, written a week early by the person who has to carry it out.
 ## Before the boss
 
 §5.6: they reread the Journal **from the start of the area** before every boss fight. That
-is entries 07 through 15, at the top of session 10, and it takes about five minutes.
+is entries 07 through 15, at the top of Practice 10, and it takes about five minutes.
 
 This is the moment the mechanic earns its keep, so tell them what to look for rather than
 leaving it as homework:

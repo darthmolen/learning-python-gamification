@@ -1,0 +1,14 @@
+# The mistake: the numbers run 1, 2, 4 — practice 3 is missing. The spine is a sequence and
+# a gap in it is either a practice nobody authored or a renumbering half-done. Either way the
+# learner is told to do 2 and then 4, and asks what happened to 3.
+area: 1
+practices:
+  - n: 1
+    title: The Loop That Draws
+    exercises: []
+  - n: 2
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+  - n: 4
+    title: The Sigil
+    exercises: [the-sigil]

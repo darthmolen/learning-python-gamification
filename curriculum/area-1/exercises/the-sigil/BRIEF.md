@@ -14,7 +14,7 @@ yours.
 
 **A generator, not a drawing.** Somebody else answers the questions and gets a picture you
 have never seen. If it makes the same picture every time, it is a drawing, and a drawing
-was session 1.
+was Practice 1.
 
 **Worth hanging on a wall.** Somebody looks at it and wants it. No test can check that,
 which is why this boss is signed off by a person.

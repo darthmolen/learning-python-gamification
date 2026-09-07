@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/.claude/worktrees/practice-spine/pyquest
+
+ ❯ |packages| packages/content/tests/practices.test.ts (10 tests | 1 failed) 59ms
+     × reports an exercise no practice claims 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > what the spine refuses > reports an exercise no practice claims
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/content/tests/practices.test.ts:127:20
+    125|       'unclaimed-exercise',
+    126|     );
+    127|     expect(issues).toHaveLength(1);
+       |                    ^
+    128|     expect(issues[0]?.message).toContain('the-sigil');
+    129|     expect(issues[0]?.fix).not.toBe('');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  09:12:15
+   Duration  1.31s (transform 230ms, setup 0ms, import 545ms, tests 59ms, environment 0ms)
+

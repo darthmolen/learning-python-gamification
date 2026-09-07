@@ -1,0 +1,404 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/.claude/worktrees/practice-spine/pyquest
+
+ ❯ |packages| packages/content/tests/practices.test.ts (10 tests | 10 failed) 62ms
+     × validates clean, and is not mistaken for a content item 22ms
+     × is read as a spine rather than as a quest 6ms
+     × accepts a practice that lists no exercises 5ms
+     × accepts one exercise claimed by more than one practice 4ms
+     × is derived from the brief path, not authored 4ms
+     × leaves a practice with no scored work carrying no quests 4ms
+     × survives the overlay being deleted 3ms
+     × reports a listed exercise with no directory 5ms
+     × reports an exercise no practice claims 4ms
+     × reports a gap in the numbering 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > a practices.yml beside the area manifest > validates clean, and is not mistaken for a content item
+AssertionError: expected [ { …(7) }, { …(7) }, { …(7) }, …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct id to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "id Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct title to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "title Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct kind to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "kind Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct concepts to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "concepts Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct dc to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "dc Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct brief to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "brief Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct verifier to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "verifier Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "remove the key, or check it against the field list in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "(root) Unrecognized key(s) in object: 'practices'",
++     "rule": "schema",
++   },
++ ]
+
+ ❯ packages/content/tests/practices.test.ts:34:49
+     32| describe('a practices.yml beside the area manifest', () => {
+     33|   it('validates clean, and is not mistaken for a content item', () => {
+     34|     expect(validateContent(roots('practices'))).toEqual([]);
+       |                                                 ^
+     35|   });
+     36|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > a practices.yml beside the area manifest > is read as a spine rather than as a quest
+AssertionError: expected [ { …(7) }, { …(7) }, { …(7) }, …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct id to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "id Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct title to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "title Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct kind to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "kind Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct concepts to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "concepts Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct dc to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "dc Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct brief to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "brief Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct verifier to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "verifier Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "remove the key, or check it against the field list in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "(root) Unrecognized key(s) in object: 'practices'",
++     "rule": "schema",
++   },
++ ]
+
+ ❯ packages/content/tests/practices.test.ts:39:20
+     37|   it('is read as a spine rather than as a quest', () => {
+     38|     const { practices, items, issues } = checkContent(roots('practices…
+     39|     expect(issues).toEqual([]);
+       |                    ^
+     40|     expect(practices.map((p) => p.n)).toEqual([1, 2, 3, 4]);
+     41|     // The quests are still quests. A practices.yml adds a spine; it d…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > a practices.yml beside the area manifest > accepts a practice that lists no exercises
+TypeError: Cannot read properties of undefined (reading 'find')
+ ❯ packages/content/tests/practices.test.ts:53:22
+     51|   it('accepts a practice that lists no exercises', () => {
+     52|     const { practices } = checkContent(roots('practices'));
+     53|     expect(practices.find((p) => p.n === 1)?.exercises).toEqual([]);
+       |                      ^
+     54|   });
+     55|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > a practices.yml beside the area manifest > accepts one exercise claimed by more than one practice
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ packages/content/tests/practices.test.ts:63:32
+     61|   it('accepts one exercise claimed by more than one practice', () => {
+     62|     const { practices } = checkContent(roots('practices'));
+     63|     const claiming = practices.filter((p) => p.exercises.includes('the…
+       |                                ^
+     64|     expect(claiming.map((p) => p.n)).toEqual([2, 3]);
+     65|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > the practice-to-quest edge > is derived from the brief path, not authored
+TypeError: Cannot read properties of undefined (reading 'find')
+ ❯ packages/content/tests/practices.test.ts:80:22
+     78|   it('is derived from the brief path, not authored', () => {
+     79|     const { practices } = checkContent(roots('practices'));
+     80|     expect(practices.find((p) => p.n === 2)?.quests).toEqual(['a1-the-…
+       |                      ^
+     81|     expect(practices.find((p) => p.n === 3)?.quests).toEqual(['a1-the-…
+     82|     expect(practices.find((p) => p.n === 4)?.quests).toEqual(['a1-the-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > the practice-to-quest edge > leaves a practice with no scored work carrying no quests
+TypeError: Cannot read properties of undefined (reading 'find')
+ ❯ packages/content/tests/practices.test.ts:87:22
+     85|   it('leaves a practice with no scored work carrying no quests', () =>…
+     86|     const { practices } = checkContent(roots('practices'));
+     87|     expect(practices.find((p) => p.n === 1)?.quests).toEqual([]);
+       |                      ^
+     88|   });
+     89|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > the practice-to-quest edge > survives the overlay being deleted
+AssertionError: expected [ { …(7) }, { …(7) }, { …(7) }, …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct id to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "id Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct title to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "title Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct kind to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "kind Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct concepts to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "concepts Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct dc to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "dc Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct brief to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "brief Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "correct verifier to match the contract in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "verifier Required",
++     "rule": "schema",
++   },
++   {
++     "column": 1,
++     "file": "area-1/practices.yml",
++     "fix": "remove the key, or check it against the field list in packages/content/src/schema.ts",
++     "id": undefined,
++     "line": 4,
++     "message": "(root) Unrecognized key(s) in object: 'practices'",
++     "rule": "schema",
++   },
++ ]
+
+ ❯ packages/content/tests/practices.test.ts:98:20
+     96|     const only = fixture('practices/curriculum');
+     97|     const { practices, issues } = checkContent({ curriculum: only, gam…
+     98|     expect(issues).toEqual([]);
+       |                    ^
+     99|     expect(practices.map((p) => p.n)).toEqual([1, 2, 3, 4]);
+    100|     expect(practices.flatMap((p) => p.quests)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > what the spine refuses > reports a listed exercise with no directory
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/content/tests/practices.test.ts:111:20
+    109|       'practice-missing-exercise',
+    110|     );
+    111|     expect(issues).toHaveLength(1);
+       |                    ^
+    112|     expect(issues[0]?.file).toBe('area-1/practices.yml');
+    113|     expect(issues[0]?.message).toContain('ghost');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > what the spine refuses > reports an exercise no practice claims
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/content/tests/practices.test.ts:127:20
+    125|       'unclaimed-exercise',
+    126|     );
+    127|     expect(issues).toHaveLength(1);
+       |                    ^
+    128|     expect(issues[0]?.message).toContain('the-sigil');
+    129|     expect(issues[0]?.fix).not.toBe('');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  |packages| packages/content/tests/practices.test.ts > what the spine refuses > reports a gap in the numbering
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/content/tests/practices.test.ts:138:20
+    136|       'practice-numbering',
+    137|     );
+    138|     expect(issues).toHaveLength(1);
+       |                    ^
+    139|     expect(issues[0]?.message).toContain('3');
+    140|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  09:09:03
+   Duration  317ms (transform 58ms, setup 0ms, import 117ms, tests 62ms, environment 0ms)
+

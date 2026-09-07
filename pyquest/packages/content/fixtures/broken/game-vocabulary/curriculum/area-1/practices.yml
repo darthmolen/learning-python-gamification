@@ -1,0 +1,17 @@
+# The spine. Practice 1 lists no exercises — that is the honest half, worked at the table,
+# and it must validate. `the-countdown` is claimed by two practices, which is the
+# many-to-many case a real area produces (`a1-the-polygon-engine` spans sessions 1 and 2).
+area: 1
+practices:
+  - n: 1
+    title: The Loop That Draws
+    exercises: []
+  - n: 2
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+  - n: 3
+    title: Carrying A Number
+    exercises: [the-countdown]
+  - n: 4
+    title: The Sigil
+    exercises: [the-sigil]

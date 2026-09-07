@@ -1,0 +1,45 @@
+# The spine of Area 2. See area-0/practices.yml for what this file is and why it exists.
+#
+# One manifest covers both halves — 2a is Practices 1 to 4, 2b is 5 to 8 — the same way
+# area-2/area.yml carries one week range of 6 to 8 across both.
+#
+# Practice 6 carries no exercise and its practice plan says so outright: "There is no quest
+# tonight. Five quests plus a boss is the shape of an area (§5.2)." That is the clearest
+# statement in the curriculum of the fact this whole file exists to make visible — a practice
+# without a quest is still work, and the learner has to be told it counts.
+area: 2
+practices:
+  # 2a — git
+  - n: 1
+    title: What A Repository Is
+    exercises: []
+
+  - n: 2
+    title: The First Commit
+    exercises: [the-first-commit]
+
+  - n: 3
+    title: The Log As A Story
+    exercises: [the-log-as-a-story]
+
+  - n: 4
+    title: Push, And It Is Somewhere Else
+    exercises: [it-is-somewhere-else]
+
+  # 2b — the real toolchain
+  - n: 5
+    title: Where A File Actually Goes
+    exercises: [where-the-file-lives]
+
+  - n: 6
+    title: A Real Editor
+    exercises: []
+
+  - n: 7
+    title: Its Own Python
+    exercises: [its-own-python]
+
+  # Boss 2, at DC 22 the campaign's first item over 20.
+  - n: 8
+    title: Read The Stack
+    exercises: [escape-the-sandbox]

@@ -16,10 +16,10 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 ## Read in this order
 
 1. **`dm-guide.md`** — how to run a session, and the Socratic phrasings for every
-   stall predicted here. Read this before session 1. It is the load-bearing document.
-2. **`sessions/session-1-first-light.md`** — then one per session, on the night.
-3. **`reference/session-3-answers.md`** — before session 3. Not during.
-4. **`journal/entry-01-prompt.md`** — at the end of session 1.
+   stall predicted here. Read this before Practice 1. It is the load-bearing document.
+2. **`practices/practice-1-first-light.md`** — then one per session, on the night.
+3. **`reference/practice-3-answers.md`** — before Practice 3. Not during.
+4. **`journal/entry-01-prompt.md`** — at the end of Practice 1.
 
 ---
 
@@ -27,30 +27,30 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 
 | # | Title | Concepts introduced | Resurfacing | Files |
 |---|---|---|---|---|
-| 1 | **First Light** | `print` | — | `s1e1`, `s1e2`, `s1e3` |
-| 2 | **Names For Things** | `variables`, `int` | `print` | `s2e1`, `s2e2` |
+| 1 | **First Light** | `print` | — | `p1e1`, `p1e2`, `p1e3` |
+| 2 | **Names For Things** | `variables`, `int` | `print` | `p2e1`, `p2e2` |
 | 3 | **The Broken Sigil** | `reading-errors` | `print`, `variables`, `int`, `str` | `b1`–`b7`, `error-log.md` |
-| 4 | **Four Kinds Of Thing** | `float`, `str`, `bool` | `int`, `variables`, `print` | `s4e1`, `s4e2` |
-| 5 | **The Machine Asks** | `input`, `f-strings` | `str`, `int`, `variables`, `print` | `s5e1`, `s5e2` |
-| 6 | **The Commission** | — | all nine | `commission-brief.md`, `s6_starter.py` |
+| 4 | **Four Kinds Of Thing** | `float`, `str`, `bool` | `int`, `variables`, `print` | `p4e1`, `p4e2` |
+| 5 | **The Machine Asks** | `input`, `f-strings` | `str`, `int`, `variables`, `print` | `p5e1`, `p5e2` |
+| 6 | **The Commission** | — | all nine | `commission-brief.md`, `p6_starter.py` |
 
 ### Why this order
 
 **Errors come third, not last.** Every platform surveyed in spec §2.3 treats error
 messages as an interruption to teaching. Here they *are* the teaching, and they land at
-session 3 because by then they have already caused four or five by accident and have a
+Practice 3 because by then they have already caused four or five by accident and have a
 grievance. A concept they already resent is the cheapest one to teach.
 
-Session 3 also arrives before `input`, which matters: session 5 breaks the learner's own
+Practice 3 also arrives before `input`, which matters: Practice 5 breaks the learner's own
 program in two ways they cannot fix yet, and they can only find that interesting rather
 than demoralising if they already know how to read what fell out.
 
 **Types come fourth, not first.** Most curricula open with a tour of int/float/str/bool
 before the learner has any use for one. Here they meet three of the four by accident —
 the string in `color("red")`, the decimals from a 1.5 staircase, the `TypeError` from
-passing `"100"` to `forward` — and session 4 names things they have already tripped over.
+passing `"100"` to `forward` — and Practice 4 names things they have already tripped over.
 
-**Session 4 is the weak one and is scheduled as such.** Types are the least visual
+**Practice 4 is the weak one and is scheduled as such.** Types are the least visual
 material in the area. It sits between the two strongest sessions on purpose, and the
 session plan says explicitly that it is fine to cut it short.
 
@@ -58,11 +58,11 @@ session plan says explicitly that it is fine to cut it short.
 
 The plan says 4–6. If the calendar bites:
 
-- **Merge 1 and 2.** Keep the REPL hook and `s1e1`; move `s1e3` to their own time.
-- **Merge 4 into 5.** Types get their real lesson under pressure in session 5 anyway,
+- **Merge 1 and 2.** Keep the REPL hook and `p1e1`; move `p1e3` to their own time.
+- **Merge 4 into 5.** Types get their real lesson under pressure in Practice 5 anyway,
   when `input` hands back a `str` and nothing works.
-- **Never cut session 3, and never cut session 6.** Session 3 is the area's actual
-  subject and session 6 is the only rehearsal for Boss 2 they get this early.
+- **Never cut Practice 3, and never cut Practice 6.** Practice 3 is the area's actual
+  subject and Practice 6 is the only rehearsal for Boss 2 they get this early.
 
 ---
 
@@ -89,7 +89,7 @@ against the Area 0 entries of `packages/content/src/concepts.ts`.
 | `s4e2_the_dashed_orbit.py` | 4 | 12 | `float`, `int`, `variables`, `print` |
 | `s5e1_ask_and_draw.py` | 5 | 12 | `input`, `str`, `int`, `f-strings`, `variables`, `print` |
 | `s5e2_the_nameplate.py` | 5 | 14 | `input`, `f-strings`, `str`, `int`, `variables`, `print` |
-| `s6_starter.py` | 6 | 18 | all nine |
+| `p6_starter.py` | 6 | 18 | all nine |
 
 All nine Area 0 concepts are covered. **`bool` is the thinnest, at three exercises, and
 that is honest rather than an oversight** — without `if`, a boolean has almost nothing to
@@ -109,10 +109,10 @@ Spec §5.1 derives XP from Difficulty Class, so these are the only numbers here 
 engine will later read. They are set against the D&D scale as it reads for **this
 learner in week one**, not against Python difficulty in the abstract.
 
-- **5** — one idea, one line to change. `s1e1`, `b1`.
+- **5** — one idea, one line to change. `p1e1`, `b1`.
 - **8** — one idea plus a thing that will surprise them.
 - **10–12** — two ideas at once, or one idea plus a prediction they will get wrong.
-- **14–18** — they have to decide something, not just type something. `s5e2`, `s6`.
+- **14–18** — they have to decide something, not just type something. `p5e2`, `s6`.
 
 Nothing in Area 0 is above 18. Spec §5.1 renders DC ≥ 20 with a warning, and a warning
 label in week one would be teaching them to be afraid of the material rather than of
@@ -144,7 +144,7 @@ Per the brief, this directory does not contain quest YAML and does not touch
 | **The Commission** | 18 | Win condition is "it ran on your dad's machine". That is `local-repo` in spirit and peer-signoff in week two. |
 
 **Do not turn into quests:** the session plans, the Journal prompts, or the reversal
-exercise in session 3. They are DM-delivered and lose their point when automated.
+exercise in Practice 3. They are DM-delivered and lose their point when automated.
 
 Two notes for whoever builds this:
 
@@ -198,9 +198,9 @@ suppressed, and checked against its own header tags:
 Last run: **19 of 19**, on Python 3.14.6, Windows 11.
 
 It also prints the **line number** each broken sigil actually failed on.
-`reference/session-3-answers.md` quotes those tracebacks verbatim, and editing a
+`reference/practice-3-answers.md` quotes those tracebacks verbatim, and editing a
 docstring silently shifts them — which happened twice while this area was being written.
-Re-run the harness after touching anything in `session-3/` and check the numbers still
+Re-run the harness after touching anything in `practice-3/` and check the numbers still
 match the answer key.
 
 The stroke count is real. An untouched turtle canvas already holds four Tk items — the
@@ -220,10 +220,10 @@ area-0/
   README.md              this file
   dm-guide.md        how to run a session; the Socratic ladder; every predicted stall
   verify.py              runs every exercise and checks it against its own tags
-  sessions/              one plan per session, in delivery order
+  practices/              one plan per session, in delivery order
   exercises/             the .py files the learner actually runs
-    session-3/error-log.md   the table they fill in while breaking things
-    session-6/commission-brief.md
+    practice-3/error-log.md   the table they fill in while breaking things
+    practice-6/commission-brief.md
   journal/
     TEMPLATE.md          the entry to paste into his journal.md, once per session
     entry-01-prompt.md   what to say the first time, and how to score it

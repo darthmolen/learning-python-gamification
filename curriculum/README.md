@@ -1,6 +1,6 @@
 # Curriculum
 
-The teaching material itself — session plans, exercises, and the Journal. Prose and
+The teaching material itself — practice plans, exercises, and the Journal. Prose and
 Python, delivered face to face by whoever holds the DM seat — in the arrangement this was
 built for, a parent.
 
@@ -18,7 +18,7 @@ matters on the learner's machine runs there as it stands. The test suite is the 
 
 **Everything educational lives here, including the briefs, starters and hidden tests the
 game scores.** They sit under `area-<n>/exercises/<slug>/` — `BRIEF.md`, `starter/` and
-`hidden/` — beside the sessions that teach them. The game's own overlay is
+`hidden/` — beside the practices that teach them. The game's own overlay is
 [`../game/`](../game/): which exercises are scored and what they are worth, and nothing else.
 Deleting it leaves this tree intact, which is the arrangement the split exists to guarantee.
 
@@ -33,7 +33,7 @@ kind.
 | area-3 | 9–14 | Collections — `list`, `dict`, `set`, iteration, nested structures | planned, blocked on the shim's measurement |
 
 Area 2's remaining half needs one sitting at the machine the profile is for: the VS Code profile has to be
-imported and confirmed there before sessions 5–8 can be finalised. Five of its strips are
+imported and confirmed there before practices 5–8 can be finalized. Five of its strips are
 view-visibility state rather than settings keys, so they can only be captured by exporting
 from a configured running editor — that step produces them, it does not merely check
 them. Area 3 waits on `curriculum/lib/`'s framerate measurement on the same machine.
@@ -53,7 +53,12 @@ plan does not own.
 Established by Area 0 and worth keeping.
 
 - **One directory per area**, holding `README.md`, `dm-guide.md`, `verify.py`,
-  `sessions/`, `exercises/`, `journal/`, `reference/`.
+  `practices.yml`, `practices/`, `exercises/`, `journal/`, `reference/`.
+- **A practice is the unit of work; a session is the unit of time** (ADR 0007). `practices/`
+  holds the plan for each numbered practice and the drills that go with it; `practices.yml` is
+  the spine, naming the exercises each practice teaches, and `validate:content` checks it.
+  A DM document may still say *session* where it means the evening — the five beats, the
+  45–60 minutes, the one before this one — because that is what the DM is running.
 - **Every exercise `.py` carries three header tags** — `# concepts:`, `# dc:`,
   `# expect:` — and an optional `# stdin:`. Concept ids come from
   `pyquest/packages/content/src/concepts.ts` verbatim, and tag what a file *resurfaces* as well
@@ -71,7 +76,7 @@ Established by Area 0 and worth keeping.
   | Audience | Files | Voice |
   |---|---|---|
   | The learner | `exercises/`, `journal/`, `area-<n>/exercises/*/BRIEF.md` | **Second person.** "You will type this and it will fail" |
-  | The DM | `dm-guide.md`, `sessions/`, `reference/`, area `README.md` | **Singular *they*** for the learner — "you" is already the DM |
+  | The DM | `dm-guide.md`, `practices/`, `reference/`, area `README.md` | **Singular *they*** for the learner — "you" is already the DM |
   | Either, when ambiguous | anywhere | `the learner`, which is stiff enough to earn its place only where *they* could mean the DM |
 
   This convention is not invented here. The briefs already address the learner

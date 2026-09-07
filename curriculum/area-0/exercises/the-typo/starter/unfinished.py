@@ -1,6 +1,6 @@
 """The Typo — read the error before you fix it.
 
-You met this one in session 3. It is broken on purpose and the fix is one
+You met this one in Practice 3. It is broken on purpose and the fix is one
 character, which is not the point. The point is what Python says on the way
 down: the NAME of the error and the LINE it happened on.
 

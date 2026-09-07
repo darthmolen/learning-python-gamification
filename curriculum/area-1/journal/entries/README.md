@@ -7,16 +7,16 @@ session, newest at the bottom, each one starting with a dated heading copied fro
 `../TEMPLATE.md`:
 
 ```markdown
-## 2026-10-19 — Session 07
+## 2026-10-19 — Practice 07
 ```
 
-**Ruled 2026-08-31.** The earlier layout was one file per session in here — `session-07.md`
-through `session-16.md` — and it was changed for the learner rather than for the code. "Which
+**Ruled 2026-08-31.** The earlier layout was one file per session in here — `practice-07.md`
+through `practice-16.md` — and it was changed for the learner rather than for the code. "Which
 file do I write in tonight?" now has one answer, the same every week, and there is no numbering
 to keep track of and no file to name.
 
 **The numbering still continues from Area 0 rather than restarting**, and it matters more now
-than it did: there is one Journal, it runs for the whole year, and session 07 is session 07. It
+than it did: there is one Journal, it runs for the whole year, and Practice 07 is Practice 07. It
 is one document, so that is now visibly true rather than merely asserted — he can scroll from his
 first entry to his most recent one without opening anything.
 

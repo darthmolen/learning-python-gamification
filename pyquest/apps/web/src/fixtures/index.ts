@@ -102,6 +102,33 @@ export const campaign: unknown = { playerId: PLAYER_ID, areas: AREA_CARDS };
  * hands these over in content-load order, so a fixture that arrives pre-sorted is also the less
  * faithful stub.
  */
+/**
+ * The practice spine, offline.
+ *
+ * **Two of the five carry no quest, and that is the whole point of the fixture.** A stub where
+ * every practice had one would be unable to tell a screen that says "worked at the table" from
+ * a screen that does not — which is the exact line this panel exists to put in front of a
+ * learner. Practice 4 claims two quests, so the plural branch is drawn too.
+ *
+ * An area absent from this map yields an empty spine, which is the real state of areas 3 to 7
+ * until their `practices.yml` is authored, and the panel is omitted rather than drawn empty.
+ */
+const PRACTICES: Readonly<Record<number, unknown[]>> = {
+  3: [
+    { n: 1, title: 'The Row Of Blocks', exercises: [], quests: [], completed: true },
+    { n: 2, title: 'The Inventory', exercises: ['inventory-lists'], quests: ['a3-inventory-lists'], completed: true },
+    { n: 3, title: 'It Changes', exercises: [], quests: [], completed: false },
+    {
+      n: 4,
+      title: 'The Recipe Book',
+      exercises: ['recipe-book', 'the-smelter'],
+      quests: ['a3-recipe-book', 'a3-the-smelter'],
+      completed: false,
+    },
+    { n: 5, title: 'The Enchanter', exercises: ['the-enchanter'], quests: ['a3-the-enchanter'], completed: false },
+  ],
+};
+
 const QUESTS: Readonly<Record<number, unknown[]>> = {
   3: [
     { id: 'a3-the-trading-hall', title: 'The Trading Hall', dc: 20, concepts: ['dict', 'list', 'iteration'], medals: [], status: 'locked' },
@@ -133,7 +160,7 @@ export const areaView = (area: number): unknown => {
   const card = AREA_CARDS.find((c) => c.area === area);
   if (card === undefined) throw new Error(`no area ${area} in this campaign`);
 
-  return { ...card, playerId: PLAYER_ID, quests: QUESTS[area] ?? [] };
+  return { ...card, playerId: PLAYER_ID, quests: QUESTS[area] ?? [], practices: PRACTICES[area] ?? [] };
 };
 
 const STARTER = `import turtle
@@ -579,4 +606,29 @@ export const signoffAward = (attemptId: string): unknown => {
   const award = AWARDS[attemptId];
   if (award === undefined) throw new Error(`no pending sign-off ${attemptId}`);
   return { attemptId, questId: award.questId, medal: 'cleared', xpAwarded: award.xpAwarded };
+};
+
+/**
+ * The HOW-TO sections, offline.
+ *
+ * Short on purpose. The real text is authored in `curriculum/how-to/` and `game/how-to/`, and a
+ * fixture that copied it would be a second version to keep in step — the exact failure the
+ * practice spine exists to end. What this has to prove without a stack is the *shape*: two
+ * sources, curriculum first, and a page that reads correctly when the second is missing.
+ */
+export const howTo: unknown = {
+  sections: [
+    {
+      id: 'how-to-learn',
+      title: 'How to learn',
+      source: 'curriculum',
+      body: 'A **practice** is one unit of the work. It has a number and a name, and the\npractices in an area run in order from 1.\n\nA practice is not a length of time. It is an amount of work.\n',
+    },
+    {
+      id: 'how-to-play',
+      title: 'How to play',
+      source: 'game',
+      body: 'The game does not score everything you do. It scores some of it.\n\nA practice without a quest is not less work. It is the same curriculum, and the\ngame is only keeping score on part of it.\n',
+    },
+  ],
 };

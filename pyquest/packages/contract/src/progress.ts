@@ -119,6 +119,36 @@ export const PlayerRoleSchema = z.enum(['player', 'dm']);
 export type PlayerRole = z.infer<typeof PlayerRoleSchema>;
 
 /**
+ * A `practice_progress` row — the learner has ticked a practice off.
+ *
+ * **Deliberately not in `PlayerProgressSchema` above.** That bundle is what the engine
+ * consumes, and the engine must never consume this: nothing is gated on a practice. §5.2 lets
+ * him clear any three quests he likes, ADR 0002 refuses any pace judgement, and the Tome
+ * promises nothing unlocks. A tick that reached the engine would be a tick that could start
+ * deciding things.
+ *
+ * **It is also not the `sessions` table, and cannot be.** That row is keyed
+ * `scheduled_for date UNIQUE`, household-wide with no `player_id`, and its own comment says two
+ * sittings in a day are one session. A practice is untimed by construction — which is the whole
+ * reason it is not called a session — so it cannot feed a streak that counts days.
+ *
+ * The tick is **scaffolding** (ADR 0004), named as such: it lives in the game's bookkeeping and
+ * it dies with the game. What survives is the journal entry, in the learner's own repository.
+ * A manual tick is also the only honest mechanism here — a practice happens at a kitchen table
+ * and no amount of instrumentation can watch it.
+ */
+export const PracticeCompletionSchema = z
+  .object({
+    playerId: z.string().min(1),
+    area: z.number().int().min(0).max(7),
+    practiceN: z.number().int().positive(),
+    completedAt: z.string().min(1),
+  })
+  .strict();
+
+export type PracticeCompletion = z.infer<typeof PracticeCompletionSchema>;
+
+/**
  * The `players` row, with its `player_roles` rows folded in.
  *
  * `id` is the identity and `handle` is not. A handle is for routing and for humans and can be

@@ -45,7 +45,7 @@ class TurtleSpy:
         """First argument of each matching call, as a float.
 
         Coercing here is safe only because `raw` below is what checks the TYPE. A str
-        that happens to look like a number floats cleanly, which is exactly the session-5
+        that happens to look like a number floats cleanly, which is exactly the practice-5
         bug this quest exists to catch, so it must not be caught here by accident.
         """
         return [
@@ -90,7 +90,7 @@ def receipt(out: str) -> int:
 def test_it_converts_before_drawing() -> None:
     """forward() must receive a NUMBER, not a str that looks like one.
 
-    This is the session-5 bug: `turtle.forward(answer)` with `answer` straight off
+    This is the practice-5 bug: `turtle.forward(answer)` with `answer` straight off
     `input()`. Asserting on the value alone would not catch it, because "150" and 150
     compare equal once floated — so this asserts on the type.
     """

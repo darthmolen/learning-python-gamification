@@ -173,7 +173,7 @@ def has_own_environment(path: pathlib.Path) -> bool:
 
     The rule is deliberately a fact about the tree rather than a list of
     exceptions: a `requirements.txt` beside a file is that file saying it has
-    an environment, in the same words session 7 teaches. Take the
+    an environment, in the same words Practice 7 teaches. Take the
     `requirements.txt` away and the file is run like any other -- and fails
     with `ModuleNotFoundError`, loudly, which is what should happen.
     """

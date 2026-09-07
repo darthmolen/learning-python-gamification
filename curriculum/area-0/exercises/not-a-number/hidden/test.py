@@ -1,6 +1,6 @@
 """Hidden tests for a0-not-a-number. Spec §6.3: these never reach the browser.
 
-Session 3's fix-it exercise, promoted to a quest. `int("ten")` is
+Practice 3's fix-it exercise, promoted to a quest. `int("ten")` is
 spelled correctly, bracketed correctly and indented correctly, and it still
 fails — because this error is about a VALUE rather than a name or a kind.
 
