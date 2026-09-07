@@ -810,3 +810,80 @@ than by assertion, and it is worth the plan's author knowing it happened.
 - **`curriculum/README.md`'s Area 3 row**, owned by `main`.
 - **Not proven and cannot be here:** that any hidden test passes over the real `local-repo`
   path. `PYQUEST_REPO` was pointed at a scratch directory by hand.
+
+---
+
+## Status — 2026-09-06, Boss 3 and the close of authoring
+
+**Every artifact in this plan's Files Expected to Change now exists.**
+
+Boss 3 landed: `exercises/the-crafting-table/BRIEF.md`, a 12-test hidden suite,
+`game/area-3/quests/a3-the-crafting-table.yml` with three framings, practice plan 13, and
+**`dm-guide.md` §9** — the Boss 3 run sheet, which this guide did not have and Area 2's did.
+
+`lesson.draft.md` → `lesson.md` is done. That rename was this plan's own sign-off and its
+condition — thirteen practices existing to have tested the prose against — was **met rather
+than waived**.
+
+### The gate was lifted by a decision, and that is recorded
+
+`feature_pygame-zero-viability-spike_2026-09-06.md` gated Boss 3 and is **still queued**. It
+was lifted on 2026-09-06 by an explicit instruction, not by the spike clearing, and
+`README.md` says so in its own section rather than dropping the gate quietly — a gate that
+vanishes without a note is indistinguishable from one nobody noticed.
+
+What made it narrow: **Boss 3's content is pure data work** — a recipe book, an inventory, a
+command loop. No graphics, no Pygame Zero, so nothing the spike could find would change a
+line of the brief or the test. What the spike still protects is **Area 4's vehicle**, and
+that is untouched by this.
+
+### Verification
+
+```console
+six hidden suites      9 + 8 + 10 + 9 + 11 + 12 = 59 tests, all green
+28 mutants seeded      27 caught, 1 correctly survived
+area harnesses         19/19  35/35  13/13  28/28
+ruff / pyright         clean
+validate:content       OK, 30 items across 8 areas
+validate:plans         OK
+npx vitest run         73 files, 1151 passed
+```
+
+### Where the plan turned out to be wrong, or incomplete
+
+1. **The DM guide had no boss section.** Area 2's carries one for Boss 2 and this plan never
+   noticed the omission. A boss night is the one evening where the DM needs a procedure
+   rather than a lesson plan. §9 now names what to type at the clean clone, and — the part
+   worth having — **which failures count**: a program that crashes on `craft banana` has not
+   broken a rule the brief fixes, and the DM says so rather than failing it.
+
+2. **No copy of the boss brief beside the practice plan**, departing from Area 1. Area 1
+   keeps `practices/practice-10/sigil-brief.md` alongside `exercises/the-sigil/BRIEF.md` —
+   two files that must never disagree, which is the same liability that kept `journal/` out
+   of this area. The practice plan points at the brief instead.
+
+3. **Two boss scenarios skip rather than assert.** Crafting twice, and `can` changing its
+   answer, cannot be built from every legitimate world — an inventory affording two of
+   everything is a valid submission. They return early. Recorded because a test that
+   silently does nothing is this repository's recurring failure.
+
+4. **`server.test.ts` used Area 3 as its example of a draft area.** Promoting the lesson
+   broke it. The assertion moved to area 4 rather than being weakened, and gained a second
+   half asserting area 3 is now announced as finished. When area 7 is done that test wants a
+   fixture rather than a real area.
+
+### What is deliberately NOT done
+
+**`area.yml` stays `authoring: partial`.** Every artifact exists, but Areas 1 and 2 set the
+rule: `complete` is a person deciding an area is finished, not a consequence of the last file
+landing. Two things are open — **no hidden test has run over the real `local-repo` path**,
+and **no practice has been delivered to a learner.** Flipping it is the DM's call, not this
+plan's.
+
+### Still owned elsewhere
+
+- `curriculum/README.md`'s Area 3 status row (`main`) — still reads "blocked on the shim's
+  measurement", now very stale.
+- The SPA fixture's five invented `a3-` ids and its five-practice spine
+  (`feature_the-fixture-ledger-compares-facts_2026-09-06.md`, PR #7).
+- `scaffold.ts`'s pre-split layout, which is why all seven YAML were hand-authored.

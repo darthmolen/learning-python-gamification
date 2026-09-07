@@ -240,9 +240,16 @@ describe('the reads', () => {
     expect(first?.lesson).toContain('By the end of this area');
     expect(first?.lessonIsDraft).toBe(false);
 
-    // Areas 3–7 carry `lesson.draft.md` only, and the reader is told rather than left to guess.
-    expect(tome.areas.find((a) => a.area === 3)?.lessonIsDraft).toBe(true);
-    expect(tome.areas.find((a) => a.area === 3)?.lesson).toBeTruthy();
+    // Areas 4–7 carry `lesson.draft.md` only, and the reader is told rather than left to
+    // guess. Area 3 was the example here until 2026-09-06, when its thirteenth practice
+    // landed and its draft was promoted — so the assertion moved to area 4 rather than
+    // being weakened. The next promotion moves it again, and the day area 7 is finished
+    // this test needs a fixture rather than a real area.
+    expect(tome.areas.find((a) => a.area === 4)?.lessonIsDraft).toBe(true);
+    expect(tome.areas.find((a) => a.area === 4)?.lesson).toBeTruthy();
+    // And the promoted one is no longer announced as a draft, which is the other half of
+    // what this route claims to do.
+    expect(tome.areas.find((a) => a.area === 3)?.lessonIsDraft).toBe(false);
   });
 
   it('serves the party with an empty xpSources rather than an absent one', async () => {

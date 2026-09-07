@@ -1,0 +1,37 @@
+# BOSS 3. Spec §4 names it: a working crafting simulator with a real recipe book.
+#
+# `requires` is absent, and that is deliberate. §5.2 gives an area five quests of which ANY
+# THREE unlock the boss, and that rule is not expressible here -- it lives in the engine as
+# `bossUnlocked(clearedQuestCount)`, which counts and does not ask which. Listing the quest
+# ids would mean all of them; listing one would impose an order §5.2 exists to protect
+# against. Nothing reads this field for progression.
+#
+# **`local-repo`, not `peer-signoff`, and the difference from Boss 2 is the point.** A
+# crafting simulator is testable: recipes in, items out, and an inventory that must be exactly
+# right afterwards. Boss 2's win condition WAS the clone, so it needed a person. §5.3's
+# clean-clone rule still binds here -- it binds every boss -- but as a standing rule the DM
+# enforces rather than as the verifier type. `dm-guide.md` §9 is that checklist.
+#
+# DC 24, the campaign's second item over 20 after Boss 2's 22. §5.1 renders DC >= 20 with a
+# warning and here it is wanted: this is the first thing the learner builds where the SHAPE OF
+# THE DATA is the design decision, and getting it wrong is not a crash but a program that
+# cannot answer the question it was built for.
+#
+# There is no new syntax in this fight. There is one data shape held across a whole file.
+id: a3-the-crafting-table
+title: "The Crafting Table"
+kind: boss
+area: 3
+concepts: [nested-structures, dict, dict-methods, set, list, list-methods, indexing, slicing, mutation, tuple, iteration, len, in, sorted, min, max]
+dc: 24                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/the-crafting-table/BRIEF.md
+
+# Spec §5.2 - they choose the framing. Two or three, and make them theirs.
+themes:
+  - "The Crafting Table"
+  - "The Alchemist's Bench"
+  - "The Forge"
+
+verifier:
+  type: local-repo
+  tests: area-3/exercises/the-crafting-table/hidden/test.py

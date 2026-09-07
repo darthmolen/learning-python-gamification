@@ -98,3 +98,55 @@ repository. `PYQUEST_REPO` was pointed at a scratch directory by hand. Where the
 runner roots the clone is still not pinned by the API contract -- the same caveat
 every `local-repo` test in the campaign carries, in the same line of code. The
 first real submission is the check, and it is a check for the DM.
+
+
+================================================================================
+BOSS 3 — a3-the-crafting-table. Added 2026-09-06, same day.
+================================================================================
+
+12 tests green against a reference submission. 5 mutants, all caught.
+
+HOW A TEST JUDGES A PROGRAM IT HAS NEVER SEEN
+
+The boss keeps state: it is asked a question, changes what it holds, and is asked
+again about the thing it just changed. A transcript is useless twice over -- the
+learner picks their own recipes, and the right answer to the second question
+depends on what the first one did.
+
+So the tests INTERVIEW the program first. `recipes`, then `recipe <name>` for
+each, then `have`. That is the learner's own world in their own words, and every
+later assertion is arithmetic over it. Nothing in the file has an opinion about
+what a torch costs.
+
+MUTANTS
+
+  half-spending on a refused craft   CAUGHT by test_a_refused_craft_spends_nothing
+      "the craft was refused and the inventory changed from {...} to {...}.
+       Nothing is spent on a craft that failed -- check everything first, then
+       spend."
+      This is the bug the brief names as the one most people get wrong, and it is
+      the one worth waiting for on the night: the program refuses correctly and
+      has already broken the world, with no error anywhere.
+
+  the crafted item is never added    CAUGHT -- ingredients spent, nothing gained
+  ingredients are not spent at all   CAUGHT (2 tests)
+  can always says yes                CAUGHT
+  spends one of each, not the recipe CAUGHT
+
+Each was checked for failing on the RIGHT test, after the earlier lesson that a
+mutant failing for the wrong reason has not exercised the check it was aimed at.
+
+TWO SCENARIOS THAT SKIP RATHER THAN PASS
+
+`crafting twice` and `can changes its mind` cannot be built from every legitimate
+world -- an inventory that affords two of everything is a valid submission. Those
+return early rather than asserting something false. Recorded because a test that
+silently does nothing is the failure this repository keeps finding, and a skip
+that is invisible is the same thing wearing a tie.
+
+WHAT NO TEST HERE CAN DO
+
+§5.3's clean-clone rule. `dm-guide.md` §9 is the checklist, and it says explicitly
+which failures count: a program that crashes on `craft banana` has not broken a
+rule the brief fixes, and the DM says so out loud and lets the learner decide
+whether to care.

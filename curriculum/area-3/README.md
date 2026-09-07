@@ -23,55 +23,57 @@ that are deliberately not in it.
 
 ## Authoring status
 
-**Partially authored. Practices 1–12 are complete; practice 13 — Boss 3 — is gated.**
+**Authored in full. Thirteen practices, seven content items, and the lesson promoted.**
 
 | Part | State |
 |---|---|
 | `area.yml` | **complete** — title, weeks, blurb, `authoring: partial` |
 | `glossary.md` | **complete** — all seventeen concepts defined |
-| `lesson.draft.md` | **a draft, deliberately** — see below |
-| `dm-guide.md` | **complete for practices 1–7**; §4 grows a second stall section with 8–12 |
+| `lesson.md` | **promoted 2026-09-06**, when the thirteenth practice landed |
+| `dm-guide.md` | **complete** — stalls for all thirteen, and §9 is the Boss 3 run sheet |
 | `verify.py` | **complete**, and proven against six seeded mutants |
-| Practices 1–12 and their drills | **complete** — 28 files, 12 plans, 1 walkthrough |
-| Practice 13 — Boss 3 | **gated** on the Pygame Zero spike; see below |
-| `reference/` | **complete for practices 1–7**; practices 8–12 check themselves |
-| `exercises/` — six briefs, five hidden tests | **complete**; Boss 3's is gated |
-| `game/area-3/quests/` — six YAML | **complete**; Boss 3's is gated |
+| Practices 1–13 and their drills | **complete** — 28 drills, 13 plans, 1 walkthrough |
+| Practice 13 — Boss 3 | **complete** — brief, hidden test, YAML, three framings |
+| `reference/` | **complete for practices 1–7**; 8–13 check themselves |
+| `exercises/` — seven briefs, six hidden tests | **complete** |
+| `game/area-3/quests/` — seven YAML | **complete** |
 
-**`lesson.draft.md` stays a draft, and the rename is the sign-off rather than a
-formality.** The Field Manual publishes it today, labelled a draft on the page and on the
-index. It is promoted to `lesson.md` when thirteen sessions exist to have tested the prose
-against real evenings. A draft promoted without a session behind it is exactly the
-"authored, plausible, never run" failure this repository keeps finding — most recently in
-its own harnesses, which had silently stopped measuring anything at all.
+**`lesson.md` was promoted on 2026-09-06, and the rename was the sign-off rather than a
+formality.** It published as a draft — labelled as one on the page and on the index — until
+thirteen practices existed to have tested the prose against. That was the plan's own
+condition, and it was met rather than waived.
 
-`area.yml` stays `authoring: partial` until the five quests exist. `estimatedQuests: 5` is
-§5.2's rule of five, not a count of anything written, and the UI renders it with a tilde.
+`apps/api/tests/server.test.ts` used Area 3 as its example of an area still in draft. That
+assertion moved to area 4 rather than being weakened, and gained a second half asserting
+that area 3 is now announced as finished. The day area 7 is done, that test wants a fixture
+rather than a real area.
+
+**`area.yml` stays `authoring: partial`, and that is a decision rather than an oversight.**
+Every artifact exists, but Areas 1 and 2 set the rule and it is a good one: `complete` is a
+person deciding an area is finished, not a consequence of the last file landing. Two things
+are still open — **no hidden test has run over the real `local-repo` path** against a cloned
+repository, and **no practice has been delivered to a learner.** Until then a tilde is the
+honest rendering. `estimatedQuests` is 6, corrected from 5 when the sixth quest landed; a
+boss is not a quest and is not counted.
 
 ---
 
-## Why practice 13 is not written
+## Practice 13 was gated, and the gate was lifted by a decision
 
-**Boss 3 is gated, and the gate is deliberate rather than an omission.**
+`planning/feature_pygame-zero-viability-spike_2026-09-06.md` was, and still is, the stated
+gate on authoring Boss 3 — *"the Pygame Zero spike promotes earlier and separately: before
+Boss 3 is authored."* Its reasoning was that Boss 3 hands over to Area 4, and you do not
+author a handover before you know the destination.
 
-`planning/backlog/promoted_area-4-functions_2026-08-28.md` set it, and
-`planning/feature_pygame-zero-viability-spike_2026-09-06.md` now carries it:
+**It was lifted on 2026-09-06 by an explicit instruction, not by the spike clearing.** That
+is recorded here rather than quietly dropped, because a gate that vanishes without a note is
+indistinguishable from one nobody noticed.
 
-> the Pygame Zero spike promotes earlier and separately: **before Boss 3 is authored.** It is
-> a gate, not a phase, and a gate discovered late is the expensive kind.
-
-Area 4's vehicle is Pygame Zero. If it will not install under the pinned Python 3.14, or
-will not open a window on the learner's laptop, Area 4's vehicle changes — and Boss 3 is the
-last thing before Area 4 and the piece that hands over to it. Authoring the handover before
-knowing what it hands over to is how six weeks get thrown away.
-
-The spike needs the learner's laptop for one sitting. **Nothing else in this area waits on
-it**; practices 1–12 are complete and deliverable, which is eleven weeks of material.
-
-There is a second, smaller gate on **practice 8** and it does not block authoring, only
-delivery: the Run and Debug view has to be restorable in their editor. `tools/vscode/`
-records the Area 2 strip as pending verification on the target machine. Practice 8's *What
-has to be true* section says what to check and what to say if the strip was never applied.
+What made it a narrow gate: **Boss 3's content is pure data work** — a recipe book, an
+inventory, and a command loop. There is no graphics in it and no Pygame Zero anywhere near
+it, so nothing the spike could find would change a line of the brief or the test. What the
+spike still protects is Area 4's *vehicle*, and that remains queued and still needs the
+learner's laptop for a sitting.
 
 ---
 
@@ -340,5 +342,5 @@ is nothing in "set a breakpoint and read the Variables panel" for a harness to e
 `verify.py` reports it as uncovered rather than skipping it silently — Area 2's harness
 earned that rule. It is audited by a person who followed it.
 
-**`exercises/` holds six of seven**, and `game/area-3/quests/` six of seven. Boss 3's brief,
-hidden test and YAML arrive when its Pygame Zero gate clears.
+**`exercises/` holds all seven**, and `game/area-3/quests/` all seven — five collections
+quests, the breakpoints rung, and Boss 3.

@@ -391,6 +391,26 @@ learner who picks it for speed picks it where order mattered.
 Four sessions ago that would have been a new idea. Here it is the answer, and it is the
 first time the debugger is the fastest way out rather than an exercise.
 
+### Practice 13 — The Crafting Table
+
+Boss night. §5.3: no scaffolding, no hints, Socratic questions only. Full run sheet in §9.
+
+**They write the recipe book and stop.** Forty minutes into choosing what a pickaxe costs.
+
+> "You have three recipes. What is the first question the program has to answer?"
+
+**Half-spending.** The one worth waiting for.
+
+> "You said it could not be made. Now print what you are holding."
+
+**A stale copy.**
+
+> "Craft it twice. Which inventory did the second one look at?"
+
+**The item never arrives.**
+
+> "You spent the coal. What did you get?"
+
 ---
 
 ## 5. Invasions
@@ -462,3 +482,76 @@ Everything else in this area — the blocks, the shim, the crafting table — is
 that one judgment. A learner who ships Boss 3 and cannot say why a recipe is a dict has
 been carried. A learner who says *"that's a dict, because I want to look things up by
 name"* about a problem you did not set has arrived, and the boss is a formality.
+
+---
+
+## 9. Boss 3 — the crafting table, step by step
+
+Area 2's guide carries a section like this for Boss 2 and this one did not, which was a gap:
+a boss night is the one evening where the DM has a procedure rather than a lesson plan.
+
+### Before the night
+
+- **Read the brief yourself**, `exercises/the-crafting-table/BRIEF.md`. You will be asked
+  what a line means and "let me read it too" is a worse answer than an accurate one.
+- **Have a terminal ready in an empty directory.** §5.3's clean-clone check is yours to run
+  and it is the half no test performs.
+- **Do not prepare a solution.** If you have one in your head you will steer toward it, and
+  their design is allowed to be unlike yours in every respect that is not in the brief.
+
+### On the night
+
+1. **Hand over the brief and stop talking.** They pick one of three framings; the program
+   underneath is identical and the choice is theirs (§5.2).
+2. **Forty minutes, and you answer questions with questions.** The four stalls in §4 above
+   are the ones to expect.
+3. **When it works, do not congratulate it yet.** Ask for the same thing to be crafted twice
+   in a row. Then ask for something unaffordable, followed by `have`.
+
+### The clean clone
+
+```console
+cd <somewhere empty>
+git clone <their remote> .
+cd the-crafting-table
+py -3.14 craft.py
+```
+
+Then **type things they did not think of.** `craft` with nothing after it. `craft banana`.
+`recipe` for something not in the book. An empty line. `quit` first.
+
+**None of that is in the brief and none of it is a failure.** The brief fixes six line
+shapes and says nothing about nonsense input, so a program that crashes on `craft banana`
+has not broken a rule. Note it, say it out loud, and let them decide whether to care — that
+judgment is the interesting half and it belongs to them.
+
+**What IS a failure** is a wrong answer to a question the brief does fix: an inventory that
+moved on a refused craft, a second craft succeeding against a world the first one emptied,
+an item spent and nothing gained.
+
+### The three failures worth predicting
+
+1. **Half-spending.** Ingredients taken as they are checked, and a refusal printed after the
+   first two are already gone. The program says it did nothing and it has made the world
+   worse. **This is the best thing in the fight.** Do not name it in advance.
+2. **The stale copy.** Affordability worked out once and answered from forever.
+3. **The item never arrives.** All the attention went to the refusal path.
+
+### What to say when it fails
+
+Nothing consoling, and nothing that makes it smaller. §5.3 records failures as **scars,
+displayed with pride**, and unlimited attempts are the rule.
+
+> "Which of the three did it? Write that down before you fix it — that sentence is worth
+> more than the fix."
+
+Then stop for the night if it is late. A boss beaten on the fourth go is worth exactly what
+one beaten on the first is worth.
+
+### What to say when it passes
+
+> "Craft me something. Now tell me what your program is holding, without running it."
+
+If they can, they have kept the shape in their head across a whole file, which is the thing
+this fight was for. Then the release notes — 75 XP flat, §5.1, and the largest non-boss
+payout in the campaign.

@@ -81,3 +81,8 @@ practices:
   - n: 12
     title: A Recipe Book
     exercises: []
+
+  # Boss 3. `exercises/the-crafting-table/` holds the boss specification.
+  - n: 13
+    title: The Crafting Table
+    exercises: [the-crafting-table]
