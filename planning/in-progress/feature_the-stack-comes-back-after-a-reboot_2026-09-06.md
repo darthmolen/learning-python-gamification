@@ -171,13 +171,42 @@ assertion has to be on the response **body**, never the status.
 | 2. Gateway base | done | RED 21/23 failing → GREEN 388 passing; mutant (absolute origin) failed 7 URL assertions |
 | 3. The proxy | done | Caddy serves and proxies; mutant returned `status=200 type=text/html` |
 | 4. `autostart.cmd` | done | Ran against a fully removed stack (`down`), brought all five back healthy |
-| 4b. `install-autostart.ps1` | written, **not yet run elevated** | worktree guard verified (exit 2); `.env` port parsing verified |
+| 4b. `install-autostart.ps1` | done | ran elevated: shortcut created targeting the main checkout, 3082/3080/3022 allowed. Path resolution and `.env` port parsing verified |
 | 5. End to end | **not started** | needs a real reboot, then the learner's laptop |
 
-**The firewall is the open blocker.** `192.168.4.102:3082` times out today while Docker binds
-`0.0.0.0:3082` correctly, so it is Windows Firewall and nothing else. Until `install-autostart.ps1`
-runs from an elevated shell, success criteria 4 and 6 stay unticked and the LAN half of this plan
-is unverified.
+**A wrong diagnosis, corrected — worth keeping because the reasoning was seductive.**
+
+This section previously read: *"`192.168.4.102:3082` times out while Docker binds `0.0.0.0:3082`
+correctly, so it is Windows Firewall and nothing else."* Every clause was true and the conclusion
+was wrong.
+
+`install-autostart.ps1` then ran elevated and created the rules — and `192.168.4.102:3082` still
+timed out. What the evidence actually showed:
+
+- WSL runs in **mirrored** networking mode, where only IPv4 loopback is mapped into the VM. Every
+  non-loopback address for *this* machine times out *from* this machine. `localhost:3080` and
+  `localhost:3082` answered 200 the whole time; the `.local` name, the LAN address and `[::1]` did
+  not, and never would have.
+- Inbound traffic to container-published ports is governed by the **Hyper-V firewall**, not the
+  Windows one. Its `DefaultInboundAction` is `Block` — and rules admitting 3080/3081/3082/3022
+  **already existed** and were enabled. The blocker the new Windows rules were created to remove
+  was not the blocker.
+- `netstat` on the host shows no listener for those ports at all, because the listeners are in the
+  WSL VM. That looked like more evidence for the wrong theory.
+
+So the LAN half was probably never broken by a firewall. What *was* broken is what Part 3 fixed:
+the SPA told the learner's browser to call **his** localhost:3081.
+
+The Windows Firewall rules are kept — correctly scoped, and load-bearing the day mirrored mode is
+turned off — but they are not what admits his laptop.
+
+The lesson is narrower than "check both firewalls": **a timeout measured from the same machine that
+hosts the service proves nothing about any other machine.** Criteria 4 and 6 were never verifiable
+from this desk, which is exactly why criterion 6 is worded the way it is.
+
+`hostAddressLoopback=true` was added to `%USERPROFILE%\.wslconfig` on 2026-09-06 so that the LAN
+name becomes testable here after the next `wsl --shutdown`. Even then, the learner's laptop remains
+the only test that answers the question.
 
 One thing was found by making the mistake rather than predicting it: the first run of
 `install-autostart.ps1` wrote a Startup shortcut pointing into `.claude/worktrees/autostart`, which

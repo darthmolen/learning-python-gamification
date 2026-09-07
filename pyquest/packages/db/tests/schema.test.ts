@@ -243,6 +243,12 @@ describe.skipIf(!HAVE_DATABASE)('the schema, on what it deliberately allows', ()
      *
      * `player_credentials` is separate from `players` because reading a player is the api's most
      * common query, and a hash on that row is a hash in every result set that selects it.
+     *
+     * **`practice_progress` is the other half of the `sessions` collision argued above**, and
+     * the two rows are worth reading together. A session is an evening — household-scoped,
+     * `scheduled_for date UNIQUE`, counted by §5.9's streak. A practice is a unit of work,
+     * per-player and untimed, which is exactly why ADR 0007 stopped calling it a session. Two
+     * tables, two meanings, and the names now say which is which.
      */
     expect(tables).toEqual([
       'api_tokens',
@@ -257,6 +263,7 @@ describe.skipIf(!HAVE_DATABASE)('the schema, on what it deliberately allows', ()
       'player_credentials',
       'player_roles',
       'players',
+      'practice_progress',
       'quest_medals',
       'runner_jobs',
       'schema_migrations',
