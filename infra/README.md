@@ -146,6 +146,11 @@ there, the raw address works immediately and with no rebuild — the SPA follows
 reached it. Pair a `hosts` entry with a DHCP reservation on the router, or the address in it goes
 stale.
 
+> **Do not try to verify this from this machine.** Under mirrored networking, every non-loopback
+> address for *this* machine times out from *this* machine, firewall or no firewall — and there is
+> a second firewall you will not find in `wf.msc`. Read "Mirrored networking" under Windows notes
+> before diagnosing anything here; a timeout on this box is not evidence of a blocked port.
+
 ### It says the api is down
 
 In order of how often it is the answer:
@@ -359,6 +364,50 @@ Two Git Bash behaviours cost real debugging time and are worth knowing before th
   where they are just string data, or prefix the command with `MSYS_NO_PATHCONV=1`.
 - **Line endings.** A `.sh` file saved with CRLF fails inside a Linux container with a confusing
   `\r: not found`. `.gitattributes` in this directory pins `*.sh` and `*.yml` to LF.
+
+### Mirrored networking — `localhost` works, the LAN name does not
+
+This machine runs WSL in **mirrored** mode (`networkingMode=mirrored` in `%USERPROFILE%\.wslconfig`),
+and it changes two things that will otherwise waste an evening.
+
+**Only IPv4 loopback is mapped into the WSL VM.** From *this* machine every non-loopback address for
+*this same machine* times out — including its own LAN address, its `.local` name, and `[::1]`:
+
+| From this machine | |
+|---|---|
+| `http://localhost:3080` | 200 |
+| `http://127.0.0.1:3080` | 200 |
+| `http://devastator-2025.local:3080` | times out |
+| `http://192.168.4.102:3080` | times out |
+| `http://[::1]:3080` | times out |
+
+**This says nothing about other machines.** A timeout here is the host-loopback limitation, not a
+firewall refusal, and the learner's laptop is on a completely different path. The only test that
+answers "can he reach it" is *his laptop*. Do not conclude anything from a timeout on this box —
+that mistake was made on 2026-09-06 and produced a confident, wrong diagnosis of a firewall problem.
+
+The fix, if you want the LAN name usable from here too, is one line in `%USERPROFILE%\.wslconfig`
+under `[wsl2]`, then `wsl --shutdown`:
+
+```ini
+hostAddressLoopback=true
+```
+
+**There is a second firewall, and it is not in `wf.msc`.** In mirrored mode inbound traffic to
+container-published ports is governed by the **Hyper-V firewall**, whose default inbound action is
+`Block`. Windows Firewall rules — the ones `install-autostart.ps1` creates — are correct and worth
+having, and they are not what admits the learner's laptop. Both matter, and only one of them is
+visible where you would look:
+
+```powershell
+# the one you will not find in wf.msc
+Get-NetFirewallHyperVVMCreator                       # WSL's VMCreatorId
+Get-NetFirewallHyperVRule -VMCreatorId '{...}' |
+  Select-Object DisplayName, Enabled, Action, Protocol, LocalPorts
+```
+
+`netstat` on the Windows host shows **no listener** for 3080/3081/3082 in this mode, because the
+listeners live in the WSL VM. That is normal and is not evidence of a stopped stack.
 
 ---
 
