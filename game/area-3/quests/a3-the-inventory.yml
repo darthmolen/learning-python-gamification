@@ -1,0 +1,26 @@
+# Area 3's first quest, and the first `local-repo` item in the area. Spec §6.3: the API pulls
+# their repository and runs this quest's pytest specification against the clone. §6.4: it can
+# only do that because they pushed, which Area 2a taught.
+#
+# No starter. `scaffold.ts` writes one only for `hidden-tests`, and §6.3 confines that to
+# Areas 0-1. From here the starting point is a file in their own repository.
+#
+# DC 10 is the floor of Area 3's band and the easiest item in the area. The plan argues why the
+# floor rose from Area 0's 5: by week nine nothing here is a single new idea. A list is a list
+# *and* iteration *and* indexing on the first evening, because an inventory that cannot be read
+# is not an inventory.
+#
+# **The tests assert on stdout, not on a world.** A `local-repo` run has no display, and Area 3's
+# vehicle opens an OpenGL window -- so this quest is deliberately the half of the area a headless
+# runner can judge. The block-placing half is judged by a person looking at it.
+id: a3-the-inventory
+title: "The Inventory"
+kind: quest
+area: 3
+concepts: [list, indexing, len, iteration]
+dc: 10                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/the-inventory/BRIEF.md
+
+verifier:
+  type: local-repo
+  tests: area-3/exercises/the-inventory/hidden/test.py

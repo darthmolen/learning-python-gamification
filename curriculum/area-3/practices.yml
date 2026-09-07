@@ -36,7 +36,7 @@ practices:
 
   - n: 2
     title: The Inventory
-    exercises: []
+    exercises: [the-inventory]
 
   - n: 3
     title: It Changes
