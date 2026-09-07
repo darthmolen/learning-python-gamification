@@ -8,7 +8,7 @@ number, you have to say so.
 
 ## What to do
 
-The starter is broken on purpose, the same way it broke in session 5.
+The starter is broken on purpose, the same way it broke in Practice 5.
 
 1. **Run it first and answer 150.** Read the error before you change anything.
 2. **Fix it.** `answer` is a `str` and `forward` needs a number. Convert it **once**, at the

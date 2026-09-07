@@ -1,4 +1,4 @@
-"""Worked answer to s2e1's YOUR MOVE. DM's copy — spec 5.5 Datamine payload.
+"""Worked answer to p2e1's YOUR MOVE. DM's copy — spec 5.5 Datamine payload.
 
 Not a handout. Taking this costs 5 XP and it should, because every question it
 answers is one the learner could have answered by printing something.
@@ -6,7 +6,7 @@ answers is one the learner could have answered by printing something.
 The four moves, worked:
 
   1. Five things, so the last slot is 4. `len(inventory) - 1`.
-  2. `inventory[5]` raises IndexError. Covered by s2e2 deliberately.
+  2. `inventory[5]` raises IndexError. Covered by p2e2 deliberately.
   3. `inventory[-5]` is the first item; `inventory[-6]` raises IndexError.
      Negative indexing has exactly the same edges as positive, counted from the
      other side, which is the thing most people never quite state.

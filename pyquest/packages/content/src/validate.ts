@@ -28,8 +28,11 @@ import { parseMarks } from './marks.ts';
 import {
   parseContentItem,
   parseAreaManifest,
+  parsePracticeManifest,
   type ContentItem,
   type AreaManifest,
+  type Practice,
+  type PracticeManifest,
 } from './schema.ts';
 
 /* -------------------------------------------------------------------------------------------
@@ -51,7 +54,11 @@ export type ValidationRule =
   | 'missing-area-manifest'
   | 'pace-in-lesson'
   | 'glossary-gap'
-  | 'unknown-mark';
+  | 'unknown-mark'
+  | 'practice-missing-exercise'
+  | 'unclaimed-exercise'
+  | 'practice-numbering'
+  | 'game-vocabulary';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -105,12 +112,31 @@ function resolveRoots(source: ContentSource): { curriculum: string; game: string
   return { curriculum: resolve(source.curriculum), game: resolve(source.game) };
 }
 
+/**
+ * A practice as the loader hands it downstream: the authored fields, plus the one edge that is
+ * derived rather than written.
+ *
+ * **`quests` is computed, never authored, and that is the point.** Practice -> Exercise is
+ * authored in `curriculum/`; Quest -> Exercise is already authored in `game/` as the `brief:`
+ * path. Joining them here means Practice -> Quest cannot drift, which is exactly what three
+ * hand-maintained tables in three area READMEs did for months. Writing the edge down instead
+ * would either point the curriculum at game ids — failing the deletion test — or state a fact
+ * the brief path already states, and two sources of one fact is how the drift started.
+ */
+export interface LoadedPractice extends Practice {
+  readonly area: number;
+  /** Ids of items whose brief names an exercise this practice claims. Empty is common. */
+  readonly quests: readonly string[];
+}
+
 /** What a content root holds, once read. */
 export interface ContentSet {
   readonly root: string;
   /** Items that satisfied the schema. Everything downstream reads only these. */
   readonly items: readonly ContentItem[];
   readonly manifests: readonly AreaManifest[];
+  /** The spine, ordered by area then practice number. */
+  readonly practices: readonly LoadedPractice[];
   readonly issues: readonly ContentIssue[];
 }
 
@@ -168,6 +194,29 @@ function yamlFilesAcross(roots: { curriculum: string; game: string }): SourceFil
  */
 function isManifestPath(file: string): boolean {
   return file === 'area.yml' || file.endsWith('/area.yml');
+}
+
+/**
+ * Is this file an area's practice spine? `area-N/practices.yml`, beside the manifest.
+ *
+ * Without this branch the loader parses it as a content item and reports a missing `id`,
+ * which is a true statement about the wrong question.
+ */
+function isPracticesPath(file: string): boolean {
+  return file === 'practices.yml' || file.endsWith('/practices.yml');
+}
+
+/**
+ * The exercise slug a brief path names: `area-0/exercises/the-typo/BRIEF.md` -> `the-typo`.
+ *
+ * This is the join. It reads the path rather than a field because the field does not exist and
+ * should not: `ContentItemSchema` is `.strict()`, and adding `exercise:` beside `brief:` would
+ * be a second way to say one thing. Anything not shaped like an exercise brief — a boss with a
+ * different layout, a path from the pre-split tree — yields `undefined` and simply joins to no
+ * practice, rather than guessing.
+ */
+function exerciseSlugOf(brief: string): string | undefined {
+  return /(?:^|\/)area-\d+\/exercises\/([^/]+)\//.exec(toPosix(brief))?.[1];
 }
 
 /**
@@ -329,6 +378,7 @@ export function checkContent(source: ContentSource): ContentSet {
   const issues: ContentIssue[] = [];
   const items: ContentItem[] = [];
   const manifests: AreaManifest[] = [];
+  const spines: { file: string; manifest: PracticeManifest }[] = [];
   const records: RawRecord[] = [];
   const sources = new Map<string, { doc: Document; counter: LineCounter }>();
 
@@ -353,12 +403,13 @@ export function checkContent(source: ContentSource): ContentSet {
 
     const raw: unknown = doc.toJS();
     const isManifest = isManifestPath(file);
+    const isPractices = isPracticesPath(file);
     const id =
       typeof (raw as { id?: unknown })?.id === 'string'
         ? ((raw as { id: string }).id)
         : undefined;
 
-    if (!isManifest && id !== undefined) {
+    if (!isManifest && !isPractices && id !== undefined) {
       const declared = (raw as { requires?: unknown }).requires;
       records.push({
         id,
@@ -369,6 +420,7 @@ export function checkContent(source: ContentSource): ContentSet {
 
     try {
       if (isManifest) manifests.push(parseAreaManifest(raw));
+      else if (isPractices) spines.push({ file, manifest: parsePracticeManifest(raw) });
       else items.push(parseContentItem(raw));
     } catch (error) {
       if (!(error instanceof z.ZodError)) throw error;
@@ -390,11 +442,182 @@ export function checkContent(source: ContentSource): ContentSet {
   issues.push(...glossaryIssues(roots));
   issues.push(...markIssues(roots));
 
+  const practices = joinPractices(spines, items);
+  issues.push(...practiceIssues(roots, spines));
+  issues.push(...vocabularyIssues(roots));
+
   issues.sort(
     (a, b) => a.file.localeCompare(b.file) || (a.line ?? 0) - (b.line ?? 0) || a.rule.localeCompare(b.rule),
   );
 
-  return { root: abs, items, manifests, issues };
+  return { root: abs, items, manifests, practices, issues };
+}
+
+/* -------------------------------------------------------------------------------------------
+ * The spine
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Materialise Practice -> Quest by joining both authored edges through the exercise slug.
+ *
+ * Done once, here, so that the engine, the API, the SPA and the Field Manual all read the same
+ * derived field instead of each re-deriving it from a path — which is how four slightly
+ * different answers to one question get shipped.
+ */
+function joinPractices(
+  spines: readonly { file: string; manifest: PracticeManifest }[],
+  items: readonly ContentItem[],
+): LoadedPractice[] {
+  const questsBySlug = new Map<string, string[]>();
+  for (const item of items) {
+    const slug = exerciseSlugOf(item.brief);
+    if (slug === undefined) continue;
+    const key = `${item.area}/${slug}`;
+    const found = questsBySlug.get(key);
+    if (found) found.push(item.id);
+    else questsBySlug.set(key, [item.id]);
+  }
+
+  return spines
+    .flatMap(({ manifest }) =>
+      manifest.practices.map((practice) => ({
+        ...practice,
+        area: manifest.area,
+        quests: practice.exercises
+          .flatMap((slug) => questsBySlug.get(`${manifest.area}/${slug}`) ?? [])
+          .sort(),
+      })),
+    )
+    .sort((a, b) => a.area - b.area || a.n - b.n);
+}
+
+/**
+ * Words the curriculum may not use about itself.
+ *
+ * `game/` is an overlay and `curriculum/` must read correctly without it — that is the
+ * deletion test, applied to prose. `build.ts` already states the principle for the published
+ * Field Manual: "anything that is not an exercise is left out rather than renamed, because
+ * renaming it would be the game leaking in under a different label." Held by hand, that
+ * survives exactly as long as nobody writes a page while holding both halves in their head,
+ * which is precisely what a how-to page is.
+ *
+ * `session` is on the list because it is the collision ADR 0007 resolves: a session is the
+ * evening, a practice is the work, and the curriculum only ever means the second.
+ */
+const GAME_WORDS = ['quest', 'xp', 'dc', 'medal', 'boss', 'invasion', 'scar', 'session'];
+
+/**
+ * A word boundary that treats `_` as a separator, which `\b` does not.
+ *
+ * `\b` sits between a word character and a non-word character, and **`_` is a word
+ * character** — so `\bboss\b` finds nothing in `boss_fight`, and `\bcolour\b` skips
+ * `frame_colour`. CLAUDE.md records that exact trap shipping two gates that passed while
+ * measuring nothing, in one day.
+ *
+ * The lookarounds below exclude only letters and digits, so an underscore on either side
+ * still counts as a boundary and `boss_fight` is caught. Seed `\b` back in and
+ * `tests/practices.test.ts` goes red on that word specifically — which is the only reason
+ * to believe this line does anything.
+ */
+const wordRe = (word: string): RegExp =>
+  new RegExp(`(?<![A-Za-z0-9])${word}(?![A-Za-z0-9])`, 'i');
+
+function vocabularyIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const dir = join(roots.curriculum, 'how-to');
+  if (!existsSync(dir)) return [];
+
+  const issues: ContentIssue[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
+    const file = `how-to/${entry.name}`;
+    const text = readFileSync(join(dir, entry.name), 'utf8');
+
+    for (const word of GAME_WORDS) {
+      // Report the word as the author wrote it, not as the list spells it. An error that
+      // says "xp" about a page saying "XP" makes the reader hunt for a second occurrence.
+      const found = wordRe(word).exec(text)?.[0];
+      if (found === undefined) continue;
+      issues.push({
+        file,
+        rule: 'game-vocabulary',
+        message: `"${found}" is the game's word, and this page is read with game/ deleted`,
+        fix: `say it in curriculum terms, or move the sentence to game/how-to/`,
+      });
+    }
+  }
+  return issues;
+}
+
+/**
+ * What the spine refuses.
+ *
+ * All three are about the same failure in different directions: the sequence and the tree
+ * disagreeing about what work exists. That disagreement is what left area 0's README
+ * proposing, in future tense, quests that had already shipped — for months, silently, because
+ * nothing could read either statement.
+ */
+function practiceIssues(
+  roots: { curriculum: string; game: string },
+  spines: readonly { file: string; manifest: PracticeManifest }[],
+): ContentIssue[] {
+  const issues: ContentIssue[] = [];
+
+  for (const { file, manifest } of spines) {
+    const area = manifest.area;
+    const dir = join(roots.curriculum, `area-${area}`, 'exercises');
+
+    /** A slug the sequence names and the tree does not hold. */
+    const claimed = new Set<string>();
+    for (const practice of manifest.practices) {
+      for (const slug of practice.exercises) {
+        claimed.add(slug);
+        if (existsSync(join(dir, slug))) continue;
+        issues.push({
+          file,
+          rule: 'practice-missing-exercise',
+          message: `practice ${practice.n} lists "${slug}", and area-${area}/exercises/${slug}/ does not exist`,
+          fix: `author the exercise, or remove "${slug}" from practice ${practice.n}`,
+        });
+      }
+    }
+
+    /**
+     * The other direction, and the one that actually bit. Work authored into the tree and
+     * claimed by no practice is invisible to the learner — nothing ever tells him to do it.
+     */
+    const onDisk = existsSync(dir)
+      ? readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name)
+      : [];
+    for (const slug of onDisk) {
+      if (claimed.has(slug)) continue;
+      issues.push({
+        file,
+        rule: 'unclaimed-exercise',
+        message: `area-${area}/exercises/${slug}/ is claimed by no practice, so nothing puts it in front of a learner`,
+        fix: `add "${slug}" to the practice that teaches it in area-${area}/practices.yml`,
+      });
+    }
+
+    /**
+     * A gap is an unwritten practice or a half-done renumbering, and the learner meets it as
+     * "what happened to 3?". Duplicates are the same disagreement with the opposite sign.
+     */
+    const numbers = manifest.practices.map((p) => p.n).sort((a, b) => a - b);
+    for (let i = 0; i < numbers.length; i += 1) {
+      const expected = i + 1;
+      const actual = numbers[i];
+      if (actual === expected) continue;
+      issues.push({
+        file,
+        rule: 'practice-numbering',
+        message: `the practice numbers are not 1..${numbers.length} — expected ${expected}, found ${String(actual)}`,
+        fix: `renumber the practices in area-${area}/practices.yml so they run 1..${numbers.length} with no gap or repeat`,
+      });
+      break;
+    }
+  }
+
+  return issues;
 }
 
 /** The file each id was declared in, for pointing an issue at the right place. */

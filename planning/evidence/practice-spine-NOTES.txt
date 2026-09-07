@@ -1,0 +1,56 @@
+# Practice spine — what the filters caught, and the one that nearly did not
+
+Companion to `practice-spine-RED.txt` and `practice-spine-MUTANT.txt`.
+
+## RED
+
+`tests/practices.test.ts`, 10 of 10 failing before any implementation existed. The first
+failure was the predicted one and worth keeping: the loader parsed `practices.yml` as a content
+item and reported a missing `id`. A true statement about the wrong question, which is what an
+unbranched loader always produces.
+
+## The mutants
+
+Three seeded after GREEN. The third is the reason this file exists.
+
+| Mutant | Result |
+|---|---|
+| `unclaimed-exercise` check removed (`\|\| true` on the guard) | **Caught** — *reports an exercise no practice claims* |
+| Join key corrupted (`${area}/${slug}x`) | **Caught** — *is derived from the brief path, not authored* |
+| `\b` restored as the word boundary | **Survived.** Test was wrong. |
+
+## The one that survived
+
+The game-vocabulary filter refuses the game's words in `curriculum/how-to/**`, so that the
+curriculum reads correctly with `game/` deleted. It was written with lookarounds excluding
+`[A-Za-z0-9_]`, carrying a comment claiming this beat `\b`.
+
+**It did not. The two are identical.** `\b` uses exactly `[A-Za-z0-9_]` as its word set, so
+the "fix" and the thing it claimed to fix behaved the same, and the suite passed either way.
+The comment asserted a difference that the code did not implement and the test did not check —
+three ways of being wrong that agreed with each other.
+
+The mutant is what exposed it. Seeding `\b` back in changed nothing, and a check that survives
+its own mutant is measuring nothing.
+
+**What was actually wrong.** CLAUDE.md's trap is that `_` *is* a word character, so
+`\bcolour\b` skips `frame_colour` — the boundary you want has to treat `_` as a **separator**.
+That means excluding only `[A-Za-z0-9]`, letting an underscore on either side count as a
+boundary.
+
+Fixed in three places, in this order:
+
+1. The fixture gained `boss_fight.py`, an occurrence no naive boundary can see.
+2. The test asserts `boss` is reported and the count is 3.
+3. The regex dropped `_` from both lookarounds.
+
+Re-seeding `\b` now fails on that word specifically. The filter is load-bearing as of that
+change and was decorative before it.
+
+## Standing note
+
+The two checks worth keeping honest are **every exercise is claimed by a practice** — the one
+that catches an exercise authored into the tree and never placed in the sequence, which is the
+drift that left area 0's README proposing quests that had already shipped — and **the derived
+Practice -> Quest edge**, which is the only place the join can be wrong precisely because it is
+derived once rather than authored in three files.

@@ -9,16 +9,16 @@ rather than pretending the help was free.
 
 | File | Answers |
 |---|---|
-| `r2_the_inventory.py` | `s2e1`'s YOUR MOVE — positions, both directions, and the two loops |
-| `r6_the_hotbar.py` | `s6e1`'s YOUR MOVE — the slice arithmetic, and copy versus second name |
+| `r2_the_inventory.py` | `p2e1`'s YOUR MOVE — positions, both directions, and the two loops |
+| `r6_the_hotbar.py` | `p6e1`'s YOUR MOVE — the slice arithmetic, and copy versus second name |
 
 **Two files for seven sessions, deliberately.** A reference solution earns its place where
 the YOUR MOVE has a *checkable* answer that a learner could get wrong without noticing.
-Sessions 3, 4 and 7 do not qualify: their hardest tasks ask what happened and why, and an
+Practices 3, 4 and 7 do not qualify: their hardest tasks ask what happened and why, and an
 answer key for *"what did the tuple buy you"* would replace the thinking with a paragraph to
 agree with.
 
-Sessions 1 and 5 do not qualify either, for the opposite reason — their tasks check
+Practices 1 and 5 do not qualify either, for the opposite reason — their tasks check
 themselves. A learner who comments out `start()` finds out immediately whether they were
 right.
 

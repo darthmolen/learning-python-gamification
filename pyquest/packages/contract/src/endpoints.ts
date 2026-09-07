@@ -378,9 +378,55 @@ export type CampaignView = z.infer<typeof CampaignViewSchema>;
  * The area's one-line brief is `identity.blurb`, which is where the content puts it; there is no
  * second brief field, because a second place to write the sentence is the place that goes stale.
  */
+/**
+ * One row of the area's practice spine.
+ *
+ * **`quests` is derived, not authored** — the join of Practice -> Exercise (in `curriculum/`)
+ * with Quest -> Exercise (the `brief:` path, in `game/`). It arrives already joined so that
+ * every consumer reads one derivation. An empty list is common and is the point of the row:
+ * a practice with no quest is still work, and the screen has to say so rather than leave a gap.
+ *
+ * `completed` is the learner's own tick. It gates nothing — §5.2 lets him choose any three
+ * quests and ADR 0002 refuses pace judgement — so nothing reads it back except the checkbox.
+ * It is scaffolding (ADR 0004) and it dies with the game; the journal is what survives.
+ *
+ * **No week and no date.** Per-practice weeks do not exist in the content and must not be
+ * invented here (ADR 0002's amendment). A practice is untimed, which is the whole reason it is
+ * not called a session.
+ */
+export const PracticeViewSchema = z
+  .object({
+    n: z.number().int().positive(),
+    title: z.string().min(1),
+    exercises: z.array(z.string().min(1)),
+    quests: z.array(ContentIdSchema),
+    completed: z.boolean(),
+  })
+  .strict();
+
+export type PracticeView = z.infer<typeof PracticeViewSchema>;
+
+/**
+ * `PUT /api/players/:playerId/areas/:area/practices/:n` — the learner's own tick.
+ *
+ * One boolean, and `.strict()` is what keeps it one. The obvious next field is a date, and a
+ * date is exactly what a client must not supply: a practice is untimed by construction
+ * (ADR 0007), which is the whole reason it is not called a session. `{ completed: true,
+ * completedAt: 'last Tuesday' }` would be the calendar creeping back in through the one door
+ * the rename closed.
+ */
+export const PracticeTickSchema = z.object({ completed: z.boolean() }).strict();
+
+export type PracticeTick = z.infer<typeof PracticeTickSchema>;
+
 export const AreaViewSchema = AreaCardSchema.extend({
   playerId: z.string().min(1),
   quests: AvailableQuestsSchema,
+  /**
+   * The spine, in order. Empty for an area whose `practices.yml` is not authored yet, which is
+   * a real state — the screen draws its quest list either way and simply omits the panel.
+   */
+  practices: z.array(PracticeViewSchema),
 }).strict();
 
 export type AreaView = z.infer<typeof AreaViewSchema>;
@@ -533,6 +579,36 @@ export type MedalDescription = z.infer<typeof MedalDescriptionSchema>;
 export const MedalsSchema = z.object({ medals: z.array(MedalDescriptionSchema) }).strict();
 
 export type Medals = z.infer<typeof MedalsSchema>;
+
+/**
+ * `GET /api/how-to` — the sections of the HOW-TO page, in reading order.
+ *
+ * Read from `curriculum/how-to/*.md` and then `game/how-to/*.md`, and the order is the
+ * argument: learn before play, which is both the pedagogical order and the lane order.
+ *
+ * **`source` is on the wire because it is the honest label, not decoration.** The curriculum
+ * half survives `game/` being deleted and the overlay half does not, so with no overlay the
+ * page is shorter and still correct — there is no game to explain. That is the same
+ * degradation `/api/medals` describes, applied to prose.
+ *
+ * The body is markdown and rendering is the UI's, consistent with every other prose payload
+ * here. The title is lifted from the file's own `# ` heading so that a new section is one
+ * authored file rather than a code change — which is the property the page exists to have.
+ */
+export const HowToSectionSchema = z
+  .object({
+    id: z.string().min(1),
+    title: z.string().min(1),
+    body: z.string().min(1),
+    source: z.enum(['curriculum', 'game']),
+  })
+  .strict();
+
+export type HowToSection = z.infer<typeof HowToSectionSchema>;
+
+export const HowToSchema = z.object({ sections: z.array(HowToSectionSchema) }).strict();
+
+export type HowTo = z.infer<typeof HowToSchema>;
 
 /* -------------------------------------------------------------------------------------------
  * Sign-offs — spec §6.3, §5.11

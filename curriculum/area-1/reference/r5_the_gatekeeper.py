@@ -1,4 +1,4 @@
-"""Datamine payload — s5e3 task 4: one square, drawn once.
+"""Datamine payload — p5e3 task 4: one square, drawn once.
 
 Unlocks: s5e3_the_gatekeeper.py, the de-duplication task.
 

@@ -46,7 +46,7 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).parent
-SEARCH = (ROOT / "sessions", ROOT / "reference")
+SEARCH = (ROOT / "practices", ROOT / "reference")
 
 # Mirrors the area 0, 1 and 2 entries of packages/content/src/concepts.ts. Kept
 # here as a literal on purpose: this directory must stay runnable with nothing
@@ -173,7 +173,7 @@ def has_own_environment(path: pathlib.Path) -> bool:
 
     The rule is deliberately a fact about the tree rather than a list of
     exceptions: a `requirements.txt` beside a file is that file saying it has
-    an environment, in the same words session 7 teaches. Take the
+    an environment, in the same words Practice 7 teaches. Take the
     `requirements.txt` away and the file is run like any other -- and fails
     with `ModuleNotFoundError`, loudly, which is what should happen.
     """

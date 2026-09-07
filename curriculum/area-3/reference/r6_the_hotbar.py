@@ -1,7 +1,7 @@
-"""Worked answer to s6e1's YOUR MOVE. DM's copy — spec 5.5 Datamine payload.
+"""Worked answer to p6e1's YOUR MOVE. DM's copy — spec 5.5 Datamine payload.
 
 Not a handout. 5 XP, and the fourth move below is the one worth making them
-find rather than read, because it closes session 3's loop.
+find rather than read, because it closes practice 3's loop.
 
 The four moves, worked:
 
@@ -9,9 +9,9 @@ The four moves, worked:
      rule, after `range(9)` and `range(2, 5)`.
   2. The two halves account for everything, and the check is one line.
   3. `[0:99]` does not crash. A slice describes a range and takes what falls
-     inside it; an index names a slot that must exist. Full treatment in s6e2.
+     inside it; an index names a slot that must exist. Full treatment in p6e2.
   4. `inventory[:]` is a real copy and `inventory` is a second name. This is
-     session 3's aliasing lesson arriving again with a new tool attached, and
+     practice 3's aliasing lesson arriving again with a new tool attached, and
      it is the reason slicing is taught after mutation rather than before.
 
 Run:  py -3.14 r6_the_hotbar.py

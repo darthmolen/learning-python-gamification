@@ -1,4 +1,4 @@
-"""Datamine payload — s3e2 task 5c: shrink until the total ink passes 1000.
+"""Datamine payload — p3e2 task 5c: shrink until the total ink passes 1000.
 
 Unlocks: s3e2_the_shrinking_line.py, the third choice on the board.
 
@@ -47,7 +47,7 @@ print("last length :", round(length / 0.8, 1))
 #   different variables changing at two different rates in the same loop, and
 #   the loop stops when ONE of them says so.
 #
-# The follow-up question, which is the whole of session 8:
+# The follow-up question, which is the whole of Practice 8:
 #
 #   "What else could you total up in there? How far it traveled? How many
 #    lines were longer than 100? How much of the ink went on the first half?"

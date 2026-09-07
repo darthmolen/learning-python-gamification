@@ -5,6 +5,7 @@ import { Rail } from '../shell/Rail';
 import { AreaScreen } from '../screens/AreaScreen';
 import { BossScreen } from '../screens/BossScreen';
 import { DefendScreen } from '../screens/DefendScreen';
+import { HowToScreen } from '../screens/HowToScreen';
 import { MapScreen } from '../screens/MapScreen';
 import { ConsoleScreen } from '../screens/ConsoleScreen';
 import { JournalScreen } from '../screens/JournalScreen';
@@ -120,6 +121,7 @@ function Routed() {
         <Route path="/party" element={<PartyScreen />} />
         <Route path="/journal" element={<JournalScreen />} />
         <Route path="/console" element={<ConsoleScreen />} />
+        <Route path="/how-to" element={<HowToScreen />} />
 
         {/* The three sub-areas. Each is reached through a place, and each carries the trail. */}
         <Route path="/area/:areaId" element={<AreaScreen />} />

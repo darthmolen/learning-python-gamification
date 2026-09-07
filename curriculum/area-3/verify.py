@@ -48,7 +48,7 @@ block and is paid once before anything appears. **The cap is about how long a
 learner stares at a blank window, not about smoothness** -- 8,000 blocks still
 renders at 178 fps. An author reading "the cap is about fps" will reason wrongly
 about what they can spend, so the number is checked here rather than left to
-arithmetic in a session plan.
+arithmetic in a practice plan.
 
 **`start()` called exactly once, when anything was placed.** `place()` only
 remembers; `start()` is what builds. A file that places fifty blocks and never
@@ -59,7 +59,7 @@ asks whether the program crashed.
 **No raw Ursina, anywhere.** Spec 4 measured that 9 of 9 engine-touching lines a
 learner would write are vocabulary they have not earned, and the shim exists to
 be a validating boundary. `Entity(`, `from ursina` and `import ursina` fail this
-run wherever they appear under `sessions/`, `exercises/` or `reference/`. The
+run wherever they appear under `practices/`, `exercises/` or `reference/`. The
 match is deliberately blunt: prose in a docstring saying "never write `Entity(`"
 trips it too, and it should, because the phrase has no business in an area whose
 whole argument is that the learner never sees it.
@@ -73,13 +73,13 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).parent
-SEARCH = (ROOT / "sessions", ROOT / "reference")
+SEARCH = (ROOT / "practices", ROOT / "reference")
 LIB = ROOT.parent / "lib"
 
 # Every directory whose Python is subject to the raw-Ursina ban. `exercises/`
 # joins the two searched directories because hidden tests are Python too, and a
 # test that reached past the shim would be checking the wrong thing entirely.
-NO_RAW_URSINA = (ROOT / "sessions", ROOT / "exercises", ROOT / "reference")
+NO_RAW_URSINA = (ROOT / "practices", ROOT / "exercises", ROOT / "reference")
 
 # Mirrors the area 0-3 entries of packages/content/src/concepts.ts. Kept here as
 # a literal on purpose: this directory must stay runnable with nothing but
@@ -321,26 +321,26 @@ def raw_ursina_hits() -> list[str]:
     return hits
 
 
-def in_session_order(path: pathlib.Path) -> tuple[str, int, str]:
-    """Sort key that puts session-2 before session-10, which plain sorting does not."""
+def in_practice_order(path: pathlib.Path) -> tuple[str, int, str]:
+    """Sort key that puts practice-2 before practice-10, which plain sorting does not."""
     top = path.relative_to(ROOT).parts[0]
-    numbered = re.fullmatch(r"session-(\d+)", path.parent.name)
+    numbered = re.fullmatch(r"practice-(\d+)", path.parent.name)
     return (top, int(numbered.group(1)) if numbered else 0, path.name)
 
 
 def main() -> int:
     files = sorted((f for d in SEARCH if d.exists() for f in d.rglob("*.py")),
-                   key=in_session_order)
+                   key=in_practice_order)
     if not files:
         print("no exercises found -- that is not a pass, it is a missing tree")
         return 1
 
     failures = 0
-    session = None
+    practice = None
     for path in files:
-        if path.parent.name != session:
-            session = path.parent.name
-            print(f"\n{session}")
+        if path.parent.name != practice:
+            practice = path.parent.name
+            print(f"\n{practice}")
         ok, note = check(path)
         if not ok:
             failures += 1
@@ -357,7 +357,7 @@ def main() -> int:
     if reached:
         print(f"{len(reached)} file(s) reached past the shim. The cap is {BLOCK_CAP} blocks.")
 
-    # Session 8's debugger rung is a thing done in an editor, and there is nothing in
+    # Practice 8's debugger rung is a thing done in an editor, and there is nothing in
     # "set a breakpoint and read the Variables panel" for a harness to execute. Area 2's
     # harness earned this rule: a run that silently ignores what it cannot cover is worse
     # than one that says so out loud, because the number at the bottom then means less

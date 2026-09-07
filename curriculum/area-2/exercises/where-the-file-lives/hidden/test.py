@@ -9,7 +9,7 @@ Area 2 test files.
 The whole quest is one idea -- a file is somewhere, and running it depends on where you
 are standing -- so the assertions are about the filesystem and about a subprocess, and
 none of them are about how clever the Python is. Two lines of `print` would pass, and
-should: session 5's subject is not the program.
+should: Practice 5's subject is not the program.
 """
 
 import os

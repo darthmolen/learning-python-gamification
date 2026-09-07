@@ -93,70 +93,85 @@ browser reached the API.
 
 ### What makes the browser talk to the API
 
-`compose/web.yml` sets `VITE_API_URL=http://localhost:${API_PORT:-3081}`, and that is **the only
-place in the repository it is set**. `apps/web/src/gateway/index.ts` reads it and treats an
-absent value as "answer from fixtures", which is how the SPA is developed on a train with no
-database and how `vitest run --project web` stays hermetic. So it must not be added to `.env`,
-and it must not become a default in the gateway.
+**Nothing, and that is the design.**
 
-The value is the address **the browser** can reach. `http://api:3081` would resolve on the
-compose network and mean nothing to Chrome on the host — Vite inlines the value into the bundle
-and it is evaluated in the browser, not in the container.
+The SPA asks for `/api/...` — a relative URL — and `apps/web/Caddyfile` in the `web` container
+serves the build and proxies `/api/*` to `api:3081` over the compose network. The SPA and the api
+answer on **one origin**, so the browser resolves the api's address to whatever host it already
+used to load the page.
 
-The api answers CORS for loopback, the RFC 1918 ranges and `*.local` (`corsOrigin` in
-`apps/api/src/server.ts`). The SPA on 3082 and the api on 3081 are cross-origin, so without that
-every request fails in a way that looks exactly like the api being down.
+Open the SPA at `localhost:3082`, at this machine's LAN name, at its raw address, or one day at a
+real domain over https: every one of those works, simultaneously, from the same image, with nothing
+configured and no rebuild.
 
-### Reaching it from the son's laptop
+`api:3081` in the Caddyfile is Docker's internal DNS name and the container-internal port. It is
+**not** `${API_PORT}` — that publishes a host port for `curl` and the e2e suite, and the proxy hop
+never touches it. The port the api listens on is never on a wire the browser can see, which is why
+there is nothing to keep in sync.
 
-§6.4 puts the api on the parent's machine and the code on his, so the browser is often not on
-this host. Both services already bind all interfaces, and the CORS allowance already covers
-private addresses, so the two things to change are the address and the firewall:
+This replaced `VITE_API_URL`, which Vite inlined into the bundle at build time. Its value was
+`http://localhost:3081` — correct in exactly one browser, the one on this machine. §6.4 puts the
+api here and the learner's code on his own laptop, so the SPA served to him told **his** browser to
+call **his** localhost. No value could have been right for both machines; the answer turned out not
+to be a better value but no value.
 
-```sh
-# infra/.env
-API_PORT=3081        # unchanged; the port is fine
+`VITE_API_LIVE` is what remains, and it is a **boolean**. Fixtures-versus-live is a property of the
+*build*, which is what build-time env is for; an address is a property of the environment, and
+there is no longer anywhere to put one. Only `apps/web/Dockerfile` sets it. Absent — `npm run dev`,
+`vitest` — the gateway answers from fixtures, which is how the SPA is developed on a train with no
+database and how `vitest run --project web` stays hermetic. Do not add it to `.env`: nothing would
+read it.
+
+CORS no longer sits on the SPA's path at all. `corsOrigin` in `apps/api/src/server.ts` stays for
+host-mode dev and direct `curl` and is still correct, but same origin means no preflight and no
+`access-control-allow-origin` to get wrong.
+
+### Reaching it from the learner's laptop
+
+§6.4 puts the api here and the code on his machine, so the browser is often not on this host.
+
+There is **no address to configure** — see above. One thing is left, and it is the firewall:
+
+```powershell
+# elevated, once. Installs the sign-in autostart too.
+powershell -NoProfile -ExecutionPolicy Bypass -File infra\install-autostart.ps1
 ```
 
-Set `VITE_API_URL` for that case by overriding it on the `web` service — it must name **this
-machine**, e.g. `http://192.168.4.102:3081`, because the browser resolves it, and `localhost` on
-his laptop is his laptop. A Windows Firewall rule for 3081 and 3082 is required, the same as for
-Gitea's 3080 and 3022.
+That opens 3082 and Gitea's 3080/3022 inbound, scoped to the Private profile and the local subnet.
+It deliberately does **not** open 3081: the api is loopback-only, and his browser reaches it
+through the proxy on 3082.
+
+Then open `http://<this-machine>:3082` from his laptop. If the `.local` name does not resolve from
+there, the raw address works immediately and with no rebuild — the SPA follows whatever host
+reached it. Pair a `hosts` entry with a DHCP reservation on the router, or the address in it goes
+stale.
 
 ### It says the api is down
 
 In order of how often it is the answer:
 
-1. **`--profile api` is not up.** `VITE_API_URL` is set unconditionally by `web.yml`, so the SPA
-   stops falling back to fixtures the moment the web container starts. Web without api is failed
-   fetches, not fixtures. That is deliberate — a screen silently showing fixtures when you asked
-   for live data is the worse failure — but it is the first thing to check.
+1. **`--profile api` is not up.** The web container proxies to `api:3081`; with nothing behind it,
+   `/api/*` answers **502** and the SPA reports failed resources. That is deliberate — a screen
+   silently showing fixtures when you asked for live data is the worse failure — and a 502 is far
+   easier to read than the CORS error this same outage used to produce.
 2. **Nothing is seeded.** See step 3 above. `404` on player routes, `200` on `/api/tome`.
-3. **A CORS refusal.** It looks identical to a dead server in the console. `curl -i -H 'Origin:
-   http://localhost:3082' http://localhost:3081/api/tome` must echo
-   `access-control-allow-origin: http://localhost:3082`.
+3. **The file server answered instead of the api.** Check the content type, never the status:
+
+   ```sh
+   curl -s -o /dev/null -w '%{content_type}\n' http://localhost:3082/api/tome
+   # application/json  -> the api answered
+   # text/html         -> it fell through to the SPA fallback
+   ```
+
+   The Caddyfile's `try_files` fallback returns **200** for anything unmatched, so the SPA can own
+   its client-side routes — which means a broken `handle /api/*` block still answers 200 to every
+   api call and looks healthy to a status check. `smoke.sh` step 4e asserts the content type for
+   exactly this reason, and a seeded mutant confirmed it: `status=200 type=text/html`.
 
 To develop the SPA against fixtures, do not run the container — run `npm run dev --workspace
-@pyquest/web` from `pyquest/` with no `VITE_API_URL` in the environment. That path is checked:
-with the api process killed outright, the gateway still answered every call from fixtures.
-
-### The Windows gap
-
-**`api`, `web` and `migrate` do not start on a Windows host**, and this is recorded rather than
-fixed — see the block at the top of `compose/api.yml`. `npm install` on Windows writes
-`pyquest/node_modules/@pyquest/*` as symlinks to absolute Docker-VM paths, which do not resolve
-inside a container that mounts only `/workspace`, so `import '@pyquest/contract'` fails before
-any of our code runs. All three fragments share it and the fix is one decision for all three: a
-Dockerfile that installs dependencies for Linux, the way `apps/runner` already has.
-
-Until then, run those two on the host, which is what the ports above are mapped to anyway:
-
-```sh
-# from pyquest/, with DATABASE_URL and CONTENT_ROOT set (CONTENT_ROOT is the REPOSITORY root,
-# the directory holding curriculum/ and game/ — the api resolves both underneath it)
-npm run start --workspace @pyquest/api
-VITE_API_URL=http://localhost:3081 npm run dev --workspace @pyquest/web -- --host 0.0.0.0 --port 3082
-```
+@pyquest/web` from `pyquest/`. `VITE_API_LIVE` is unset there, so the gateway answers from
+fixtures. That path is checked: with the api process killed outright, the gateway still answered
+every call from fixtures.
 
 ## Ports
 
@@ -165,8 +180,8 @@ VITE_API_URL=http://localhost:3081 npm run dev --workspace @pyquest/web -- --hos
 | postgres | **5433** | 5432 | `127.0.0.1` only | Only the `api` talks to it, and the `api` runs on this host. |
 | gitea HTTP | **3080** | 3000 | all interfaces | §6.4 makes `git push` the verification mechanism; learners push from their own machines. |
 | gitea SSH | **3022** | 22 | all interfaces | Same reason. |
-| api | **3081** | 3081 | all interfaces | The SPA fetches from it, and §6.4 puts the son's browser on another machine. |
-| web | **3082** | 3082 | all interfaces | The Vite dev server. Same reason. |
+| api | **3081** | 3081 | `127.0.0.1` only | Nothing off this machine dials it: `web` is its front door and proxies over the compose network. What is left is `curl`, `npm run e2e` and `smoke.sh`, all of which run here. |
+| web | **3082** | 3082 | all interfaces | The one port a browser uses. It serves the SPA *and* carries `/api/*` to the api, so §6.4's other machine needs this and nothing else. |
 
 **Postgres is on 5433, not 5432, on purpose.** This machine already runs an unrelated
 `ec-postgres` container on 5432. All six ports above were probed free before being chosen, and
@@ -407,6 +422,50 @@ drive that leaves the house, encrypt it.
 `GITEA_SECRET_KEY` signs sessions and encrypts stored tokens. Changing it invalidates every
 session and every stored OAuth token, so generate it once and keep it.
 
+## No command — starting at sign-in
+
+The stack is supposed to be there without anybody remembering it. Two mechanisms, because one is
+not enough:
+
+| Mechanism | Covers | Does not cover |
+|---|---|---|
+| `restart: unless-stopped` on every long-running service | the daemon restarting, and a reboot | a container that was **removed** — which `docker compose … down` does — and migrations |
+| `infra\autostart.cmd`, from the Startup folder | everything, including a cold start and the migration job | a machine nobody signs in to |
+
+Install both:
+
+```powershell
+# elevated, once. Firewall rules need administrator; the shortcut does not.
+powershell -NoProfile -ExecutionPolicy Bypass -File infra\install-autostart.ps1
+
+# and to undo it
+powershell -NoProfile -ExecutionPolicy Bypass -File infra\install-autostart.ps1 -Uninstall
+```
+
+It writes a shortcut to `autostart.cmd` into `shell:startup` (runs minimized) and opens the LAN
+ports. It refuses to run from a git worktree, because a Startup shortcut into one points at a
+directory that vanishes when the branch merges — that mistake was made once already.
+
+`autostart.cmd` waits up to 300s for the Docker daemon, runs `start-full.cmd` into
+`infra\logs\autostart.log` (previous boot kept as `autostart.prev.log`), and on failure raises a
+desktop notification naming that log. It waits with `ping`, never `timeout`: `timeout` reads the
+console and dies on redirected stdin, which is exactly what a Startup shortcut hands it.
+
+**Sign-in, not boot.** Docker Desktop is a desktop application and starts when a user signs in, so
+a boot-time trigger would poll a daemon that is never coming. §6.4's availability is an arrangement
+— the machine stays on, signed in, locked — and the goal is that nothing has to be *typed*, not
+that nobody has to sign in.
+
+### Why this exists
+
+On 2026-09-06 `api`, `runner` and `web` all exited 255 at the same instant — the Docker daemon
+stopping, not a crash; the api's last log line was a healthy `/health` 200 — and stayed down, while
+postgres and gitea came back because only they carried a restart policy. Nothing noticed until
+somebody opened the SPA. `smoke.sh` step 4d now asserts the policy on each container, reading
+`docker inspect` rather than the compose file: the policy is baked into a container's `HostConfig`
+at **create** time, so editing YAML without `--force-recreate` leaves a stale container behind a
+correct-looking file.
+
 ## One command
 
 ```
@@ -457,10 +516,16 @@ Two things it does deliberately:
 
 ## Two things that will bite
 
-**`VITE_API_URL` is baked in at build time.** Vite inlines it into the bundle, so the SPA's idea of
-where the api lives is fixed when `bounce.cmd web` runs — not when the container starts. Setting it
-under `environment:` in compose would be read by nothing and change nothing. The day the api moves
-to a different port or a LAN address, the web image needs rebuilding rather than restarting.
+**A broken proxy answers 200.** `apps/web/Caddyfile` ends in `try_files {path} /index.html` so the
+SPA owns its own routes and `/area/3/quest/a3-recipe-book` survives a reload. That fallback catches
+*everything* unmatched — so if the `handle /api/*` block is broken or missing, every api call gets
+the SPA shell with a **200 status**, and any check reading status codes calls the stack healthy.
+Assert on the content type. `smoke.sh` step 4e does; a seeded mutant returned `status=200
+type=text/html`, which is precisely the shape of the trap.
+
+*(This section used to warn that `VITE_API_URL` was baked into the bundle at build time. It no
+longer exists — the SPA derives the api from the origin that served it. See "What makes the browser
+talk to the API".)*
 
 **An old `runner_spool` volume keeps its old ownership.** Docker creates a named volume
 `root:root 0755` and seeds it from the image only when it is *first* created. The api and the

@@ -1,6 +1,6 @@
 # The Type Lab
 
-Session 4 gave you four kinds of thing and one instrument for asking which is which:
+Practice 4 gave you four kinds of thing and one instrument for asking which is which:
 `type(x)`. This is the four questions from the end of that session, and every one of them
 is a `print` away.
 

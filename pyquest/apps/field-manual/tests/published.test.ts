@@ -86,12 +86,12 @@ describe('what the learner artifact may not contain', () => {
 
   /**
    * `reference/` holds worked solutions and an answers file. The reader walks `exercises/` and
-   * `sessions/` only, so exclusion is by construction — this is the test that keeps it true
+   * `practices/` only, so exclusion is by construction — this is the test that keeps it true
    * when somebody later adds a directory walk.
    *
    * **The learner site only.** The first version of this asserted over both and failed, and it
    * was the test that was wrong: the DM guide tells whoever is teaching to read
-   * `reference/session-6-answers.md` before session 6, which is exactly what that document is
+   * `reference/practice-6-answers.md` before Practice 6, which is exactly what that document is
    * for. Pointing a teacher at the answers is the guide doing its job; the rule being kept here
    * is that the *learner* is never pointed at them.
    */

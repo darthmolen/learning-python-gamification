@@ -2,15 +2,25 @@ import { NavLink } from 'react-router';
 import { color, font, metric } from '../design/tokens';
 
 /**
- * The six overland destinations (§6.8). They are "true wherever you are standing, so they are
+ * The overland destinations (§6.8). They are "true wherever you are standing, so they are
  * always one click away and never nested" — which is why this list is flat, fixed, and has no
- * conditional members. A seventh entry would mean something was promoted out of the place it
- * belongs to; a fifth would mean something became unreachable.
+ * conditional members. A fifth would mean something became unreachable.
+ *
+ * **HOW-TO is the seventh, and it is admitted rather than excepted (ADR 0008).** The rule the
+ * original six were counted against is that nothing belonging to a *place* may be promoted out
+ * of it: Quests is a section of an area, not a rail item, because you cannot be in Quests
+ * without being somewhere. HOW-TO belongs to no place. It has no parent area and no parent
+ * screen, so there is nothing for it to be promoted out of — and confusion is the one thing in
+ * this product that is genuinely location-independent, which is the strongest claim any item
+ * here can make to §6.8's own test.
+ *
+ * It sits last on purpose. A learner reaches for it when something has gone wrong, and the
+ * end of a list is where you look for help.
  *
  * The icons are the artboards' own inline SVGs, copied rather than matched from an icon set.
  * A library's nearest equivalent is a different drawing, and these are drawn to sit together.
  */
-export type RailKey = 'map' | 'tome' | 'defend' | 'party' | 'journal' | 'console';
+export type RailKey = 'map' | 'tome' | 'defend' | 'party' | 'journal' | 'console' | 'how-to';
 
 interface Destination {
   key: RailKey;
@@ -85,6 +95,29 @@ const DESTINATIONS: readonly Destination[] = [
     to: '/console',
     icon: (s) => (
       <path d="M3 6.5h14M3 13.5h14" fill="none" stroke={s} strokeWidth="1.5" strokeLinecap="round" />
+    ),
+  },
+  {
+    key: 'how-to',
+    label: 'How-To',
+    to: '/how-to',
+    /**
+     * A question mark, drawn in the same stroked style as its neighbours rather than set as a
+     * glyph — the rail's icons are one drawing at one weight, and a text `?` would read as a
+     * different object sitting in the same column.
+     */
+    icon: (s) => (
+      <>
+        <path
+          d="M7.4 7.4a2.6 2.6 0 1 1 3.4 2.5c-.5.2-.8.7-.8 1.2v.7"
+          fill="none"
+          stroke={s}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="10" cy="14.8" r="0.95" fill={s} />
+      </>
     ),
   },
 ];

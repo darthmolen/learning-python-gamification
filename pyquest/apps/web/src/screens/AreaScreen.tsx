@@ -1,8 +1,8 @@
-import { useCallback, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import type { AreaView } from '@pyquest/contract';
 import { color, font } from '../design/tokens';
-import { getArea } from '../gateway/index.ts';
+import { getArea, setPracticeCompleted } from '../gateway/index.ts';
 import { usePlayer } from '../session/SessionProvider.tsx';
 import { useResource } from '../gateway/useResource.ts';
 import { Awaiting } from '../shell/Loading';
@@ -99,7 +99,8 @@ function Area({ view }: { view: AreaView }) {
         aside={identity === undefined ? undefined : `weeks ${identity.weeks.from}–${identity.weeks.to}`}
       />
 
-      <div style={{ padding: '30px 40px 50px', overflow: 'auto' }}>
+      <div style={{ display: 'flex', flexGrow: 1, minHeight: 0 }}>
+      <div style={{ flexGrow: 1, minWidth: 0, padding: '30px 40px 50px', overflow: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '22px' }}>
           <Cube size={62} />
           <div style={{ minWidth: 0 }}>
@@ -219,6 +220,136 @@ function Area({ view }: { view: AreaView }) {
           )}
         </div>
       </div>
+
+      <PracticeSpine area={area} practices={view.practices} />
+      </div>
     </>
+  );
+}
+
+/**
+ * The practice spine — the order the work is done in, which this screen has never shown.
+ *
+ * The area's quest list is deliberately unordered: §5.2 gives any three of five and
+ * `a1-the-sigil.yml` refuses `requires` so the choice stays the learner's. That refusal is
+ * right, and its unnoticed consequence was that the screen then showed *no* order at all,
+ * because the only sequence in the curriculum lived in session plans the learner never opens.
+ * This panel is that sequence, and nothing more than that.
+ *
+ * **Nothing here gates anything.** No locks, no greying by prerequisite, no "do this first".
+ * An unticked practice blocks no quest and a ticked one unlocks nothing — §5.2, ADR 0002 and
+ * the Tome's "every page is open from day one" all say the same thing, and a checklist screen's
+ * first instinct is to make the next row conditional.
+ *
+ * **No weeks.** Per-practice weeks do not exist in the content and must not be invented here
+ * (ADR 0002's amendment). The area's range is already on the crumb bar, where the game may
+ * say it.
+ */
+function PracticeSpine({ area, practices }: { area: number; practices: AreaView['practices'] }) {
+  const playerId = usePlayer();
+  /**
+   * Ticks held here as well as on the server.
+   *
+   * Optimistic on purpose: a checkbox that waits for a round trip before it looks ticked feels
+   * broken, and nothing downstream depends on the value — no quest is gated on it, so a tick
+   * that fails to save costs a re-tick and nothing else. On failure it goes back, so the box
+   * never claims something the server did not accept.
+   */
+  const [ticks, setTicks] = useState<Readonly<Record<number, boolean>>>({});
+
+  // An area whose practices.yml is not authored yet draws no panel at all, rather than a
+  // heading over nothing. Areas 3 to 7 are in that state today.
+  if (practices.length === 0) return null;
+
+  const isDone = (p: AreaView['practices'][number]): boolean => ticks[p.n] ?? p.completed;
+
+  const toggle = (n: number, next: boolean): void => {
+    setTicks((held) => ({ ...held, [n]: next }));
+    void setPracticeCompleted(playerId, area, n, next).catch(() => {
+      setTicks((held) => ({ ...held, [n]: !next }));
+    });
+  };
+
+  const done = practices.filter(isDone).length;
+
+  return (
+    <aside
+      aria-label="Practices"
+      style={{
+        width: '340px',
+        flexShrink: 0,
+        borderLeft: `1px solid ${color.border}`,
+        background: color.panel,
+        padding: '30px 26px',
+        overflow: 'auto',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '4px' }}>
+        <Eyebrow>Practices</Eyebrow>
+        <div style={{ flexGrow: 1 }} />
+        {/*
+          * §5.1a: cleared of total, never a bare number. The denominator here is the authored
+          * spine rather than an estimate, so it wears no tilde — unlike the quest count above,
+          * which does when the area is partial.
+          */}
+        <Mono>{`${String(done)} of ${String(practices.length)}`}</Mono>
+      </div>
+      <Mono style={{ display: 'block', color: color.muted, lineHeight: 1.7, marginBottom: '16px' }}>
+        The order the work is done in. Ticking one unlocks nothing — it is here so you can see
+        where you are.
+      </Mono>
+
+      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        {practices.map((practice) => (
+          <li
+            key={practice.n}
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '10px',
+              padding: '9px 10px',
+              background: isDone(practice) ? color.railActiveBg : 'transparent',
+              borderLeft: `2px solid ${isDone(practice) ? color.accentMid : color.border}`,
+            }}
+          >
+            {/*
+              * A real `<input type="checkbox">`, not a styled div. Space toggles it, Tab reaches
+              * it, and a screen reader calls it a checkbox — none of which a div gets back
+              * without reimplementing all three.
+              */}
+            <input
+              type="checkbox"
+              checked={isDone(practice)}
+              onChange={(event) => {
+                toggle(practice.n, event.target.checked);
+              }}
+              aria-label={`Practice ${String(practice.n)}, ${practice.title}`}
+              style={{ flexShrink: 0, accentColor: color.accent, cursor: 'pointer' }}
+            />
+            <Mono style={{ width: '16px', flexShrink: 0, color: color.muted }}>
+              {String(practice.n)}
+            </Mono>
+            <div style={{ flexGrow: 1, minWidth: 0 }}>
+              <div style={{ color: color.fg, fontSize: '13px' }}>{practice.title}</div>
+              {/*
+                * The line this whole plan exists for. A practice with no quest is not lesser
+                * work — it is DM-delivered, at the table, and the learner who only played the
+                * scored subset was skipping it without ever being told.
+                */}
+              <Mono style={{ display: 'block', marginTop: '3px', color: color.muted, fontSize: '10.5px' }}>
+                {practice.quests.length === 0
+                  ? 'worked at the table'
+                  : `${String(practice.quests.length)} ${practice.quests.length === 1 ? 'quest' : 'quests'}`}
+              </Mono>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <Mono style={{ display: 'block', marginTop: '18px', color: color.muted, lineHeight: 1.7 }}>
+        Practices marked <span style={{ color: color.secondary }}>worked at the table</span> carry
+        no quest and still count. <Link to="/how-to" style={{ color: color.accent }}>How this works</Link>
+      </Mono>
+    </aside>
   );
 }

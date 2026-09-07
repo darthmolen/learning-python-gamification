@@ -29,12 +29,12 @@ Unchanged from Area 0, plus one addition at the end that is specific to loops.
 
 | File | Unlocks | Notes |
 |---|---|---|
-| `r3_the_shrinking_line.py` | `s3e2` choice (c) | Two values changing at two rates in one `while` |
-| `r5_the_gatekeeper.py` | `s5e3` task 4 | The ladder decides; the loop draws. A bool with a job |
-| `r7_the_rosette.py` | `s7e3` choices (a) and (b) | The outer counter used, and band edges that survive a dial change |
-| `r8_the_ink_budget.py` | `s8e3` choices (b) and (c) | Two stop conditions, and the `and`/`or` swap that catches everyone |
-| `r9_mandala.py` | Session 9 | A complete, honest mandala. Whole, or not at all |
-| `session-6-answers.md` | The six broken loops | Read before session 6, not during |
+| `r3_the_shrinking_line.py` | `p3e2` choice (c) | Two values changing at two rates in one `while` |
+| `r5_the_gatekeeper.py` | `p5e3` task 4 | The ladder decides; the loop draws. A bool with a job |
+| `r7_the_rosette.py` | `p7e3` choices (a) and (b) | The outer counter used, and band edges that survive a dial change |
+| `r8_the_ink_budget.py` | `p8e3` choices (b) and (c) | Two stop conditions, and the `and`/`or` swap that catches everyone |
+| `r9_mandala.py` | Practice 9 | A complete, honest mandala. Whole, or not at all |
+| `practice-6-answers.md` | The six broken loops | Read before Practice 6, not during |
 
 Every one of these carries the same header tags as the exercises and is run by the same
 harness. They are checked code, not sketches.

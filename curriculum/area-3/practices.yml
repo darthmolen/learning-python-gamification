@@ -1,0 +1,83 @@
+# The spine of Area 3 — the order the work is done in, stored rather than described.
+#
+# A practice is the unit of work; a session is the unit of time (ADR 0007). The numbers here
+# are the numbers the practice plans already use, and the titles are the ones argued in
+# README.md under *The sessions*.
+#
+# **Every `exercises` list is empty, and that is the truth about this area today.** The five
+# quests, the breakpoints rung and Boss 3 are authored in the plan's Phase 4 and none of
+# their directories exist yet — `curriculum/area-3/exercises/` is not there at all. A slug
+# listed here has to resolve to a real directory or `practice-missing-exercise` fires, so
+# naming them ahead of the briefs would be writing a promise the tree cannot keep.
+#
+# The mapping is not lost while it waits. README.md's session table carries a `Quest` column
+# naming which item attaches to which practice, and the quest matrix in
+# `planning/in-progress/feature_area-3-collections_2026-08-28.md` carries the ids and DCs.
+# When a brief lands, its slug comes here at the same time — `unclaimed-exercise` enforces
+# that, because an exercise no practice claims is one nothing ever puts in front of a
+# learner.
+#
+# For the record, the intended pairing, from the quest matrix:
+#
+#     practice 2   the-inventory          practice 9    the-recipe
+#     practice 4   pick-it-up             practice 11   what-am-i-missing
+#     practice 6   the-hotbar             practice 13   the-crafting-table  (Boss 3)
+#     practice 8   set-a-breakpoint
+#
+# **Practice 13 is absent rather than empty.** Boss 3 has no plan file, because it is gated
+# on the Pygame Zero spike — see README.md, *Why practice 13 is not written*. Listing it
+# here would claim a practice that does not exist; the numbers run 1..12 with no gap, which
+# is what `practice-numbering` asks, and 13 is appended when it is written.
+area: 3
+practices:
+  - n: 1
+    title: The Row Of Blocks
+    exercises: []
+
+  - n: 2
+    title: The Inventory
+    exercises: []
+
+  - n: 3
+    title: It Changes
+    exercises: []
+
+  - n: 4
+    title: Pick It Up
+    exercises: []
+
+  - n: 5
+    title: Do I Have Enough
+    exercises: []
+
+  - n: 6
+    title: The Hotbar
+    exercises: []
+
+  - n: 7
+    title: A Coordinate Cannot Change
+    exercises: []
+
+  # The heaviest practice in the area: a dict and the debugger in one evening, which is the
+  # argument for the breakpoints rung being elective depth rather than one of the five.
+  - n: 8
+    title: Things By Name
+    exercises: []
+
+  - n: 9
+    title: The Recipe
+    exercises: []
+
+  - n: 10
+    title: A Bag With No Order
+    exercises: []
+
+  # Introduces nothing. Set subtraction beside the loop it replaces, which is the strongest
+  # argument available for the concept in front of it.
+  - n: 11
+    title: What Am I Missing
+    exercises: []
+
+  - n: 12
+    title: A Recipe Book
+    exercises: []

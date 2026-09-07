@@ -13,6 +13,7 @@ import {
   API_ROUTES,
   ApiErrorSchema,
   AreaViewSchema,
+  PracticeViewSchema,
   CampaignViewSchema,
   DrillResultSchema,
   JOB_STATES,
@@ -368,7 +369,7 @@ describe('the composite views', () => {
     ).toBe(false);
   });
 
-  it('gives the area screen its quests in one request', () => {
+  it('gives the area screen its quests and its practice spine in one request', () => {
     const view = {
       ...AREA_CARD,
       playerId: 'p1',
@@ -382,8 +383,35 @@ describe('the composite views', () => {
           status: 'available',
         },
       ],
+      /**
+       * Two practices, one of which carries no quest. That second row is the case the spine
+       * exists for — a practice worked at the table is still work, and a shape that could not
+       * express it would push the screen back to showing only the scored subset.
+       */
+      practices: [
+        { n: 1, title: 'First Light', exercises: [], quests: [], completed: true },
+        {
+          n: 2,
+          title: 'The Machine Asks',
+          exercises: ['name-tag'],
+          quests: ['a0-name-tag'],
+          completed: false,
+        },
+      ],
     };
     expect(AreaViewSchema.safeParse(view).success).toBe(true);
+  });
+
+  /**
+   * The spine is ordering, not gating. Nothing in the shape may imply otherwise — §5.2 lets him
+   * clear any three quests he chooses and ADR 0002 refuses pace judgement — so `.strict()` is
+   * what keeps a `locked` or `dueOn` from being added to a practice row later without argument.
+   */
+  it('refuses a practice row carrying a lock or a date', () => {
+    const practice = { n: 1, title: 'First Light', exercises: [], quests: [], completed: false };
+    expect(PracticeViewSchema.safeParse(practice).success).toBe(true);
+    expect(PracticeViewSchema.safeParse({ ...practice, locked: true }).success).toBe(false);
+    expect(PracticeViewSchema.safeParse({ ...practice, dueOn: '2026-09-06' }).success).toBe(false);
   });
 
   it('returns concepts by area from the Tome and no progress at all (plan v3)', () => {

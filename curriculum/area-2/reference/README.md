@@ -9,7 +9,7 @@ and not a failure. The five rules that come with using one are in Area 0's
 
 ## What is deliberately not here
 
-**Nothing for sessions 1–4, and that is not an oversight.**
+**Nothing for Practices 1–4, and that is not an oversight.**
 
 A git walkthrough's answer is the next line of the walkthrough. There is no reference
 solution to unlock for "make a commit, then read the log", because the walkthrough already
@@ -25,7 +25,7 @@ conflict markers themselves, which are already in his file.
 
 ## What is here, and it is all 2b
 
-Sessions 5–8 are a different matter, because from session 5 there are right answers that
+Practices 5–8 are a different matter, because from Practice 5 there are right answers that
 are not obvious from the walkthrough.
 
 ### `its-own-python/` — the worked venv project
@@ -35,17 +35,17 @@ are not obvious from the walkthrough.
 commands that build the environment it needs.
 
 **Unlock it only after he has built a venv of his own and failed at it**, which is the
-normal Datamine rule and matters more here than usual — the value of session 7 is entirely
+normal Datamine rule and matters more here than usual — the value of Practice 7 is entirely
 in the `ModuleNotFoundError` he causes himself.
 
 Its README also records the measured version of the two-interpreter trap, including the
 part that catches adults: **inside an activated environment, `py -3.14` is not the
 environment.**
 
-### `session-8-answers.md` — the traceback answer key
+### `practice-8-answers.md` — the traceback answer key
 
-In the shape of Area 0's `session-3-answers.md`, and used the same way: **read it before
-session 8, never in front of him.** Every traceback in it was captured by running the file
+In the shape of Area 0's `practice-3-answers.md`, and used the same way: **read it before
+Practice 8, never in front of him.** Every traceback in it was captured by running the file
 on Python 3.14.6, and it carries the six written answers the walkthrough asks for.
 
 This is the one payload in the area that is for the DM rather than for unlocking. There is

@@ -681,3 +681,59 @@ says it, and `s8e2_the_key_that_is_not_there.py` is left as a ready-made example
   writes the pre-split layout, and `fixtures-agree.test.ts` hard-codes five invented `a3-`
   ids that do not match the matrix.
 - **`lesson.draft.md` stays a draft.** Twelve sessions is not thirteen.
+
+---
+
+## Status — 2026-09-06, the practice rename
+
+**Caught up to `main`'s ADR 0007 rename.** Instructions came from
+`planning/reminders/completed/follow-up_rename-area-3-sessions-to-practices_2026-09-06.md`,
+which is now closed with the full record.
+
+`sessions/` → `practices/`, 40 paths moved with `git mv`, 26 drills from `s<n>e<m>` to
+`p<n>e<m>`, 228 reference lines rewritten across 45 files, and `practices.yml` added. Every
+`exercises` list in it is empty, because `curriculum/area-3/exercises/` does not exist yet —
+the quests are this plan's Phase 4, and a slug listed before its directory fails
+`practice-missing-exercise`. Practice 13 is absent rather than empty; the numbers run 1..12.
+
+Both spine rules were seeded and watched to fail against Area 3 before being trusted.
+
+### The merge was clean and wrong
+
+`SEARCH` had been repointed at `sessions` by this plan's own harness fix; `main` moved that
+directory. Git saw edits to different files and merged them without a murmur. Afterwards
+`curriculum/area-0/verify.py` reported **2 of 2 and passed**, having found only
+`reference/` — a green gate measuring almost nothing, which is the exact failure the fix
+existed to repair, arriving by a different road. All four harnesses now read `practices`.
+
+**A clean merge is not a correct merge, and only running the thing showed the difference.**
+
+### Two defects found in the shipped rename
+
+Both in `curriculum/area-1/verify.py`, both fixed here because reconciling this collision is
+this track's job:
+
+1. The sort key was dead — `re.fullmatch(r"session-(\d+)", …)` matches no `practice-N`, so
+   output order had collapsed to `practice-6, practice-10, practice-1, …` while its
+   docstring still claimed otherwise.
+2. A half-renamed sentence: *"Session 3 and Practice 6 each ship a loop…"*
+
+Internal identifiers in areas 0–2 were left alone on purpose — another track's file, and
+`main` chose not to rename them.
+
+### One break inherited from `main`, not fixed here
+
+`pyquest/packages/db/tests/schema.test.ts` fails: PR #5 added
+`migrations/0007-practice-progress.sql`, which creates `practice_progress`, and the test's
+expected table list was never updated. **This branch has not touched `pyquest/` at all** —
+`git diff main -- pyquest/` is empty — and Lane A is out of this plan's scope. The fix is one
+string in that array. Reported rather than taken.
+
+### Verified
+
+```console
+area-0 19/19   area-1 35/35   area-2 13/13   area-3 28/28 (+1 walkthrough uncovered)
+ruff curriculum/area-3/   clean          pyright   5, all argued in README.md
+validate:content          OK, 23 items   validate:plans   OK, 122 documents
+npx vitest run            72 of 73 files pass; the one failure is main's, above
+```

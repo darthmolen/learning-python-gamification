@@ -1,6 +1,6 @@
 # Journal — the first entry
 
-Read this out loud before the first entry is written. Once, at the end of session 1. It
+Read this out loud before the first entry is written. Once, at the end of Practice 1. It
 never needs reading again.
 
 ---
@@ -89,7 +89,7 @@ rather than one per session.
 Each entry opens with a dated heading, copied out of the template:
 
 ```markdown
-## 2026-08-31 — Session 01
+## 2026-08-31 — Practice 01
 ```
 
 **The date format is not cosmetic.** The game reads those headings to tell one entry from the

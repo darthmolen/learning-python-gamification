@@ -3,19 +3,19 @@
 **Weeks 9–14. Thirteen sessions of 45–60 minutes.**
 Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Area 3.
 
-Read this before session 1. §2 has to be done before session 1 and takes an evening on its
+Read this before practice 1. §2 has to be done before practice 1 and takes an evening on its
 own. §3 is the one section worth rereading mid-area, because it is the section that stops
 you designing something the shim cannot do.
 
-This guide covers **sessions 1–12** — lists through nested structures. Session 13 is Boss 3
-and is gated on the Pygame Zero spike; `README.md` says why. Nothing in sessions 1–12 waits
+This guide covers **practices 1–12** — lists through nested structures. Practice 13 is Boss 3
+and is gated on the Pygame Zero spike; `README.md` says why. Nothing in practices 1–12 waits
 on it.
 
 ---
 
 ## 1. What is different about the shape of a session
 
-Three things change in this area, and all three change on session 1.
+Three things change in this area, and all three change on practice 1.
 
 **The picture is no longer the point, and it is still on screen.** Areas 0 and 1 drew with
 turtle, and the drawing *was* the answer — a hexagon with five sides was visibly wrong.
@@ -35,11 +35,11 @@ number they chose. Do not apologize for it. Ask what they think it is doing.
 first line of most files in this area. It is one line, it is Area 2b vocabulary, and it is
 the beginning of a thread that runs to Boss 5: this file comes down on a schedule, half of
 it is readable to them today, and the schedule is written in `curriculum/lib/README.md`.
-Say that once, in session 1, and then leave it alone.
+Say that once, in practice 1, and then leave it alone.
 
 ---
 
-## 2. Setup, once, before session 1
+## 2. Setup, once, before practice 1
 
 **Install ursina on both machines, pinned.**
 
@@ -138,7 +138,7 @@ win.
 Each one is a thing that will actually happen, with the question to ask. Ask the question.
 Do not give the answer — §3 principle 6, and it is the whole job.
 
-### Session 1 — The Row Of Blocks
+### Practice 1 — The Row Of Blocks
 
 **Nothing appears, and there is no error.** They called `place()` in a loop and never
 called `start()`. This is the signature Area 3 bug and it arrives in the first fifteen
@@ -164,10 +164,10 @@ and it is not an error. The row is one block long.
 `print(len(inventory))` answers it, and this is the first time `len` earns its place.
 
 **They want a second row and write the whole thing again.** Let them, once. The nested loop
-is session 7 in Area 1 and they have it; what they do not yet have is a reason to want it
+is practice 7 in Area 1 and they have it; what they do not yet have is a reason to want it
 here. Copy-paste is the reason.
 
-### Session 2 — The Inventory
+### Practice 2 — The Inventory
 
 **`inventory[3]` on a three-item list.** `IndexError`, and it is the good kind of error:
 loud, immediate, and correct.
@@ -186,7 +186,7 @@ better when they say it than when you do.
 **Negative indexing looks like a trick.** It is not, and the way to sell it is a problem
 rather than a rule: *"give me the last block, without knowing how long the list is."*
 
-### Session 3 — It Changes
+### Practice 3 — It Changes
 
 **`x = inventory.sort()` and now `x` is `None`.** This costs everybody an evening once.
 
@@ -207,14 +207,14 @@ that there was only ever one list.
 **They expect `append` to hand back a new list.** Same family as the `sort` stall, and the
 same question works.
 
-### Session 4 — Pick It Up
+### Practice 4 — Pick It Up
 
 **`remove()` on something that is not there.** `ValueError`, and the message is good.
 
 > "What does the error say it was looking for? Is it in the list? How would you check
 > before asking?"
 
-That is the first natural reason to want `in`, which is session 5's material arriving one
+That is the first natural reason to want `in`, which is practice 5's material arriving one
 session early because they asked for it. Let it.
 
 **`pop()` and `remove()` get mixed up.** One takes a position, one takes a value.
@@ -228,7 +228,7 @@ skipped. Nothing crashes. The list is just quietly wrong.
 
 This is the second silent failure of the area and it is worth ten minutes.
 
-### Session 5 — Do I Have Enough
+### Practice 5 — Do I Have Enough
 
 **`sorted(x)` versus `x.sort()`.** They use one and expect the other's behavior.
 
@@ -240,10 +240,10 @@ is about `str` and `int` not being comparable.
 
 > "What would it even mean for a word to be smaller than a number?"
 
-**`in` feels too easy.** It is. Let it be. The payoff is session 4's `remove()` crash never
+**`in` feels too easy.** It is. Let it be. The payoff is practice 4's `remove()` crash never
 happening again, and they should notice that themselves.
 
-### Session 6 — The Hotbar
+### Practice 6 — The Hotbar
 
 **`[0:9]` gives nine things and they expected ten.** Same stopping rule as `range`, third
 time of asking.
@@ -252,7 +252,7 @@ time of asking.
 > rule?"
 
 **A slice past the end does not crash.** `inventory[0:99]` on a three-item list gives three
-items and no error — which is genuinely surprising after session 2's `IndexError`.
+items and no error — which is genuinely surprising after practice 2's `IndexError`.
 
 > "Indexing past the end exploded. Slicing past the end did not. What is different about
 > what you asked for?"
@@ -263,7 +263,7 @@ The answer worth reaching: an index asks for *a thing that must exist*; a slice 
 **They slice and then wonder why the original is unchanged.** Good — that is the lesson.
 Ask what they expected and why.
 
-### Session 7 — A Coordinate Cannot Change
+### Practice 7 — A Coordinate Cannot Change
 
 **Assigning into a tuple.** `spawn[0] = 5` is a `TypeError`, and the message says `'tuple'
 object does not support item assignment`.
@@ -285,7 +285,7 @@ The immovability is a promise to whoever reads it later — which by Area 7 is t
 idea, and no quest of its own. Do not pad it. If the session runs short, that is what the
 choice board is for.
 
-### Session 8 — Things By Name
+### Practice 8 — Things By Name
 
 **`KeyError` on a typo, and the message is no help.** It names the key and stops. What they
 want to know is what *was* in the dict, which it does not say.
@@ -307,7 +307,7 @@ see the session plan's *What has to be true*. Fix it quickly and move on.
 
 > "It is waiting for you. Type `p` and the name of anything in the program."
 
-### Session 9 — The Recipe
+### Practice 9 — The Recipe
 
 **`for name, amount in recipe:` without `.items()`.** The unpacking error is not obvious.
 
@@ -330,7 +330,7 @@ should always exist. That hides a broken recipe book instead of reporting it.
 
 > "If the stick were missing from this recipe, would you want to know?"
 
-### Session 10 — A Bag With No Order
+### Practice 10 — A Bag With No Order
 
 **The set that did not keep its order.**
 
@@ -352,7 +352,7 @@ should always exist. That hides a broken recipe book instead of reporting it.
 **Do not lead with performance.** A set is the shape for *which ones*, not "the fast one". A
 learner who picks it for speed picks it where order mattered.
 
-### Session 11 — What Am I Missing
+### Practice 11 — What Am I Missing
 
 **`have - need` when they wanted `need - have`.**
 
@@ -370,7 +370,7 @@ learner who picks it for speed picks it where order mattered.
 
 > "What is `counts.get(thing, 0)` when the thing has never been seen? Now add one."
 
-### Session 12 — A Recipe Book
+### Practice 12 — A Recipe Book
 
 **One bracket too few, or one too many.**
 
@@ -424,14 +424,14 @@ The fourth prompt — *what will break next time* — is read back at the start 
 session, which is Beat 2.
 
 Their `journal.md` already lives in their own repository and is committed and pushed, since
-Area 2a session 2. Nothing about that changes here and there is no `journal/` directory in
+Area 2a practice 2. Nothing about that changes here and there is no `journal/` directory in
 this area; Area 0's template is still the only copy.
 
 Two additions worth asking for in this area specifically:
 
-- **The session-3 entry names the two-names-one-list moment**, in their own words. It is the
+- **The practice-3 entry names the two-names-one-list moment**, in their own words. It is the
   first time this year that a thing was true and invisible at the same time.
-- **The session-6 entry states the slicing stopping rule**, written out. Third encounter with
+- **The practice-6 entry states the slicing stopping rule**, written out. Third encounter with
   that rule, and writing it is what makes the third one the last.
 
 Your reply goes in two places, as it has since Area 2: a line under their entry, and a
@@ -454,7 +454,7 @@ not. `print(len(...))` is always available and it is theirs to type.
 
 ## 8. What you are actually being graded on
 
-Not whether they finish thirteen sessions. Whether, by session 13, they reach for a list
+Not whether they finish thirteen sessions. Whether, by practice 13, they reach for a list
 when a problem has an order in it and a dict when a problem has names in it, and can say
 why the other one would have been worse.
 

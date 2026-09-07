@@ -1,4 +1,4 @@
-"""Datamine payload — s7e3 choice board a and b: growing copies, own color each.
+"""Datamine payload — p7e3 choice board a and b: growing copies, own color each.
 
 Unlocks: s7e3_the_rosette.py, choices (a) and (b) together.
 
@@ -66,7 +66,7 @@ print("ink used    :", ink, "pixels")
 #    which version still works when `copies` changes. That is the difference
 #    between a drawing and a generator and it is the whole of Boss 1.
 #
-# 3. `ink` is the accumulator from session 8 arriving one session early, in the
+# 3. `ink` is the accumulator from Practice 8 arriving one session early, in the
 #    innermost loop. Ask how many times that line runs. It is not 12.
 
 

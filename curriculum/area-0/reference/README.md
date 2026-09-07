@@ -24,13 +24,13 @@ These are the payloads for the Area 0 exercises most likely to need one.
 
 | File | Unlocks | Notes |
 |---|---|---|
-| `r5_ask_and_draw.py` | `s5e1` tasks 3 and 4 | Color input, side count, computed total turn |
+| `r5_ask_and_draw.py` | `p5e1` tasks 3 and 4 | Color input, side count, computed total turn |
 | `r6_nameplate.py` | Commission A | A complete, honest Area 0 nameplate |
-| `session-3-answers.md` | The seven broken sigils | Read before session 3, not during |
+| `practice-3-answers.md` | The seven broken sigils | Read before Practice 3, not during |
 
 ## What is deliberately not here
 
-There is **no reference solution for the choice boards**, for `s1e1`, for `s2e2`, or for
+There is **no reference solution for the choice boards**, for `p1e1`, for `p2e2`, or for
 Commissions B and C.
 
 Those are open-ended. There is no answer to unlock, because there is no single right

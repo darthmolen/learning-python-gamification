@@ -322,6 +322,58 @@ export const AreaManifestSchema = z
 
 export type AreaManifest = z.infer<typeof AreaManifestSchema>;
 
+/**
+ * One practice: a numbered unit of the curriculum, and the ordering the app never had.
+ *
+ * **A practice is the unit of work; a session is the unit of time** (ADR 0007). The word
+ * matters. "Session 3" asserts a sitting, and a learner who takes two evenings over it is told
+ * by the noun that he is behind — which is the sentence ADR 0006 exists to refuse. A practice
+ * is untimed, so it survives a learner who took twice as long.
+ *
+ * `exercises` names slugs under `curriculum/area-<n>/exercises/`, **never session plan files**.
+ * The learner never opens a plan; the plans are DM-voiced and written for somebody running a
+ * calendar. Naming slugs is also what keeps this manifest independent of the directory the
+ * plans happen to live in.
+ */
+export const PracticeSchema = z
+  .object({
+    /** 1-based, contiguous within an area. The validator proves the sequence has no gap. */
+    n: z.number().int().positive(),
+    title: z.string().min(1),
+    /**
+     * Exercise slugs, in the order the practice works them.
+     *
+     * **Empty is legal and common.** Roughly half the practices in a real area carry no
+     * brief-bearing exercise — the work is delivered at the table and `area-1/README.md`
+     * records the deliberate non-mappings. Requiring one would make an author invent an
+     * exercise to satisfy a schema, which is the schema teaching a lie.
+     */
+    exercises: z.array(IdSchema).default([]),
+  })
+  .strict();
+
+export type Practice = z.infer<typeof PracticeSchema>;
+
+/**
+ * `curriculum/area-<n>/practices.yml` — the spine of an area.
+ *
+ * This lives in the curriculum and never in `game/`, because the ordering is the curriculum's
+ * own. `tests/two-roots.test.ts` deletes the overlay and asserts the curriculum still stands;
+ * a spine stored in quest YAML would be deleted along with it.
+ *
+ * It is a sidecar rather than a widening of `area.yml` because that file is the manifest of
+ * area-level facts — title, weeks, blurb, authoring — and thirteen practices with exercise
+ * lists are not one of those.
+ */
+export const PracticeManifestSchema = z
+  .object({
+    area: AreaSchema,
+    practices: z.array(PracticeSchema).min(1),
+  })
+  .strict();
+
+export type PracticeManifest = z.infer<typeof PracticeManifestSchema>;
+
 /* -------------------------------------------------------------------------------------------
  * Parsing
  * ----------------------------------------------------------------------------------------- */
@@ -334,6 +386,11 @@ export function parseContentItem(raw: unknown): ContentItem {
 /** Parse and validate one area manifest. */
 export function parseAreaManifest(raw: unknown): AreaManifest {
   return AreaManifestSchema.parse(raw);
+}
+
+/** Parse and validate one area's practice spine. */
+export function parsePracticeManifest(raw: unknown): PracticeManifest {
+  return PracticeManifestSchema.parse(raw);
 }
 
 /** The medal slots an item offers, applying the §5.10 default. */

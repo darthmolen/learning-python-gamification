@@ -23,18 +23,18 @@ that are deliberately not in it.
 
 ## Authoring status
 
-**Partially authored. Sessions 1–12 are complete; session 13 — Boss 3 — is gated.**
+**Partially authored. Practices 1–12 are complete; practice 13 — Boss 3 — is gated.**
 
 | Part | State |
 |---|---|
 | `area.yml` | **complete** — title, weeks, blurb, `authoring: partial` |
 | `glossary.md` | **complete** — all seventeen concepts defined |
 | `lesson.draft.md` | **a draft, deliberately** — see below |
-| `dm-guide.md` | **complete for sessions 1–7**; §4 grows a second stall section with 8–12 |
+| `dm-guide.md` | **complete for practices 1–7**; §4 grows a second stall section with 8–12 |
 | `verify.py` | **complete**, and proven against six seeded mutants |
-| Sessions 1–12 and their drills | **complete** — 28 files, 12 plans, 1 walkthrough |
-| Session 13 — Boss 3 | **gated** on the Pygame Zero spike; see below |
-| `reference/` | **complete for sessions 1–7**; sessions 8–12 check themselves |
+| Practices 1–12 and their drills | **complete** — 28 files, 12 plans, 1 walkthrough |
+| Practice 13 — Boss 3 | **gated** on the Pygame Zero spike; see below |
+| `reference/` | **complete for practices 1–7**; practices 8–12 check themselves |
 | `exercises/` — seven briefs | **not started** |
 | `game/area-3/quests/` — seven YAML | **not started** |
 
@@ -50,7 +50,7 @@ its own harnesses, which had silently stopped measuring anything at all.
 
 ---
 
-## Why session 13 is not written
+## Why practice 13 is not written
 
 **Boss 3 is gated, and the gate is deliberate rather than an omission.**
 
@@ -66,18 +66,18 @@ last thing before Area 4 and the piece that hands over to it. Authoring the hand
 knowing what it hands over to is how six weeks get thrown away.
 
 The spike needs the learner's laptop for one sitting. **Nothing else in this area waits on
-it**; sessions 1–12 are complete and deliverable, which is eleven weeks of material.
+it**; practices 1–12 are complete and deliverable, which is eleven weeks of material.
 
-There is a second, smaller gate on **session 8** and it does not block authoring, only
+There is a second, smaller gate on **practice 8** and it does not block authoring, only
 delivery: the Run and Debug view has to be restorable in their editor. `tools/vscode/`
-records the Area 2 strip as pending verification on the target machine. Session 8's *What
+records the Area 2 strip as pending verification on the target machine. Practice 8's *What
 has to be true* section says what to check and what to say if the strip was never applied.
 
 ---
 
 ## The sessions
 
-The spine. Sessions 8–13 are fixed here **before** they are written, because two halves
+The spine. Practices 8–13 are fixed here **before** they are written, because two halves
 authored against different assumptions silently disagree, and the disagreement surfaces at
 Boss 3 where it is most expensive.
 
@@ -111,14 +111,14 @@ and then it fails at something, and the failure is the next session.
 not an inventory. Splitting them would produce a session whose payoff is a variable holding
 three words and nothing to do with them.
 
-**Session 3 is the quiet one and it is scheduled early on purpose.** Two names for one list
+**Practice 3 is the quiet one and it is scheduled early on purpose.** Two names for one list
 is the first thing this year that is true and invisible at the same time — no error, no
-wrong picture, just a second name that was never a second list. It lands in session 3 rather
-than session 9 because everything after it involves passing lists around, and a learner who
+wrong picture, just a second name that was never a second list. It lands in practice 3 rather
+than practice 9 because everything after it involves passing lists around, and a learner who
 has not met aliasing will meet it as a mystery instead of as a lesson.
 
 **`in`, `min`, `max` and `sorted` are one session, and it is the cheap one.** Four small
-names that make session 2's list answer questions. It is deliberately the least demanding
+names that make practice 2's list answer questions. It is deliberately the least demanding
 session in the first half, and it sits directly after the mutation pair, which are the two
 heaviest.
 
@@ -129,10 +129,10 @@ where a rule stops being surprising, and this one is scheduled to be the last ti
 **`tuple` is seventh and it is the thinnest concept in the area.** It gets one session, no
 quest, and no padding. A tuple only has an honest reason to exist once there is something
 that should *not* change, and `place(x, y, z, kind)` has been handing them coordinates
-since session 1. The README says it is thin rather than pretending otherwise — the same
+since practice 1. The README says it is thin rather than pretending otherwise — the same
 call Area 0 made about `bool`.
 
-**Session 8 teaches `dict` and `breakpoints` together, which is heavier than average and
+**Practice 8 teaches `dict` and `breakpoints` together, which is heavier than average and
 is the argument for the rung being elective.** A breakpoint needs a bug worth stopping on,
 and `KeyError` on a dict is that bug: the exception breakpoint stops at the moment it is
 raised, with the whole inventory still on screen. That is Area 0's *errors are readable*
@@ -140,16 +140,16 @@ promise made interactive, three areas later, on a failure this area produces nat
 `a3-set-a-breakpoint` is a tool quest rather than a collections quest, which is why it does
 not displace one of the five.
 
-**Session 11 introduces nothing.** It is set difference doing in one line what a loop they
+**Practice 11 introduces nothing.** It is set difference doing in one line what a loop they
 already wrote did in six — "which blocks does this recipe need that I do not have". A
 session whose content is *a thing you already built, now smaller* needs no new vocabulary
 and is the strongest possible argument for the concept in front of it.
 
 ### Where the slump is
 
-**Session 7, and it is scheduled rather than stumbled into.** After slicing and before
+**Practice 7, and it is scheduled rather than stumbled into.** After slicing and before
 dicts, the material is correct and unglamorous: one idea, no quest, and the least visually
-rewarding hour in the area. Area 0 did the same thing with its session 4 and said in
+rewarding hour in the area. Area 0 did the same thing with its practice 4 and said in
 writing that cutting it short was fine. So does this one.
 
 ### Compressing to eleven sessions
@@ -158,10 +158,10 @@ If the calendar bites:
 
 - **Merge 5 into 2.** `in`, `len` and `sorted` are readable the moment indexing is.
 - **Merge 7 into 6.** A tuple beside a slice is two shapes of "part of a thing", and
-  session 7 is the area's designed slack.
-- **Never cut session 3, never cut session 8, never cut session 12.** Session 3 is the only
-  place aliasing is taught before it bites. Session 8 is the debugger, and every session
-  after it assumes they can stop a program. Session 12 is the only rehearsal Boss 3 gets.
+  practice 7 is the area's designed slack.
+- **Never cut practice 3, never cut practice 8, never cut practice 12.** Practice 3 is the only
+  place aliasing is taught before it bites. Practice 8 is the debugger, and every session
+  after it assumes they can stop a program. Practice 12 is the only rehearsal Boss 3 gets.
 
 ---
 
@@ -194,28 +194,28 @@ question it was built for.
 
 ## Concept coverage
 
-Seventeen concepts. **All seventeen are now taught.** Session 13 introduces nothing — a boss
+Seventeen concepts. **All seventeen are now taught.** Practice 13 introduces nothing — a boss
 resurfaces the area rather than adding to it.
 
 | Concept | Session | Where | Shipped? |
 |---|---|---|---|
-| `list` | 1 | `s1e1_a_row_of_blocks.py` | yes |
-| `iteration` | 1 | `s1e1`, `s1e2` | yes |
-| `indexing` | 2 | `s2e1_the_inventory.py` | yes |
-| `len` | 2 | `s2e1`, `s2e2` | yes |
-| `mutation` | 3 | `s3e1_two_names_one_list.py` | yes |
-| `list-methods` | 4 | `s4e1_pick_it_up.py` | yes |
-| `in` | 5 | `s5e1_do_i_have_enough.py` | yes |
-| `min` | 5 | `s5e2_the_tallest_tower.py` | yes |
-| `max` | 5 | `s5e2` | yes |
-| `sorted` | 5 | `s5e3_tidy_it_up.py` | yes |
-| `slicing` | 6 | `s6e1_the_hotbar.py` | yes |
-| `tuple` | 7 | `s7e1_a_coordinate.py` | yes |
-| `dict` | 8 | `s8e1_things_by_name.py` | yes |
-| `breakpoints` | 8 | `s8e3_stop_and_look.py`, `w8_the_variables_panel.md` | yes |
-| `dict-methods` | 9 | `s9e1_the_recipe.py`, `s9e2` | yes |
-| `set` | 10 | `s10e1_a_bag_with_no_order.py`, `s10e2` | yes |
-| `nested-structures` | 12 | `s12e1_a_recipe_book.py`, `s12e2` | yes |
+| `list` | 1 | `p1e1_a_row_of_blocks.py` | yes |
+| `iteration` | 1 | `p1e1`, `p1e2` | yes |
+| `indexing` | 2 | `p2e1_the_inventory.py` | yes |
+| `len` | 2 | `p2e1`, `p2e2` | yes |
+| `mutation` | 3 | `p3e1_two_names_one_list.py` | yes |
+| `list-methods` | 4 | `p4e1_pick_it_up.py` | yes |
+| `in` | 5 | `p5e1_do_i_have_enough.py` | yes |
+| `min` | 5 | `p5e2_the_tallest_tower.py` | yes |
+| `max` | 5 | `p5e2` | yes |
+| `sorted` | 5 | `p5e3_tidy_it_up.py` | yes |
+| `slicing` | 6 | `p6e1_the_hotbar.py` | yes |
+| `tuple` | 7 | `p7e1_a_coordinate.py` | yes |
+| `dict` | 8 | `p8e1_things_by_name.py` | yes |
+| `breakpoints` | 8 | `p8e3_stop_and_look.py`, `w8_the_variables_panel.md` | yes |
+| `dict-methods` | 9 | `p9e1_the_recipe.py`, `p9e2` | yes |
+| `set` | 10 | `p10e1_a_bag_with_no_order.py`, `p10e2` | yes |
+| `nested-structures` | 12 | `p12e1_a_recipe_book.py`, `p12e2` | yes |
 
 **The thinnest is `tuple`**, at one drill and no quest, and *Why this order* argues that it
 should be. The next thinnest is `min`, which shares a file with `max` because the two are
@@ -224,7 +224,7 @@ one idea asked in opposite directions.
 **`breakpoints` is taught as stepping and the Variables panel, and not as the exception
 breakpoint.** That split was settled on 2026-08-29 and is recorded in
 `tools/vscode/README.md`: `breakpoints` is Area 3, and `debugger` — conditional breakpoints,
-exception breakpoints, logpoints, the call stack — stays at Area 7. Session 8 hunts a
+exception breakpoints, logpoints, the call stack — stays at Area 7. Practice 8 hunts a
 `KeyError` with a breakpoint; it does not teach break-on-raise. The queued plan said
 otherwise and has been corrected in place.
 
@@ -254,7 +254,7 @@ So the cap is justified by build-and-fuse cost, and an author who reads "the cap
 fps" will reason wrongly about what they can spend. `verify.py`'s failure message states
 the cost in seconds for that reason.
 
-**Sessions 1–7 stay well under it.** Nothing in this half places more than a few hundred
+**Practices 1–7 stay well under it.** Nothing in this half places more than a few hundred
 blocks, because these sessions are about what a collection *is* rather than about scale. A
 row is ten blocks; the largest thing here is a 20 × 20 floor.
 
@@ -278,9 +278,9 @@ the next author think this area had none.
   `import world` resolves exactly where it matters and all twenty-eight files run. It does not
   resolve for a type checker pointed at the repository root, which is a fact about where
   pyright was standing rather than about the code. The count tracks the number of drills that
-  build a world: `s1e1`, `s1e2`, `s7e1`, `s10e2`.
+  build a world: `p1e1`, `p1e2`, `p7e1`, `p10e2`.
 - **One × `"__setitem__" method not defined on type "tuple[...]"`**, at
-  `s7e2_it_will_not_change.py:39`. That line is `spawn[0] = 99`, the file is called *It Will
+  `p7e2_it_will_not_change.py:39`. That line is `spawn[0] = 99`, the file is called *It Will
   Not Change*, and `# expect: TypeError` is in its header. Pyright has read the program
   correctly and found the bug the file was written to contain.
 
@@ -302,7 +302,7 @@ need for:
   blocks and never calls `start()` runs perfectly, exits zero and draws nothing, which is
   the quietest failure available in this area;
 - **no raw Ursina anywhere** — `Entity(`, `from ursina` and `import ursina` fail the run
-  wherever they appear under `sessions/`, `exercises/` or `reference/`.
+  wherever they appear under `practices/`, `exercises/` or `reference/`.
 
 **All six checks have been seen to fail against seeded mutants** before being trusted: a
 `def` tag on an Area 3 file, an 80 × 80 loop placing 6,400 blocks, a file that places and
@@ -321,21 +321,21 @@ area-3/
   area.yml           the manifest; weeks, blurb, and the quest denominator
   dm-guide.md        the shim's negative space, stalls by session, the invasion rule
   glossary.md        one entry per concept, keyed to concepts.ts
-  lesson.draft.md    the teaching body, published as a draft until session 13 exists
+  lesson.draft.md    the teaching body, published as a draft until practice 13 exists
   verify.py          headless; asserts placements, never opens a window
-  sessions/
-    session-1-the-row-of-blocks.md      … through session-12
-    session-1/  s1e1_a_row_of_blocks.py, …   drills live beside the session
-    session-8/  … and w8_the_variables_panel.md, the one walkthrough in the area
+  practices/
+    practice-1-the-row-of-blocks.md      … through practice-12
+    practice-1/  p1e1_a_row_of_blocks.py, …   drills live beside the practice
+    practice-8/  … and w8_the_variables_panel.md, the one walkthrough in the area
   reference/         worked answers. Datamine payloads under §5.5, not handouts
 ```
 
-**No `journal/`.** Their `journal.md` moved into their own repository at Area 2a session 2
+**No `journal/`.** Their `journal.md` moved into their own repository at Area 2a practice 2
 and Area 0's `TEMPLATE.md` is still the only copy; eight copies of one file that must never
 disagree is not a layout, it is a liability. Journal prompts live in each session plan's
 Beat 5, which is where a DM actually reads them.
 
-**One walkthrough, in session 8.** The debugger rung is a thing done in an editor and there
+**One walkthrough, in practice 8.** The debugger rung is a thing done in an editor and there
 is nothing in "set a breakpoint and read the Variables panel" for a harness to execute, so
 `verify.py` reports it as uncovered rather than skipping it silently — Area 2's harness
 earned that rule. It is audited by a person who followed it.

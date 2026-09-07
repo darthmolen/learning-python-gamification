@@ -1,9 +1,9 @@
 # The Wrong Kind Of Thing
 
-You met this one in session 3. On the page, `100` and `"100"` look almost identical. Python
+You met this one in Practice 3. On the page, `100` and `"100"` look almost identical. Python
 does not think they are alike at all, and it will tell you so at some length.
 
-This is the same disagreement that ambushes you in session 5, when `input` hands back a `str`
+This is the same disagreement that ambushes you in Practice 5, when `input` hands back a `str`
 and nothing works. Meeting it here, on two lines you can see all of, is cheaper.
 
 ## What to do
