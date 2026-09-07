@@ -35,8 +35,8 @@ that are deliberately not in it.
 | Practices 1–12 and their drills | **complete** — 28 files, 12 plans, 1 walkthrough |
 | Practice 13 — Boss 3 | **gated** on the Pygame Zero spike; see below |
 | `reference/` | **complete for practices 1–7**; practices 8–12 check themselves |
-| `exercises/` — seven briefs | **not started** |
-| `game/area-3/quests/` — seven YAML | **not started** |
+| `exercises/` — six briefs, five hidden tests | **complete**; Boss 3's is gated |
+| `game/area-3/quests/` — six YAML | **complete**; Boss 3's is gated |
 
 **`lesson.draft.md` stays a draft, and the rename is the sign-off rather than a
 formality.** The Field Manual publishes it today, labelled a draft on the page and on the
@@ -340,4 +340,5 @@ is nothing in "set a breakpoint and read the Variables panel" for a harness to e
 `verify.py` reports it as uncovered rather than skipping it silently — Area 2's harness
 earned that rule. It is audited by a person who followed it.
 
-**No `exercises/` yet**, and no `game/area-3/`. Both arrive with the quest items.
+**`exercises/` holds six of seven**, and `game/area-3/quests/` six of seven. Boss 3's brief,
+hidden test and YAML arrive when its Pygame Zero gate clears.

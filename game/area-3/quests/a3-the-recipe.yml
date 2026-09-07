@@ -1,0 +1,21 @@
+# Practice 9's quest, and the strongest item in the area. A recipe is the most honest dict
+# there is -- a name and an amount, which is exactly what a dict is.
+#
+# DC 16. The step from `a3-the-hotbar` is that two structures have to be read against each
+# other, and the answer is arithmetic rather than a slice.
+#
+# The brief requires an ingredient ABSENT from `have`, not present at zero, and the test
+# asserts it. That is the whole reason the quest exists: a missing key is a KeyError, and
+# not having any flint is an ordinary answer of zero. Without the absent key the learner
+# never meets the decision between `have[name]` and `have.get(name, 0)`.
+id: a3-the-recipe
+title: "The Recipe"
+kind: quest
+area: 3
+concepts: [dict, dict-methods, in, iteration]
+dc: 16                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/the-recipe/BRIEF.md
+
+verifier:
+  type: local-repo
+  tests: area-3/exercises/the-recipe/hidden/test.py

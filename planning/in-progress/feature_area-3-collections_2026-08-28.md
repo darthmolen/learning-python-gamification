@@ -737,3 +737,76 @@ ruff curriculum/area-3/   clean          pyright   5, all argued in README.md
 validate:content          OK, 23 items   validate:plans   OK, 122 documents
 npx vitest run            72 of 73 files pass; the one failure is main's, above
 ```
+
+---
+
+## Status — 2026-09-06, Phase 4 (six of seven content items)
+
+**Six items authored, proven and landed. Boss 3 remains gated.**
+
+| Item | Practice | Verifier | DC | Tests |
+|---|---|---|---|---|
+| `a3-the-inventory` | 2 | local-repo | 10 | 9 |
+| `a3-pick-it-up` | 4 | local-repo | 12 | 8 |
+| `a3-the-hotbar` | 6 | local-repo | 14 | 10 |
+| `a3-set-a-breakpoint` | 8 | peer-signoff: dm | 12 | — |
+| `a3-the-recipe` | 9 | local-repo | 16 | 9 |
+| `a3-what-am-i-missing` | 11 | local-repo | 18 | 11 |
+| `a3-the-crafting-table` | 13 | local-repo | 24 | **gated** |
+
+47 hidden tests, green against correct submissions; 23 mutants seeded, 22 caught and one
+correctly survived. Each slug is claimed in `practices.yml`, so `unclaimed-exercise` stays
+satisfied. `validate:content` reports 29 items across 8 areas.
+
+### The shared design, and why a transcript would not do
+
+Every one of these quests is about a program **answering from its data rather than
+remembering an answer**. A test comparing output to a fixed transcript passes a hardcoded
+submission — the exact thing being rejected — and reading their source for `len(` or `.get(`
+rewards the token rather than the behavior.
+
+So each does self-consistency and then **substitution**: change the data in a copy of their
+program and require every answer to follow. Nothing writes to the repository it was given.
+
+### Where the plan turned out to be wrong, or incomplete
+
+1. **A hardcoded hotbar survived the growth check**, because adding items to the *end* leaves
+   the first nine unchanged — which is what the check asserts of a correct program, and a
+   literal is unchanged too. Fixed with a second substitution that renames the *first* item.
+   The original check looked obviously sufficient; only seeding it showed otherwise.
+
+2. **One mutant survived correctly and is recorded as such.** `pop(1)` in place of
+   `remove("bread")` removes the same item, so there is no observable difference and the test
+   asserts observables. Proven not to be a hole: a mutant whose *label* and *action* disagree
+   is caught, naming the move.
+
+3. **Two bugs in my own tests, found by the correct submission failing rather than by a
+   mutant.** `\s*` crosses newlines, so an empty `short:` line swallowed the next line — live
+   in four files, since every brief here allows an empty value. And the-recipe stocked the
+   *recipe* dict instead of the inventory; it now identifies the dict by the keys the program
+   printed, which does not depend on guessing variable names. **A test only ever run against
+   wrong answers has not been tested.**
+
+4. **`estimatedQuests` was stale at 5 with six quests authored.** Found by the ledger, not by
+   a validator. The engine takes `Math.max(estimatedQuests, authored, cleared)` so nothing was
+   broken — the API already said 6 — but the file is read by people, and it now says 6 with
+   the reasoning written in.
+
+### The ledger fired three times in one day
+
+`fixtures-agree.test.ts` went red at one quest, again at six, and once more with a new
+`progress.total` entry. **The fact being recorded — the fixture names quests that do not
+exist — never changed; the sentence carrying it was rewritten three times.** That is the
+argument for `feature_the-fixture-ledger-compares-facts_2026-09-06.md` made by events rather
+than by assertion, and it is worth the plan's author knowing it happened.
+
+### Still open
+
+- **Boss 3**, gated on `feature_pygame-zero-viability-spike_2026-09-06.md` — practice plan,
+  brief, hidden test, quest YAML with three themes, and a `## Boss 3` section in the DM guide,
+  which has none.
+- **`lesson.draft.md` → `lesson.md`**, earned when practice 13 exists.
+- **`area.yml`'s `partial` → `complete`**, a person's decision.
+- **`curriculum/README.md`'s Area 3 row**, owned by `main`.
+- **Not proven and cannot be here:** that any hidden test passes over the real `local-repo`
+  path. `PYQUEST_REPO` was pointed at a scratch directory by hand.

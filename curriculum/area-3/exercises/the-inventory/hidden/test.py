@@ -53,10 +53,10 @@ MIN_ITEMS = 5
 # Three real sentences, the same substance-over-existence rule the Journal is scored by (§5.6).
 MIN_NOTES_CHARACTERS = 150
 
-COUNT = re.compile(r"^carrying:\s*(\d+)\s*$", re.MULTILINE)
-FIRST = re.compile(r"^first:\s*(.+?)\s*$", re.MULTILINE)
-LAST = re.compile(r"^last:\s*(.+?)\s*$", re.MULTILINE)
-SLOT = re.compile(r"^\s+(\d+):\s*(.+?)\s*$", re.MULTILINE)
+COUNT = re.compile(r"^carrying:[ \t]*(\d+)[ \t]*$", re.MULTILINE)
+FIRST = re.compile(r"^first:[ \t]*(.+?)[ \t]*$", re.MULTILINE)
+LAST = re.compile(r"^last:[ \t]*(.+?)[ \t]*$", re.MULTILINE)
+SLOT = re.compile(r"^\s+(\d+):[ \t]*(.+?)[ \t]*$", re.MULTILINE)
 
 # Finding the list literal, in two plain steps rather than one clever pattern.
 #

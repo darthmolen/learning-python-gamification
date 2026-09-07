@@ -44,7 +44,7 @@ practices:
 
   - n: 4
     title: Pick It Up
-    exercises: []
+    exercises: [pick-it-up]
 
   - n: 5
     title: Do I Have Enough
@@ -52,7 +52,7 @@ practices:
 
   - n: 6
     title: The Hotbar
-    exercises: []
+    exercises: [the-hotbar]
 
   - n: 7
     title: A Coordinate Cannot Change
@@ -62,11 +62,11 @@ practices:
   # argument for the breakpoints rung being elective depth rather than one of the five.
   - n: 8
     title: Things By Name
-    exercises: []
+    exercises: [set-a-breakpoint]
 
   - n: 9
     title: The Recipe
-    exercises: []
+    exercises: [the-recipe]
 
   - n: 10
     title: A Bag With No Order
@@ -76,7 +76,7 @@ practices:
   # argument available for the concept in front of it.
   - n: 11
     title: What Am I Missing
-    exercises: []
+    exercises: [what-am-i-missing]
 
   - n: 12
     title: A Recipe Book

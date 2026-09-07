@@ -1,0 +1,26 @@
+# The VS Code rung, and the one `peer-signoff` item in an otherwise `local-repo` area.
+#
+# **No hidden test, and that is correct rather than missing.** `scaffold.ts` writes a test file
+# for `hidden-tests` and `local-repo` only. A test can check that a program ran; it cannot
+# check that somebody knew where to stand. §5.3's rule for a signed-off item is that a person
+# watches and presses the button, and `dm-guide.md` §4 gives them what to listen for.
+#
+# **Elective depth, not one of the five.** §5.2 gives an area five quests of which any three
+# unlock the boss. This is a sixth: a tool quest rather than a collections quest, so it does
+# not displace one. Practice 8 is heavier than average for exactly this reason.
+#
+# `breakpoints` is Area 3 -- stepping and the Variables panel. `debugger` stays at Area 7 for
+# the deep pass, and that split was settled on 2026-08-29 (`c90202e`). The brief names the
+# exception breakpoint as the thing NOT included and says when it arrives, which turns a
+# limit into a road marker rather than a gap.
+id: a3-set-a-breakpoint
+title: "Set A Breakpoint"
+kind: quest
+area: 3
+concepts: [breakpoints, dict, vscode]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/set-a-breakpoint/BRIEF.md
+
+verifier:
+  type: peer-signoff
+  by: dm

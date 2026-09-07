@@ -1,0 +1,100 @@
+Area 3 content items — six of seven, each proven against a correct submission
+and against the bugs it exists to catch.
+Captured 2026-09-06, Python 3.14.6, pytest 9.1.1, Windows 11.
+
+    the-inventory        9 tests    5 mutants caught
+    pick-it-up           8 tests    4 caught, 1 correctly survived
+    the-hotbar          10 tests    4 caught (one needed a second check -- see below)
+    the-recipe           9 tests    5 caught
+    what-am-i-missing   11 tests    5 caught
+    set-a-breakpoint     -- peer-signoff, no hidden test, and that is correct
+
+    47 hidden tests, all green against correct submissions.
+
+THE SHARED PROBLEM
+
+Every one of these quests is about a program ANSWERING from its data rather than
+remembering an answer. A test comparing output to a fixed transcript passes a
+hardcoded submission, which is the exact thing being rejected. Reading source for
+`len(` or `.get(` rewards the token, not the behavior.
+
+So each test does self-consistency first, then SUBSTITUTION: change the data in a
+copy of their program and require every answer to follow. Nothing ever writes to
+the repository it was given.
+
+  the-inventory      add a sixth item; count, last and numbering must all move
+  pick-it-up         replay their own moves against their own start list
+  the-hotbar         add three at the END, and rename the FIRST
+  the-recipe         stock the missing ingredient; short empties, verdict flips
+  what-am-i-missing  no substitution needed -- three set answers check each other
+
+TWO MUTANTS THAT DID NOT BEHAVE, AND WHAT THEY TAUGHT
+
+**the-hotbar: a hardcoded hotbar survived the growth check.** Adding items to the
+END of the list leaves the first nine unchanged -- which is exactly what the check
+asserts of a CORRECT program. A literal list of nine words is unchanged too, so
+the two were indistinguishable.
+
+Fixed by adding a second substitution that renames the FIRST item. A slice
+follows; nine typed words do not. Recorded because the original growth check
+looked obviously sufficient and was not, and only seeding it showed that.
+
+**pick-it-up: `backpack.pop(1)` in place of `backpack.remove("bread")` survived,
+and should have.** At that moment index 1 IS "bread", so the resulting list is
+identical and the `- bread` label still tells the truth. The test asserts
+observable outcomes, and this substitution has none. Checking WHICH method was
+called would mean reading their source, which every one of these tests refuses
+for good reason.
+
+Proven not to be a hole: a mutant where the LABEL and the ACTION disagree --
+printing `- rope` while removing bread -- is caught, naming the move:
+
+    after move 2 (`- rope`) the backpack holds ['torch', 'bread', 'flint'],
+    but the program printed ['torch', 'rope', 'flint'].
+
+A mutant that survives for a good reason is a statement about a test's scope. One
+that survives for a bad reason is a hole. These are one of each and the
+difference is worth writing down.
+
+TWO BUGS IN MY OWN TESTS, FOUND BY RUNNING THEM
+
+**`\s*` crosses newlines.** `^short:\s*(.*?)\s*$` on an EMPTY `short:` line
+consumed the newline and matched the next line's content, so a correct submission
+failed with "could not read 'can build: yes'". Every brief here allows an empty
+value -- an emptied backpack, a short list, nothing missing -- so this was live in
+four files. All label patterns now use `[ \t]*`, which cannot leave the line.
+
+**the-recipe stocked the wrong dict.** The first `{` after the first `=` is the
+RECIPE, not the inventory. The fix identifies the dict by its CONTENTS -- the keys
+the program itself printed -- which is the one identification that does not
+depend on guessing what the learner named their variables.
+
+Both were caught by the correct submission failing, not by a mutant. A test that
+has only ever been run against wrong answers has not been tested.
+
+THE LEDGER FIRED TWICE IN ONE DAY
+
+`fixtures-agree.test.ts` went red at one quest and again at six:
+
+    API []  ->  API [a3-the-inventory]  ->  API [a3-pick-it-up, ... six ids]
+
+Then a THIRD time, with a new entry: `area 3: progress.total — fixture 5, API 6`.
+
+That third one found something real. `area-3.yml` still said `estimatedQuests: 5`
+with six quests authored. The engine takes `Math.max(estimatedQuests, authored,
+cleared)` while `authoring: partial`, so the API had already answered 6 and
+nothing was broken -- but the file is read by people, so it was corrected to 6
+with the reasoning written in.
+
+The fact being recorded ("the fixture names quests that do not exist") never
+changed. The sentence carrying it was rewritten three times. That is the argument
+for `planning/feature_the-fixture-ledger-compares-facts_2026-09-06.md`, made by
+events rather than by assertion.
+
+NOT PROVEN, AND IT CANNOT BE HERE
+
+That any of this passes over the real `local-repo` path against a cloned
+repository. `PYQUEST_REPO` was pointed at a scratch directory by hand. Where the
+runner roots the clone is still not pinned by the API contract -- the same caveat
+every `local-repo` test in the campaign carries, in the same line of code. The
+first real submission is the check, and it is a check for the DM.
