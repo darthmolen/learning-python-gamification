@@ -233,7 +233,19 @@ describe('one pass over everything', () => {
   it('reports every distinct problem in a root in a single run', () => {
     const rules = new Set(validateContent(broken('many-problems')).map((i) => i.rule));
     expect(rules).toEqual(
-      new Set(['prerequisite-cycle', 'schema', 'concept-above-area', 'dangling-prerequisite']),
+      new Set([
+        'prerequisite-cycle',
+        'schema',
+        'concept-above-area',
+        'dangling-prerequisite',
+        // Grew on 2026-09-09 with `boss-framings`. This fixture's boss offers two framings
+        // and its brief names none, which was already true and had nothing to report it.
+        // The set is asserted whole precisely so a new rule shows up here rather than
+        // quietly, and the fixture is NOT repaired to make it go away: fixtures/broken's
+        // README says leave it, and a fixture with more distinct problems serves this test
+        // better than one with fewer.
+        'boss-framings',
+      ]),
     );
   });
 

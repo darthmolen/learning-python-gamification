@@ -5,8 +5,14 @@ this specification, and one evening.
 
 Spec §4 names this one: **a working crafting simulator with a real recipe book.**
 
-Pick one of the framings offered on the boss card. They differ in the words and in nothing
-else; the program underneath is the same, and choosing which words to work in is yours.
+Pick one of the framings below. They differ in the words and in nothing else; the program
+underneath is the same, and choosing which words to work in is yours.
+
+## The framings
+
+- **The Crafting Table** — planks, sticks and torches, and a book of what makes what.
+- **The Alchemist's Bench** — reagents and philtres, and a grimoire instead of a book.
+- **The Forge** — ore, ingots and tools, and a smith who knows what each one costs.
 
 ## What makes this different from every quest so far
 

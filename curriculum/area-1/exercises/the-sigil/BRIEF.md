@@ -6,9 +6,16 @@ file, this specification, and one session.
 Spec §4 names this one: **an art generator that takes input and produces something worth
 hanging on a wall.**
 
-Pick one of the framings offered on the boss card. They differ in the words and in
-nothing else; the program underneath is the same, and choosing which words to work in is
-yours.
+Pick one of the framings below. They differ in the words and in nothing else; the program
+underneath is the same, and choosing which words to work in is yours.
+
+## The framings
+
+- **The Family Crest** — a shield that belongs to somebody, built from what they tell you
+  about themselves.
+- **The Spell Circle** — a ring of marks whose shape comes from the spell being cast.
+- **The Star Chart** — a sky, and where its lines fall depends on where you say you are
+  standing.
 
 ## The two halves, and both are load-bearing
 
