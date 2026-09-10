@@ -1,13 +1,14 @@
 ---
 kind: plan
-status: queued
+status: completed
 track: gitea-remote
 date: 2026-09-10
+completed: 2026-09-10
 ---
 
 # Ten quests that cannot be verified, and a packer that needs the DM to hold a clone
 
-**Status:** Planned
+**Status:** Completed 2026-09-10 — the LAN half stays with its own stub
 **Track:** `gitea-remote`
 **Date:** 2026-09-10
 **Author:** Claude (Opus 5)
@@ -184,5 +185,77 @@ Then with the stack up, submit one `local-repo` quest end to end.
 
 ## Evidence
 
-`planning/evidence/gitea-lan-PROOF.txt` — the healthz call from the other machine.
-`planning/evidence/payload-exclusions-RED-GREEN-MUTANT.txt`.
+`planning/evidence/payload-exclusions-MUTANT.txt` — both mutants, and the one that survived.
+
+## Outcome
+
+**The two env vars are wired, `pack:payload` derives the payload from the audience marks, and
+`pack.sh --remote` clones, applies, pushes and forgets.** 1190 tests pass; `validate:content`
+and `tsc -b` clean.
+
+`pack.sh` now packs **194 entries** rather than 17: the toolchain instructions plus a complete
+self-study kit for every authored area — lesson, glossary, the spine, every drill, every brief
+and starter, the journal template and `verify.py`. Verified by packing a throwaway repository
+and working Area 0 out of it: `py -3.14 curriculum/area-0/verify.py` reports `17 of 17` and says
+`reference/ is not here, so nothing in it was checked`, which is the honest answer on a machine
+that is correctly missing the DM's copy.
+
+`--remote` was exercised end to end against a bare repository: cloned, 194 entries copied,
+branch pushed, 196 files on the remote, temp clone removed on exit, and nothing forbidden in the
+tree.
+
+### The one mutant that survived, and why that was worth knowing
+
+Removing the `reference/` exclusion left all nine payload assertions green. That is not a hole —
+it is the allow-list already refusing those files twice over, since the markdown in `reference/`
+is marked `dm` and its `.py` files match no rule. The exclusion is belt-and-braces for the day
+somebody adds a rule that ships `.py` from an area, and it now says so in the code rather than
+looking load-bearing when it is not.
+
+The mutant that does bite is rule 2 ignoring the audience: four assertions fail, `dm-guide.md`
+among them. That is the one holding the line.
+
+### A correction to the approved plan
+
+**The two `world.py` copies are not a defect, and the plan was wrong to call one.** Both have a
+job. `smoke.py` puts its own directory on `sys.path` and imports `curriculum/lib/world.py`, so
+the canonical copy has to travel or the check that proves ursina is installed cannot run. The
+copy at the repository root is the one the learner imports from their own exercises and the one
+they **delete in Area 4** — which `curriculum/lib/README.md` argues at length and is right about.
+Consolidating to one would have broken either the smoke check or the Area 4 move.
+
+What was actually wrong was that no document said this, so the audit read two copies as drift.
+`curriculum/lib/README.md` now states it, and notes that its `cp` command is deliberately
+machine-agnostic: it works from the root of the campaign repository or of the learner's, because
+the payload mirrors the layout.
+
+### What could not be done here, and it is not small
+
+**The LAN half is untouched, and this machine cannot do it.** It needs three things: an edit to
+the gitignored `infra/.env` naming this host's LAN address, two `New-NetFirewallRule` commands in
+an elevated shell, and a `curl http://<host>:3080/api/healthz` **from the learner's machine** —
+which is the only check that proves anything, since the stub exists precisely because a test run
+on the host passed while the LAN leg failed.
+
+That work is `planning/backlog/feature_gitea-lan-access-for-the-son_2026-08-27.md` and it stays
+open. **`practice-zero` cannot be run with a learner until it passes**, because Practice 0 puts a
+clone on their machine in week 1. Authoring Practice 0 does not wait on it; running it does.
+
+Likewise `GITEA_TOKEN` and `PLAYER_REPOS` are now *documented and threaded* — `.env.example`,
+`compose/api.yml` and `dev-stack.sh` all carry them — but the live `infra/.env` is gitignored and
+holds neither. Minting the token is one command, recorded in `.env.example`, and it is the
+operator's to run. Until they do, `local-repo` and `git-signal` still refuse; the difference is
+that the refusal is now a missing value in a documented slot rather than a variable nothing
+mentions.
+
+### Also done
+
+- `WORKSPACE_ROOT` and a named `api_workspaces` volume, which `compose/api.yml` also omitted —
+  a bind mount there would put `git reset --hard` and `git clean -qfdx` one typo from a real
+  checkout.
+- The payload mirror is documented as a **constraint** in `tools/learner-setup/README.md`, with
+  the three things that depend on it. `stress.py` walks `parents[2]` and no test would notice it
+  breaking.
+- The sentence that started the audience track is fixed in all three areas. It no longer tells a
+  learner to copy a directory holding the DM's plans; it says the plans are not theirs and do not
+  travel, which is now true by construction rather than by hope.

@@ -11,9 +11,13 @@ are the work of that practice, and they live with the plan that teaches them.
 a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
 different directory.
 
-Copy this whole directory somewhere you own — `Documents/code/` or similar. You need a
-folder that is yours. Area 2a turns it into a git repository; until then it is just a
-folder.
+**The plans beside these folders are not yours, and they do not travel.**
+`practice-1-first-light.md` and its siblings are written for whoever is running the evening.
+Practice 3 in particular only works if you have not read ahead, so what reaches your machine is
+the `practice-<n>/` folders and nothing else.
+
+Work in the folder for the practice you are on. If these files are not on your machine yet,
+whoever is running the session puts them there — you do not need to go and find them.
 
 ## Running one
 

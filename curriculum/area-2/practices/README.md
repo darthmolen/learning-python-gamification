@@ -46,11 +46,15 @@ exercise that was meant to break and did not is as wrong as one that crashed (§
 
 ## Where these files go
 
-**Copy them into your own repository, one session at a time, when the walkthrough says
-to.** That is different from Area 0, where you copied the whole directory at the start.
-Here the copying *is* part of the work: an untracked file arriving in a repository is
+**Copy them into your working folder one practice at a time, when the walkthrough says to.**
+That is different from Areas 0 and 1, where everything for the area was simply there from the
+start. Here the copying *is* part of the work: an untracked file arriving in a repository is
 what `git status` is for, and a directory that was already complete would have nothing to
 notice.
+
+The files themselves live where every area's drills live, at
+`curriculum/area-2/practices/practice-<n>/`. The plans beside those folders are the DM's and do
+not travel, the same as every other area.
 
 The exception is Practice 1: copy `still_works.py` in before you run `git init`, so you
 have something in the folder to prove nothing broke.

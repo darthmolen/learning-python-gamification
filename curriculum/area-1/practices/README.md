@@ -11,9 +11,11 @@ are the work of that practice, and they live with the plan that teaches them.
 a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
 different directory.
 
-Copy this whole directory into the same folder you have been using since Area 0 — the
-one that is yours. Area 2a turns it into a git repository; until then it is still just a
-folder, and that is still fine.
+**The plans beside these folders are not yours, and they do not travel** — the same
+arrangement as Area 0. `practice-1-the-loop-that-draws.md` and its siblings are written for
+whoever runs the evening; what reaches your machine is the `practice-<n>/` folders.
+
+They arrive beside Area 0's, in the same place you have been working since week one.
 
 Nothing new to install. Same Python, same turtle, same editor.
 

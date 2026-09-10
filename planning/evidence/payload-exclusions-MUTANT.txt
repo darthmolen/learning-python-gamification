@@ -1,0 +1,88 @@
+the learner payload: what holds it, proved by breaking it
+==========================================================
+Track: gitea-remote        Date: 2026-09-10
+
+This is the suite with the worst failure mode in the repository. Everything else fails into a
+red test; this one fails into an eleven-year-old holding the answer key, and no commit takes
+that back.
+
+
+MUTANT 1 -- the reference/ exclusion removed.  SURVIVED.
+---------------------------------------------------------
+    // if (withinArea.startsWith('reference/')) continue;      <- deleted
+
+$ npx vitest run packages/content/tests/payload.test.ts
+     Tests  9 passed (9)
+
+All nine assertions stayed green, which is worth recording rather than hiding.
+
+The line is redundant *today*, and redundant for a good reason: the markdown under
+`reference/` is marked `audience: dm`, so rule 2 refuses it, and the `.py` files there match no
+allow rule at all. The allow-list was already refusing those files twice over.
+
+It is kept anyway. The case it exists for has not happened yet -- the day somebody adds a rule
+that ships `.py` from an area, `reference/r5_ask_and_draw.py` is a worked solution and
+`hidden/test.py` is the test it answers. The code now says this at the line, so nobody reads it
+as load-bearing when the allow-list is what is actually holding.
+
+
+MUTANT 2 -- the audience check removed from rule 2.  CAUGHT, four ways.
+------------------------------------------------------------------------
+    if (file.endsWith('.md')) {
+      out.push(file);          // <- was: only when audienceOf(...) === 'learner'
+
+$ npx vitest run packages/content/tests/payload.test.ts
+
+     x carries no DM guide
+     x carries no practice plan, only the drills beside them
+     x carries no area README, which is written for somebody running a calendar
+     x carries no area document that declares itself the DM's
+       Tests  4 failed | 5 passed (9)
+
+This is the one holding the line. Restored: 9 passed.
+
+
+A THIRD THING THE SUITE CAUGHT, WHICH WAS NOT A MUTANT
+--------------------------------------------------------
+The first version of "carries no markdown that declares itself the DM's" asserted over all of
+`curriculum/` and failed on:
+
+    curriculum/lib/README.md
+
+That is correct behavior rather than a leak, and the test was wrong. `lib/` is not an area; it
+is the ursina shim the learner imports, and it ships because a person put it in `manifest.txt`.
+`audienceOf` answers `dm` for it only because it is unmarked, and it is unmarked because the
+`audience` rule does not reach outside an area.
+
+The assertion is now scoped to `curriculum/area-<n>/`, which is where the flag governs. The seam
+is recorded in the test: the derived half is held by the flag, and the hand-written half is held
+by review of `manifest.txt`.
+
+
+END TO END
+-----------
+$ tools/learner-setup/pack.sh <throwaway>
+     PASS  194 payload entries, all present
+     PASS  copied 194 entries
+     8 passed, 0 failed
+
+$ find <throwaway> \( -name dm-guide.md -o -path '*/reference/*' -o -path '*/hidden/*' \)
+     (nothing)
+
+$ cd <throwaway> && py -3.14 curriculum/area-0/verify.py
+     17 of 17 exercises behaved as tagged.
+     reference/ is not here, so nothing in it was checked.
+
+A learner can work Area 0 out of the packed repository, and the harness is honest about the one
+tree it correctly does not have.
+
+
+$ tools/learner-setup/pack.sh --remote <bare repo>
+     PASS  cloned <redacted>
+     PASS  194 payload entries, all present
+     PASS  pushed learner-setup
+     10 passed, 0 failed
+
+     branch on the remote: learner-setup      196 files
+     forbidden content:    none
+     temp clone:           removed on exit
