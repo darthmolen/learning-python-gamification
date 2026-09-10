@@ -90,7 +90,7 @@ The old and new commands, on the same stale image, against a throwaway database:
   ledger: 6 migrations
   on disk: 7            <-- the job said it was finished; it is one short
 
-######## NEW (--build), same image, same database ########
+######## NEW (--build), same database, image rebuilt from the same tree ########
   migrate: applied 0007-practice-progress.sql
   ledger: 7 migrations
   on disk: 7            <-- matches
@@ -180,7 +180,9 @@ Demonstrated both ways, with a real `pyquest-migrate:local` present and
   --- PASS=0 FAIL=2 ---
 ```
 
-And unbroken, for the GREEN side: `PASS=3 FAIL=0`. The Dockerfile was restored and verified
+And unbroken, for the GREEN side: `PASS=3 FAIL=0` — three because the harness covers only the
+build guard and the two job assertions. A full step 4b in `smoke.sh` also runs the on-disk-vs-ledger
+check after them, so an unbroken run of the whole step is `PASS=4`. The Dockerfile was restored and verified
 byte-identical each time.
 
 Worth saying plainly: this is the third time in two days that the bug has been *a tool reporting
