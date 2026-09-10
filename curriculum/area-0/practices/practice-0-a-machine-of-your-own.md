@@ -96,45 +96,52 @@ Nothing to explain here. It is a version number, it is the right one, move on.
 
 ## Beat 3 — The repository, and the clone (10 minutes)
 
-Four steps, and **the order matters** — the second one is yours, and the payload cannot exist
-before the repository it goes into.
+Three steps, and **the order matters** — the middle one is yours, and the payload cannot be
+pushed to a repository that does not exist yet.
 
-### 3a. They make it, and they name it
+The heading on each step says whose keyboard it happens at. Nothing below is ambiguous about
+that on purpose: the one way to lose this beat is for you to reach over.
 
-In the web UI at `http://<host>:3080`, signed in as themselves: **New Repository**, and the name
-they picked. Tick *Initialize this repository* so the clone has something in it rather than
-Git's empty-repository warning.
+### 3a — On their machine, in a browser
 
-**If they change their mind about the name here, let them.** It costs one command below and it
-is the only thing in the evening that is genuinely theirs to decide.
+They sign in at `http://<host>:3080` as themselves, click **New Repository**, and type the name
+they picked. They tick *Initialize this repository*, so the clone arrives with something in it
+rather than Git's empty-repository warning.
 
-### 3b. You put the payload on it — say what you are doing
+**If they change their mind about the name here, let them.** It costs you one command below, and
+it is the only thing in the whole evening that is genuinely theirs to decide.
 
-This is the one moment you touch a keyboard, so narrate it. *"I'm sending you the files."*
+### 3b — On your machine, in Git Bash
+
+Your keyboard, and the only time tonight it is. Narrate it: *"I'm sending you the files."*
 
 ```console
 tools/learner-setup/pack.sh --remote http://<host>:3080/<them>/<their-repo>.git
 ```
 
+Git Bash, not PowerShell — it is a POSIX shell script and says so at the top.
+
 It clones their repository to a temp directory, copies the payload in, pushes it as the
 `learner-setup` branch, and deletes the temp copy. Under a minute, and it ends with
-`pushed learner-setup`. If it says anything else, stop and read it — do not go on to 3c.
+`pushed learner-setup`. **If it says anything else, stop and read it. Do not go on to 3c.**
 
 **Why this cannot be done in advance if they named it tonight**, which is the whole reason this
-step is here: the branch has to be pushed to a repository that exists, so a name chosen at 3a
-means a push at 3b. Doing it the day before is fine too, and then this step is a no-op that
-reports the branch already carries the payload.
+step exists: the branch has to be pushed to a repository that already exists, so a name chosen
+at 3a means a push at 3b. Doing it the day before is fine too, and then this step reports that
+the branch already carries the payload and changes nothing.
 
-### 3c. They clone it
+### 3c — On their machine, at a terminal
 
-The whole of `git-clone`, and no more of git than that.
+**They type every line of this. All of it.** The whole of `git-clone`, and no more git than that.
 
 ```console
 git clone http://<host>:3080/<them>/<their-repo>.git
 cd <their-repo>
+dir
 ```
 
-Then `ls`, and let them look.
+`dir` lists the folder. **They read what it prints, not you** — ask them what they see rather
+than looking at the screen yourself and telling them.
 
 **What to say when they ask what a repository is:** that it is a folder the other machine is
 also keeping, that it comes back if this laptop dies, and that Area 2 is four sessions about
@@ -146,17 +153,23 @@ That deferral is the same move Area 0 already makes with types: they meet `str` 
 accident in Practices 1 to 3, and Practice 4 names what they have already tripped over. Meeting
 a repository before it is explained is a feature.
 
-### 3d. They switch to the branch
+**Still their machine, still their keyboard** — they switch to the branch:
 
 ```console
 git fetch
 git checkout learner-setup
+dir
 ```
 
 `git fetch` is there rather than assumed. A clone taken at 3c already has the branch, so the
 fetch reports nothing and the checkout works — but if 3b ran *after* they cloned, the fetch is
 the step that makes the branch exist locally. One command that is right either way beats two
 that depend on an order nobody will remember.
+
+**The second `dir` is the point of the whole beat.** The folder had one file a moment ago and
+now has a dozen. Ask them what changed before you say anything: files arriving from another
+machine because they asked for them is the entire idea, and it is the only time this year they
+will see it happen from nothing.
 
 `SETUP.md` is now in front of them. It is written to them, not to you — read the first page
 together and then let them drive.
@@ -182,7 +195,7 @@ together and then let them drive.
 | `could not resolve host` | `GITEA_DOMAIN` is still `localhost`, or they typed yours | "Which machine is that name pointing at?" |
 | Connection times out | the firewall rule was never added | Yours to fix, not theirs. Do it, out loud, and say what you are doing |
 | Asked for a password and it failed | Caps Lock, or the account was made with a different one | Reset it rather than debugging it in front of them |
-| `cd` into the wrong folder | the clone made a directory and they are above it | "What did `ls` show right after the clone?" |
+| `cd` into the wrong folder | the clone made a directory and they are above it | "What did `dir` show right after the clone?" |
 | `pathspec 'learner-setup' did not match` | **3b did not run, or ran against a different repository name** | Yours, not theirs. Check the name in the URL you packed against the one they made, then re-run 3b and have them `git fetch` again |
 | The clone is empty apart from `README.md` | 3b has not run yet | The same. `git fetch` after it does, and 3d works |
 

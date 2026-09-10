@@ -33,16 +33,16 @@ Answer these out loud. You will check both answers in a minute.
 Open a terminal. Before anything else, find out where it thinks you are.
 
 ```
-pwd
+cd
 ```
 
-On Windows in PowerShell, `pwd` works too. Whatever it prints, read it. That path is
+`cd` with nothing after it prints where you are. Read it. That path is
 where every command you type next is going to happen.
 
 Now list what is in it:
 
 ```
-ls
+dir
 ```
 
 Write down, on paper, the number of things it printed. You will compare it in step 3.
@@ -57,20 +57,20 @@ you will delete it before the end:
 ```
 mkdir scratch
 cd scratch
-pwd
-ls
+cd
+dir
 ```
 
-`ls` shows nothing, which is the point: this folder has no past, and in a few minutes it will
+`dir` shows nothing, which is the point: this folder has no past, and in a few minutes it will
 have one.
 
-**Check `pwd` says `scratch`.** Everything below happens here and nowhere else.
+**Check that it says `scratch`.** Everything below happens here and nowhere else.
 
 Copy in the Python file that is sitting with this walkthrough, so the folder has something in
 it that you can watch survive:
 
 ```
-cp ../curriculum/area-2/practices/practice-1/still_works.py .
+copy ..\curriculum\area-2\practices\practice-1\still_works.py .
 py -3.14 still_works.py
 ```
 
@@ -114,7 +114,7 @@ Initialized empty Git repository in .../code/.git/
 Now:
 
 ```
-ls
+dir
 ```
 
 **Count again.** Compare with the number you wrote down in step 1. It is the same. None
@@ -123,10 +123,10 @@ of your files moved, none of them changed, none of them are gone.
 Now look properly:
 
 ```
-ls -a
+dir /a
 ```
 
-`-a` means *all*, including the hidden things. There is one new entry: `.git`. That
+`/a` means *all*, including the hidden things. There is one new entry: `.git`. That
 directory is the entire difference between a folder and a repository.
 
 ---
@@ -136,7 +136,7 @@ directory is the entire difference between a folder and a repository.
 You are allowed. Go and look.
 
 ```
-ls .git
+dir .git /a
 ```
 
 You will see names like `HEAD`, `config`, `objects`, `refs`, `hooks`.
@@ -189,7 +189,7 @@ git for the rest of their lives.
 
 ```
 cd ..
-rm -rf scratch
+rmdir /s /q scratch
 ```
 
 Gone — the folder, the `.git` inside it, all of it. **That is the last part of the lesson.** A
