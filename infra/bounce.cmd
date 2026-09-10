@@ -63,7 +63,10 @@ rem there is nothing to recreate and its exit code is the answer.
 if /i "%PROFILE%"=="migrate" (
   echo.
   echo === running the migration job =============================================
-  docker compose --profile migrate run --rm migrate
+  rem --build is load-bearing: `run` reuses an existing image, and the migrations are baked
+  rem into it. A stale image reports "already up to date" about migrations it has never seen.
+  rem See compose/migrate.yml. Cached, about a second when nothing changed.
+  docker compose --profile migrate run --rm --build migrate
   exit /b %errorlevel%
 )
 

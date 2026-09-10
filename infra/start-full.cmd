@@ -53,7 +53,10 @@ echo === 2/4  migrations =======================================================
 rem A job, not a service: it runs to completion and exits. Its exit code is the
 rem real answer, so this stops here rather than starting an api against a schema
 rem that was never applied.
-docker compose --profile migrate run --rm migrate
+rem --build is load-bearing: `run` reuses an existing image, and the migrations are baked into
+rem it. A stale image reports "already up to date" about migrations it has never seen, which is
+rem how production sat a migration behind for four days. See compose/migrate.yml.
+docker compose --profile migrate run --rm --build migrate
 if errorlevel 1 (
   echo [FAIL] the migration job failed. The stack is not started.
   exit /b 1

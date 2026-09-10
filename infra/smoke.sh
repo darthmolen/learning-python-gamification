@@ -226,6 +226,17 @@ step "4b. the migration job applies the progress schema (spec 6.1)"
 # actually applies the schema against the real container, and that running it a
 # second time does nothing. Forward-only migrations are safe to re-run only if
 # the ledger says so, and a ledger nobody has watched work is a hope.
+#
+# Built ONCE, here, before either run. `docker compose run` reuses whatever image
+# exists and the migrations are baked in, so a stale `pyquest-migrate:local` runs
+# the migrator it was built with and reports "already up to date" about files it
+# has never seen. That happened: 2026-09-10, an 8-day-old image, six migrations
+# in it and seven on disk, and this suite's *idempotency* check below would have
+# been satisfied by it. Building here rather than passing `--build` to each run
+# keeps the two runs comparable -- they must differ only in that one has already
+# been done.
+dc --profile migrate build migrate >/dev/null 2>&1 || true
+
 MIGRATE_1=$(dc --profile migrate run --rm migrate 2>&1) || true
 if echo "$MIGRATE_1" | grep -qE 'migrate: (applied|already up to date)'; then
   ok "the migrate job ran to completion"
@@ -244,6 +255,13 @@ fi
 
 # Every migration on disk is recorded. A count that lags is a migration that was
 # skipped, which is the failure that shows up as a missing column much later.
+#
+# **This is the check that catches a stale migrate image**, and it is the reason
+# the two runs above are not the whole story. They ask the migrator whether it is
+# finished; this asks the repository. On 2026-09-10 the migrator said "already up
+# to date" while `find` counted seven files and the ledger held six -- the image
+# predated the seventh. Comparing the container's opinion of itself against the
+# source tree is the only question a stale image cannot answer wrongly.
 ON_DISK=$(find ../pyquest/packages/db/migrations -name '*.sql' | wc -l | tr -d ' ')
 RECORDED=$(psql_super -d "$POSTGRES_DB" -c 'SELECT count(*) FROM schema_migrations;' 2>/dev/null || echo 0)
 if [ "${RECORDED:-0}" = "$ON_DISK" ]; then

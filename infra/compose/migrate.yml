@@ -6,11 +6,33 @@
 # A job, not a service: it runs to completion and exits. `restart: "no"` says so out loud,
 # because a migration job that restarts on failure re-applies migrations in a loop.
 #
-#   docker compose --profile migrate run --rm migrate
+#   docker compose --profile migrate run --rm --build migrate
+#
+# ## `--build` is not optional, and leaving it off has already cost a day
+#
+# `docker compose run` uses the image if one exists. It does **not** rebuild, and the migrations
+# are baked into the image rather than mounted — so a `pyquest-migrate:local` built before a
+# migration was written runs the migrator it was built with, finds every file it knows about
+# already applied, and prints **"migrate: already up to date"**. Which is true, and useless: it is
+# a statement about the image, not about `packages/db/migrations/`.
+#
+# Measured 2026-09-10. The image was 8 days old and held six migrations;
+# `0007-practice-progress.sql` had landed five days earlier. The job reported up to date, the
+# production database stayed at six, and the running api — whose own image *did* carry 0007 and
+# whose `store.ts` SELECTs, INSERTs and DELETEs against `practice_progress` — was live against a
+# database with no such table. Nothing had touched the route yet, so the first practice tick would
+# have been the discovery.
+#
+# The rebuild is cached and costs about a second when nothing changed. This is the cheapest
+# possible guard against the failure mode this whole file is supposed to prevent.
 #
 # Safe to run twice, and that is asserted rather than assumed: `packages/db` keeps a
 # `schema_migrations` ledger, takes an advisory lock, and applies each file in its own
-# transaction. The second run prints "already up to date", which `infra/smoke.sh` checks.
+# transaction. The second run prints "already up to date", which `infra/smoke.sh` checks —
+# **and note that this particular assertion is the one a stale image can satisfy for the wrong
+# reason.** What actually catches drift is smoke.sh's next check, which counts the `.sql` files on
+# disk against the `schema_migrations` ledger. Keep both: one proves the ledger works, the other
+# proves the image is current.
 #
 # `npm run migrate` builds before it runs, because the workspace is bind-mounted as source and
 # nothing else in the stack compiles it. That is why the image is plain node rather than a

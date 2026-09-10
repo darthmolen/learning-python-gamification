@@ -76,11 +76,24 @@ a real failure mode here, not a hypothetical one.
 In the order you type it, from `infra/`:
 
 ```sh
-docker compose up -d                                  # 1. postgres and gitea
-docker compose --profile migrate run --rm migrate     # 2. schema, safe to repeat
-npm run seed --workspace @pyquest/db                  # 3. from pyquest/ — somebody to be
+docker compose up -d                                          # 1. postgres and gitea
+docker compose --profile migrate run --rm --build migrate     # 2. schema, safe to repeat
+npm run seed --workspace @pyquest/db                          # 3. from pyquest/ — somebody to be
 docker compose --profile api --profile web up -d api runner web
 ```
+
+**`--build` on the migrate line is load-bearing.** `docker compose run` reuses whatever image
+already exists, and the migrations are baked into that image rather than mounted — so a
+`pyquest-migrate:local` built before a migration was written runs the migrator it was built with,
+finds everything it knows about already applied, and prints `migrate: already up to date`. That
+sentence is true and useless: it describes the image, not `packages/db/migrations/`.
+
+It is not hypothetical. On 2026-09-10 the image was 8 days old and carried six migrations while
+seven were on disk; production sat at six for four days while the running api — whose own image
+*did* carry the seventh, and whose `store.ts` reads the table it creates — was live against a
+database missing it. `./smoke.sh` catches this, by counting `.sql` files against the
+`schema_migrations` ledger rather than believing the job's own report. The rebuild is cached and
+costs about a second.
 
 Then open **<http://localhost:3082>**. The API is on **<http://localhost:3081>**; `curl
 http://localhost:3081/health` answers `{"status":"ok","items":23}` and touches no database, so
