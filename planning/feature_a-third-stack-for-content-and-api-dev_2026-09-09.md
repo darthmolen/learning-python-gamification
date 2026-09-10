@@ -102,18 +102,33 @@ Not assumed — measured, because most of this plan is discovering the plumbing 
 So the remaining work is a documented way in, one open question, and a decision about how
 content reloads.
 
-## The open question
+## The open question, closed — 2026-09-09
 
-**Where the host API gets `DATABASE_URL`.** `api.yml` composes it from `${POSTGRES_USER}`,
-`${POSTGRES_PASSWORD}` and `${POSTGRES_DB}`, and there is no `.env` beside the compose files
-and no wrapper naming one — the running containers were configured when the stack first came
-up, and `docker compose restart` reuses that rather than re-rendering it. The root `.env`
-holds Gitea and DM credentials only, in lower case, so compose substitution would not see
-them.
+**Where the host API gets `DATABASE_URL`: `infra/.env`, which already exists.**
 
-Postgres is reachable from the host on `127.0.0.1:5433`, so the connection is available; what
-is missing is a sanctioned way for a host process to learn the credentials. Settle this before
-writing the script, and settle it without putting secrets in a tracked file.
+This was written up as unresolved after looking in `infra/compose/` and the repository root
+and finding nothing. Both were the wrong place. `infra/docker-compose.yml` is the top-level
+file — it `include:`s the three fragments under `compose/` — so **`infra/` is the Compose
+project directory**, and `infra/.env` is where Compose reads variables from naturally. It is
+gitignored, `infra/.env.example` is the tracked template beside it, and it already carries
+`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` and `POSTGRES_PORT`.
+
+So there is no new mechanism to invent. A host process sources the same file Compose does.
+
+**Two keys were added to both, and neither is a secret:**
+
+```
+DEV_API_PORT=3083
+DEV_POSTGRES_DB=pyquest_dev
+```
+
+`.env.example` carries them with the reasoning — why the dev api gets its own port rather
+than borrowing production's, and why a third database is not tidiness but the thing standing
+between a content review and the learner's real progress.
+
+`DATABASE_URL` for the dev api is then composed the way `api.yml` composes production's,
+with two substitutions: `127.0.0.1:${POSTGRES_PORT}` instead of the compose-network host, and
+`${DEV_POSTGRES_DB}` instead of `${POSTGRES_DB}`.
 
 ## Success criteria
 
@@ -130,7 +145,8 @@ writing the script, and settle it without putting secrets in a tracked file.
 - [ ] **The dev api writes to its own database.** No dev sign-in, attempt or journal entry
       appears in the production one, and the plan says how that is verified rather than
       assumed
-- [ ] `DATABASE_URL` for a host process is answered, and no secret is committed
+- [x] `DATABASE_URL` for a host process is answered — `infra/.env`, which Compose already
+      reads because `infra/` is the project directory. No secret committed
 
 ## Approach
 
