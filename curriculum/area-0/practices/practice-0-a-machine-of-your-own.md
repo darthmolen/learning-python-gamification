@@ -35,17 +35,24 @@ means Practice 1 is still Practice 1 for everybody who has ever talked about thi
 Three things, on your machine, and all three are yours rather than theirs:
 
 1. **The stack is up and reachable from their machine.** Not from yours — from theirs.
-   `tools/git/local-lan-learner.md` has the procedure and the two things that are wrong out of
-   the box: `GITEA_DOMAIN` still says `localhost`, and the firewall has no rule for 3080. Prove
-   it with `curl http://<host>:3080/api/healthz` **typed on their laptop**. A check run on the
-   host passes while the thing you need fails.
-2. **An account for them, and a repository they will name.** The account is yours to create
-   (`gitea admin user create`). The repository name is theirs to choose, and §7 means it: one
-   repository for everything they make this year, called whatever they want. Ask them the day
-   before so they have had time to think, and so the evening does not open with a decision.
-3. **`pack.sh --remote <their clone url>`**, once the repository exists. That puts the payload
-   on the branch before they have ever opened a terminal, so Beat 3 is a `git checkout` rather
-   than a wait.
+   `tools/git/local-lan-learner.md` has the procedure. Two things are wrong out of the box:
+   `GITEA_DOMAIN` defaults to `localhost`, which makes every clone URL Gitea *displays* point at
+   whichever machine is reading it, and the firewall has no rule for 3080. Set the domain to the
+   host's LAN address and prove the rest with `curl http://<host>:3080/api/healthz` **typed on
+   their laptop**.
+
+   **A host cannot test this against itself.** Under WSL mirrored networking it fails from the
+   host and works from everywhere else, so a red result on your own machine means nothing and a
+   green one proves nothing. Borrow the laptop, or a phone browser.
+
+2. **An account for them.** Yours to create — `gitea admin user create`. Do this before, not
+   during; an admin command at the keyboard is you taking the session.
+
+3. **The repository is theirs to name, and the naming is part of the evening.** §7 means it:
+   one repository for everything they make this year, called whatever they want.
+
+   Ask the day before so they arrive with an idea. **Expect them to change it on the night
+   anyway**, which is fine and costs nothing — see Beat 3.
 
 If any of the three is not done, do not start. Move the evening. A first session spent watching
 an adult fight a firewall teaches exactly one thing, and it is not Python.
@@ -87,7 +94,38 @@ Nothing to explain here. It is a version number, it is the right one, move on.
 
 ---
 
-## Beat 3 — The clone (10 minutes)
+## Beat 3 — The repository, and the clone (10 minutes)
+
+Four steps, and **the order matters** — the second one is yours, and the payload cannot exist
+before the repository it goes into.
+
+### 3a. They make it, and they name it
+
+In the web UI at `http://<host>:3080`, signed in as themselves: **New Repository**, and the name
+they picked. Tick *Initialize this repository* so the clone has something in it rather than
+Git's empty-repository warning.
+
+**If they change their mind about the name here, let them.** It costs one command below and it
+is the only thing in the evening that is genuinely theirs to decide.
+
+### 3b. You put the payload on it — say what you are doing
+
+This is the one moment you touch a keyboard, so narrate it. *"I'm sending you the files."*
+
+```console
+tools/learner-setup/pack.sh --remote http://<host>:3080/<them>/<their-repo>.git
+```
+
+It clones their repository to a temp directory, copies the payload in, pushes it as the
+`learner-setup` branch, and deletes the temp copy. Under a minute, and it ends with
+`pushed learner-setup`. If it says anything else, stop and read it — do not go on to 3c.
+
+**Why this cannot be done in advance if they named it tonight**, which is the whole reason this
+step is here: the branch has to be pushed to a repository that exists, so a name chosen at 3a
+means a push at 3b. Doing it the day before is fine too, and then this step is a no-op that
+reports the branch already carries the payload.
+
+### 3c. They clone it
 
 The whole of `git-clone`, and no more of git than that.
 
@@ -108,12 +146,17 @@ That deferral is the same move Area 0 already makes with types: they meet `str` 
 accident in Practices 1 to 3, and Practice 4 names what they have already tripped over. Meeting
 a repository before it is explained is a feature.
 
-**Then the branch:**
+### 3d. They switch to the branch
 
 ```console
 git fetch
 git checkout learner-setup
 ```
+
+`git fetch` is there rather than assumed. A clone taken at 3c already has the branch, so the
+fetch reports nothing and the checkout works — but if 3b ran *after* they cloned, the fetch is
+the step that makes the branch exist locally. One command that is right either way beats two
+that depend on an order nobody will remember.
 
 `SETUP.md` is now in front of them. It is written to them, not to you — read the first page
 together and then let them drive.
@@ -140,6 +183,8 @@ together and then let them drive.
 | Connection times out | the firewall rule was never added | Yours to fix, not theirs. Do it, out loud, and say what you are doing |
 | Asked for a password and it failed | Caps Lock, or the account was made with a different one | Reset it rather than debugging it in front of them |
 | `cd` into the wrong folder | the clone made a directory and they are above it | "What did `ls` show right after the clone?" |
+| `pathspec 'learner-setup' did not match` | **3b did not run, or ran against a different repository name** | Yours, not theirs. Check the name in the URL you packed against the one they made, then re-run 3b and have them `git fetch` again |
+| The clone is empty apart from `README.md` | 3b has not run yet | The same. `git fetch` after it does, and 3d works |
 
 **Let them get wrong:** typing the URL rather than pasting it. They will typo it, get a clear
 error, and fix it. That is the first time this year the computer will tell them precisely what

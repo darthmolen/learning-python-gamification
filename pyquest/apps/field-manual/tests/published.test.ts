@@ -86,6 +86,20 @@ describe('what the learner artifact may not contain', () => {
   });
 
   /**
+   * The practice plans are the DM's, in exactly the way the guide is.
+   *
+   * They are a sharper leak than the guide if they get out: a plan names the stalls before the
+   * learner hits them, and Practice 3's whole design is that they do not know what is coming.
+   */
+  it('carries no practice plan on any page', () => {
+    for (const p of learner) {
+      expect(p.html, `${p.file} carries a practice plan`).not.toMatch(/Run this practice/i);
+      // A phrase that only ever appears inside a plan, in case the summary label changes.
+      expect(p.html, `${p.file} carries plan prose`).not.toMatch(/What you may not say/i);
+    }
+  });
+
+  /**
    * The audience block is metadata about the reader, and the reader is not its audience.
    *
    * Every `.md` under an area declares `audience: learner` or `audience: dm`, and three
@@ -166,6 +180,26 @@ describe('what the dm artifact adds', () => {
   it('carries the aid on the areas that have a guide', () => {
     const withAid = dm.filter((p) => /teaching aid/i.test(p.html));
     expect(withAid.length).toBeGreaterThan(0);
+  });
+
+  /**
+   * The plan for each practice — the document an evening is actually run from.
+   *
+   * Published nowhere until 2026-09-10, and found the way these things are found: a DM opened
+   * the Tome looking for what to do tonight and got a practice title and a line saying the work
+   * happens at the table. The area guide covers the area; nothing covered the evening.
+   *
+   * Asserted on an area known to have plans rather than on "at least one somewhere", because
+   * the failure worth catching is a whole area's worth going missing while another still has
+   * some.
+   */
+  it('carries a runnable plan for every practice of an authored area', () => {
+    const areaZero = dm.find((p) => p.file === 'area-0.html');
+    expect(areaZero).toBeDefined();
+
+    // Seven practices in Area 0 since Practice 0 was added, and every one has a plan file.
+    const plans = areaZero?.html.match(/Run this practice/g) ?? [];
+    expect(plans).toHaveLength(7);
   });
 
   /**
