@@ -11,6 +11,8 @@
   ],
   "scripts": {
     "test": "vitest run",
+    "build": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/build-packages.ts",
+    "check:dist": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/build-packages.ts --check",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty && npm run typecheck --workspaces --if-present",
     "validate:content": "npm run validate:content --workspace @pyquest/content --",

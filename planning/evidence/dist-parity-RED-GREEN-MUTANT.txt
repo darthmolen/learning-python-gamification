@@ -1,0 +1,142 @@
+The dist-parity check — RED, GREEN, and three seeded mutants.
+Captured 2026-09-09/10, TypeScript 5.9.3, Node 24.0.0, vitest 4.1.11, Windows 11.
+
+Plan: the-build-and-the-tests-see-the-same-code_2026-09-09
+Diagnosis this rests on: tsc-b-trusts-buildinfo-DIAGNOSIS.txt
+
+WHAT IS BEING CHECKED
+
+`pyquest/tests/compiled-entry-points.test.ts`, in the `dist` vitest project — the only
+project with no `@pyquest/* -> src/` alias. For every entry point every package
+publishes, it imports the bare specifier (which resolves through `exports` to `dist/`)
+and the source module (by absolute path), and compares the export names.
+
+RED — the exact 2026-09-09 failure, reproduced
+
+A schema added to `contract/src` and never emitted, which is what happened to
+`HowToSchema`. No build run: this is the developer who types `vite`.
+
+    $ printf '\nexport const StaleProbeSchema = z.object({ probe: z.string() });\n' \
+        >> packages/contract/src/endpoints.ts
+    $ printf "\nexport { StaleProbeSchema } from './endpoints.ts';\n" \
+        >> packages/contract/src/index.ts
+    $ npx vitest run --project dist
+
+     FAIL  |dist| compiled-entry-points.test.ts > '@pyquest/contract'
+                > exports from dist everything it exports from src
+     AssertionError: FAIL  @pyquest/contract
+             missing from dist:  StaleProbeSchema
+
+           dist/ does not export what src/ does, so every app resolving the package
+           entry point is reading code that no longer exists.
+
+           fix: rm pyquest/packages/*/tsconfig.tsbuildinfo && npm run build
+
+           `tsc -b` alone will not fix this. It never stats dist/ — it trusts the
+           hashes in tsconfig.tsbuildinfo, and a branch switch pushes that file's
+           mtime past every source file without changing a byte of output. See
+           planning/evidence/tsc-b-trusts-buildinfo-DIAGNOSIS.txt.
+
+     Test Files  1 failed (1)
+          Tests  1 failed | 5 passed (6)
+
+The remedy is inside the failure on purpose. The obvious one does not work, and a
+developer who reaches for `npm run build --workspace @pyquest/contract` gets exit 0.
+
+GREEN — the same tree, built
+
+    $ npm run build --workspace @pyquest/contract
+    $ npx vitest run --project dist
+          Tests  6 passed (6)
+
+(Here `tsc -b` did emit, because the source *text* changed. That is the case it
+handles correctly, and it is why the drift is invisible until it isn't.)
+
+Source restored, rebuilt, still green.
+
+MUTANTS — three, seeded into scripts/dist-parity.ts, each caught
+
+  1. compareExports never reports a missing name        `missing: []`
+         Test Files  1 failed | 2 passed (3)
+              Tests  4 failed | 46 passed (50)
+
+  2. entryPoints skips published subpaths, keeping "." only
+         Test Files  1 failed | 2 passed (3)
+              Tests  2 failed | 47 passed (49)
+     (this one also drops a test from the run — `describe.each` over the entry points
+     shrinks, which is itself the signal: the guard `expect(published.length)
+     .toBeGreaterThanOrEqual(4)` exists because a check over an empty list is green)
+
+  3. formatParity reports OK regardless                 `const stale = []`
+         Test Files  1 failed | 2 passed (3)
+              Tests  2 failed | 48 passed (50)
+
+  restored:  Test Files 3 passed (3)   Tests 50 passed (50)
+
+THE BUILD REPAIRS ITSELF — end to end, on the hardest case
+
+The state the diagnosis proved `tsc -b` cannot see: output deleted, buildinfo intact.
+
+    $ rm packages/contract/dist/index.js
+    $ npx tsc -b
+      exit 0, STILL MISSING            <-- the compiler, as diagnosed
+
+    $ npm run build
+      Tests  2 failed | 4 passed (6)   <-- parity catches what tsc -b cannot
+
+      tsc -b reported success and did not emit what src/ declares.
+      Discarding tsconfig.tsbuildinfo and rebuilding from scratch — this is
+      the documented repair, not a retry.
+
+      Tests  6 passed (6)
+      Recovered after discarding stale build info.
+    EXIT=0
+    RESULT: dist/index.js RESTORED
+
+Two packages fail rather than one because `db` and `engine` both depend on `contract`
+and cannot load when its entry point is gone. That is correct: a missing artifact is
+reported everywhere it is missing from.
+
+THE TWO APPLICATIONS THAT WERE BROKEN
+
+    $ npm run build --workspace @pyquest/field-manual
+      > predev/prebuild: Tests 6 passed (6)
+      field-manual: 8 areas, 95 ideas, 26 exercises -> dist/
+      field-manual: the same, plus 4 teaching aids -> dist/dm/
+
+    $ npm run dev --workspace @pyquest/web -- --port 5199
+      > predev: Tests 6 passed (6)
+      VITE v6.4.3 ready in 218 ms
+      GET /             -> 200
+      GET /src/main.tsx -> 200
+
+    $ node -e "import('@pyquest/contract').then(m => console.log('HowToSchema' in m))"
+      true                              <-- the symbol the SPA died on, in dist
+
+Started on 5199 rather than 5173 deliberately: a vite dev server was already running
+on 5173 and production was up on 3081/3082. Neither was touched. The scratch server
+was stopped afterwards and 5173 re-checked (200).
+
+FULL SUITE
+
+    $ npx vitest run
+      Test Files  75 passed (75)
+           Tests  1170 passed | 1 skipped (1171)
+
+1154 before, 1170 after: 10 unit tests for the comparison, 6 parity checks (one per
+published entry point, plus the guard that there are any).
+
+ONE THING FOUND ALONG THE WAY, FIXED, AND WORTH RECORDING
+
+`apps/field-manual`'s build did `rmSync(outDir, { recursive: true, force: true })`,
+which fails EPERM when anything holds the directory handle — and something did: a
+`python -m http.server` previewing the site, whose working directory *is* `dist/`.
+The build died having produced nothing, for a reason unrelated to content.
+
+Clearing the directory's *children* needs no such handle and clears just as
+thoroughly. Changed, and the preview server picked the rebuilt site up without being
+restarted.
+
+This is adjacent to the plan rather than in it. Recorded here because "the Field
+Manual builds" was a success criterion and this was the only thing standing between
+the repository and that sentence.

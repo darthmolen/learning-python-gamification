@@ -6,7 +6,8 @@
   "description": "The PyQuest API. Serves @pyquest/contract, runs the four verifiers of §6.3.",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "start": "tsc -b ../.. && node --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts",
+    "prestart": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
+    "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts",
     "e2e": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/e2e.ts",
     "typecheck": "tsc -p tsconfig.json"
   },

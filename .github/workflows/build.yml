@@ -113,6 +113,18 @@ jobs:
       - name: Validate content
         run: npm run validate:content
 
+      # Does dist/ export what src/ exports? The `dist` vitest project is the only one with no
+      # source alias, so it loads each package the way an application does.
+      #
+      # This is a *supplement*, not the fix. The 2026-09-09 failure was a working-tree failure and
+      # CI could never have reproduced it — `npm ci` deletes dist/ and the buildinfo together,
+      # which is the one operation that keeps the two consistent. The fix lives in `npm run build`
+      # and in the prebuild/predev hooks, where the drift actually happens. What this step adds is
+      # the other half: a package whose tsconfig genuinely excludes a file emits a dist that is
+      # wrong on any machine, and that is a repository fault rather than a local one.
+      - name: Check dist matches src
+        run: npx vitest run --project dist
+
       # The step this workflow exists for. It resolves @pyquest/* through package exports —
       # dist/ — which is the one path no test in this repository takes.
       - name: Build the SPA
