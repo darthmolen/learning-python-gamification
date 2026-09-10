@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 C:/dev/learning-python-gamification/pyquest
+
+ ❯ |packages| packages/content/tests/learner-setup.test.ts (2 tests | 1 failed) 6ms
+     × names only paths that exist in this repository 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |packages| packages/content/tests/learner-setup.test.ts > the learner-setup manifest > names only paths that exist in this repository
+AssertionError: expected [ …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "curriculum/area-2/exercises/README.md",
++   "curriculum/area-2/exercises/session-2",
++ ]
+
+ ❯ packages/content/tests/learner-setup.test.ts:61:21
+     59|     // Asserting on the list rather than on a count, because the usefu…
+     60|     // path died — that is the whole of the next action, and `pack.sh`…
+     61|     expect(missing).toEqual([]);
+       |                     ^
+     62|   });
+     63| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  09:26:04
+   Duration  133ms (transform 15ms, setup 0ms, import 23ms, tests 6ms, environment 0ms)
+

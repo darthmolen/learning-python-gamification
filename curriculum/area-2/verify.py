@@ -186,8 +186,16 @@ def has_own_environment(path: pathlib.Path) -> bool:
 
 
 def main() -> int:
-    found = sorted(f for directory in SEARCH for f in directory.rglob("*.py"))
-    walkthroughs = sorted(f for directory in SEARCH for f in directory.rglob("w*.md"))
+    # See area-0/verify.py. `reference/` is the DM's copy and absent on a learner's machine by
+    # design; `rglob` on a missing directory yields nothing rather than raising, so the count
+    # shrank silently and still exited 0. This harness already names the files it did not run
+    # for a different reason -- the venv skip below -- and an absent tree deserves the same
+    # sentence rather than silence.
+    absent = [d for d in SEARCH if not d.exists()]
+    found = sorted(f for directory in SEARCH if directory.exists() for f in directory.rglob("*.py"))
+    walkthroughs = sorted(
+        f for directory in SEARCH if directory.exists() for f in directory.rglob("w*.md")
+    )
     files = [f for f in found if not has_own_environment(f)]
     skipped = [f for f in found if has_own_environment(f)]
     if not files:
@@ -195,11 +203,11 @@ def main() -> int:
         return 1
 
     failures = 0
-    session = None
+    practice = None
     for path in found:
-        if path.parent.name != session:
-            session = path.parent.name
-            print(f"\n{session}")
+        if path.parent.name != practice:
+            practice = path.parent.name
+            print(f"\n{practice}")
         if path in skipped:
             print(f"  SKIP  {path.name:<24} needs its own venv -- requirements.txt beside it")
             continue
@@ -218,6 +226,8 @@ def main() -> int:
         f"{len(walkthroughs)} walkthroughs are NOT covered here -- there is nothing to "
         "execute in\nthem. README.md carries their completion checklist."
     )
+    for directory in absent:
+        print(f"{directory.name}/ is not here, so nothing in it was checked.")
     return 1 if failures else 0
 
 

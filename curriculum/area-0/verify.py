@@ -135,18 +135,30 @@ def check(path):
     return True, (headline[-1] if headline else expect) + where
 
 
-def main():
-    files = sorted(f for d in SEARCH for f in d.rglob("*.py"))
+def main() -> int:
+    # `reference/` is the DM's copy and is deliberately absent from a learner's machine --
+    # reference/README.md opens with "This directory is yours, not the learner's."
+    #
+    # `rglob` on a directory that does not exist yields nothing rather than raising, so without
+    # this guard the harness printed "15 of 15 exercises behaved as tagged" and exited 0 on a
+    # machine where four files were never looked at. A smaller number presented as a whole one
+    # is the failure practices/README.md already names: a harness that quietly counts fewer
+    # files and prints a reassuring result is worse than one that says what it cannot check.
+    #
+    # An absent reference/ is a CORRECT state, so this names the gap and still exits on the
+    # strength of what it did run.
+    absent = [d for d in SEARCH if not d.exists()]
+    files = sorted(f for d in SEARCH if d.exists() for f in d.rglob("*.py"))
     if not files:
-        print("no exercises found")
+        print("no exercises found -- that is not a pass, it is a missing tree")
         return 1
 
     failures = 0
-    session = None
+    practice = None
     for path in files:
-        if path.parent.name != session:
-            session = path.parent.name
-            print(f"\n{session}")
+        if path.parent.name != practice:
+            practice = path.parent.name
+            print(f"\n{practice}")
         ok, note = check(path)
         mark = "PASS" if ok else "FAIL"
         if not ok:
@@ -154,6 +166,8 @@ def main():
         print(f"  {mark}  {path.name:<28} {note}")
 
     print(f"\n{len(files) - failures} of {len(files)} exercises behaved as tagged.")
+    for directory in absent:
+        print(f"{directory.name}/ is not here, so nothing in it was checked.")
     return 1 if failures else 0
 
 

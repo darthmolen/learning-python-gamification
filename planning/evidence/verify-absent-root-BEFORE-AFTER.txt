@@ -1,0 +1,67 @@
+verify.py and the missing search root
+=====================================
+Track: learner-setup-repairs        Date: 2026-09-10
+
+THE DEFECT
+----------
+SEARCH = (ROOT / "practices", ROOT / "reference")
+
+`reference/` is the DM's copy. curriculum/area-0/reference/README.md line 3:
+"**This directory is yours, not the learner's.** Do not copy it onto the learner's machine."
+
+pathlib.Path.rglob on a directory that does not exist yields nothing rather than raising, so on
+a learner's machine the harness counted fewer files, printed the smaller number as if it were
+the whole, and exited 0. Areas 0, 1 and 2 had no guard at all. Area 3 had `if d.exists()` and
+skipped silently, which is better and still silent.
+
+curriculum/area-2/practices/README.md already argues against exactly this:
+"A harness that quietly counts zero and prints a reassuring result is worse than one that names
+what it cannot check."  The harness it describes is this one.
+
+
+AFTER -- full tree, all three areas (nothing changed)
+-----------------------------------------------------
+$ py -3.14 curriculum/area-0/verify.py
+19 of 19 exercises behaved as tagged.                       exit 0
+
+$ py -3.14 curriculum/area-1/verify.py
+35 of 35 exercises behaved as tagged.                       exit 0
+
+$ py -3.14 curriculum/area-2/verify.py
+1 file(s) were NOT run: they belong to a project with its own requirements.txt...
+8 walkthroughs are NOT covered here...                      exit 0
+
+
+AFTER -- a learner's copy, practices/ only, no reference/
+----------------------------------------------------------
+$ py -3.14 <scratch>/a0-learner/verify.py
+
+practice-6
+  PASS  p6_starter.py                clean, 0 strokes drawn
+
+17 of 17 exercises behaved as tagged.
+reference/ is not here, so nothing in it was checked.
+exit: 0
+
+17 rather than 19, and the reason is on the screen. Exit stays 0 -- a learner without
+reference/ is in a CORRECT state, so this is a sentence rather than a failure.
+
+
+MUTANT -- the reporting removed, old behavior reproduced
+---------------------------------------------------------
+$ sed -i '/for directory in absent:/,+1d' <scratch>/a0-learner/verify.py
+$ py -3.14 <scratch>/a0-learner/verify.py
+
+17 of 17 exercises behaved as tagged.
+exit: 0
+
+No mention of the missing tree. A learner reads "17 of 17" and believes everything was
+checked. That is the bug, reproduced on demand, which is what makes the two added lines
+load-bearing rather than decorative.
+
+
+NOT TOUCHED
+-----------
+curriculum/area-3/verify.py -- the `area-3` track is in-progress and owns that file. It already
+carries `if d.exists()`, so it does not shrink its denominator; it is still silent about why.
+Recorded for whoever closes that track.

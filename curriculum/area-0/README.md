@@ -23,7 +23,7 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 
 ---
 
-## The sessions
+## The practices
 
 | # | Title | Concepts introduced | Resurfacing | Files |
 |---|---|---|---|---|
@@ -51,8 +51,8 @@ the string in `color("red")`, the decimals from a 1.5 staircase, the `TypeError`
 passing `"100"` to `forward` — and Practice 4 names things they have already tripped over.
 
 **Practice 4 is the weak one and is scheduled as such.** Types are the least visual
-material in the area. It sits between the two strongest sessions on purpose, and the
-session plan says explicitly that it is fine to cut it short.
+material in the area. It sits between the two strongest practices on purpose, and the
+practice plan says explicitly that it is fine to cut it short.
 
 ### Compressing to four sessions
 
@@ -71,13 +71,13 @@ The plan says 4–6. If the calendar bites:
 Generated from the `# concepts:` tags in the exercise files, which `verify.py` checks
 against the Area 0 entries of `packages/content/src/concepts.ts`.
 
-| Exercise | Session | DC | Concepts |
+| Exercise | Practice | DC | Concepts |
 |---|---|---|---|
-| `s1e1_first_light.py` | 1 | 5 | `print` |
-| `s1e2_where_am_i.py` | 1 | 8 | `print` |
-| `s1e3_pen_and_color.py` | 1 | 8 | `print`, `str`, `bool` |
-| `s2e1_square_by_name.py` | 2 | 8 | `variables`, `int`, `print` |
-| `s2e2_the_staircase.py` | 2 | 10 | `variables`, `int`, `print` |
+| `p1e1_first_light.py` | 1 | 5 | `print` |
+| `p1e2_where_am_i.py` | 1 | 8 | `print` |
+| `p1e3_pen_and_color.py` | 1 | 8 | `print`, `str`, `bool` |
+| `p2e1_square_by_name.py` | 2 | 8 | `variables`, `int`, `print` |
+| `p2e2_the_staircase.py` | 2 | 10 | `variables`, `int`, `print` |
 | `b1_the_typo.py` | 3 | 5 | `reading-errors`, `print` |
 | `b2_wrong_kind.py` | 3 | 8 | `reading-errors`, `str`, `int` |
 | `b3_never_closed.py` | 3 | 8 | `reading-errors` |
@@ -85,10 +85,10 @@ against the Area 0 entries of `packages/content/src/concepts.ts`.
 | `b5_no_such_order.py` | 3 | 10 | `reading-errors` |
 | `b6_not_a_number.py` | 3 | 10 | `reading-errors`, `int`, `str` |
 | `b7_no_error_at_all.py` | 3 | 12 | `reading-errors`, `variables` |
-| `s4e1_type_lab.py` | 4 | 12 | `int`, `float`, `str`, `bool`, `print`, `variables` |
-| `s4e2_the_dashed_orbit.py` | 4 | 12 | `float`, `int`, `variables`, `print` |
-| `s5e1_ask_and_draw.py` | 5 | 12 | `input`, `str`, `int`, `f-strings`, `variables`, `print` |
-| `s5e2_the_nameplate.py` | 5 | 14 | `input`, `f-strings`, `str`, `int`, `variables`, `print` |
+| `p4e1_type_lab.py` | 4 | 12 | `int`, `float`, `str`, `bool`, `print`, `variables` |
+| `p4e2_the_dashed_orbit.py` | 4 | 12 | `float`, `int`, `variables`, `print` |
+| `p5e1_ask_and_draw.py` | 5 | 12 | `input`, `str`, `int`, `f-strings`, `variables`, `print` |
+| `p5e2_the_nameplate.py` | 5 | 14 | `input`, `f-strings`, `str`, `int`, `variables`, `print` |
 | `p6_starter.py` | 6 | 18 | all nine |
 
 All nine Area 0 concepts are covered. **`bool` is the thinnest, at three exercises, and
@@ -112,7 +112,7 @@ learner in week one**, not against Python difficulty in the abstract.
 - **5** — one idea, one line to change. `p1e1`, `b1`.
 - **8** — one idea plus a thing that will surprise them.
 - **10–12** — two ideas at once, or one idea plus a prediction they will get wrong.
-- **14–18** — they have to decide something, not just type something. `p5e2`, `s6`.
+- **14–18** — they have to decide something, not just type something. `p5e2`, `p6`.
 
 Nothing in Area 0 is above 18. Spec §5.1 renders DC ≥ 20 with a warning, and a warning
 label in week one would be teaching them to be afraid of the material rather than of
@@ -129,9 +129,9 @@ Per the brief, this directory does not contain quest YAML and does not touch
 
 | Exercise | DC | Why it verifies cleanly |
 |---|---|---|
-| `s2e1_square_by_name.py` task 4 | 8 | Perimeter computed, not typed. Assert on the printed number as the size varies. |
-| `s4e1_type_lab.py` | 12 | Every answer is a value. Tests can assert on `type()` results directly. |
-| `s5e1_ask_and_draw.py` | 12 | Feed stdin, assert on stdout. The f-string receipt is exactly checkable. |
+| `p2e1_square_by_name.py` task 4 | 8 | Perimeter computed, not typed. Assert on the printed number as the size varies. |
+| `p4e1_type_lab.py` | 12 | Every answer is a value. Tests can assert on `type()` results directly. |
+| `p5e1_ask_and_draw.py` | 12 | Feed stdin, assert on stdout. The f-string receipt is exactly checkable. |
 | `b1`–`b6` as *fix-it* quests | 5–10 | Starter is the broken file; the test is that it runs. The cleanest quest shape in the area. |
 
 **Good `peer-signoff` quests** — a person has to look:
@@ -140,10 +140,10 @@ Per the brief, this directory does not contain quest YAML and does not touch
 |---|---|---|
 | Every choice board | 8–12 | Open-ended by design. There is no right picture. |
 | `b7_no_error_at_all.py` | 12 | The win condition is that they *say what is wrong*, which no test can check. |
-| `s5e2_the_nameplate.py` | 14 | It draws. Someone has to see it. |
+| `p5e2_the_nameplate.py` | 14 | It draws. Someone has to see it. |
 | **The Commission** | 18 | Win condition is "it ran on your dad's machine". That is `local-repo` in spirit and peer-signoff in week two. |
 
-**Do not turn into quests:** the session plans, the Journal prompts, or the reversal
+**Do not turn into quests:** the practice plans, the Journal prompts, or the reversal
 exercise in Practice 3. They are DM-delivered and lose their point when automated.
 
 Two notes for whoever builds this:
@@ -188,7 +188,7 @@ than existence, and empty prompts pay nothing. `dm-guide.md` §6 has the rubric.
 py -3.14 verify.py
 ```
 
-Every `.py` file in `exercises/` and `reference/` is run, with the turtle window
+Every `.py` file in `practices/` and `reference/` is run, with the turtle window
 suppressed, and checked against its own header tags:
 
 - files tagged `# expect: ok` must exit cleanly **and actually put the pen down**
@@ -215,15 +215,28 @@ assumed.
 
 ## Directory map
 
-```
+**There are two bodies of work here and they are different objects.** `practices/` holds the
+drills delivered at the table, which have no brief and no test. `exercises/` holds the
+brief-bearing work the game scores. An earlier version of this map conflated them.
+
+```text
 area-0/
   README.md              this file
-  dm-guide.md        how to run a session; the Socratic ladder; every predicted stall
-  verify.py              runs every exercise and checks it against its own tags
-  practices/              one plan per session, in delivery order
-  exercises/             the .py files the learner actually runs
-    practice-3/error-log.md   the table they fill in while breaking things
+  dm-guide.md            how to run a session; the Socratic ladder; every predicted stall
+  lesson.md              the area's teaching, written to the learner
+  glossary.md            one definition per concept this area introduces
+  area.yml               title, weeks, and whether the quest count is final
+  practices.yml          the spine — every practice in order, and the exercises it teaches
+  verify.py              runs every drill and checks it against its own tags
+  practices/             one plan per practice, in delivery order, and the drills beside it
+    practice-1-first-light.md    the DM's plan. The learner never opens one
+    practice-1/                  the drills that plan hands over — p1e1, p1e2, p1e3
+    practice-3/error-log.md      the table they fill in while breaking things
     practice-6/commission-brief.md
+  exercises/<slug>/      the brief-bearing work the game scores, one directory each
+    BRIEF.md             the instructions, written to the learner
+    starter/             the file to begin from, sometimes broken on purpose
+    hidden/              the test. Never shipped to a browser (spec §6.3)
   journal/
     TEMPLATE.md          the entry to paste into his journal.md, once per session
     entry-01-prompt.md   what to say the first time, and how to score it

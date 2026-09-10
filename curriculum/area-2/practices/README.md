@@ -1,7 +1,7 @@
-# The session drills
+# The practice drills
 
-Each `session-<n>/` directory here holds the files for the session plan beside it. They
-are the work of the evening, and they live with the session that teaches them.
+Each `practice-<n>/` directory here holds the files for the practice plan beside it. They
+are the work of that practice, and they live with the plan that teaches them.
 
 **The brief-bearing exercises are next door in `../exercises/`** — those are the ones with
 a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,

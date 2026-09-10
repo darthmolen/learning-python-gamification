@@ -55,9 +55,28 @@ env_get() {
   ' "$2"
 }
 
+# The same lookup, tried under both spellings of the key.
+#
+# This script was written expecting `gitea-user-admin`; the `.env` it reads uses
+# `gitea_user_admin`. Because `env_get` matches `key=` exactly, every lookup returned empty and
+# the script died at the first `require` — it has never run against this repository's own `.env`.
+#
+# Accepting both is the right repair rather than renaming the keys. `.env` is gitignored, so it
+# exists only on machines that already have one, and a rename would silently break every one of
+# them the next time somebody pulled. A script that reads two spellings costs four lines; a
+# rename costs an afternoon on somebody else's machine.
+env_either() {
+  _ev=$(env_get "$1" "$2")
+  [ -n "$_ev" ] || _ev=$(env_get "$(printf '%s' "$1" | tr '-' '_')" "$2")
+  printf '%s' "$_ev"
+}
+
 require() {
   eval "_val=\${$1}"
-  [ -n "$_val" ] || die "$2 is missing or empty in $ENV_FILE"
+  # Both spellings are named, because the reader's next action is to add one of them and the
+  # error should not make them guess which.
+  [ -n "$_val" ] \
+    || die "$2 (or $(printf '%s' "$2" | tr '-' '_')) is missing or empty in $ENV_FILE"
 }
 
 dc() { (cd "$INFRA_DIR" && docker compose "$@"); }
@@ -71,10 +90,10 @@ step "0. inputs"
 # =============================================================================
 [ -f "$ENV_FILE" ] || die "no .env at $ENV_FILE"
 
-ADMIN_USER=$(env_get gitea-user-admin "$ENV_FILE")
-ADMIN_PW=$(env_get gitea-user-admin-pw "$ENV_FILE")
-USER1=$(env_get gitea-user1 "$ENV_FILE")
-USER1_PW=$(env_get gitea-user1-pw "$ENV_FILE")
+ADMIN_USER=$(env_either gitea-user-admin "$ENV_FILE")
+ADMIN_PW=$(env_either gitea-user-admin-pw "$ENV_FILE")
+USER1=$(env_either gitea-user1 "$ENV_FILE")
+USER1_PW=$(env_either gitea-user1-pw "$ENV_FILE")
 
 require ADMIN_USER gitea-user-admin
 require ADMIN_PW   gitea-user-admin-pw

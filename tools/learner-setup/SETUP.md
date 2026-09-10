@@ -65,7 +65,7 @@ re-export is what turns the directory from a plan into an artifact. Without it t
 open and Area 2 is not ready to be taught.
 
 Then open one real exercise in it and use it, rather than admiring it:
-[`curriculum/area-2/exercises/session-2/motto.py`](curriculum/area-2/exercises/session-2/motto.py),
+[`curriculum/area-2/practices/practice-2/motto.py`](curriculum/area-2/practices/practice-2/motto.py),
 which is the file §4's `py -3.14 motto.py` line means.
 
 ### Gate 2 — the ursina framerate on this machine
