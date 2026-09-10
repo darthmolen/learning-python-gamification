@@ -139,3 +139,50 @@ because a migrator is a *tool run against source*, not a release.
 That distinction is the real design question and this plan does not settle it. What it does is
 fix the one case where the answer is unambiguous. **Owner: unassigned — an `infra` question, and
 the shape of it is "which of our images are releases and which are tools".**
+
+## Addendum — 2026-09-10, the fix reintroduced the bug it was fixing
+
+Copilot's review of the PR caught it, and it was right.
+
+The build step went in as:
+
+```sh
+dc --profile migrate build migrate >/dev/null 2>&1 || true
+```
+
+`|| true` swallows the exit status and `>/dev/null 2>&1` swallows the reason. So a migrate image
+that **fails to build** leaves the previous one on disk, and the two assertions underneath then run
+against it and pass. A smoke test reporting success about code that never compiled — which is the
+exact failure this step exists to catch, written one line above it.
+
+It came from pattern-matching the surrounding lines, which do use `|| true`. They are different:
+they capture output and then assert on it, so the assertion is the check. A build line with no
+assertion after it means "ignore".
+
+**Recording the failure is not sufficient on its own**, which is the part worth keeping. An
+assertion that cannot be true of the thing under test must not run at all, or its PASS is a lie
+about a stale image. So the build's status is asserted *and* the two job assertions are skipped
+when it fails.
+
+Demonstrated both ways, with a real `pyquest-migrate:local` present and
+`RUN this-command-does-not-exist` appended to `packages/db/Dockerfile`:
+
+```console
+######## the version Copilot objected to ########
+  PASS  the migrate job ran to completion
+  PASS  running it again is a no-op - the schema_migrations ledger is doing its job
+  --- PASS=2 FAIL=0 ---              <-- green, against a Dockerfile that cannot build
+
+######## after the fix ########
+  FAIL  the migrate image did not build - nothing below can be said about it
+        failed to solve: process "/bin/sh -c this-command-does-not-exist" ... exit code: 127
+  FAIL  skipped both migrate job assertions - they would have tested the previous image
+  --- PASS=0 FAIL=2 ---
+```
+
+And unbroken, for the GREEN side: `PASS=3 FAIL=0`. The Dockerfile was restored and verified
+byte-identical each time.
+
+Worth saying plainly: this is the third time in two days that the bug has been *a tool reporting
+success about something it did not check*, and the second time I have written one myself while
+fixing the previous one.

@@ -235,22 +235,43 @@ step "4b. the migration job applies the progress schema (spec 6.1)"
 # been satisfied by it. Building here rather than passing `--build` to each run
 # keeps the two runs comparable -- they must differ only in that one has already
 # been done.
-dc --profile migrate build migrate >/dev/null 2>&1 || true
-
-MIGRATE_1=$(dc --profile migrate run --rm migrate 2>&1) || true
-if echo "$MIGRATE_1" | grep -qE 'migrate: (applied|already up to date)'; then
-  ok "the migrate job ran to completion"
+#
+# **The build's exit status is asserted, and the two runs below are skipped if it
+# failed.** Both halves are needed and the first draft of this had neither: it was
+# `... >/dev/null 2>&1 || true`, which swallowed the status AND the reason. A
+# broken Dockerfile would then leave the previous image in place and the two
+# assertions below would pass against it -- a smoke test reporting success about
+# code that never compiled, which is the exact failure this whole step exists to
+# catch, reintroduced one line above it. Recording the failure is not enough on
+# its own: an assertion that cannot be true of the thing being tested must not
+# run at all, or its PASS is a lie about a stale image.
+if MIGRATE_BUILD=$(dc --profile migrate build migrate 2>&1); then
+  ok "the migrate image was rebuilt from source"
+  MIGRATE_IMAGE_FRESH=1
 else
-  bad "the migrate job did not report applying anything"
-  echo "$MIGRATE_1" | tail -10 | sed 's/^/        /'
+  bad "the migrate image did not build - nothing below can be said about it"
+  echo "$MIGRATE_BUILD" | tail -10 | sed 's/^/        /'
+  MIGRATE_IMAGE_FRESH=0
 fi
 
-MIGRATE_2=$(dc --profile migrate run --rm migrate 2>&1) || true
-if echo "$MIGRATE_2" | grep -q 'migrate: already up to date'; then
-  ok "running it again is a no-op - the schema_migrations ledger is doing its job"
+if [ "$MIGRATE_IMAGE_FRESH" = "1" ]; then
+  MIGRATE_1=$(dc --profile migrate run --rm migrate 2>&1) || true
+  if echo "$MIGRATE_1" | grep -qE 'migrate: (applied|already up to date)'; then
+    ok "the migrate job ran to completion"
+  else
+    bad "the migrate job did not report applying anything"
+    echo "$MIGRATE_1" | tail -10 | sed 's/^/        /'
+  fi
+
+  MIGRATE_2=$(dc --profile migrate run --rm migrate 2>&1) || true
+  if echo "$MIGRATE_2" | grep -q 'migrate: already up to date'; then
+    ok "running it again is a no-op - the schema_migrations ledger is doing its job"
+  else
+    bad "the second run was not a no-op; migrations are not idempotent"
+    echo "$MIGRATE_2" | tail -10 | sed 's/^/        /'
+  fi
 else
-  bad "the second run was not a no-op; migrations are not idempotent"
-  echo "$MIGRATE_2" | tail -10 | sed 's/^/        /'
+  bad "skipped both migrate job assertions - they would have tested the previous image"
 fi
 
 # Every migration on disk is recorded. A count that lags is a migration that was
