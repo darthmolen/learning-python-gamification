@@ -337,3 +337,31 @@ cd infra && docker compose --profile migrate run --rm migrate
 ```
 
 **Owner: the `practice-spine` track.**
+
+## Addendum — 2026-09-10, `--with-spa`
+
+Asked for after the plan closed: one command rather than two. Added as a flag rather than as a
+change of default, because the two-terminal shape is still the better one for a long session —
+every api restart under `--with-spa` bounces vite too, and vite is the half holding the page you
+are looking at. The script's header now argues both and says which session wants which.
+
+The only hard part is stopping. `npm run X` is not the process holding the port — it spawns node,
+through `cmd.exe` on Windows — so signalling the pid bash knows about leaves the real listener
+orphaned on 3083 or 5173, and the next run hits the port check and refuses. The trap therefore
+kills the process **tree**, found by port. That is safe here for one reason, and only for that
+reason: the checks above refuse to start unless both ports are free, so anything listening on them
+afterwards is this script's own child. Without that ordering it would be a script that kills
+strangers, and the comment in the file says so.
+
+Verified: both up from one command (api 200, SPA 200, Tome through the proxy 8 areas / 95
+concepts); both down on signal, with production still 200 on 3081 and 3082; `--with-spa
+--migrate-only` refused as contradictory, exit 2; and the port check refused on 3083 while a
+previous dev api still held it.
+
+**One thing could not be verified from here, and it is worth writing down.** The `Ctrl-C` path
+specifically — SIGINT — could not be exercised, because a job started in the background from a
+non-interactive shell inherits SIGINT set to *ignore*, and bash will not let a trap override an
+inherited ignore. Sending SIGINT to the script did nothing at all; SIGTERM and the EXIT trap both
+ran correctly and stopped both children. An interactive terminal delivers SIGINT normally, so
+Ctrl-C is expected to work — but that is inference from how bash documents the behavior, not a
+measurement, and it is the one claim in this addendum that has not been seen to happen.

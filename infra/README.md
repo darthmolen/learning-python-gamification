@@ -189,19 +189,33 @@ Pick by the question you are asking. The third row exists because the first two 
 | **app dev** | `vite` **5173** | nothing — `apps/web/src/fixtures` | nothing | **The content.** 7 concepts against the real 95, two areas missing identity, `iteration` deliberately undefined. A Tome reading "2 concepts" here is a stub behaving correctly. |
 | **dev stack** | `vite` **5173**, `--mode live` | `npm start`, from source, **3083** | the repository, read directly | **Submissions.** The dev api's spool is a host directory the runner container cannot see, so a submission queues and is never picked up. Everything else is real. |
 
-Starting the dev stack, in two terminals:
+Starting the dev stack, in one command:
 
 ```sh
-./infra/dev-stack.sh                            # 1. the api, from source, on 3083
-npm run dev:live --workspace @pyquest/web       # 2. from pyquest/ — the SPA, in live mode
+./infra/dev-stack.sh --with-spa                 # api on 3083 + SPA on 5173, stopped together
 ```
 
 Then open **<http://localhost:5173>**. Add `--seed` the first time to put a throwaway household in
 the dev database, and `npm run bootstrap --workspace @pyquest/db` (with `DATABASE_URL` pointing at
 `pyquest_dev`) to arm a sign-in secret.
 
-Two terminals rather than one, on purpose. The api is the half you restart; the vite server is the
-half you leave alone, because it is holding the page you are looking at.
+Or in two terminals, which is the better shape for a long session:
+
+```sh
+./infra/dev-stack.sh                            # 1. the api, from source, on 3083
+npm run dev:live --workspace @pyquest/web       # 2. from pyquest/ — the SPA, in live mode
+```
+
+The api is the half you restart — that is how a manifest change reloads. The vite server is the
+half worth leaving alone, because it is holding HMR state and the page you are looking at, and
+`--with-spa` bounces it on every api restart. Dipping in to check one screen: one command. An
+afternoon of moving quests between areas: two terminals.
+
+`--with-spa` refuses to start if **either** port is taken, and stops both on Ctrl-C by killing the
+process tree — `npm run X` is not the process holding the port, so signalling it alone would leave
+an orphan on 3083 or 5173 and make the next run refuse. npm prints a "Lifecycle script failed"
+block when its child is killed; that block is the shutdown, not a fault, and the script says so
+after it.
 
 ### Production stays up, and that is the whole shape of it
 

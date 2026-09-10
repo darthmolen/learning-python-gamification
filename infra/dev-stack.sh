@@ -16,14 +16,23 @@
 #   dev stack   this. vite:5173 with VITE_API_LIVE -> proxy -> api from source on 3083 ->
 #               pyquest_dev, with content read straight out of the repository.
 #
-# ## Two commands, and the split is deliberate
+# ## One command, or two
+#
+#     ./infra/dev-stack.sh --with-spa               # both, stopped together on Ctrl-C
+#
+# or, in two terminals:
 #
 #     ./infra/dev-stack.sh                          # terminal 1 — the api (this script)
 #     npm run dev:live --workspace @pyquest/web     # terminal 2 — the SPA, from pyquest/
 #
-# The api is the half you restart, because restarting it is how content reloads (see below). The
-# vite server is the half you leave alone: it holds HMR state and the page you are looking at, and
-# bouncing it every time you fix a typo in a brief would throw away the thing you were checking.
+# **The two-terminal form is still the better one for a long session**, and `--with-spa` is a
+# convenience rather than a correction. The api is the half you restart, because restarting it is
+# how a manifest change reloads (see below); the vite server is the half you want left alone,
+# because it is holding HMR state and the page you are looking at. Under `--with-spa` every api
+# restart bounces vite too and you lose that page.
+#
+# Which is worth it depends on the session. Dipping in to check one screen: one command. An
+# afternoon of moving quests between areas: two terminals, and leave vite up.
 #
 # ## Production stays up. That is not a preference.
 #
@@ -42,7 +51,7 @@
 #
 # ## How content reloads: restart this script
 #
-# Ctrl-C, run it again. About three seconds. Considered and rejected:
+# Ctrl-C, run it again. About four seconds. Considered and rejected:
 #
 #   a reload endpoint   POST /api/content/reload, dev-only. Fast, and it puts a route in the api
 #                       that exists only for authors — shipped in the image, reachable in
@@ -62,33 +71,49 @@ REPO="$(cd "$HERE/.." && pwd)"
 
 usage() {
   cat <<'USAGE'
-Usage: ./infra/dev-stack.sh [--seed] [--migrate-only] [--help]
+Usage: ./infra/dev-stack.sh [--with-spa] [--seed] [--migrate-only] [--help]
 
 Runs the PyQuest api from source against a development database, so a content or API change
 shows up in a browser refresh without an image rebuild.
 
+  --with-spa      start the SPA too, on 5173, and stop both together on Ctrl-C
   --seed          (re)seed the dev database with a throwaway household before starting
   --migrate-only  create and migrate the dev database, then stop — do not start the api
   --help          this message
 
-Then, in a second terminal, from pyquest/:
+Without --with-spa this starts the api alone, and the SPA is a second terminal, from pyquest/:
 
   npm run dev:live --workspace @pyquest/web      then open http://127.0.0.1:5173
 
 Production is untouched: 3081 and 3082 stay bound to their containers throughout.
+
+  DEV_SPA_PORT    override the SPA's port (default 5173)
 USAGE
 }
 
 SEED=0
 MIGRATE_ONLY=0
+SPA=0
 for arg in "$@"; do
   case "$arg" in
+    --with-spa) SPA=1 ;;
     --seed) SEED=1 ;;
     --migrate-only) MIGRATE_ONLY=1 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "dev-stack: unknown argument '$arg'" >&2; echo >&2; usage >&2; exit 2 ;;
   esac
 done
+
+if [[ "$SPA" == "1" && "$MIGRATE_ONLY" == "1" ]]; then
+  echo "dev-stack: --with-spa and --migrate-only contradict each other." >&2
+  echo "      --migrate-only stops before anything starts. Pick one." >&2
+  exit 2
+fi
+
+# Vite's own config pins 5173 with `strictPort: true`, so this is the number to check rather than
+# a preference — a vite that finds the port taken exits instead of picking another, and that is
+# the correct behaviour for a proxy whose address is written down elsewhere.
+DEV_SPA_PORT="${DEV_SPA_PORT:-5173}"
 
 # ---------------------------------------------------------------------------
 # Configuration comes from infra/.env — the file Compose already reads.
@@ -156,15 +181,27 @@ done
 
 # Held by something else? Say what, and stop. Never kill it — on this machine the thing holding a
 # port in the 308x block is most likely production.
-if command -v netstat >/dev/null 2>&1 && netstat -ano 2>/dev/null | grep -qE "[:.]$DEV_API_PORT[[:space:]].*LISTEN"; then
-  echo "dev-stack: port $DEV_API_PORT is already in use." >&2
+#
+# Checked BEFORE anything starts, and that ordering is what makes the shutdown below safe to write
+# as "kill whatever is listening here": a port this script refused to start on is a port nothing
+# of ours is on, and a port it did start on holds our own child and nobody else's.
+listening_on() { netstat -ano 2>/dev/null | grep -E "[:.]$1[[:space:]].*LISTEN"; }
+
+port_must_be_free() {
+  command -v netstat >/dev/null 2>&1 || return 0
+  listening_on "$1" >/dev/null || return 0
+
+  echo "dev-stack: port $1 is already in use ($2)." >&2
   echo >&2
-  netstat -ano 2>/dev/null | grep -E "[:.]$DEV_API_PORT[[:space:]].*LISTEN" | sed 's/^/      /' >&2
+  listening_on "$1" | sed 's/^/      /' >&2
   echo >&2
-  echo "      If that is an older dev api, stop it and run this again. This script will not" >&2
-  echo "      kill it for you: in the 308x block the likeliest holder is production." >&2
+  echo "      If that is an older dev process, stop it and run this again. This script will" >&2
+  echo "      not kill it for you: in the 308x block the likeliest holder is production." >&2
   exit 1
-fi
+}
+
+port_must_be_free "$DEV_API_PORT" "the dev api"
+[[ "$SPA" == "1" ]] && port_must_be_free "$DEV_SPA_PORT" "the SPA"
 
 # ---------------------------------------------------------------------------
 # Postgres, and the dev database inside it.
@@ -221,6 +258,12 @@ DEV_SPOOL="$HERE/logs/dev-spool"
 DEV_WORKSPACES="$HERE/logs/dev-workspaces"
 mkdir -p "$DEV_SPOOL" "$DEV_WORKSPACES"
 
+if [[ "$SPA" == "1" ]]; then
+  SPA_LINE="   the SPA:    http://127.0.0.1:${DEV_SPA_PORT}   (started by this script, --with-spa)"
+else
+  SPA_LINE="   the SPA:    npm run dev:live --workspace @pyquest/web      (from pyquest/, another terminal)"
+fi
+
 cat <<BANNER
 
   ────────────────────────────────────────────────────────────────────────
@@ -231,18 +274,89 @@ cat <<BANNER
    content     ${REPO}   (read live from the repository)
    production  3081 and 3082 stay up, bound to their containers
 
-   the SPA:    npm run dev:live --workspace @pyquest/web      (from pyquest/, another terminal)
-   reload:     Ctrl-C and run this again — about three seconds
+${SPA_LINE}
+   reload:     Ctrl-C and run this again — about four seconds
   ────────────────────────────────────────────────────────────────────────
 
 BANNER
 
 cd "$REPO/pyquest"
-exec env \
-  CONTENT_ROOT="$REPO" \
-  DATABASE_URL="$DEV_DATABASE_URL" \
-  API_PORT="$DEV_API_PORT" \
-  API_HOST="127.0.0.1" \
-  SPOOL_ROOT="$DEV_SPOOL" \
-  WORKSPACE_ROOT="$DEV_WORKSPACES" \
-  npm start --workspace @pyquest/api
+
+api() {
+  env \
+    CONTENT_ROOT="$REPO" \
+    DATABASE_URL="$DEV_DATABASE_URL" \
+    API_PORT="$DEV_API_PORT" \
+    API_HOST="127.0.0.1" \
+    SPOOL_ROOT="$DEV_SPOOL" \
+    WORKSPACE_ROOT="$DEV_WORKSPACES" \
+    npm start --workspace @pyquest/api
+}
+
+# The api alone: `exec`, so there is no shell left holding a pipe between you and the logs.
+if [[ "$SPA" == "0" ]]; then
+  api
+  exit $?
+fi
+
+# ---------------------------------------------------------------------------
+# --with-spa: two children, and the only hard part is stopping both.
+#
+# `npm run X` is not the process doing the work — it spawns node (through cmd.exe on Windows), so
+# signalling the pid bash knows about leaves the real listener orphaned, still holding 3083 or
+# 5173. The next run then hits the port check above and refuses, and the person who just pressed
+# Ctrl-C has to go hunting for a pid. That is a worse experience than the two terminals this flag
+# replaces, so the shutdown kills the *tree*.
+#
+# Killing by port rather than by pid is deliberate and it is safe here for one reason: the checks
+# above refused to start unless both ports were free, so anything listening on them now is a child
+# of this script. Without that ordering this would be a script that kills strangers.
+# ---------------------------------------------------------------------------
+stopping=0
+stop_everything() {
+  [[ "$stopping" == "1" ]] && return   # Ctrl-C then EXIT would otherwise run this twice
+  stopping=1
+  echo
+  echo "dev-stack: stopping the SPA and the api…"
+  for port in "$DEV_SPA_PORT" "$DEV_API_PORT"; do
+    for pid in $(listening_on "$port" | awk '{print $5}' | sort -u); do
+      if command -v taskkill >/dev/null 2>&1; then
+        taskkill //PID "$pid" //T //F >/dev/null 2>&1 || true
+      else
+        kill -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
+      fi
+    done
+  done
+
+
+  # npm prints a twelve-line "Lifecycle script failed" block when its child is killed, once per
+  # workspace. That block IS this shutdown — nothing failed — but it arrives asynchronously, so
+  # without the pause it is the last thing on screen and Ctrl-C looks like a crash. A second of
+  # latency on exit is a fair price for the final line being true.
+  sleep 1
+  echo
+  echo "dev-stack: stopped. The npm 'error' blocks above are npm noticing its own child was"
+  echo "           killed — that is what stopping looks like, not a fault."
+  echo "           Production is untouched: 3081 and 3082 were never involved."
+}
+trap stop_everything INT TERM EXIT
+
+( npm run dev:live --workspace @pyquest/web -- --host 127.0.0.1 --port "$DEV_SPA_PORT" ) &
+
+api &
+API_PID=$!
+
+# Whichever falls over first takes the other down with it. A half-stack — a SPA proxying to an api
+# that died, answering every call with a connection error — looks like a broken app rather than a
+# stopped one, and that is a bad ten minutes for whoever is looking at it.
+#
+# `wait -n` is bash 4.3+, and it is checked by VERSION rather than by exit status: `wait -n`
+# returns the exit code of whichever child finished, so `if wait -n` would read a SPA that failed
+# as "this bash has no -n" and then sit waiting for an api nobody is watching. Given no ids it
+# waits for the next of *any* job, which is what is wanted and what 4.3 supports — passing ids to
+# it only became legal in 5.1.
+if ((BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 3))); then
+  wait -n || true
+else
+  wait "$API_PID" || true
+fi
