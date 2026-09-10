@@ -1,7 +1,14 @@
 # Boss - Escape the Sandbox
 
 No scaffolding, no hints, and Socratic questions only (§5.3). Pick one of the framings
-offered on the card; the program underneath is the same either way.
+below; the program underneath is the same either way.
+
+## The framings
+
+- **The Sigil, Rebuilt** — the Area 1 boss, taken out of the browser and made a real
+  project.
+- **The Character Sheet** — a sheet that asks who you are and prints you back.
+- **The Dungeon Map** — a map drawn from answers, and drawn again from a clean clone.
 
 **Take something you already built in the browser and make it a real project.** Then push
 it. Then I clone it, on my computer, into a folder that has never seen your code, and run

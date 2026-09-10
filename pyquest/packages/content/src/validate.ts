@@ -58,7 +58,8 @@ export type ValidationRule =
   | 'practice-missing-exercise'
   | 'unclaimed-exercise'
   | 'practice-numbering'
-  | 'game-vocabulary';
+  | 'game-vocabulary'
+  | 'boss-framings';
 
 export interface ContentIssue {
   /** Path relative to the content root, with forward slashes on every platform. */
@@ -445,6 +446,7 @@ export function checkContent(source: ContentSource): ContentSet {
   const practices = joinPractices(spines, items);
   issues.push(...practiceIssues(roots, spines));
   issues.push(...vocabularyIssues(roots));
+  issues.push(...framingIssues(roots, items, locate));
 
   issues.sort(
     (a, b) => a.file.localeCompare(b.file) || (a.line ?? 0) - (b.line ?? 0) || a.rule.localeCompare(b.rule),
@@ -1070,4 +1072,91 @@ export function formatIssues(issues: readonly ContentIssue[], source: ContentSou
     `FAIL  ${issues.length} problem${issues.length === 1 ? '' : 's'} in ${files} file${files === 1 ? '' : 's'}`,
   );
   return lines.join('\n');
+}
+
+/**
+ * A boss's framings, held in agreement between the brief a learner reads and the card the
+ * game draws.
+ *
+ * §5.2 gives every boss two or three theme framings and lets the player choose. Those live in
+ * `themes:` on the quest, which is `game/` — and every boss brief tells the reader to *"pick
+ * one of the framings offered on the boss card"*.
+ *
+ * **The Field Manual never reads `themes`.** So on the published site, and in any build with
+ * `game/` deleted, all four bosses instructed the reader to choose from a list that appeared
+ * nowhere on the page. The deletion test passed the whole time, because a dangling sentence
+ * is not a missing file.
+ *
+ * The fix put the framings in the brief, where the curriculum can teach them without the
+ * game. That immediately created the failure mode this rule exists for: **two copies of one
+ * list, which must never disagree.** The same liability that keeps `TEMPLATE.md` in one area
+ * and kept a second copy of a boss brief out of Area 3 — except here the duplication buys
+ * something the alternatives could not, so it is paid for with a check rather than avoided.
+ *
+ * Order is compared, not just membership. The card and the page put the same choice in front
+ * of the same person minutes apart, and a reader who picks "the third one" should get the
+ * third one.
+ *
+ * With `game/` deleted there are no boss items and this rule finds nothing to check, which is
+ * correct: the brief is then the only copy and cannot disagree with itself.
+ */
+const FRAMING_HEADING = /^#{2,3}[^\n]*\bframings?\b[^\n]*$/im;
+const FRAMING_BULLET = /^[-*]\s+\*\*(.+?)\*\*/gm;
+
+function framingsInBrief(markdown: string): string[] | undefined {
+  const heading = FRAMING_HEADING.exec(markdown);
+  if (heading === null) return undefined;
+
+  // From the heading to the next one of the same level or above, so a later section's bold
+  // bullets are not swept in.
+  const after = markdown.slice(heading.index + heading[0].length);
+  const ends = /^#{1,3} /m.exec(after);
+  const section = ends === null ? after : after.slice(0, ends.index);
+
+  FRAMING_BULLET.lastIndex = 0;
+  return [...section.matchAll(FRAMING_BULLET)].map((m) => (m[1] ?? '').trim());
+}
+
+function framingIssues(
+  roots: { curriculum: string; game: string },
+  items: readonly ContentItem[],
+  locate: Locator,
+): ContentIssue[] {
+  const issues: ContentIssue[] = [];
+
+  for (const item of items) {
+    if (item.kind !== 'boss') continue;
+    const themes = item.themes ?? [];
+    if (themes.length === 0) continue;
+
+    const briefPath = join(roots.curriculum, item.brief);
+    if (!existsSync(briefPath)) continue; // `missing-file` already says so, and better.
+
+    const named = framingsInBrief(readFileSync(briefPath, 'utf8'));
+    if (named === undefined) {
+      issues.push({
+        file: item.brief,
+        id: item.id,
+        rule: 'boss-framings',
+        message: `${item.id} offers ${String(themes.length)} framings and its brief names none`,
+        fix: `add a "## The framings" section listing them as **bold** bullets, so the choice survives with game/ deleted`,
+      });
+      continue;
+    }
+
+    if (named.length === themes.length && named.every((n, i) => n === themes[i])) continue;
+
+    issues.push({
+      file: item.brief,
+      id: item.id,
+      ...locate(item.id, ['themes']),
+      rule: 'boss-framings',
+      message:
+        `${item.id}'s framings disagree — the brief names [${named.join(', ')}], ` +
+        `the quest offers [${themes.join(', ')}]`,
+      fix: 'make the two lists identical, in the same order; a reader who picks the third one should get the third one',
+    });
+  }
+
+  return issues;
 }

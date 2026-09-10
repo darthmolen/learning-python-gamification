@@ -1,0 +1,24 @@
+# Practice 11's quest. The practice introduces no concept: set subtraction does in one
+# character what a six-line loop did in Practice 5, and the two are shown side by side so the
+# shortcut is a refund rather than a spell.
+#
+# DC 18, the top of the collections quests. Not because sets are hard -- they are the smallest
+# idea in the area -- but because by here the learner CHOOSES the collection instead of being
+# given one, and the wrong choice does not crash.
+#
+# **The bug this quest is built around is silent.** `have - need` where `need - have` was meant
+# prints a confident, well-formatted, wrong answer, and `dm-guide.md` §4 predicts it as this
+# practice's first stall. The brief therefore requires something missing AND something spare,
+# and the test asserts both -- without them the two directions can coincide and the mistake
+# never shows.
+id: a3-what-am-i-missing
+title: "What Am I Missing"
+kind: quest
+area: 3
+concepts: [set, in, list, iteration]
+dc: 18                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/what-am-i-missing/BRIEF.md
+
+verifier:
+  type: local-repo
+  tests: area-3/exercises/what-am-i-missing/hidden/test.py

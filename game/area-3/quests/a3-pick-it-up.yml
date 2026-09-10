@@ -1,0 +1,20 @@
+# Practice 4's quest. `local-repo`, like every collections quest in this area.
+#
+# DC 12, one above `a3-the-inventory`. The step is small and real: the inventory quest reads a
+# list, this one changes it, and the difference between `remove` and `pop` is the first place
+# in Area 3 where two operations look alike and are not.
+#
+# The hidden test replays the learner's own moves against their own starting list rather than
+# comparing output to a transcript, so a program printing four states it typed by hand
+# disagrees with the replay at the first move that is not what its `now:` line claims.
+id: a3-pick-it-up
+title: "Pick It Up"
+kind: quest
+area: 3
+concepts: [list-methods, mutation, list, iteration]
+dc: 12                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/pick-it-up/BRIEF.md
+
+verifier:
+  type: local-repo
+  tests: area-3/exercises/pick-it-up/hidden/test.py

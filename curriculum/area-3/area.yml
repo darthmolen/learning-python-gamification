@@ -2,9 +2,18 @@
 # `partial` means the total below is an estimate and the UI must mark it as one: "1 of ~5".
 #
 # Transcribed from spec §3's Area 3 heading on 2026-08-29, not authored: the title is the
-# document of record's, and `estimatedQuests` is §5.2's rule of five quests per area rather
-# than a count of anything written. Nothing in this area exists yet, which is what `partial`
-# says. Flip it to `complete` when curriculum/area-3/README.md's authoring status says so.
+# document of record's. Flip `authoring` to `complete` when curriculum/area-3/README.md's
+# authoring status says so.
+#
+# `estimatedQuests` moved 5 -> 6 on 2026-09-06, when the sixth quest was authored. It began as
+# §5.2's rule of five quests per area, and this area deliberately carries six: five collections
+# quests plus the breakpoints rung, which is a tool quest and does not displace one of the five.
+# The plan argues that at *The quest matrix*.
+#
+# The engine takes `Math.max(estimatedQuests, authored, cleared)` while `authoring: partial`
+# (`packages/engine/src/queries.ts`), so an estimate below reality never understates the
+# denominator -- the API already answered 6 with this file still saying 5. The number is
+# corrected because it is read by a person, not because the arithmetic needed it.
 #
 # Weeks come from spec §3's heading and are road markers, not a schedule (ADR 0002): they
 # gate nothing, and nothing derives ahead or behind from them. The blurb is the line under
@@ -15,4 +24,4 @@ title: Collections
 weeks: { from: 9, to: 14 }
 blurb: Minecraft data. Inventories are lists. Recipes are dicts.
 authoring: partial
-estimatedQuests: 5
+estimatedQuests: 6

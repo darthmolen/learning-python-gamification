@@ -22,7 +22,8 @@ without updating it.
 | The commit message | someone running `git log` or `blame` | *why did this change?* |
 
 Not redundancy — three different readers arriving from three directions, none of whom will find
-the other two. The rule is `.claude/skills/plan-review-record/SKILL.md`.
+the other two. The rule is the `plan-review-record` skill, which ships in the
+`ai-plugins-and-skills` plugin rather than in this repository.
 
 ## Six of these are unrecoverable, and it is worth knowing why
 

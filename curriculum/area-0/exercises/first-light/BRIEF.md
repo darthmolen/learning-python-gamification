@@ -2,8 +2,15 @@
 
 No starter file. No hints. A blank file, this specification, and one session.
 
-Pick one of the three framings offered on the boss card. They differ only in the words on the
-screen; the program underneath is the same, and choosing which words to work with is yours.
+Pick one of the three framings below. They differ only in the words on the screen; the
+program underneath is the same, and choosing which words to work with is yours.
+
+## The framings
+
+- **The Villager Trade Ticket** — a villager wants something, and the ticket says who is
+  trading and for how many emeralds.
+- **The Spaceship Boarding Pass** — a passenger, a destination, and a seat number.
+- **The Dungeon Character Sheet** — a name, a class, and a level.
 
 ## The specification
 

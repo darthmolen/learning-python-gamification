@@ -6,15 +6,25 @@ file, this specification, and one session.
 Spec §4 names this one: **an art generator that takes input and produces something worth
 hanging on a wall.**
 
-Pick one of the framings offered on the boss card. They differ in the words and in
-nothing else; the program underneath is the same, and choosing which words to work in is
-yours.
+Pick one of the framings below. They differ in the words and in nothing else; the program
+underneath is the same, and choosing which words to work in is yours.
+
+## The framings
+
+- **The Family Crest** — a shield that belongs to somebody, built from what they tell you
+  about themselves.
+- **The Spell Circle** — a ring of marks whose shape comes from the spell being cast.
+- **The Star Chart** — a sky, and where its lines fall depends on where you say you are
+  standing.
 
 ## The two halves, and both are load-bearing
 
-**A generator, not a drawing.** Somebody else answers the questions and gets a picture you
-have never seen. If it makes the same picture every time, it is a drawing, and a drawing
-was Practice 1.
+**A generator, not a drawing.** In Area 0 a sigil was a symbol you drew, and the seven
+broken ones you fixed there each drew exactly the same shape every time. That was true then
+and it is half the story. Here the word gets sharper: **a Sigil is the machine that makes
+them.** Somebody else answers the questions and gets a picture you have never seen. If it
+makes the same picture every time, it is a drawing — which is what you built in Area 0 and
+in Practice 1, and it is not this.
 
 **Worth hanging on a wall.** Somebody looks at it and wants it. No test can check that,
 which is why this boss is signed off by a person.

@@ -164,6 +164,56 @@ describe('what the spine refuses', () => {
     expect(byRule(validateContent(roots('practices')), 'game-vocabulary')).toEqual([]);
   });
 
+  /**
+   * A boss's framings, in two files that must never disagree.
+   *
+   * §5.2 lets the player choose between two or three framings, and they lived only in
+   * `themes:` on the quest — which is `game/`. The Field Manual never reads `themes`, so
+   * every boss brief told the reader to "pick one of the framings offered on the boss card"
+   * while the published page showed no list at all, and a `game/`-deleted build had none to
+   * show. The deletion test passed throughout, because a dangling sentence is not a missing
+   * file.
+   *
+   * Putting the framings in the brief fixed the page and created this failure mode: one list
+   * in two places. That is the liability that keeps `TEMPLATE.md` in a single area — paid for
+   * here with a check, because the duplication buys something avoidance could not.
+   */
+  it('reports a boss whose brief and card name different framings', () => {
+    const issues = byRule(validateContent(roots('broken/boss-framings')), 'boss-framings');
+    const renamed = issues.find((i) => i.id === 'a1-the-sigil');
+    expect(renamed?.file).toBe('area-1/exercises/the-sigil/BRIEF.md');
+    // Both lists in the message: "they disagree" is not a finding anybody can act on.
+    expect(renamed?.message).toContain('The Lantern');
+    expect(renamed?.message).toContain('The Beacon');
+  });
+
+  /**
+   * Order, not just membership, and this is the subtler half. The card and the page put the
+   * same choice in front of the same person minutes apart, so a reader who picks "the second
+   * one" must get the same framing from either surface. Both lists here hold the same two
+   * names and the sets are equal; only the order differs.
+   */
+  it('reports framings that agree on names and disagree on order', () => {
+    const issues = byRule(validateContent(roots('broken/boss-framings')), 'boss-framings');
+    const reordered = issues.find((i) => i.id === 'a1-the-beacon');
+    expect(reordered).toBeDefined();
+    expect(reordered?.message).toContain('[The Dusk, The Dawn]');
+    expect(reordered?.message).toContain('[The Dawn, The Dusk]');
+  });
+
+  it('says nothing about framings when the game is deleted', () => {
+    /**
+     * With no `game/` there are no boss items, so there is no second copy and nothing to
+     * disagree with. The brief is then the only list, which is exactly the state the rule
+     * exists to protect.
+     */
+    const issues = validateContent({
+      curriculum: roots('broken/boss-framings').curriculum,
+      game: roots('nonexistent').game,
+    });
+    expect(byRule(issues, 'boss-framings')).toEqual([]);
+  });
+
   /** A gap is either an unwritten practice or a half-done renumbering. Both are bugs. */
   it('reports a gap in the numbering', () => {
     const issues = byRule(

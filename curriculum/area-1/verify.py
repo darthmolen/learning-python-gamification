@@ -28,8 +28,9 @@ Three tags here that Area 0's harness did not need, and all three exist because
 Area 1's failures are quieter than Area 0's. All three are optional; a file may
 carry none of them and behave exactly as it would have under Area 0's harness.
 
-**`expect: hangs`, a new member of the existing expectation vocabulary.** Session
-3 and Practice 6 each ship a loop that does not stop, and that loop is the lesson.
+**`expect: hangs`, a new member of the existing expectation vocabulary.**
+Practice 3 and Practice 6 each ship a loop that does not stop, and that loop is
+the lesson.
 Putting it in `# expect:` rather than inventing a bare timeout number keeps one
 vocabulary for "what should happen when this runs".
 
@@ -56,7 +57,7 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).parent
-SEARCH = (ROOT / "exercises", ROOT / "reference")
+SEARCH = (ROOT / "practices", ROOT / "reference")
 
 # Mirrors the area-0 and area-1 entries of packages/content/src/concepts.ts. Kept
 # here as a literal on purpose: this directory must stay runnable with nothing but
@@ -238,7 +239,7 @@ def check(path: pathlib.Path) -> tuple[bool, str]:
 def in_session_order(path: pathlib.Path) -> tuple[str, int, str]:
     """Sort key that puts practice-2 before practice-10, which plain sorting does not."""
     top = path.relative_to(ROOT).parts[0]
-    numbered = re.fullmatch(r"session-(\d+)", path.parent.name)
+    numbered = re.fullmatch(r"practice-(\d+)", path.parent.name)
     return (top, int(numbered.group(1)) if numbered else 0, path.name)
 
 

@@ -1,0 +1,86 @@
+a3-the-inventory — the first Area 3 content item, proven end to end
+Captured 2026-09-06, Python 3.14.6, pytest 9.1.1, Windows 11.
+
+WHY THIS ITEM WAS BUILT FIRST
+
+To prove the pipeline before repeating it six more times: quest YAML in game/,
+brief and hidden test in curriculum/, and the slug claimed in practices.yml, with
+validate:content clean and the test shown to pass a correct submission and reject
+the bugs the quest exists to catch.
+
+THE PROBLEM THIS TEST HAD TO SOLVE
+
+The quest is not "print these five lines". It is **every line must be asked of the
+list rather than typed**. A test comparing output against a fixed transcript would
+pass a submission with all five answers hardcoded -- which is exactly the
+submission being rejected. Reading their source for `len(` would be worse: it
+rewards the token, and `print("carrying:", len([1,2,3,4,5]))` sails through.
+
+So the check is self-consistency, then substitution: run it, assert the output
+agrees with itself, then **add a sixth item to a copy of their list and run it
+again.** Every line must move.
+
+GREEN — a correct submission
+
+    inventory = ["torch", "bread", "rope", "pickaxe", "flint"]
+    print("carrying:", len(inventory))
+    print("first:", inventory[0])
+    print("last:", inventory[-1])
+    for slot in range(len(inventory)):
+        print(f"  {slot}: {inventory[slot]}")
+
+    $ PYQUEST_REPO=<repo> py -3.14 -m pytest .../hidden/test.py -q
+    9 passed in 0.15s
+
+MUTANTS — six, each seeded into that file and reverted after
+
+  A. the count typed: print("carrying: 5")
+     CAUGHT by test_every_line_follows_when_the_list_grows
+     "`carrying:` did not follow when the list grew. It was typed, not asked for."
+
+  B. the last item named: print("last: flint")
+     CAUGHT by the same test
+     "`last:` still says 'flint' after a sixth item was added. The last item is
+      being named rather than found."
+
+  C. range(1, len + 1), which indexes past the end
+     CAUGHT as a crash -- IndexError, "inventory.py did not run cleanly"
+     Correct, but generic, so it did not prove the numbering check. Hence C2.
+
+  C2. numbered from one WITHOUT crashing: print(f"  {slot + 1}: ...")
+     CAUGHT by test_it_prints_every_slot_numbered_from_zero
+     "the slot numbers are [1, 2, 3, 4, 5]; they should run 0 to 4, counting from
+      zero"
+
+  D. the classic off-by-one: inventory[len(inventory)]
+     CAUGHT as a crash -- IndexError
+
+  E. the whole transcript hardcoded, no list in the file at all
+     CAUGHT by the growth test, on the absence of a list literal
+     "could not find a list of at least five quoted items in inventory.py. If your
+      inventory is built some other way, say so in NOTES.md and ask for a
+      sign-off."
+
+C2 is recorded separately because C did not prove what it was seeded to prove. A
+mutant that fails for the wrong reason has not exercised the check it was aimed
+at, and replacing it rather than counting it is the difference between six
+mutants and five plus a coincidence.
+
+E is the submission this quest is really about: it produces byte-perfect expected
+output and is still wrong. The message names the one legitimate case -- an
+inventory built some other way -- and routes it to a person instead of failing it
+silently.
+
+WHAT THE TEST DELIBERATELY DOES NOT CHECK
+
+Which five things they carry, what else the program prints, whether the list is a
+literal or built in a loop, and anything about style. It also never writes to the
+repository it is given: the growth check copies the project to a temporary
+directory first.
+
+NOT PROVEN HERE, AND IT CANNOT BE
+
+That this passes against a real cloned repository over the `local-repo` path.
+`PYQUEST_REPO` was set to a scratch directory by hand. Where the runner roots the
+clone is still not pinned by the API contract -- the same caveat both Area 2 test
+files carry, in the same line of code. First real submission is the check.

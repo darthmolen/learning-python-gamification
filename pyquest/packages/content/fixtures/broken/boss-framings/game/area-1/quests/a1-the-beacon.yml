@@ -1,0 +1,15 @@
+# The same two names as its brief, in the other order. The subtler half of the rule: a reader
+# who picks "the second one" gets a different framing depending on which surface they read.
+id: a1-the-beacon
+title: "The Beacon"
+kind: boss
+area: 1
+concepts: [while]
+dc: 20
+brief: area-1/exercises/the-beacon/BRIEF.md
+themes:
+  - The Dawn
+  - The Dusk
+verifier:
+  type: peer-signoff
+  by: peer

@@ -1,0 +1,18 @@
+# Practice 6's quest. The stopping rule, met for the third time and meant to be the last:
+# `range(9)` is nine numbers, `range(2, 5)` is three, `[0:9]` is nine items.
+#
+# DC 14. Above `a3-pick-it-up` because two things must be true at once -- the boundary, and
+# both halves being views of one list rather than two lists typed out. The growth check is
+# what separates those: a hand-typed pair agrees with itself perfectly and falls apart the
+# moment the list underneath changes.
+id: a3-the-hotbar
+title: "The Hotbar"
+kind: quest
+area: 3
+concepts: [slicing, indexing, len, list]
+dc: 14                # XP and the risk label both derive from this (§5.1)
+brief: area-3/exercises/the-hotbar/BRIEF.md
+
+verifier:
+  type: local-repo
+  tests: area-3/exercises/the-hotbar/hidden/test.py

@@ -153,9 +153,30 @@ const KNOWN_DISAGREEMENTS: readonly string[] = [
   'area 1: identity.blurb — fixture "Loops and conditions, and the shapes they draw.", API "Turtle becomes generative art. Loops repeat and conditions choose."',
   // The fixture's order was shuffled on purpose on 2026-09-03, and the change is recorded here
   // rather than smoothed over: the Area screen sorts by DC now, so a fixture that arrived in DC
-  // order could not tell a screen that sorts from one that does not. The disagreement itself is
-  // unchanged — area 3 has no authored quests, so the API sends none.
-  'area 3: quests — fixture [a3-the-trading-hall, a3-recipe-book, a3-the-enchanter, a3-inventory-lists, a3-the-smelter], API []',
+  // order could not tell a screen that sorts from one that does not.
+  //
+  // The fixture's area 3 card still carries the stub's total of 5. Six quests are authored,
+  // and `area-3.yml`'s own estimate was corrected 5 -> 6 the same day, so the API says 6.
+  // Same shape as the area 0 entry above, and the same fix when somebody takes it.
+  'area 3: progress.total — fixture 5, API 6',
+  // Updated 2026-09-06: area 3 now has ONE authored quest, so the API sends it. This suite did
+  // exactly what its header promises — content changed on one side and the run failed here,
+  // sending whoever changed it back to this comment instead of leaving a stale note in a plan.
+  //
+  // **The five fixture ids remain fiction and are still not repaired here.** None of them
+  // matches the quest matrix in `planning/.../feature_area-3-collections_2026-08-28.md`, and
+  // the real ids are `a3-the-inventory`, `a3-pick-it-up`, `a3-the-hotbar`,
+  // `a3-set-a-breakpoint`, `a3-the-recipe`, `a3-what-am-i-missing`, `a3-the-crafting-table`.
+  // Deciding what the SPA is built against is a contract question and belongs to
+  // `planning/feature_the-fixture-ledger-compares-facts_2026-09-06.md`, which also replaces
+  // these sentences with structured facts.
+  //
+  // **This line has now moved twice in one day** — API `[]` to one quest to six — and it will
+  // move once more, when Boss 3 clears its Pygame Zero gate. That is precisely the churn the
+  // plan exists to end: the fact being recorded ("the fixture names quests that do not
+  // exist") has not changed once, while the sentence carrying it has been rewritten three
+  // times. A structured entry would have compared the fact and left the rendering alone.
+  'area 3: quests — fixture [a3-the-trading-hall, a3-recipe-book, a3-the-enchanter, a3-inventory-lists, a3-the-smelter], API [a3-pick-it-up, a3-set-a-breakpoint, a3-the-hotbar, a3-the-inventory, a3-the-recipe, a3-what-am-i-missing]',
   'area 4: identity.blurb — fixture "Naming a thing is how you stop repeating it.", API "Pygame Zero and a game loop. A long script becomes functions worth naming."',
   'area 6: identity.blurb — fixture "Files, APIs, and data that did not come from you.", API "Save the world, share a seed, call a live API. Data outlives the program."',
   'area 7: identity.blurb — fixture "Tests, review, and code somebody else can read.", API "Tests, types and the debugger. Read unfamiliar code, then open a pull request."',

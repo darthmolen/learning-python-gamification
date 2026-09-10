@@ -1,0 +1,15 @@
+# The card offers two framings, in this order. The brief beside it names them differently,
+# which is the disagreement `boss-framings` exists to catch.
+id: a1-the-sigil
+title: "The Sigil"
+kind: boss
+area: 1
+concepts: [while]
+dc: 20
+brief: area-1/exercises/the-sigil/BRIEF.md
+themes:
+  - The Ward
+  - The Beacon
+verifier:
+  type: peer-signoff
+  by: peer
