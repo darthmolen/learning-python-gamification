@@ -8,6 +8,8 @@
   "scripts": {
     "predev": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
     "dev": "vite",
+    "predev:live": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
+    "dev:live": "vite --mode live",
     "prebuild": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
     "build": "vite build",
     "preview": "vite preview",

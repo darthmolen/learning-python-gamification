@@ -1,0 +1,225 @@
+The dev stack — every success criterion, with the command that proved it.
+Captured 2026-09-10, Node 24.0.0, vite 6.4.3, Postgres 16.15, Windows 11, Git Bash.
+
+Plan: a-third-stack-for-content-and-api-dev_2026-09-09
+
+PRODUCTION WAS UP THE WHOLE TIME, AND THAT WAS THE FIRST CONSTRAINT
+
+Checked at the start, after every restart, and at the end:
+
+    3081 -> 200      pyquest-api, the container
+    3082 -> 200      pyquest-web, the learner's front door
+    5433             pyquest-postgres
+
+Nothing was stopped, rebuilt or re-ported. A vite dev server the user had already
+started on 5173 was also left alone; every SPA check below ran on a scratch port.
+
+---------------------------------------------------------------------------
+1. ONE DOCUMENTED COMMAND BRINGS IT UP
+---------------------------------------------------------------------------
+
+    $ ./infra/dev-stack.sh --seed
+    dev-stack: creating database pyquest_dev
+    dev-stack: migrating pyquest_dev
+    migrate: applied 0001-players-and-campaign.sql   ... through 0007-practice-progress.sql
+    dev-stack: seeding pyquest_dev with a throwaway household
+    seed: 27 medals, 4 reviews, 2 forced, 6 attempts
+
+      ────────────────────────────────────────────────────────────────────────
+       PyQuest dev api — from source, reloads on restart
+      ────────────────────────────────────────────────────────────────────────
+       database    pyquest_dev   (NOT pyquest — the learner's progress is untouched)
+       port        127.0.0.1:3083   (loopback only)
+       content     /c/dev/learning-python-gamification   (read live from the repository)
+       production  3081 and 3082 stay up, bound to their containers
+      ────────────────────────────────────────────────────────────────────────
+
+    {"level":30,...,"items":30,"areas":8,"msg":"content loaded"}
+    {"level":30,...,"msg":"Server listening at http://127.0.0.1:3083"}
+
+**One listening line, not three.** Before `API_HOST` was added to `apps/api/src/main.ts`
+the same command printed three — 127.0.0.1, 172.31.0.1 and 192.168.4.102 — because the
+listen host was hardcoded `0.0.0.0`. Correct in the container, where loopback is the
+container's own and invisible from outside (§6.1); wrong on this host, where it would
+put an api with no Gitea token and a throwaway database on the LAN beside the real one.
+
+---------------------------------------------------------------------------
+2. THE THREE REFUSALS, EACH SEEN TO FIRE
+---------------------------------------------------------------------------
+
+Not attestation. `infra/.env` was backed up (md5 c77b8f02...), doctored three ways, and
+restored — verified back to c77b8f02... afterwards.
+
+  (a) the dev database IS the production database
+
+    DEV_POSTGRES_DB=pyquest
+    $ ./infra/dev-stack.sh --migrate-only
+    dev-stack: REFUSING — DEV_POSTGRES_DB and POSTGRES_DB are both 'pyquest'.
+          The dev api signs in, records attempts, awards medals and writes journal
+          entries. Pointed at the production database it would do content review by
+          mutating the learner's real progress, which is the one thing in this system
+          that cannot be regenerated from git (§6.7).
+          fix: set DEV_POSTGRES_DB=pyquest_dev in infra/.env
+    EXIT=1
+
+  (b) the dev api asks for production's port
+
+    DEV_API_PORT=3081
+    $ ./infra/dev-stack.sh --migrate-only
+    dev-stack: REFUSING — DEV_API_PORT is 3081, which production is using.
+    EXIT=1
+
+  (c) the port is already held — run a second time with the first still up
+
+    $ ./infra/dev-stack.sh --migrate-only
+    dev-stack: port 3083 is already in use.
+            TCP    127.0.0.1:3083    0.0.0.0:0    LISTENING    125348
+          If that is an older dev api, stop it and run this again. This script will
+          not kill it for you: in the 308x block the likeliest holder is production.
+    EXIT=1
+
+(c) names the holder and refuses to kill it, deliberately. A script that frees a port
+in the 308x block is a script that can take production down to save four keystrokes.
+
+---------------------------------------------------------------------------
+3. THE DEV API WRITES TO ITS OWN DATABASE — ASSERTED, NOT ASSUMED
+---------------------------------------------------------------------------
+
+A full bootstrap sign-in — the heaviest write path there is: it creates a player, a
+credential and a token in one request.
+
+    BEFORE  prod: api_tokens=5 credentials=1 attempts=8 journal=0 medals=26 players=2
+    BEFORE   dev: api_tokens=0 credentials=0 attempts=6 journal=0 medals=27 players=2
+
+    $ curl -X POST http://127.0.0.1:3083/api/session/bootstrap -d '{"secret":...}'
+    {"token":"sCLxXJ...","expiresAt":"2026-09-10T21:32:06.677Z",
+     "account":{"id":"e8f8ea68-...","handle":"devdm","displayName":"Dev DM",...}}
+
+    AFTER   prod: api_tokens=5 credentials=1 attempts=8 journal=0 medals=26 players=2
+    AFTER    dev: api_tokens=1 credentials=1 attempts=6 journal=0 medals=27 players=3
+
+    ASSERT PASS: production is byte-identical before and after a dev sign-in
+    ASSERT PASS: the dev database did change — the write landed somewhere
+
+**Both assertions matter.** The first is the one the plan asked for. The second is the
+one that keeps the first from being vacuous: a sign-in that silently failed would also
+have left production untouched, and would have proved nothing.
+
+---------------------------------------------------------------------------
+4. REAL CONTENT, WHICH IS THE POINT OF THE WHOLE THING
+---------------------------------------------------------------------------
+
+    $ curl -H "authorization: Bearer $TOKEN" http://127.0.0.1:3083/api/tome
+      areas:    8
+      concepts: 95
+
+Against the fixtures' 3 areas and 7 concepts. The Tome that "reads as a catastrophe" on
+`npm run dev` reads correctly here, because it is the actual corpus.
+
+---------------------------------------------------------------------------
+5. THE SPA, THROUGH THE PROXY, INTO THE DEV API
+---------------------------------------------------------------------------
+
+On 5174 rather than 5173, because the user's own vite already held 5173.
+
+    $ npm run dev:live --workspace @pyquest/web -- --port 5174
+    VITE v6.4.3  [live]  ready in 202 ms
+
+    GET  /                                     -> 200
+    GET  /api/tome            (no token)       -> 401     <-- crossed the proxy; the api
+                                                              declined it, which is a
+                                                              real api, not a stub
+    GET  /api/tome            (dev token)      -> areas=8  concepts=95
+
+---------------------------------------------------------------------------
+6. THE DEFAULT DID NOT MOVE
+---------------------------------------------------------------------------
+
+    $ npx vitest run --project web
+      Test Files  30 passed (30)
+           Tests  394 passed (394)
+
+And the decisive check — what vite actually serves the browser in each mode:
+
+    :5174  npm run dev:live   (mode "live")
+      import.meta.env = {"BASE_URL":"/","DEV":true,"MODE":"live","PROD":false,
+                         "SSR":false,"VITE_API_LIVE":"true"};
+
+    :5175  npm run dev        (mode "development")
+      <that line is absent entirely — no VITE_API_LIVE at all>
+
+Both served the identical gateway source below it:
+
+      const apiBase = () => import.meta.env["VITE_API_LIVE"] === "true" ? SAME_ORIGIN : void 0;
+
+So plain `npm run dev` returns `undefined` and answers from fixtures, with a live api
+sitting right there on 3083 and reachable. The switch is the *mode*, not the stack.
+
+`apps/web/Dockerfile` still carries `ENV VITE_API_LIVE=true`, so the production image is
+untouched by any of this — `.env.live` is only read in `--mode live`, and `vite build`
+runs in mode `production`.
+
+---------------------------------------------------------------------------
+7. WHAT RELOADS — AND THE PLAN'S RECOMMENDATION TURNED OUT TO BE TOO BLUNT
+---------------------------------------------------------------------------
+
+The plan said "restart the process" and recommended it over a reload endpoint or a
+watcher. That recommendation stands. But it is coarser than the truth, and the truth is
+better news: **the api reads content two different ways.**
+
+`apps/api/src/content.ts` returns `items`, `manifests` and `practices` as values built
+once at boot — and `read` and `howTo` as *functions* that `readFileSync` on every call.
+
+  PROSE — no restart at all. Measured:
+
+    marker present before edit : 0
+    (append RELOAD_PROBE_MARKER to curriculum/how-to/how-to-learn.md)
+    marker present after edit  : 1   <-- no restart, no rebuild
+    (revert)
+    marker present after revert: 0
+
+  MANIFESTS — boot-time. Measured on the same file the browser reads:
+
+    progress.total before edit : 10
+    (estimatedQuests: 10 -> 99 in curriculum/area-0/area.yml)
+    progress.total after edit  : 10   <-- unchanged: needs the restart
+    (revert)
+
+  API SOURCE — the restart, and it is fast:
+
+    (add devStackProbe: true to /health in apps/api/src/server.ts)
+    $ ./infra/dev-stack.sh
+    {"status":"ok","items":30,"devStackProbe":true}
+    restart took 4 seconds (including the prebuild dist-parity check)
+
+Both content edits were transient and reverted immediately; each file was verified
+byte-identical afterwards by md5 and `git status --short curriculum/` was empty. Nothing
+under `curriculum/` or `game/` is in this branch's diff — `git diff --stat HEAD --
+curriculum/ game/` is empty.
+
+So the honest instruction is the table in `infra/README.md`: writing prose, which is the
+common case and the reason this plan exists, costs nothing at all. Only structure needs
+the four seconds.
+
+---------------------------------------------------------------------------
+8. THE REST OF THE REPOSITORY
+---------------------------------------------------------------------------
+
+    $ npm run typecheck            clean
+    $ npx vitest run               75 files, 1170 passed | 1 skipped
+    $ npm run validate:content     30 items across 8 areas, no problems
+    $ npm run build --workspace @pyquest/web    built in 1.22s
+    $ npm run validate:plans       125 documents, no problems
+
+ONE THING FOUND THAT NOBODY ASKED ABOUT
+
+**The production database is one migration behind.** `pyquest` has 6 rows in
+`schema_migrations`; `pyquest_dev`, migrated from the same directory today, applied 7.
+The missing one is `0007-practice-progress.sql`, which the practice spine landed on
+2026-09-06.
+
+Not applied. Migrating the learner's live database is not this plan's to do, and doing it
+silently overnight would be exactly the class of act the dev-database refusal above exists
+to prevent. Recorded for whoever owns the `practice-spine` track:
+
+    cd infra && docker compose --profile migrate run --rm migrate

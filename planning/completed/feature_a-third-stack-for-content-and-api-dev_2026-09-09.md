@@ -1,13 +1,14 @@
 ---
 kind: plan
-status: queued
+status: completed
 track: dev-stack
 date: 2026-09-09
+completed: 2026-09-10
 ---
 
 # A third stack, for content and API development
 
-**Status:** Planned
+**Status:** Complete
 **Track:** dev-stack
 **Date:** 2026-09-09
 **Author:** Claude (Opus 5)
@@ -132,17 +133,17 @@ with two substitutions: `127.0.0.1:${POSTGRES_PORT}` instead of the compose-netw
 
 ## Success criteria
 
-- [ ] One documented command brings up the dev stack, and one line says what it is for
-- [ ] A change to a brief or a lesson is visible in the browser **without an image rebuild**,
+- [x] One documented command brings up the dev stack, and one line says what it is for
+- [x] A change to a brief or a lesson is visible in the browser **without an image rebuild**,
       and the plan states the exact gesture and how long it takes
-- [ ] A change to API source is visible the same way
-- [ ] `npm run dev` still answers from fixtures with no stack running. **The default does not
+- [x] A change to API source is visible the same way
+- [x] `npm run dev` still answers from fixtures with no stack running. **The default does not
       move** — it is correct, it is hermetic, and `vitest --project web` depends on it
-- [ ] **Production keeps running throughout.** `pyquest-web` on 3082 and `pyquest-api` on
+- [x] **Production keeps running throughout.** `pyquest-web` on 3082 and `pyquest-api` on
       3081 stay up and bound; the dev stack never asks for either port and never stops a
       container. Bringing dev up while the son is mid-practice must be a non-event
-- [ ] The dev api runs on **3083**, `127.0.0.1` only, and the port table records it
-- [ ] **The dev api writes to its own database.** No dev sign-in, attempt or journal entry
+- [x] The dev api runs on **3083**, `127.0.0.1` only, and the port table records it
+- [x] **The dev api writes to its own database.** No dev sign-in, attempt or journal entry
       appears in the production one, and the plan says how that is verified rather than
       assumed
 - [x] `DATABASE_URL` for a host process is answered — `infra/.env`, which Compose already
@@ -201,3 +202,138 @@ The stale-`dist` problem — that is
 `the-build-and-the-tests-see-the-same-code_2026-09-09`, and it bites this plan (a host API
 imports `@pyquest/*` and `npm start` already runs `tsc -b ../..` first, which is the right
 instinct and the reason that plan exists).
+
+## Status — 2026-09-10, complete
+
+**Every success criterion is met and each one was verified rather than reasoned about.**
+Full output in `planning/evidence/dev-stack-VERIFICATION.txt`.
+
+Production was up throughout — 3081, 3082 and 5433 checked at the start, after every restart
+and at the end. Nothing was stopped, rebuilt or re-ported, and a vite dev server the user had
+already left running on 5173 was not touched either: every SPA check ran on a scratch port.
+
+### What was built
+
+| | |
+|---|---|
+| `infra/dev-stack.sh` | the script — env, three refusals, create, migrate, optional seed, then the api from source |
+| `apps/web/vite.config.ts` | the proxy target: overridable, **defaulting to 3083** |
+| `apps/web/.env.live` + `dev:live` | the deliberate act that turns fixtures off |
+| `apps/api/src/main.ts` | `API_HOST`, and a header saying how to run it from source and against which database |
+| `infra/README.md` | the three-mode table, the reload table, and 3083 in the port table |
+
+`infra/.env` and `.env.example` were **not** touched — `DEV_API_PORT` and `DEV_POSTGRES_DB`
+were already there, as the plan said.
+
+### The two things the plan did not anticipate
+
+**1. `apps/api` hardcoded `host: '0.0.0.0'`, so "127.0.0.1 only" was not configuration.** The
+first run bound three interfaces and printed three listening lines. `API_HOST` now defaults to
+`0.0.0.0`, so `compose/api.yml` needs nothing added — the container's loopback is invisible
+from the host (§6.1) and that default is right there. On this host there is no such
+indirection, and binding every interface would have put an api with no Gitea token and a
+throwaway database on the LAN beside the real one.
+
+**2. "Restart the process" is right, and coarser than the truth.** `apps/api/src/content.ts`
+returns `items`, `manifests` and `practices` as values built once at boot — but `read` and
+`howTo` as *functions* that `readFileSync` on every call. So:
+
+| change | gesture |
+|---|---|
+| a brief, a lesson, a how-to page | **refresh the browser. No restart.** |
+| `area.yml`, a quest's YAML, adding an exercise | restart — about 4 seconds |
+| API source | restart — same 4 seconds |
+
+Measured both ways: a marker appended to `curriculum/how-to/how-to-learn.md` appeared in
+`/api/how-to` with no restart, and `estimatedQuests: 10 -> 99` in `curriculum/area-0/area.yml`
+did **not** move `progress.total` until the process came back. Both edits were reverted
+immediately and each file verified byte-identical by md5; `git diff HEAD -- curriculum/ game/`
+is empty.
+
+**This is better news than the plan expected.** The common case — writing the prose a learner
+reads — is already the "edit a brief, refresh the browser" loop the watcher option was going
+to be built for, and it has been all along. The recommendation to build neither the reload
+endpoint nor the watcher therefore stands more firmly than when it was written: a watcher
+would have been work to reproduce something the lazy reads already do, and it would have had
+to serve the last good tree mid-save while doing it.
+
+### The refusals, seen to fire
+
+The script's safety is three refusals, and none of them is attestation — `infra/.env` was
+backed up, doctored three ways and restored, with md5 checked before and after.
+
+- `DEV_POSTGRES_DB == POSTGRES_DB` → refuses, exit 1, and names §6.7 in the message
+- `DEV_API_PORT` is one of production's → refuses, exit 1
+- 3083 already held → refuses, exit 1, **prints the holder and declines to kill it** — in the
+  308x block the likeliest holder is production
+
+### The isolation criterion, asserted both directions
+
+A full bootstrap sign-in — the heaviest write there is, creating a player, a credential and a
+token in one request:
+
+```
+BEFORE  prod: api_tokens=5 credentials=1 attempts=8 medals=26 players=2
+BEFORE   dev: api_tokens=0 credentials=0 attempts=6 medals=27 players=2
+AFTER   prod: api_tokens=5 credentials=1 attempts=8 medals=26 players=2   <-- byte-identical
+AFTER    dev: api_tokens=1 credentials=1 attempts=6 medals=27 players=3   <-- it landed here
+```
+
+The second line is not decoration. A sign-in that silently failed would also have left
+production untouched and proved nothing.
+
+### The default did not move
+
+`npx vitest run --project web`: 394 passed. And the decisive check is what vite serves the
+browser — in `--mode live` it injects `"VITE_API_LIVE":"true"` above the gateway module; in
+mode `development` that line is **absent entirely**, with a live api reachable on 3083 at the
+time. The switch is the mode, not the stack. `apps/web/Dockerfile` still sets
+`ENV VITE_API_LIVE=true`, so the production image is untouched.
+
+### Decisions taken, and why
+
+**The proxy defaults to 3083, not 3081.** The old hardcoded `http://localhost:3081` was not
+merely inflexible, it was the wrong default: a dev SPA pointed there signs in against the
+learner's real database. Reaching production is now `PYQUEST_API_TARGET=http://127.0.0.1:3081`,
+a deliberate act.
+
+**`--mode live` rather than an environment variable**, because Windows has no `VAR=x cmd`
+prefix and this repository is used from both Git Bash and PowerShell. A shell-specific
+incantation in `package.json` would work in one and fail in the other.
+
+**Migrated from the host, not through `compose/migrate.yml`.** The plan suggested pointing
+that fragment at a second name. It cannot be the whole answer: `migrate.yml` is a container
+that must be *built* before it runs, and it cannot create a database — only migrate one that
+exists. The script is a host-process stack already, and `npm run migrate --workspace
+@pyquest/db` is the same migrator reading the same `DATABASE_URL`. Routing half of it through
+Docker would add an image build to a script whose entire point is not needing one. No new
+mechanism was invented; the existing one was chosen differently than the plan guessed.
+
+**Two terminals, not one.** The api is the half you restart; the vite server is the half you
+leave alone, because it is holding the page you are looking at. A single script managing both
+would also have to manage killing npm's child processes on Windows, which is where that kind
+of script goes wrong.
+
+### What the dev stack lies about, written down rather than discovered later
+
+**Submissions.** The dev api's spool is a host directory under `infra/logs/`, and the runner
+container cannot see it — it has no network at all (§6.6) and reaches the api only through a
+Docker volume. A submission made against the dev stack queues and is never picked up. Sharing
+the production spool instead would put dev jobs in the learner's queue, which is worse. It is
+in the README's three-mode table under "what it lies about", beside the fixtures' sparseness.
+
+### Found, not fixed, and it belongs to somebody else
+
+**The production database is one migration behind.** `pyquest` has 6 rows in
+`schema_migrations`; `pyquest_dev`, migrated today from the same directory, applied 7. The
+missing one is `0007-practice-progress.sql`, from the practice spine on 2026-09-06.
+
+Not applied. Migrating the learner's live database silently, overnight, unasked, is precisely
+the class of act the dev-database refusal above exists to prevent, and the plan that owns it
+is `practice-spine`. One command when somebody decides to:
+
+```sh
+cd infra && docker compose --profile migrate run --rm migrate
+```
+
+**Owner: the `practice-spine` track.**
