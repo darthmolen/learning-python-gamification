@@ -256,8 +256,23 @@ ${formatIssues(issues, roots)}`,
         }))(new Set<string>()),
     }));
 
-  rmSync(outDir, { recursive: true, force: true });
+  /**
+   * Empty the output directory rather than delete it.
+   *
+   * The site must not carry pages from a previous run — an area removed from the curriculum has
+   * to disappear from the published index — so the clearing itself is not optional. But deleting
+   * the directory *entry* needs a handle nothing else holds, and on Windows something usually
+   * does: `python -m http.server` previewing the site, a shell sitting in it, an editor watching
+   * it. `rmSync` then fails EPERM/EBUSY and the build dies having produced nothing, for a reason
+   * that has nothing to do with the content.
+   *
+   * Removing the contents needs no such handle. Measured 2026-09-09: with a preview server whose
+   * working directory *is* `dist/`, `rmSync(outDir)` fails and clearing its children succeeds.
+   */
   mkdirSync(outDir, { recursive: true });
+  for (const entry of readdirSync(outDir)) {
+    rmSync(join(outDir, entry), { recursive: true, force: true });
+  }
   /**
    * The DM site asks not to be indexed. It is unlisted rather than secret — nothing links to
    * it — and this is what keeps "unlisted" true once a link exists somewhere it should not.

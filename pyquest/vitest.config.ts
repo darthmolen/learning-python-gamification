@@ -143,6 +143,31 @@ export default defineConfig({
           environment: 'node',
         },
       },
+      /**
+       * `pyquest/tests` — **the one project with no alias**, and the reason the constant above is
+       * spread by name rather than applied globally.
+       *
+       * Everything else here reads source, which is correct and which this project is not an
+       * argument against. But the consequence of that correct decision is that no suite in the
+       * repository had ever loaded the `dist/` every application resolves to, so a stale build was
+       * invisible to 1154 tests by construction. Two apps broke on 2026-09-09 while everything was
+       * green. This project is the one place a package is imported the way an app imports it.
+       *
+       * It is a separate directory rather than a file flagged inside an existing one because a
+       * project is the unit that owns a resolver: `scripts/**` and `packages/**` are already
+       * claimed by aliased projects, and a parity test collected by one of those would resolve
+       * `@pyquest/contract` to source and compare source against itself. Green, and measuring
+       * nothing — which is the failure mode this whole file keeps warning about.
+       */
+      {
+        test: {
+          name: 'dist',
+          root: fileURLToPath(new URL('./tests', import.meta.url)),
+          include: ['**/*.{test,spec}.ts'],
+          exclude,
+          environment: 'node',
+        },
+      },
     ],
   },
 });

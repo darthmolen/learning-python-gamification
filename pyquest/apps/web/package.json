@@ -6,7 +6,11 @@
   "description": "The PyQuest SPA. Nine screens, built against @pyquest/contract with stubs.",
   "license": "GPL-3.0-or-later",
   "scripts": {
+    "predev": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
     "dev": "vite",
+    "predev:live": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
+    "dev:live": "vite --mode live",
+    "prebuild": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json"

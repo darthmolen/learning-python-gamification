@@ -56,7 +56,27 @@ RUN npx tsc -b
 # a real api, and every build that should answer from fixtures is one nobody runs here — `npm run
 # dev` and `vitest`, where this is simply unset.
 ENV VITE_API_LIVE=true
-RUN npm run build --workspace @pyquest/web
+
+# `--ignore-scripts` skips the `prebuild` hook, and it has to.
+#
+# On a developer's machine `prebuild` runs `scripts/build-packages.ts`, which compiles the
+# workspace packages and then proves the compile happened — because `tsc -b` exits 0 without
+# emitting once its buildinfo has gone stale. That guard is for a working tree that has been
+# switched between branches for days. **This image has no such tree.** It is built from `npm ci`
+# and fresh `COPY`s, so there is no pre-existing `dist/` and no `tsconfig.tsbuildinfo` for the
+# compiler to trust: the `npx tsc -b` above cannot no-op, and it is the same argument that makes
+# CI immune to the failure the guard exists for.
+#
+# Without the flag this build dies. The hook resolves `../../scripts/build-packages.ts`, and this
+# image deliberately copies `packages/`, `apps/web/` and the two tsconfigs and nothing else — no
+# `scripts/`, no `tests/`, no `vitest.config.ts`. Measured 2026-09-10: the build failed at this
+# line with `Cannot find module /workspace/scripts/build-packages.ts`.
+#
+# Copying the parity tooling in instead was the alternative and it was rejected: it would put the
+# repository's test harness inside the image build to re-check something that cannot be wrong
+# here. Packaging is verified where it can actually break — `build.yml`'s "Check dist matches src"
+# step, and every host build, both of which keep the hook.
+RUN npm run build --workspace @pyquest/web --ignore-scripts
 
 # ---------------------------------------------------------------------------------------------
 # The serving stage. Nothing from the build survives except the built files.

@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node --experimental-strip-types --disable-warning=ExperimentalWarning ../../scripts/build-packages.ts",
     "build": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/build.ts",
     "typecheck": "tsc -p tsconfig.json"
   },

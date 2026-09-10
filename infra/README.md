@@ -178,6 +178,86 @@ To develop the SPA against fixtures, do not run the container — run `npm run d
 fixtures. That path is checked: with the api process killed outright, the gateway still answered
 every call from fixtures.
 
+## Three ways to run the SPA — and what each one lies about
+
+Pick by the question you are asking. The third row exists because the first two cannot answer
+*"I changed a brief — does it look right?"*.
+
+| | serves the SPA | serves the API | content comes from | what it lies about |
+|---|---|---|---|---|
+| **prod** | `pyquest-web` image, **3082** | `pyquest-api` image, **3081** | bind mount, reloaded on container restart | Nothing — this is the real thing. It just costs an **image rebuild** for an API change. |
+| **app dev** | `vite` **5173** | nothing — `apps/web/src/fixtures` | nothing | **The content.** 7 concepts against the real 95, two areas missing identity, `iteration` deliberately undefined. A Tome reading "2 concepts" here is a stub behaving correctly. |
+| **dev stack** | `vite` **5173**, `--mode live` | `npm start`, from source, **3083** | the repository, read directly | **Submissions.** The dev api's spool is a host directory the runner container cannot see, so a submission queues and is never picked up. Everything else is real. |
+
+Starting the dev stack, in one command:
+
+```sh
+./infra/dev-stack.sh --with-spa                 # api on 3083 + SPA on 5173, stopped together
+```
+
+Then open **<http://localhost:5173>**. Add `--seed` the first time to put a throwaway household in
+the dev database, and `npm run bootstrap --workspace @pyquest/db` (with `DATABASE_URL` pointing at
+`pyquest_dev`) to arm a sign-in secret.
+
+Or in two terminals, which is the better shape for a long session:
+
+```sh
+./infra/dev-stack.sh                            # 1. the api, from source, on 3083
+npm run dev:live --workspace @pyquest/web       # 2. from pyquest/ — the SPA, in live mode
+```
+
+The api is the half you restart — that is how a manifest change reloads. The vite server is the
+half worth leaving alone, because it is holding HMR state and the page you are looking at, and
+`--with-spa` bounces it on every api restart. Dipping in to check one screen: one command. An
+afternoon of moving quests between areas: two terminals.
+
+`--with-spa` refuses to start if **either** port is taken, and stops both on Ctrl-C by killing the
+process tree — `npm run X` is not the process holding the port, so signalling it alone would leave
+an orphan on 3083 or 5173 and make the next run refuse. npm prints a "Lifecycle script failed"
+block when its child is killed; that block is the shutdown, not a fault, and the script says so
+after it.
+
+### Production stays up, and that is the whole shape of it
+
+`dev-stack.sh` **stops nothing, rebuilds nothing, and takes no production port.** 3081 and 3082
+stay bound to their containers throughout — 3082 is the learner's front door (§6.4), and a dev
+stack that requires taking it down is a dev stack nobody runs on a weeknight. Bringing it up
+mid-practice is a non-event, and that was checked rather than assumed.
+
+### It writes to its own database, and the script refuses to do otherwise
+
+Signing in writes a token row. Clicking through a quest writes attempts, medals and journal
+entries. A dev api pointed at `POSTGRES_DB` would do content review by **mutating the learner's
+real progress** — the one half of this system that cannot be regenerated from git (§6.7).
+
+So `DEV_POSTGRES_DB=pyquest_dev` is a third database on the same Postgres server, and
+`dev-stack.sh` **refuses to start** if it equals `POSTGRES_DB`, if `DEV_API_PORT` is one of
+production's, or if 3083 is already held by something else. It prints the database it is about to
+write to every time it starts.
+
+Verified 2026-09-10 rather than assumed: a full bootstrap sign-in against the dev api moved
+`pyquest_dev` from 0 tokens / 0 credentials / 2 players to 1 / 1 / 3, and left `pyquest`
+byte-identical at 5 / 1 / 2.
+
+### What reloads, and what needs the restart
+
+Sharper than "restart it", because the api reads content two different ways:
+
+| change | gesture | why |
+|---|---|---|
+| **a brief, a lesson, a how-to page** — the prose a learner reads | **just refresh the browser** | `read()` and `howTo()` are `readFileSync` per request. Nothing is cached. |
+| **a manifest** — `area.yml`, a quest's YAML, adding or removing an exercise | **Ctrl-C and run `./infra/dev-stack.sh` again** — about 4 seconds | `items`, `manifests` and `practices` are built once, by `loadContentRoot`, at boot. |
+| **API source** | same restart, same 4 seconds | `npm start` runs `src/main.ts` from source. |
+
+So the common case — writing prose — costs nothing at all, and that was measured: a marker added
+to `curriculum/how-to/how-to-learn.md` appeared in `/api/how-to` with no restart, and the same
+edit to `estimatedQuests` in `curriculum/area-0/area.yml` did **not** move `progress.total` until
+the process came back.
+
+A reload endpoint and a content watcher were both considered and rejected — see the header of
+`dev-stack.sh`. The short version: a dev-only route ships in the production image, and a watcher
+has to serve the last good tree while you are mid-save, which is worse than restarting.
+
 ## Ports
 
 | Service | Host port | Container | Bound on | Why |
@@ -187,6 +267,7 @@ every call from fixtures.
 | gitea SSH | **3022** | 22 | all interfaces | Same reason. |
 | api | **3081** | 3081 | `127.0.0.1` only | Nothing off this machine dials it: `web` is its front door and proxies over the compose network. What is left is `curl`, `npm run e2e` and `smoke.sh`, all of which run here. |
 | web | **3082** | 3082 | all interfaces | The one port a browser uses. It serves the SPA *and* carries `/api/*` to the api, so §6.4's other machine needs this and nothing else. |
+| dev api | **3083** | — | `127.0.0.1` only | Not a container. `infra/dev-stack.sh` runs the api from source here, against `pyquest_dev`. Its own port so production keeps 3081 — see "Three ways to run the SPA". |
 
 **Postgres is on 5433, not 5432, on purpose.** This machine already runs an unrelated
 `ec-postgres` container on 5432. All six ports above were probed free before being chosen, and

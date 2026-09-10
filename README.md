@@ -50,7 +50,7 @@ Everything runs from `pyquest/`:
 ```bash
 cd pyquest
 npm install
-npm test                 # 98 tests
+npm test                 # 1170 tests; pretest compiles the packages first
 npm run typecheck
 npm run validate:content # the authored content in ../content
 npm run new:quest -- --id a3-shulker-sort --title "Shulker Sort" --area 3 \

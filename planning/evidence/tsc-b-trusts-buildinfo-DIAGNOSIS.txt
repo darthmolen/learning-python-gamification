@@ -1,0 +1,117 @@
+Why `tsc -b` exited 0 without rebuilding — diagnosed, not guessed.
+Captured 2026-09-09, TypeScript 5.9.3, Node 22, Windows 11, Git Bash.
+
+Plan: the-build-and-the-tests-see-the-same-code_2026-09-09
+Success criterion: "Diagnosed and written down: why `tsc -b` trusted its build info"
+
+THE SHORT ANSWER
+
+`tsc -b` never looks at `dist/`. Its up-to-date check reads `tsconfig.tsbuildinfo`
+— the input text hashes recorded inside it, and that file's own mtime — and treats
+those as a complete proxy for the emitted output. No `.js` file is ever stat'd. So
+once the buildinfo claims the project is current, `dist/` can be stale, partial or
+entirely absent and `tsc -b` will report success forever.
+
+Deleting the buildinfo works because it erases the recorded hashes, leaving nothing
+to trust. It is not a cache-corruption workaround; it is the only way to make the
+compiler look at reality.
+
+THE NATURAL EXPERIMENT — no setup required
+
+`packages/content` was already stale on checkout of `main`, because a branch switch
+rewrites every `src/` mtime without changing any text:
+
+    BEFORE
+      2026-09-09 08:31:47  packages/content/dist/index.js
+      2026-09-09 08:31:47  packages/content/tsconfig.tsbuildinfo
+      2026-09-09 21:47:03  packages/content/src/validate.ts     <-- 13h newer
+
+    $ npm run build --workspace @pyquest/content
+    > tsc -b
+    exit=0
+
+    AFTER
+      2026-09-09 08:31:47  packages/content/dist/index.js       <-- UNCHANGED
+      2026-09-09 21:50:43  packages/content/tsconfig.tsbuildinfo <-- PUSHED FORWARD
+
+That is the whole failure in six lines. The compiler was handed inputs newer than
+its outputs, emitted nothing, and moved the buildinfo timestamp ahead of the inputs
+so the next run would not even reach the comparison.
+
+EXPERIMENT A — is a missing output noticed?
+
+    $ rm packages/content/dist/index.js
+    $ npm run build --workspace @pyquest/content
+    > tsc -b
+    exit=0
+    RESULT: dist/index.js STILL MISSING
+
+`tsc -b` reported success while the package's entry point did not exist on disk.
+
+EXPERIMENT A2 — is the output checked when the buildinfo looks old?
+
+Rules out "it skips the stat only when the buildinfo is fresh".
+
+    $ touch -d '2026-09-01 00:00:00' packages/content/tsconfig.tsbuildinfo
+      2026-09-01 00:00:00  tsconfig.tsbuildinfo   <-- 8 days OLDER than src
+      2026-09-09 21:47:03  src/validate.ts
+    $ npm run build --workspace @pyquest/content
+    RESULT: dist/index.js STILL MISSING
+      2026-09-09 21:51:26  tsconfig.tsbuildinfo   <-- pushed forward again
+
+Even with the buildinfo backdated well behind the sources, no emit. The outputs are
+never stat'd at all.
+
+EXPERIMENT C — does a genuine text change force the emit?
+
+The one that surprised me, and the reason the drift reached seven days.
+
+    $ printf '\n// probe-%s\n' "$(date +%s)" >> packages/content/src/validate.ts
+    $ npm run build --workspace @pyquest/content
+    RESULT: dist/index.js STILL MISSING
+
+    $ ls packages/content/dist/
+      index.d.ts   index.d.ts.map   index.js.map      <-- present
+                                    (no index.js)     <-- still gone
+
+A real change to `validate.ts` re-emits `validate.js` and nothing else. Emit is
+per-file, and `index.ts` did not change, so `index.js` is never reconsidered — the
+buildinfo says it was emitted once, and that is the end of the inquiry. The sibling
+`index.js.map` and `index.d.ts` sitting right beside the hole are the tell.
+
+THE THREE MECHANISMS, COMPOSED
+
+1. **Outputs are never stat'd.** The buildinfo is the sole record of what is on
+   disk. Anything that changes `dist/` out of band — a delete, a partial copy, a
+   container build writing into the tree, a worktree switch — is invisible.
+
+2. **A mtime-only change pushes the buildinfo forward.** TypeScript 5.4 added the
+   up-to-date status for "inputs are newer but the text is identical". It is a real
+   optimization and it is correct when `dist/` is genuinely in sync. Its side effect
+   is that the buildinfo mtime is refreshed. `git checkout` rewrites every `src/`
+   file's mtime and changes no text, so the first `tsc -b` after a branch switch
+   silently re-dates the buildinfo ahead of every input.
+
+3. **Emit is per-file.** Rebuilding is not all-or-nothing, so a single stale or
+   missing artifact never gets swept up by unrelated work happening around it.
+
+Together: (2) makes the buildinfo self-confirming after any branch switch, and (1)
+means it is confirming something it never checked. That is why it reported success
+four times in a row. It was not a corrupted cache — the compiler behaved exactly as
+designed, and the design assumes nothing but `tsc` ever writes to `outDir`.
+
+WHY THIS REPOSITORY IS EXPOSED TO IT
+
+`dist/` and `*.tsbuildinfo` are both gitignored, so neither moves on checkout while
+every `src/` file is rewritten. That is mechanism (2)'s exact trigger, and this tree
+switches branches and worktrees constantly. CI never sees it because `npm ci` deletes
+`dist/` *and* the buildinfo together, which is the one operation that keeps the two
+consistent.
+
+WHAT THIS RULES OUT FOR THE FIX
+
+An mtime comparison — approach 3 in the plan — is a *second opinion*, and a weak one:
+it is comparing the same timestamps the compiler already mishandled, and it cannot see
+a `dist/index.js` whose contents are wrong but whose date is fine. The check that
+survives all three mechanisms is the one that **loads the compiled artifact and asks it
+what it exports**, because that is the only question whose answer cannot be cached.
