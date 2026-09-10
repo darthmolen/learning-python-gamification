@@ -1,13 +1,14 @@
 ---
 kind: plan
-status: queued
+status: completed
 track: workflow-catalog
 date: 2026-09-10
+completed: 2026-09-10
 ---
 
 # The loop, written down, and the two documents that explain it
 
-**Status:** Planned
+**Status:** Completed 2026-09-10
 **Track:** `workflow-catalog`
 **Date:** 2026-09-10
 **Author:** Claude (Opus 5)
@@ -176,6 +177,64 @@ sections render in filename order, and that the curriculum half still reads corr
 
 ## Evidence
 
-`planning/evidence/how-to-vocabulary-RED.txt` — the rule firing on a draft that used the game's
-words, captured before the rewrite. A page that never tripped the rule is a page nobody proved the
-rule was watching.
+`planning/evidence/how-to-vocabulary-RED.txt` — the rule firing on this exact page, tripped on
+purpose. A page that never tripped the rule is a page nobody proved the rule was watching.
+
+## Outcome
+
+**Three documents written, and the reading order falls out of the filenames.**
+
+- `docs/design/workflow-catalog.md` — the six direct directions, the transitive paths, sign-off
+  in full, and a table of what is specified and unbuilt.
+- `game/how-to/how-to-run-a-session.md` — the first global DM document.
+- `curriculum/how-to/how-to-study-alone.md` — titled *How to work on your own*, because the page
+  may not use the word the plan used for it.
+
+The `/how-to` page now reads **How to learn → How to work on your own → How to play → How to run
+a session** on the DM site, and the first two on the learner site. That ordering is filename
+order and nothing enforces it beyond the names, which is worth knowing before anybody renames one.
+
+1200 tests pass, `validate:content` clean, and the published split holds: the DM build carries
+the session guide, the learner build carries no word of it.
+
+### The vocabulary rule earned its place rather than obstructing
+
+`how-to-study-alone.md` passed on the first run, so it was tripped on purpose — three words, all
+caught, each reported as the author spelled it.
+
+More usefully, the rule forced a split that turns out to be correct. The solo learner's hardest
+question is *what happens at a boss*, since every boss needs a sign-off and there is nobody to
+give one. That paragraph cannot live on a page read with `game/` deleted, so it lives in
+`game/how-to/how-to-play.md` under a new section, and the two pages point at each other. Working
+alone through the curriculum and waiting on somebody to press a button are two subjects.
+
+The answer that section gives is the one this wave settled on: **work it, push it, write the
+teach-back, and the attempt waits in the queue.** Nothing expires. That already worked in the
+shipped API and no code changed.
+
+### What the catalog records that nothing else did
+
+- **Sign-off is per attempt, and the validator never sees the code.** The queue row carries who,
+  which quest and when — the evidence is a person or a git history.
+- **`peer` is not "the learner".** It means *somebody other than the submitter*, which is why the
+  learner can sign off the parent's teach-back and tell them it was not good enough.
+- **The pending sign-off is an attempts row**, not a table. There is no `signoffs` table and the
+  absence is the truer model.
+- **Eight things are specified and unbuilt**, named in a table so a reader cannot mistake intent
+  for behavior — attendance and the streak (the `sessions` table has no `INSERT` anywhere),
+  streak forgiveness, the boss attempt log, Party's XP sources, five of the six medals, and the
+  two open policy questions.
+
+### A correction to the approved plan
+
+**The learner-facing page is called *How to work on your own*, not *How to study alone*.** The
+plan named it in words the page itself is forbidden to use — not by the vocabulary rule, which
+does not ban "study", but by the same instinct: "self-study" is a phrase from a syllabus rather
+than one a thirteen-year-old would use about a Tuesday evening. The filename kept the plan's
+slug, so the sort order is unchanged.
+
+### Left for the person who has it
+
+The catalog is dated and says so. It describes the tree on 2026-09-10, and the two things most
+likely to age out of it are the unbuilt table and the verifier counts. Both are cheap to re-check
+and neither is load-bearing for anything but the reader's trust.

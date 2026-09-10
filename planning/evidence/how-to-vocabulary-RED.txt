@@ -1,0 +1,62 @@
+the vocabulary rule, proved to be watching how-to-study-alone.md
+================================================================
+Track: workflow-catalog        Date: 2026-09-10
+
+`curriculum/how-to/how-to-study-alone.md` passed `validate:content` on the first run, which
+proves nothing on its own: a page that never tripped the rule is a page nobody proved the rule
+was watching. So it was tripped on purpose.
+
+The sentence seeded, into the middle of a real paragraph rather than at the top, so that the
+check had to actually read the file:
+
+    Work in order. Some of them carry a quest worth XP, and the boss is at the end.
+    It is the one rule of sequence in the whole curriculum ...
+
+
+$ npm run validate:content
+
+  [game-vocabulary]  (no id)
+      "quest" is the game's word, and this page is read with game/ deleted
+      fix: say it in curriculum terms, or move the sentence to game/how-to/
+  [game-vocabulary]  (no id)
+      "XP" is the game's word, and this page is read with game/ deleted
+      fix: say it in curriculum terms, or move the sentence to game/how-to/
+  [game-vocabulary]  (no id)
+      "boss" is the game's word, and this page is read with game/ deleted
+      fix: say it in curriculum terms, or move the sentence to game/how-to/
+
+  FAIL  3 problems in 1 file
+  exit 1
+
+All three caught, and each reported with the word AS THE AUTHOR WROTE IT -- "XP" rather than
+"xp" -- which is the thing that stops a reader hunting for a second occurrence that is not there.
+
+Sentence reverted. `validate:content` clean.
+
+
+WHY THE RULE IS RIGHT HERE RATHER THAN AN OBSTACLE
+----------------------------------------------------
+The solo learner's hardest question is what happens at a boss, since every boss needs a sign-off
+and there is nobody in the room to give one. That paragraph cannot live on this page.
+
+So it does not. It lives in `game/how-to/how-to-play.md`, under "Working on your own, and what
+happens at a boss", and the two pages cross-reference each other. The rule forced a split that
+is correct on its own terms: working alone through the curriculum and waiting on somebody to
+press a button are two subjects, and the curriculum half has to still read correctly with the
+game deleted.
+
+
+THE READING ORDER, WHICH IS FILENAME ORDER
+--------------------------------------------
+$ npm run build --workspace @pyquest/field-manual
+
+  learner site:  How to learn -> How to work on your own
+  dm site:       How to learn -> How to work on your own -> How to play -> How to run a session
+
+$ grep -c 'How to run a session' dist/dm/how-to.html    -> 1
+$ grep -c 'How to run a session' dist/how-to.html       -> 0
+$ grep -c '90-second rule'       dist/how-to.html       -> 0
+
+The learner site carries the curriculum's two pages. The DM site carries all four, because the
+DM runs both halves and has to be able to explain the second to somebody who has just asked what
+a quest is.

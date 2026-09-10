@@ -1,13 +1,13 @@
 ---
 kind: wave
-status: open
+status: done
 date: 2026-09-10
 ---
 
 # Wave 4 — The Workflow, and the Bootstrap
 
-**Status:** Open — `learner-setup-repairs` landed 2026-09-10; four tracks queued, one backlog
-stub to promote before `practice-zero` can start
+**Status:** Done 2026-09-10 — all five tracks landed. One item is handed on: the LAN gate
+
 **Level:** Wave — coordinates plans, does not replace them
 **Date:** 2026-09-10
 **Author:** Claude (Opus 5)
@@ -61,7 +61,7 @@ and they already disagree about `game/how-to/`.
 
 Two dependencies, and everything else runs when there is capacity.
 
-```
+```text
 gitea-lan-access (promote the stub)  ──┐
                                        ├──► practice-zero
 gitea-remote (its LAN half)  ──────────┘
@@ -85,15 +85,47 @@ it, so it goes first.
 
 ### The tracks
 
-| Track | Depends on | Lane | What it is |
-|---|---|---|---|
-| ~~`learner-setup-repairs`~~ | nothing | A and B | **Done 2026-09-10.** All four tools run; `pack.sh` packs again |
-| `gitea-remote` | nothing | A | wire two env vars, then `pack.sh --remote`; unblocks ten quests |
-| `practice-zero` | the gate, `gitea-remote` | A and B | `n: 0` through schema, contract and database; Area 0 gains a bootstrap practice |
-| `audience-flag` | nothing | A | `audience:` frontmatter, validated, replacing two filename regexes |
-| `workflow-catalog` | `audience-flag` | B | walk Area 0, catalog the interactions, write the two HOW-TO documents |
+All five landed on 2026-09-10, in this order:
 
-`learner-setup-repairs` and `audience-flag` can start today and touch disjoint files.
+| Track | What it did |
+|---|---|
+| `learner-setup-repairs` | All four broken tools run. `pack.sh` packs again |
+| `audience-flag` | 122 documents declare an audience; three consumers read it |
+| `gitea-remote` | Two env vars wired; the payload derives itself; `pack.sh --remote` |
+| `practice-zero` | `n: 0` legal in **five** places; Area 0 opens with Practice 0 |
+| `workflow-catalog` | The catalog, and the two HOW-TO documents |
+
+Final state: **1200 tests pass, 1 skipped.** `validate:content`, `validate:plans` and `tsc -b`
+clean. `pack.sh` carries **194 entries** rather than 17 — a complete self-study kit for every
+authored area, with no `dm-guide.md`, no `reference/` and no `hidden/` in it.
+
+### What is handed on
+
+**The LAN gate — `feature_gitea-lan-access-for-the-son_2026-08-27` — is still open**, and it
+could not be closed from the machine this ran on. It needs an elevated shell for two firewall
+rules and a `curl` from the *learner's* laptop, which is the only check that proves anything.
+
+**Practice 0 is authored and every system accepts it. It cannot be run with a learner until that
+passes**, and its own *Before they sit down* list says so as the first of three items.
+
+Likewise `GITEA_TOKEN` and `PLAYER_REPOS` are documented and threaded everywhere they are read,
+but the live `infra/.env` is gitignored and holds neither. Minting the token is one command,
+recorded in `.env.example`. Until then those ten quests still refuse — the difference is that the
+refusal is now a missing value in a documented slot rather than a variable nothing mentioned.
+
+### Four corrections the tracks made to this wave's own plan
+
+Recorded because each was found by contact with the code rather than by reading it:
+
+- **`readsAsLesson` is not an audience predicate** and was left alone. It answers whether ADR
+  0006 governs some prose; the flag answers who may receive a file. Collapsing them would have
+  broken a working rule.
+- **The API and the Field Manual should disagree about `game/how-to/`.** They are different
+  products. Making them match would have hidden the learner's own guide to the game from them.
+- **The two `world.py` copies are not a defect.** `smoke.py` imports the canonical one; the root
+  copy is the one the learner deletes in Area 4.
+- **`n: 0` was refused in five places, not four.** The fifth was the API's tick route, which had
+  no test at all and would have rejected the checkbox on the first row of the first area.
 
 ## What this wave does not decide
 

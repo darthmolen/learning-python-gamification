@@ -60,6 +60,33 @@ that idea back sooner.
 **Scars** are failures, kept on purpose and shown on purpose. Nothing here hides that
 something went wrong, because the record of what broke is more useful than a clean sheet.
 
+## Working on your own, and what happens at a boss
+
+*How to work on your own* covers the curriculum half — which practices survive being done alone
+and which do not. This is the part it cannot say, because that page is written to be read with
+the game switched off.
+
+**Almost everything scores itself with nobody watching.** Hidden tests run on the server. A
+pushed repository gets cloned and tested. Your journal is read out of your own git log. None of
+it waits for a person, and none of it happens faster because somebody is in the room. Work on a
+Wednesday, and it counts on Wednesday.
+
+**Bosses are the exception, and they do not block you.** Every boss needs a sign-off: somebody
+other than you presses the button. So do it anyway — take the boss, work it, push it, and write
+your teach-back. The attempt is recorded straight away and waits in the queue as *not passed
+yet*. Whoever holds the DM seat grants it later, from wherever they are, and the XP lands then.
+
+Nothing expires. Nothing is lost by finishing at ten at night.
+
+**Say what you did while it is fresh.** The sign-off is a person reading your explanation, so the
+explanation is the work. Write it when you finish rather than three days later when the button
+gets pressed — you will never remember it as well again, and a good teach-back is most of what
+makes the sign-off quick.
+
+**A refusal is not a scolding.** If the explanation was not good enough, the attempt stays on the
+record as one that did not pass and you go again. That is the same rule that keeps every scar:
+what broke is more useful than a clean sheet.
+
 ## The practice checkbox is scaffolding
 
 The tick beside each practice is yours to set. Nothing checks it and nothing is unlocked by
