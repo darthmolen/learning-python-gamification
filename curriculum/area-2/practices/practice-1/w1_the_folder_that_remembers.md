@@ -6,9 +6,15 @@ audience: learner
 
 **Concepts:** `repository` · `git-init`
 **DC:** 5
-**You need:** a terminal, and the folder your Area 0 and Area 1 exercises are in.
+**You need:** a terminal, and an empty folder you are willing to delete afterwards.
 
 There is no Python in this walkthrough. Type every command yourself; do not paste.
+
+**Why an empty folder rather than your own.** You already have a repository — you cloned it in
+your first session, and you chose its name. Running `git init` there would do nothing you could
+see, because the answer is already yes. This walkthrough is about watching a folder *become* one,
+and you only get to watch that in a folder that is not one yet. Make it, use it, delete it. What
+it teaches stays.
 
 ---
 
@@ -43,23 +49,28 @@ Write down, on paper, the number of things it printed. You will compare it in st
 
 ---
 
-## 2. Get to the folder that is yours
+## 2. Make a folder to throw away
 
-Your exercises live somewhere like `Documents/code/`. Get there:
+Somewhere you will not lose it among things that matter — inside your repository is fine, and
+you will delete it before the end:
 
 ```
-cd Documents/code
+mkdir scratch
+cd scratch
 pwd
 ls
 ```
 
-**This folder is about to become the only folder on the laptop that remembers its own
-past.** Make sure it is the right one before you go on. If `ls` does not show your
-turtle files, you are in the wrong place.
+`ls` shows nothing, which is the point: this folder has no past, and in a few minutes it will
+have one.
 
-Run the Python file that is sitting here with this walkthrough:
+**Check `pwd` says `scratch`.** Everything below happens here and nowhere else.
+
+Copy in the Python file that is sitting with this walkthrough, so the folder has something in
+it that you can watch survive:
 
 ```
+cp ../curriculum/area-2/practices/practice-1/still_works.py .
 py -3.14 still_works.py
 ```
 
@@ -172,9 +183,27 @@ git for the rest of their lives.
 
 ---
 
+---
+
+## Throw it away
+
+```
+cd ..
+rm -rf scratch
+```
+
+Gone — the folder, the `.git` inside it, all of it. **That is the last part of the lesson.** A
+repository is a thing you make, and a thing you can destroy, and nothing about it is precious
+until you decide it is. The one you actually keep is the repository you cloned in your first
+session, and Practice 2 is where your work starts going into it on purpose.
+
+---
+
 ## Done when
 
-- [ ] `git status` runs in your folder without refusing
+- [ ] `git status` refused in an ordinary folder, and you read why
+- [ ] `git status` stopped refusing after one command, and you can name the command
 - [ ] You can say which single directory made the difference
 - [ ] You looked inside `.git` and wrote down two guesses
-- [ ] `still_works.py` runs, still, unchanged
+- [ ] `still_works.py` ran, unchanged, before and after
+- [ ] `scratch/` is deleted

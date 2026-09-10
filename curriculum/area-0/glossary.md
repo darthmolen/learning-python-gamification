@@ -102,3 +102,18 @@ the error says what kind of mistake it was, and the **line number** says where t
 The last line is the summary; the lines above it are the path Python took to get there, most
 recent at the bottom. Reading one on purpose — rather than scrolling past it to try something
 else — is the single habit that makes everything after this area cheaper.
+
+## git-clone
+
+Copies a repository — a folder somebody else is keeping for you — onto this machine, with
+everything already in it.
+
+```console
+git clone http://<host>:3080/<you>/<your-repo>.git
+```
+
+You do this once, at the very start, and it is how the files for the work arrive. The folder it
+makes is yours: you work in it, and everything you write stays there.
+
+What a repository actually *is*, and how to make one, comes later. For now it is enough that
+somebody made one for you and this is the command that brings it here.

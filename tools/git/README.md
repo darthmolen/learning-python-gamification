@@ -1,6 +1,11 @@
 # git
 
-**Both machines. Needed week 6, Area 2a session 1.**
+**Both machines. Needed week 1, Area 0 practice 0.**
+
+> **The client moved forward from week 6**, along with the remote, because everything else a
+> machine needs arrives on a branch of the learner's own repository. Installing git early does
+> not teach git early — Area 2a still owns that, and owns it better for landing on somebody who
+> has been using one for five weeks.
 
 The client only. *Where it pushes to* is a separate decision — see below — and Area 2a is
 written so the session runs whichever way that decision goes.
@@ -14,7 +19,7 @@ the shell this repository's commands assume.
 git --version
 ```
 
-## Configure before session 1, not during
+## Configure before practice 1, not during
 
 Two settings, done ahead of time, because a first commit that stops to ask for an identity
 is a bad first commit:
@@ -58,5 +63,5 @@ git --version
 git config --global user.name && git config --global user.email
 ```
 
-Then, before session 4: a `git push` to whichever remote was chosen, from the learner's
+Then, before practice 4: a `git push` to whichever remote was chosen, from the learner's
 machine, completing without a credential prompt they cannot answer.

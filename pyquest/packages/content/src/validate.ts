@@ -610,15 +610,37 @@ function practiceIssues(
      * "what happened to 3?". Duplicates are the same disagreement with the opposite sign.
      */
     const numbers = manifest.practices.map((p) => p.n).sort((a, b) => a - b);
-    for (let i = 0; i < numbers.length; i += 1) {
-      const expected = i + 1;
-      const actual = numbers[i];
-      if (actual === expected) continue;
+
+    /*
+     * A spine opens at 1, or at 0 when the area begins with a bootstrap — Area 0's Practice 0 is
+     * "create your first repository", which exists because the learner-setup payload travels by
+     * git and so cannot deliver the instructions for installing git.
+     *
+     * It may open nowhere else. A learner told to begin at 2 asks what 1 was, which is the gap
+     * failure below moved to the front, and admitting 0 is exactly the change that could let any
+     * starting number through by accident.
+     */
+    const start = numbers[0];
+    if (start !== undefined && start !== 0 && start !== 1) {
       issues.push({
         file,
         rule: 'practice-numbering',
-        message: `the practice numbers are not 1..${numbers.length} — expected ${expected}, found ${String(actual)}`,
-        fix: `renumber the practices in area-${area}/practices.yml so they run 1..${numbers.length} with no gap or repeat`,
+        message: `the spine starts at ${String(start)} — a practice sequence opens at 0 or 1`,
+        fix: `renumber the practices in area-${area}/practices.yml to start at 1, or at 0 if the first one is setup that precedes the work`,
+      });
+      continue;
+    }
+
+    for (let i = 0; i < numbers.length; i += 1) {
+      const expected = (start ?? 1) + i;
+      const actual = numbers[i];
+      if (actual === expected) continue;
+      const last = (start ?? 1) + numbers.length - 1;
+      issues.push({
+        file,
+        rule: 'practice-numbering',
+        message: `the practice numbers are not ${String(start)}..${last} — expected ${expected}, found ${String(actual)}`,
+        fix: `renumber the practices in area-${area}/practices.yml so they run ${String(start)}..${last} with no gap or repeat`,
       });
       break;
     }

@@ -195,6 +195,46 @@ describe.skipIf(!HAVE_DATABASE)('the schema, on what it deliberately allows', ()
     });
   });
 
+  /**
+   * Practice 0 — setup, before the work starts.
+   *
+   * 0007 wrote `CHECK (practice_n > 0)` and was right about the curriculum at the time. Area 0
+   * now opens with **Practice 0 — create your first repository**, because `tools/learner-setup/`
+   * delivers its payload by git and so could not deliver the instructions for installing git.
+   * The ordering was circular; making the bootstrap a numbered practice is the way out.
+   *
+   * The tick is the only runtime path that touches this constraint, so it is the only thing that
+   * proves 0008 landed. A row the loader accepts and the database refuses is a checkbox a learner
+   * can set once and never see again.
+   */
+  it('accepts practice 0, which is the bootstrap Area 0 opens with', async () => {
+    await inRollback(scratch(), async () => {
+      for (const statement of ROSTER) await scratch().client.query(statement);
+      await scratch().client.query(
+        `INSERT INTO practice_progress (player_id, area, practice_n)
+         VALUES ('${PLAYER}', 0, 0), ('${PLAYER}', 0, 1)`,
+      );
+      const { rows } = await scratch().client.query(
+        'SELECT count(*)::int AS n FROM practice_progress',
+      );
+      expect((rows[0] as { n: number }).n).toBe(2);
+    });
+  });
+
+  it('still refuses a negative practice number, because there is no practice minus one', async () => {
+    await inRollback(scratch(), async () => {
+      for (const statement of ROSTER) await scratch().client.query(statement);
+      // 0008 relaxed the constraint rather than dropping it. Without this, "accepts 0" would
+      // pass just as well against no constraint at all.
+      await expect(
+        scratch().client.query(
+          `INSERT INTO practice_progress (player_id, area, practice_n)
+           VALUES ('${PLAYER}', 0, -1)`,
+        ),
+      ).rejects.toThrow();
+    });
+  });
+
   it('accepts both rung 0 and the top rung, which are the ends of the §5.4 ladder', async () => {
     await inRollback(scratch(), async () => {
       for (const statement of ROSTER) await scratch().client.query(statement);

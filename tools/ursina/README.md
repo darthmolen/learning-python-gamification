@@ -1,6 +1,6 @@
 # ursina
 
-**Both machines, identical versions. Needed week 9, Area 3 session 1.**
+**Both machines, identical versions. Needed week 9, Area 3 practice 1.**
 
 The 3D engine Areas 3 through 5 build on, and the capstone. A learner never touches it directly —
 they import `curriculum/lib/world.py`, a three-name shim, which comes down on a schedule.

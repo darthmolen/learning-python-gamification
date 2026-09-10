@@ -4,7 +4,7 @@
 >
 > `pyquest-area2.code-profile` in this directory is **hand-authored, not exported**, and
 > **has not been imported on a learner's machine.** Until §4 has been worked through on that
-> machine and this banner deleted, **Area 2 is not ready to be taught** — session 6 is the
+> machine and this banner deleted, **Area 2 is not ready to be taught** — practice 6 is the
 > VS Code session and the whole argument for a profile is that stock defaults are the
 > thing being rejected.
 >
@@ -80,7 +80,7 @@ them. If a later version moves it again, §5 is the fallback that cannot move: t
 are readable there and paste into a new profile's `settings.json`.
 
 To go back to a normal VS Code at any time: `Ctrl+Shift+P` → **Profiles: Switch
-Profile** → *Default*. **Say this out loud in session 6.** A stripped editor a learner
+Profile** → *Default*. **Say this out loud in practice 6.** A stripped editor a learner
 cannot escape is a cage; one they chose and can leave is a tool with the noise turned
 down, and the difference is entirely in whether they know about that command.
 
@@ -112,7 +112,7 @@ of this file and record the date.
 - [ ] `Ctrl+`` opens an integrated terminal, in the folder that is open
 - [ ] `py -3.14 motto.py` runs in that terminal and prints
 - [ ] Editing without saving leaves a visible dot, and running picks up the **old**
-      file — the session 6 stall, confirmed as real rather than assumed
+      file — the practice 6 stall, confirmed as real rather than assumed
 - [ ] **Profiles: Switch Profile** returns a normal VS Code, and switching back restores
       the strip
 
@@ -209,7 +209,7 @@ Four of those are arguments rather than preferences:
 - **`files.autoSave: "off"`.** Running a stale file because it was never saved is session
   6's named stall, and it is a two-minute lesson about what the dot on the tab means. Auto
   save would remove the stall and the lesson with it.
-- **`python.terminal.activateEnvironment: false`.** Session 7 is entirely about which
+- **`python.terminal.activateEnvironment: false`.** Practice 7 is entirely about which
   Python is running. An editor that silently activates the venv teaches that
   environments are something that happens to you. **Area 3 may flip this once the lesson
   has landed**, and flipping it is a fine thing to do deliberately.

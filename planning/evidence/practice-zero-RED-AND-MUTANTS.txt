@@ -1,0 +1,96 @@
+Practice 0: the RED run, and a mutant per refusal
+=================================================
+Track: practice-zero        Date: 2026-09-10
+
+`n: 0` was refused in FIVE places, not the four the plan predicted. Each one is a small change
+and each has its own mutant, because they sit in four different packages and a database and no
+single test reaches them all.
+
+
+RED -- before any change
+-------------------------
+$ npx vitest run packages/content/tests/practice-zero.test.ts
+
+     x is accepted by the schema
+       AssertionError: expected false to be true
+
+     x validates a whole spine that starts at 0
+       AssertionError: expected [ { ...(7) } ] to deeply equal []
+
+     x refuses one that starts at 2, which is a gap moved to the front
+       AssertionError: expected 'the practice numbers are not 1..3 -- e...' to contain '0 or 1'
+       Received: "the practice numbers are not 1..3 -- expected 1, found 2"
+
+       Tests  3 failed | 3 passed (6)
+
+Each failure is the predicted one. The third is the interesting one: the old rule could not
+even describe the new requirement, because it had no idea a spine could start anywhere but 1.
+
+
+MUTANT 1 -- the numbering rule goes back to 1-based
+-----------------------------------------------------
+    const expected = i + 1;          // was: (start ?? 1) + i
+
+     x validates a whole spine that starts at 0
+       Tests  1 failed | 5 passed (6)
+
+
+MUTANT 2 -- migration 0008 removed
+------------------------------------
+    $ mv packages/db/migrations/0008-practice-zero.sql /tmp/
+
+     x accepts practice 0, which is the bootstrap Area 0 opens with
+       Tests  1 failed | 37 passed (38)
+
+Run against real Postgres, not a mock. `useMigratedDatabase` applies every migration to a
+scratch database, so removing the file genuinely restores `CHECK (practice_n > 0)`.
+
+The paired assertion matters as much: "still refuses a negative practice number" fails if the
+constraint is DROPPED rather than relaxed. 0008 relaxes it. There is no practice minus one.
+
+
+MUTANT 3 -- the API route goes back to `practiceN < 1`
+--------------------------------------------------------
+    if (... || practiceN < 1) {
+
+     x accepts practice 0, which is the first row of the first area
+       Tests  1 failed | 40 passed (41)
+
+THIS WAS THE FIFTH REFUSAL AND THE PLAN DID NOT PREDICT IT. It is also the worst of them: it
+rejects the tick before the database is ever consulted, so the failure a learner would have met
+is the checkbox on the first row of the first area refusing, with a message about a number being
+out of range. The route had no test whatsoever; it has two now.
+
+
+A THING THE TEST FOUND THAT IS NOT A BUG IN THIS CHANGE
+---------------------------------------------------------
+The first version of "still refuses a negative practice number" asserted `statusCode === 400`
+and got 200 with this body:
+
+    { "code": "verifier-failed",
+      "message": "an area is 0-7 and a practice number is 0 or more",
+      "retryable": false }
+
+The guard fires; the status is 200 because `errors.ts` maps `verifier-failed` to 200 on purpose
+-- it means "your submission did not pass", a domain outcome rather than an HTTP fault.
+
+Using it for a malformed route parameter is a pre-existing oddity on this route (the `area`
+bound has always answered the same way) and is left alone. Changing which code the route raises
+is a contract change and belongs to whoever owns that table. The test now asserts the error code
+rather than the status, and says so at the assertion.
+
+
+AFTER
+------
+$ npm test
+     Test Files  79 passed (79)
+          Tests  1200 passed | 1 skipped (1201)
+
+$ npm run validate:content
+     OK  no problems found -- 30 items across 8 areas
+
+$ npm run pack:payload | grep -c 'practice-0-a-machine'
+     0
+
+The last one is the audience flag doing its job on the new file: Practice 0's plan is DM-voiced,
+marked `audience: dm`, and does not travel to the learner's machine.

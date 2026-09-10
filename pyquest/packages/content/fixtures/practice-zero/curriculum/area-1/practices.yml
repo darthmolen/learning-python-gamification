@@ -1,0 +1,25 @@
+# A spine that starts at 0, which is legal.
+#
+# Practice 0 is setup that precedes the work — Area 0's is "create your first repository",
+# and Area 3's ursina install is the next honest candidate. The number is the claim: 0 means
+# *before the work starts*, which is what a bootstrap is.
+#
+# It carries no exercises, like Practice 1 in the control fixture beside this one, because
+# setup is done at the table and has no brief to hand over.
+area: 1
+practices:
+  - n: 0
+    title: Put The Machine Into Service
+    exercises: []
+  - n: 1
+    title: The Loop That Draws
+    exercises: []
+  - n: 2
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+  - n: 3
+    title: Carrying A Number
+    exercises: [the-countdown]
+  - n: 4
+    title: The Sigil
+    exercises: [the-sigil]

@@ -731,3 +731,50 @@ describe('defend', () => {
     expect(response.statusCode).toBe(404);
   });
 });
+
+/* -------------------------------------------------------------------------------------------
+ * The practice tick — and Practice 0
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Area 0 opens with **Practice 0 — create your first repository**: the bootstrap, admitted as a
+ * practice because `tools/learner-setup/` delivers its payload by git and so could not deliver
+ * the instructions for installing git.
+ *
+ * Four places refused `n: 0` and all four had to move — the content schema, the wire contract,
+ * the numbering rule and migration 0007's `CHECK`. **This route was the fourth, and the worst
+ * of them**: it rejected the tick before the database ever saw it, so a learner could set the
+ * checkbox on the first row of the first area and watch it fail with a message about a number.
+ */
+describe('ticking a practice', () => {
+  it('accepts practice 0, which is the first row of the first area', async () => {
+    const response = await authed(app, TOKEN, {
+      method: 'POST',
+      url: `/api/players/${ADA}/areas/0/practices/0`,
+      payload: { completed: true },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ completed: true });
+  });
+
+  /**
+   * Asserted on the error code rather than the status, because this route answers a bad
+   * parameter with `verifier-failed`, which `errors.ts` maps to **200** on purpose — that code
+   * means "your submission did not pass", a domain outcome rather than an HTTP fault.
+   *
+   * Using it for a malformed route parameter is a pre-existing oddity here (the `area` bound
+   * has always answered the same way) and is left alone: changing which code this route raises
+   * is a contract change, and it belongs to whoever owns the error table rather than to the
+   * change that made practice 0 legal. Recorded in the plan.
+   */
+  it('still refuses a negative practice number, because there is no practice minus one', async () => {
+    const response = await authed(app, TOKEN, {
+      method: 'POST',
+      url: `/api/players/${ADA}/areas/0/practices/-1`,
+      payload: { completed: true },
+    });
+
+    expect(response.json()).toMatchObject({ code: 'verifier-failed' });
+  });
+});

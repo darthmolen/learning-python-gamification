@@ -52,16 +52,27 @@ tool, so it has no row below — nothing in it gets installed on anything.
 
 ## Every learner's machine
 
-In this order. Nothing here needs the application, the host, or the internet beyond the
-installers themselves.
+In this order. Only the first two need the host; after that, nothing here needs the
+application or the internet beyond the installers themselves.
 
 | # | Tool | Needed by | Notes |
 |---|---|---|---|
-| 1 | [Python 3.14](python/) | **week 1**, Area 0 session 1 | The first thing. Nothing else works without it |
-| 2 | A text editor | week 1 | Notepad is genuinely sufficient until week 7 — see below |
-| 3 | [git](git/) | week 6, Area 2a | Client only. The remote is a separate decision |
-| 4 | [VS Code](vscode/) | **week 7**, Area 2b session 6 | Install stock, then import the profile. Do not install it early |
+| 1 | [git](git/) | **week 1**, Area 0 practice 0 | Client, plus the remote. Everything else arrives through it |
+| 2 | [Python 3.14](python/) | **week 1**, Area 0 practice 1 | Nothing runs without it |
+| 3 | A text editor | week 1 | Notepad is genuinely sufficient until week 7 — see below |
+| 4 | [VS Code](vscode/) | **week 7**, Area 2b practice 6 | Install stock, then import the profile. Do not install it early |
 | 5 | [ursina](ursina/) | week 9, Area 3 | Pinned. Verify with `curriculum/lib/smoke.py`, which needs a real display |
+
+**git moved to first, and it is a delivery decision rather than a teaching one.**
+[`learner-setup/`](learner-setup/) hands a machine its payload as a branch of the learner's own
+repository — and the payload contains [`git/README.md`](git/README.md), the instructions for
+installing git. Receiving the instructions required the thing they instruct. The circle only
+breaks by installing git first and cloning before anything else, which is what **Area 0's
+Practice 0** now does, at the table, in about twenty-five minutes.
+
+**Installing git early does not teach git early.** Area 2a still owns that, at week 6, and it
+is four practices about what a repository actually is. A learner who has been using one for
+five weeks without understanding it is in exactly the state Area 0 already engineers for types.
 
 **Do not install VS Code before week 7.** Area 0's DM guide says so directly: it is Area 2b
 vocabulary and costs a session for no gain if it arrives early. The Quest screen is the

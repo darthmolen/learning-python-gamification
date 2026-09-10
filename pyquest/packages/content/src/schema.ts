@@ -390,8 +390,19 @@ export type AreaManifest = z.infer<typeof AreaManifestSchema>;
  */
 export const PracticeSchema = z
   .object({
-    /** 1-based, contiguous within an area. The validator proves the sequence has no gap. */
-    n: z.number().int().positive(),
+    /**
+     * The practice's place in the order. Contiguous within an area; the validator proves it.
+     *
+     * **Zero is legal, and it means *before the work starts*.** A Practice 0 is setup — Area 0's
+     * is "create your first repository", which exists because the learner-setup payload travels
+     * by git and so could not deliver the instructions for installing git. Area 3's ursina
+     * install is the next honest candidate.
+     *
+     * Legal in every area rather than only Area 0: restricting it would bake a special case into
+     * the file roughly 150 quests are authored against, which is the argument §6.3 already made
+     * when it named a role instead of a family member.
+     */
+    n: z.number().int().nonnegative(),
     title: z.string().min(1),
     /**
      * Exercise slugs, in the order the practice works them.

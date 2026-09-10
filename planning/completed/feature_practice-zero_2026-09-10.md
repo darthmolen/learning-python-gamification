@@ -1,13 +1,14 @@
 ---
 kind: plan
-status: queued
+status: completed
 track: practice-zero
 date: 2026-09-10
+completed: 2026-09-10
 ---
 
 # Practice 0 — the bootstrap, admitted rather than hidden
 
-**Status:** Planned
+**Status:** Completed 2026-09-10 — authored and wired; running it waits on the LAN gate
 **Track:** `practice-zero`
 **Date:** 2026-09-10
 **Author:** Claude (Opus 5)
@@ -206,5 +207,81 @@ one that proves the migration landed.
 
 ## Evidence
 
-`planning/evidence/practice-zero-RED.txt` — the four refusals, before any change.
-`planning/evidence/practice-zero-MUTANT.txt` — `expected = i + 1` restored, `0, 1, 2` red.
+`planning/evidence/practice-zero-RED-AND-MUTANTS.txt` — the RED run, and a mutant per refusal.
+
+## Outcome
+
+**`n: 0` is legal in all four places, each proven by its own mutant, and Area 0 opens with
+Practice 0 — A Machine Of Your Own.** 1200 tests pass; `validate:content` and `validate:plans`
+clean.
+
+The four were not three, as the plan said. **A fifth refusal was found during execution and it
+was the worst of them**: `apps/api/src/server.ts`'s tick route validated `practiceN < 1` and
+would have rejected the tick before the database ever saw it — a learner setting the checkbox on
+the first row of the first area, and being told a number was out of range. It had no test at all;
+it has two now.
+
+| Where | Mutant | Result |
+|---|---|---|
+| `schema.ts` | — | covered by the 0-start fixture below |
+| `validate.ts` numbering | restore `expected = i + 1` | the `0, 1, 2` spine goes red |
+| migration 0008 | remove the file | `accepts practice 0` goes red against real Postgres |
+| `server.ts` route | restore `practiceN < 1` | `accepts practice 0` goes red |
+
+`practice-numbering` now proves two things rather than one: a spine opens at **0 or 1**, and is
+contiguous from wherever it opened. `broken/practice-numbering-start` holds the case the
+relaxation could most easily have let through — a spine beginning at 2, which is the old gap
+failure moved to the front.
+
+### The area's founding claim had to be rewritten, not quietly broken
+
+`curriculum/area-0/README.md` opened with *"It needs no application, no server, no browser and no
+internet"*, and spec §8 is the reason. Practice 0 needs Gitea reachable over the LAN, so that
+sentence became false the moment the practice existed.
+
+It now says what is true: **Practices 1 to 6 need nothing but Python and a terminal; Practice 0
+is the exception and is contained on purpose.** The plan for Practice 0 says outright that if the
+network fights you on the night, run Practice 1 instead and clone next time. The area's
+independence is a property of the teaching, and one setup evening at the front does not spend it.
+
+### The authored-area edit, which was larger than "one sentence"
+
+The plan named `the-first-commit/BRIEF.md:8`. The walkthrough behind it needed the same pass and
+needed it more: `w1_the_folder_that_remembers.md` is built on `git status` **failing** in an
+ordinary folder and then succeeding after `git init` — and in a folder that is already a clone,
+it never fails, so the whole beat collapses.
+
+Both now run in a `scratch/` directory the learner makes and then deletes, and the deletion is
+part of the lesson: *a repository is a thing you make, and a thing you can destroy, and nothing
+about it is precious until you decide it is.* The one they keep is the one they cloned in week 1.
+
+`git-clone` was added at area 0 and `repository` / `git-init` deliberately left at area 2, so
+Area 2a still teaches what a repository *is* — to somebody who has been using one for five weeks,
+which is the same ordering Area 0 already uses for types. The glossary entry was mandatory:
+`glossaryIssues` is bidirectional and fails an area whose glossary omits a concept of that area.
+
+### Also done
+
+- **The `tools/` rename sweep** — fifteen `session <n>` references across six files, all naming
+  the unit, all now *practice*. `learner-setup-repairs` left them deliberately to avoid a
+  collision on files this track owns.
+- **git is install #1** in `tools/README.md` and `SETUP.md`, and both git documents moved from
+  "week 6, Area 2a" to "week 1, Area 0 practice 0" with a note saying why. `SETUP.md` now opens
+  by pointing out the learner has already used git — they cloned the branch it is written on.
+
+### Found while working, not fixed
+
+**`verifier-failed` maps to HTTP 200, and the tick route uses it for a malformed parameter.**
+That code means "your submission did not pass" — a domain outcome, deliberately not an HTTP
+fault — so a bad route parameter answers 200 with an error body. Pre-existing: the `area` bound
+has always behaved this way. Changing which code the route raises is a contract change and
+belongs to whoever owns `errors.ts`'s table, not to the change that made practice 0 legal. The
+new test asserts the error *code* rather than the status, and says why.
+
+### What still blocks running it
+
+**The LAN gate.** `feature_gitea-lan-access-for-the-son_2026-08-27` is still open and cannot be
+closed from this machine: it needs an elevated shell for two firewall rules and a `curl` from the
+learner's laptop, which is the only check that proves anything. **Practice 0 is authored and
+every system accepts it; it cannot be run with a learner until that passes**, and its own
+*Before they sit down* list says so as the first of three items.

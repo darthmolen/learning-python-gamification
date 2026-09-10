@@ -4,16 +4,23 @@ audience: dm
 
 # Area 0 — First Light
 
-**Weeks 1–2. Six sessions of 45–60 minutes.**
+**Weeks 1–2. Seven sittings of 45–60 minutes, and the first one is short.**
 Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Area 0.
 
-`print` · `variables` · `int` `float` `str` `bool` · `input` · `f-strings` · reading errors
+`print` · `variables` · `int` `float` `str` `bool` · `input` · `f-strings` · reading errors ·
+`git-clone`
 
 **Vehicle: turtle graphics.** The first line they type draws something.
 
-This area needs a text editor, a terminal, and Python 3.14. It needs no application, no
-server, no browser and no internet. That is deliberate — spec §8 warns that if Area 0
-waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child Python*.
+**Practices 1 to 6 need a text editor, a terminal, and Python 3.14 — no application, no server,
+no browser and no internet.** That is deliberate, and spec §8 is why: if Area 0 waits on Phase 1,
+*the app becomes a satisfying way to postpone teaching a child Python*.
+
+**Practice 0 is the exception, and it is contained on purpose.** It needs the DM's Gitea
+reachable over the LAN, because that is where the learner's repository is and the setup payload
+travels by git. Nothing after it does. If the network fights you on the night, run Practice 1
+instead and clone next time — the plan for Practice 0 says so in as many words. The area's
+independence is a property of the teaching, and one setup evening at the front does not spend it.
 
 ---
 
@@ -21,9 +28,11 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 
 1. **`dm-guide.md`** — how to run a session, and the Socratic phrasings for every
    stall predicted here. Read this before Practice 1. It is the load-bearing document.
-2. **`practices/practice-1-first-light.md`** — then one per session, on the night.
-3. **`reference/practice-3-answers.md`** — before Practice 3. Not during.
-4. **`journal/entry-01-prompt.md`** — at the end of Practice 1.
+2. **`practices/practice-0-a-machine-of-your-own.md`** — and read its *Before they sit down*
+   list a day early, because two of its three items are yours and one needs a firewall rule.
+3. **`practices/practice-1-first-light.md`** — then one per session, on the night.
+4. **`reference/practice-3-answers.md`** — before Practice 3. Not during.
+5. **`journal/entry-01-prompt.md`** — at the end of Practice 1.
 
 ---
 
@@ -31,6 +40,7 @@ waits on Phase 1, *the app becomes a satisfying way to postpone teaching a child
 
 | # | Title | Concepts introduced | Resurfacing | Files |
 |---|---|---|---|---|
+| 0 | **A Machine Of Your Own** | `git-clone` | — | none — it happens *to* the machine |
 | 1 | **First Light** | `print` | — | `p1e1`, `p1e2`, `p1e3` |
 | 2 | **Names For Things** | `variables`, `int` | `print` | `p2e1`, `p2e2` |
 | 3 | **The Broken Sigil** | `reading-errors` | `print`, `variables`, `int`, `str` | `b1`–`b7`, `error-log.md` |
@@ -95,7 +105,10 @@ against the Area 0 entries of `packages/content/src/concepts.ts`.
 | `p5e2_the_nameplate.py` | 5 | 14 | `input`, `f-strings`, `str`, `int`, `variables`, `print` |
 | `p6_starter.py` | 6 | 18 | all nine |
 
-All nine Area 0 concepts are covered. **`bool` is the thinnest, at three exercises, and
+All ten Area 0 concepts are covered — nine here, and `git-clone` in Practice 0, which has no
+exercise because it happens to the machine rather than in a file.
+
+**`bool` is the thinnest of the nine, at three exercises, and
 that is honest rather than an oversight** — without `if`, a boolean has almost nothing to
 do. It appears where it genuinely occurs (`turtle.isdown()`, `50 > 100`) and is not
 padded out with make-work. Area 1 opens with `if` and gives it a job on day one.

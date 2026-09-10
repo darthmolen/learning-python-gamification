@@ -396,7 +396,13 @@ export type CampaignView = z.infer<typeof CampaignViewSchema>;
  */
 export const PracticeViewSchema = z
   .object({
-    n: z.number().int().positive(),
+    /**
+     * Zero is legal on the wire, because it is legal in the content: a Practice 0 is setup that
+     * precedes the work. `packages/content/src/schema.ts` carries the argument. This must match
+     * that one — a wire that refused what the loader accepted would drop Area 0's first row on
+     * the floor and give the screen no way to say why.
+     */
+    n: z.number().int().nonnegative(),
     title: z.string().min(1),
     exercises: z.array(z.string().min(1)),
     quests: z.array(ContentIdSchema),

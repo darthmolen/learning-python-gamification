@@ -1,6 +1,11 @@
 # A learner's repository on the LAN Gitea
 
-**A learner's machine, plus one DM step. Needed week 6, Area 2a.**
+**A learner's machine, plus one DM step. Needed week 1, Area 0 practice 0.**
+
+> **This moved forward from week 6.** It used to be Area 2a's, because that is when git is
+> *taught*. It is now week 1, because the setup payload travels by git and cannot deliver the
+> instructions for installing git. Area 2a still teaches everything here means; this is the
+> four steps that make a machine reachable, run once, at the start.
 
 [`tools/git/`](../git/) installs the client and says the remote is a separate decision.
 This is that decision taken the intended way: **Gitea on the DM's machine, reached over the
