@@ -1,5 +1,32 @@
+import { readFileSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+
+/**
+ * Read one key out of `infra/.env` — the file Compose reads, and the one place the dev api's port
+ * is configured.
+ *
+ * **Without this the two flows disagree.** `infra/dev-stack.sh` sources that file with `set -a`,
+ * so a vite it starts inherits `DEV_API_PORT`; the documented two-terminal flow starts vite by
+ * hand, where nothing has sourced anything and `process.env.DEV_API_PORT` is simply undefined.
+ * Change the port in `infra/.env` and the api moves while a separately launched SPA keeps
+ * proxying to 3083, and every live request fails with a connection error that names nothing.
+ *
+ * Parsed rather than sourced because this is a config file evaluated by Node, not a shell — and
+ * deliberately not `dotenv`: one key, no interpolation, no export semantics, and no dependency
+ * added to the SPA for the sake of a number. A missing file is not an error. `infra/.env` is
+ * gitignored, so a fresh clone has none, and a SPA that refused to configure itself because the
+ * *infrastructure* was not set up would be wrong — the fallback below is the documented default.
+ */
+function fromInfraEnv(key: string): string | undefined {
+  try {
+    const text = readFileSync(new URL(`../../../infra/.env`, import.meta.url), 'utf8');
+    const match = new RegExp(`^${key}=(.*)$`, 'm').exec(text);
+    return match?.[1]?.trim().replace(/^["']|["']$/g, '') || undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Where `/api/*` goes when the dev server is proxying — **the dev api on 3083, by default**.
@@ -16,14 +43,16 @@ import { defineConfig } from 'vite';
  *
  *     PYQUEST_API_TARGET=http://127.0.0.1:3081 npm run dev:live --workspace @pyquest/web
  *
- * `DEV_API_PORT` is read too, because `infra/.env` already defines it and a port configured in
- * one place that another place hardcodes is the disagreement this comment exists to prevent.
+ * `DEV_API_PORT` is read from the environment *and* from `infra/.env`, because `infra/.env`
+ * already defines it and a port configured in one place that another place hardcodes is exactly
+ * the disagreement this comment exists to prevent. The environment wins when both are set —
+ * `dev-stack.sh` exports it, and an explicit export should beat a file.
  *
  * None of this is reachable without `VITE_API_LIVE`. Plain `npm run dev` answers from fixtures
  * and never asks the proxy anything — see the `server.proxy` comment below.
  */
-const apiTarget =
-  process.env['PYQUEST_API_TARGET'] ?? `http://127.0.0.1:${process.env['DEV_API_PORT'] ?? '3083'}`;
+const devApiPort = process.env['DEV_API_PORT'] ?? fromInfraEnv('DEV_API_PORT') ?? '3083';
+const apiTarget = process.env['PYQUEST_API_TARGET'] ?? `http://127.0.0.1:${devApiPort}`;
 
 export default defineConfig({
   plugins: [react()],

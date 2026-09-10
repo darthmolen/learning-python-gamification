@@ -312,28 +312,68 @@ fi
 # above refused to start unless both ports were free, so anything listening on them now is a child
 # of this script. Without that ordering this would be a script that kills strangers.
 # ---------------------------------------------------------------------------
+## Kill whatever is listening on one port — but only if it looks like something we started.
+##
+## The image-name check is the guard against the window between "the port was free" and now. That
+## window is real: this script checked the ports before starting, and on a shared machine nothing
+## stops a stranger binding one in between. Killing a stranger's process because it happened to
+## take 5173 would be far worse than leaving an orphan, so an unrecognised image is left alone and
+## said out loud. `node.exe` is the only thing either child can be.
+kill_listeners_on() {
+  local port="$1" pid image
+  for pid in $(listening_on "$port" | awk '{print $5}' | sort -u); do
+    if command -v tasklist >/dev/null 2>&1; then
+      image=$(tasklist //FI "PID eq $pid" //NH //FO CSV 2>/dev/null | head -1 | cut -d'"' -f2)
+      case "$image" in
+        node.exe | '') ;;  # ours, or Windows would not say — go ahead
+        *)
+          echo "dev-stack: leaving pid $pid ($image) on port $port alone — that is not ours." >&2
+          continue
+          ;;
+      esac
+    fi
+    if command -v taskkill >/dev/null 2>&1; then
+      taskkill //PID "$pid" //T //F >/dev/null 2>&1 || true
+    else
+      kill -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
+    fi
+  done
+}
+
 stopping=0
 stop_everything() {
   [[ "$stopping" == "1" ]] && return   # Ctrl-C then EXIT would otherwise run this twice
   stopping=1
   echo
   echo "dev-stack: stopping the SPA and the api…"
-  for port in "$DEV_SPA_PORT" "$DEV_API_PORT"; do
-    for pid in $(listening_on "$port" | awk '{print $5}' | sort -u); do
-      if command -v taskkill >/dev/null 2>&1; then
-        taskkill //PID "$pid" //T //F >/dev/null 2>&1 || true
-      else
-        kill -- "-$pid" 2>/dev/null || kill "$pid" 2>/dev/null || true
-      fi
-    done
+
+  ## 1. The children this script actually launched.
+  ##
+  ## First, and by pid, because of the startup race: interrupt this while vite is still booting and
+  ## it has not bound 5173 yet, so a port sweep finds nothing and the process goes on to start —
+  ## orphaned, holding the port, and the next run refuses because the port is taken. Signalling the
+  ## pid we know closes that window regardless of how far along the child got.
+  for pid in ${API_PID:-} ${SPA_PID:-}; do
+    kill "$pid" 2>/dev/null || true
   done
 
+  ## 2. The processes actually holding the ports.
+  ##
+  ## Needed as well as (1), not instead of it: `npm run X` is not the listener. It spawns node,
+  ## through `cmd.exe` on Windows, so the pid bash knows about is a wrapper and killing it can
+  ## leave the grandchild bound to the port.
+  kill_listeners_on "$DEV_SPA_PORT"
+  kill_listeners_on "$DEV_API_PORT"
 
-  # npm prints a twelve-line "Lifecycle script failed" block when its child is killed, once per
-  # workspace. That block IS this shutdown — nothing failed — but it arrives asynchronously, so
-  # without the pause it is the last thing on screen and Ctrl-C looks like a crash. A second of
-  # latency on exit is a fair price for the final line being true.
-  sleep 1
+  ## 3. Again, after a pause, for the child that was mid-startup when (1) reached it and bound its
+  ## port on the way down anyway. The pause is not free but it is not wasted either — npm prints a
+  ## twelve-line "Lifecycle script failed" block per workspace when its child is killed, and that
+  ## block IS this shutdown rather than a fault. Without the wait it lands last and Ctrl-C looks
+  ## like a crash.
+  sleep 2
+  kill_listeners_on "$DEV_SPA_PORT"
+  kill_listeners_on "$DEV_API_PORT"
+
   echo
   echo "dev-stack: stopped. The npm 'error' blocks above are npm noticing its own child was"
   echo "           killed — that is what stopping looks like, not a fault."
@@ -342,6 +382,7 @@ stop_everything() {
 trap stop_everything INT TERM EXIT
 
 ( npm run dev:live --workspace @pyquest/web -- --host 127.0.0.1 --port "$DEV_SPA_PORT" ) &
+SPA_PID=$!
 
 api &
 API_PID=$!
