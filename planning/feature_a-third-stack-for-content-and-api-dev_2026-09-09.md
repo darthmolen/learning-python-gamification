@@ -51,14 +51,39 @@ stack:
 |---|---|---|---|
 | **prod** | `pyquest-web` image, :3082 | `pyquest-api` image, :3081 | bind mount, reloaded on container restart |
 | **app dev** | vite :5173 | nothing — fixtures | nothing |
-| **dev stack** | vite :5173, `VITE_API_LIVE=true` | **`npm start`, from source**, :3081 | the repository, directly |
+| **dev stack** | vite :5173, `VITE_API_LIVE=true` | **`npm start`, from source, :3083** | the repository, directly |
 
 A content edit and an API edit then reload by the same gesture, and neither is a build.
 
-**The port is the switch.** Both the container and a host process want :3081, and
-`apps/web/vite.config.ts` already proxies `/api` there. So `docker compose stop api`, start
-the host one, and nothing else in the stack or the SPA changes. Postgres, Gitea and the
-runner keep running as they are.
+### Production stays up, and that decides the ports
+
+**The dev stack takes its own port. It does not borrow 3081.** An earlier draft of this plan
+proposed stopping the api container and letting the host process take its place — "the port
+is the switch". That is wrong. §6.4 puts the api on this machine and the son's code on his,
+`web` is bound on all interfaces because it is his front door, and **production ports stay up
+and bound to the images**. A dev stack that requires taking production down is a dev stack
+nobody runs on a weeknight.
+
+So: **api-dev on `3083`**, `127.0.0.1` only, continuing the 3080–3082 block the port table
+already documents and for the same reason the api has — nothing off this machine dials it.
+
+That makes one thing in the SPA a real change rather than a configuration: **the vite proxy
+hardcodes `http://localhost:3081`**. It has to become overridable, defaulting to the dev port,
+so that pointing dev at production is a deliberate act rather than the default.
+
+### The dev stack needs its own database
+
+The part that would actually hurt, and the reason this is not simply "another port".
+
+Signing in **writes** — a token row per session — and clicking around writes attempts, medals
+and journal entries. A dev api pointed at the production database does content review by
+mutating the son's progress. Content lives in git and progress lives in Postgres (§6.7), and
+this is the seam where a dev tool would cross it.
+
+Cheapest answer that holds: **a second database on the existing Postgres instance**, not a
+second container. `pyquest_dev` beside the real one, on the same 5433, migrated the same way
+`migrate.yml` migrates the first. Seeding it with `seedHousehold` gives a household to click
+through that nobody is graded on.
 
 ## What already works, proven 2026-09-09
 
@@ -98,16 +123,29 @@ writing the script, and settle it without putting secrets in a tracked file.
 - [ ] A change to API source is visible the same way
 - [ ] `npm run dev` still answers from fixtures with no stack running. **The default does not
       move** — it is correct, it is hermetic, and `vitest --project web` depends on it
-- [ ] Prod is untouched: `pyquest-web` and the `pyquest-api` image behave exactly as now
-- [ ] The port collision is documented rather than discovered — starting the host API with the
-      container API still up must fail in a way that says so
+- [ ] **Production keeps running throughout.** `pyquest-web` on 3082 and `pyquest-api` on
+      3081 stay up and bound; the dev stack never asks for either port and never stops a
+      container. Bringing dev up while the son is mid-practice must be a non-event
+- [ ] The dev api runs on **3083**, `127.0.0.1` only, and the port table records it
+- [ ] **The dev api writes to its own database.** No dev sign-in, attempt or journal entry
+      appears in the production one, and the plan says how that is verified rather than
+      assumed
 - [ ] `DATABASE_URL` for a host process is answered, and no secret is committed
 
 ## Approach
 
-**1. A script, not a paragraph.** `infra/dev-stack.sh` or an npm script: stop the container
-api, export the environment the host api needs, start it from source on :3081. It should
-refuse with a clear message if :3081 is held.
+**1. A script, not a paragraph.** `infra/dev-stack.sh` or an npm script that starts the api
+from source on **3083**, against `pyquest_dev`, with `CONTENT_ROOT` pointing at the
+repository. It stops nothing and takes no production port. It should refuse with a clear
+message if 3083 is held, and it should say out loud which database it is about to write to —
+the one mistake worth making impossible is running it against production data.
+
+Creating and migrating `pyquest_dev` is part of this: `migrate.yml` already knows how to
+migrate a database, so the work is pointing it at a second one rather than inventing a path.
+
+**1a. The proxy target becomes configurable.** `apps/web/vite.config.ts` hardcodes
+`http://localhost:3081`. It defaults to 3083 — the dev api — so that reaching production from
+a dev browser takes a deliberate override rather than being what happens by accident.
 
 **2. Decide how content reloads, and say so.** Three options, cheapest first:
 
@@ -130,12 +168,13 @@ exactly what that table prevents.
 ## Files expected to change
 
 - `infra/dev-stack.sh` (or `pyquest/package.json` script) — new
-- `infra/README.md` — the three modes, and the port switch
-- `pyquest/apps/api/README.md` if one exists, or `main.ts`'s header — how to run it from source
-- Possibly `apps/web/vite.config.ts`, only if the proxy target needs to become configurable
+- `infra/README.md` — the three modes, and **3083 added to the port table**
+- `apps/web/vite.config.ts` — the proxy target, overridable, defaulting to the dev port
+- `pyquest/apps/api/main.ts`'s header — how to run it from source, and against which database
+- whatever creates and migrates `pyquest_dev`
 
-**Not changed:** `apps/web/src/fixtures/**`, the vitest alias, `api.yml`, and the prod
-compose stack.
+**Not changed:** `apps/web/src/fixtures/**`, the vitest alias, `api.yml`, and the prod compose
+stack. **Nothing in this plan stops, rebuilds or re-ports a production container.**
 
 ## Out of scope
 
