@@ -12,6 +12,7 @@
 
 import { z } from 'zod';
 import { CONCEPT_IDS } from './concepts.ts';
+import { splitFrontmatter } from './frontmatter.ts';
 
 /* -------------------------------------------------------------------------------------------
  * Difficulty
@@ -63,6 +64,58 @@ export const DEFAULT_MEDALS: readonly Medal[] = [
   'teach-back',
   'conjured',
 ];
+
+/* -------------------------------------------------------------------------------------------
+ * Audience — who a curriculum document is written for
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Who reads this file.
+ *
+ * `curriculum/README.md` has stated the split in prose since Area 0 — a three-row table of
+ * audience, files and voice — and prose is what it stayed. The convention failed in the one
+ * place it mattered most: `area-<n>/practices/README.md` tells the learner *"Copy this whole
+ * directory somewhere you own"*, and `practices/` holds the DM's plans beside the learner's
+ * drills, including the practice built on the learner not knowing what is coming.
+ *
+ * Directory-as-audience failed because the two audiences share a directory. Nothing caught it,
+ * because there was no field to check.
+ *
+ * **`dm` is what an unmarked file means** — see `AUDIENCE_WHEN_UNMARKED`. The default has to fail
+ * closed: the consumer that matters most is the thing that copies files onto a learner's machine,
+ * and a marking mistake there ships the answer key.
+ */
+export const AUDIENCES = ['learner', 'dm'] as const;
+
+export type Audience = (typeof AUDIENCES)[number];
+
+export const AudienceSchema = z.enum(AUDIENCES);
+
+/**
+ * What an undeclared audience means.
+ *
+ * A constant in code rather than a zod `.default()`, following `medalsFor` below: a zod default
+ * rewrites the parsed value, so a reader of the result cannot tell an author's decision from a
+ * schema's guess. Here that distinction is the whole point — the validator's job is to say which
+ * files have not decided yet, and it cannot if parsing has already decided for them.
+ */
+export const AUDIENCE_WHEN_UNMARKED: Audience = 'dm';
+
+/**
+ * Who a document says it is for, from its own frontmatter.
+ *
+ * Unmarked and unrecognised both answer `dm`, which is the fail-closed direction: the consumers
+ * are a static-site builder and a packer that copies files onto a learner's machine, and the
+ * expensive mistake in both is handing over the answer key. `validate:content` reports either
+ * case as an `audience` issue, so a file lands here wrong only while somebody is mid-edit.
+ */
+export function audienceOf(text: string): Audience {
+  const { fields, present } = splitFrontmatter(text);
+  const declared = present ? fields.get('audience') : undefined;
+  return declared !== undefined && (AUDIENCES as readonly string[]).includes(declared)
+    ? (declared as Audience)
+    : AUDIENCE_WHEN_UNMARKED;
+}
 
 /* -------------------------------------------------------------------------------------------
  * Verifiers — spec §6.3

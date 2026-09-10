@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Escape the sandbox with the scribe role
 
 No drawings or turtles in this lesson.

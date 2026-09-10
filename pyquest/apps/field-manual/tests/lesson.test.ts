@@ -13,6 +13,7 @@
  * assertion is over the bytes of the learner's HTML, not over what a browser chooses to paint.
  */
 
+import { marked } from './support/audience.ts';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,7 +26,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 function scratch(name: string, files: Record<string, string>): string {
   const root = resolve(here, '..', `dist-${name}-fixture`);
   rmSync(root, { recursive: true, force: true });
-  for (const [relative, body] of Object.entries(files)) {
+  for (const [relative, body] of Object.entries(marked(files))) {
     const full = join(root, relative);
     mkdirSync(dirname(full), { recursive: true });
     writeFileSync(full, body, 'utf8');

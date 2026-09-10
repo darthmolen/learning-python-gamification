@@ -99,6 +99,12 @@ describe('glossary marks never reach the published site', () => {
     writeFileSync(
       join(marked, 'curriculum', 'area-0', 'lesson.md'),
       [
+        // Marked because every `.md` under an area must declare its audience; this suite is
+        // about marks reaching the page, not about who reads it.
+        '---',
+        'audience: learner',
+        '---',
+        '',
         '# First Light',
         '',
         'Use [[print]] to see it, and read the [[reading-errors|error message]] on purpose.',

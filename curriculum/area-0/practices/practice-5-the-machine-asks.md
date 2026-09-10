@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 5 — The Machine Asks
 
 **Concepts:** `input` · `f-strings` · `str`, `int`, `variables`, `print` resurfacing

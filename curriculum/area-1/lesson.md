@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Control
 
 Area 0, the last lesson, gave you lines that run once each, top to bottom. This area gives

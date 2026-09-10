@@ -308,8 +308,14 @@ describe('a glossary mark', () => {
     expect(bad[0]?.message).toContain('whlie');
   });
 
+  /**
+   * Ten rather than six since the fixture gained an `audience:` block. The number is counted
+   * over the file as it sits on disk, frontmatter included, which is the only version an author
+   * opens — a line number measured against the body alone would point four lines short of the
+   * mark it names.
+   */
   it('names the line, because a lesson is long and an id is three characters', () => {
-    expect(marks()[0]?.line).toBe(6);
+    expect(marks()[0]?.line).toBe(10);
   });
 
   it('says what to do, rather than only what is wrong', () => {

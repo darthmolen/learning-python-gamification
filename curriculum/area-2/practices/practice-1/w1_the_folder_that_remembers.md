@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 1 — The Folder That Remembers
 
 **Concepts:** `repository` · `git-init`

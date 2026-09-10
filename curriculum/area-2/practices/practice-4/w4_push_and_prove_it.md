@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 4 — Push, And Prove It
 
 **Concepts:** `git-push` · resurfaces `git-log`, `git-commit`, `repository`

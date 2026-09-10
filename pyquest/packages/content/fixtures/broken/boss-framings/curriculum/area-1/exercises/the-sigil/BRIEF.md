@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Boss 1 — The Sigil
 
 Pick one of the framings below.

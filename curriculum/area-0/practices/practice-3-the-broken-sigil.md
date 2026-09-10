@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 3 — The Broken Sigil
 
 **Concepts:** `reading-errors` · `print`, `variables`, `int`, `str` resurfacing

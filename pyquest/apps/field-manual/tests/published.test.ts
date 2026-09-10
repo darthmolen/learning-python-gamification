@@ -18,7 +18,20 @@ const contentRoot = resolve(here, '..', '..', '..', '..');
 const out = resolve(here, '..', 'dist-published');
 
 const NEWLINE = String.fromCharCode(10);
-const LESSON = `A list holds things.${NEWLINE}`;
+/**
+ * Marked, because a lesson under an area has to declare who reads it or `checkContent` refuses
+ * the whole root — and this suite's subject is the deletion test, not the audience rule. The
+ * block is written out here rather than assembled by a helper so that the one thing this file
+ * builds is visible in one place.
+ */
+const LESSON = [
+  '---',
+  'audience: learner',
+  '---',
+  '',
+  'A list holds things.',
+  '',
+].join(NEWLINE);
 
 const pages = (dir: string): { file: string; html: string }[] =>
   readdirSync(dir)
@@ -69,6 +82,23 @@ describe('what the learner artifact may not contain', () => {
   it('carries no teaching aid on any page', () => {
     for (const p of learner) {
       expect(p.html, `${p.file} carries a teaching aid`).not.toMatch(/teaching aid/i);
+    }
+  });
+
+  /**
+   * The audience block is metadata about the reader, and the reader is not its audience.
+   *
+   * Every `.md` under an area declares `audience: learner` or `audience: dm`, and three
+   * separate strippers have to run for none of it to reach a page — `briefBody` for lessons and
+   * briefs, `howToUnder` for the how-to sections, and the API's `read` for the SPA. Miss any one
+   * and the failure is quiet and ugly: `marked` renders a leading `---` block as a heading and a
+   * rule, so the page gains a stray title *and* prints the word `dm` to a learner.
+   *
+   * Asserted across both artifacts, because the dm site is public too — unlisted is not private.
+   */
+  it('prints no frontmatter on any page of either site', () => {
+    for (const p of [...learner, ...dm]) {
+      expect(p.html, `${p.file} prints its frontmatter`).not.toMatch(/audience:\s*(learner|dm)/i);
     }
   });
 

@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 6 — The Commission
 
 **Concepts:** all nine — `print`, `variables`, `int`, `float`, `str`, `bool`, `input`,

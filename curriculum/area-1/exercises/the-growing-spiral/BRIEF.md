@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Growing Spiral
 
 Three arms, and a number nobody typed.

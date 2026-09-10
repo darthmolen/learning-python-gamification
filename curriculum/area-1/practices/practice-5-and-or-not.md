@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 5 — And, Or, Not
 
 **Concepts:** `boolean-operators`, `elif` · `if`, `else`, `bool`,

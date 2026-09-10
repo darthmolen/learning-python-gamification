@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The First Half
 
 One question, asked twelve times, answered differently each time.

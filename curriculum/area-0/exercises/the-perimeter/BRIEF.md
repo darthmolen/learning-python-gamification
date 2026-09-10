@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Perimeter
 
 You drew this rectangle in Practice 2, and it is still written the way Practice 2 warned you

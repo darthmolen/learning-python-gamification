@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # BOSS 1 — The Sigil
 
 **No scaffolding. No hints. A blank file, this specification, and one session.**

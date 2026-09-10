@@ -23,12 +23,15 @@ import { dirname, join, resolve } from 'node:path';
 import { LineCounter, parseDocument, type Document } from 'yaml';
 import { z } from 'zod';
 import { CONCEPTS, conceptArea, isKnownConcept } from './concepts.ts';
+import { splitFrontmatter } from './frontmatter.ts';
 import { parseGlossary } from './glossary.ts';
 import { parseMarks } from './marks.ts';
 import {
+  AUDIENCES,
   parseContentItem,
   parseAreaManifest,
   parsePracticeManifest,
+  type Audience,
   type ContentItem,
   type AreaManifest,
   type Practice,
@@ -59,6 +62,7 @@ export type ValidationRule =
   | 'unclaimed-exercise'
   | 'practice-numbering'
   | 'game-vocabulary'
+  | 'audience'
   | 'boss-framings';
 
 export interface ContentIssue {
@@ -446,6 +450,7 @@ export function checkContent(source: ContentSource): ContentSet {
   const practices = joinPractices(spines, items);
   issues.push(...practiceIssues(roots, spines));
   issues.push(...vocabularyIssues(roots));
+  issues.push(...audienceIssues(roots));
   issues.push(...framingIssues(roots, items, locate));
 
   issues.sort(
@@ -884,6 +889,76 @@ function markIssues(roots: { curriculum: string; game: string }): ContentIssue[]
           fix: 'use an id from packages/content/src/concepts.ts, add the concept there if the curriculum really teaches it, or write `\\[[` for a literal',
         });
       }
+    }
+  }
+
+  return issues;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Audience — who a curriculum document is written for
+ * ----------------------------------------------------------------------------------------- */
+
+/**
+ * Which files must declare an audience: markdown under `curriculum/area-<n>/`.
+ *
+ * That is the payload surface. Everything a packer could put on a learner's machine lives under
+ * an area directory, so that is where an undeclared audience is a decision nobody has made rather
+ * than a question nobody needs to ask.
+ *
+ * Deliberately **not** required elsewhere. `curriculum/how-to/` is learner-facing by
+ * construction and `game/` is the overlay, and demanding the field there would be a rule
+ * asserting something already true — the kind that teaches authors to write around it.
+ */
+const needsAudience = (file: string): boolean => /^area-\d+\//.test(file);
+
+/**
+ * Every `.md` under `curriculum/area-<n>/` declares who it is written for.
+ *
+ * The rule exists because the convention it replaces has already failed in production prose —
+ * `AUDIENCES` in `schema.ts` carries that story. What matters here is the shape of the failure:
+ * it was invisible. A directory cannot be asked who reads it, so nothing could check, and the
+ * sentence that hands a learner the DM's plans has been shipping for months.
+ *
+ * Two ways to fail, and the second is the one worth having. An unknown value is a typo. A missing
+ * one is a file whose author never decided — and because an unmarked file is treated as `dm`
+ * (`AUDIENCE_WHEN_UNMARKED`), the cost of not deciding is that a learner never receives it. That
+ * is the safe direction, and it is still wrong often enough to be worth naming.
+ */
+function audienceIssues(roots: { curriculum: string; game: string }): ContentIssue[] {
+  const root = roots.curriculum;
+  if (!existsSync(root)) return [];
+
+  const issues: ContentIssue[] = [];
+  const files = readdirSync(root, { recursive: true, withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => toPosix(join(entry.parentPath, entry.name).slice(root.length + 1)))
+    .filter(needsAudience)
+    .sort();
+
+  for (const file of files) {
+    const { fields, present } = splitFrontmatter(readFileSync(join(root, file), 'utf8'));
+    const declared = present ? fields.get('audience') : undefined;
+
+    if (declared === undefined) {
+      issues.push({
+        file,
+        rule: 'audience',
+        message: 'no `audience:` declared, so this file is treated as the DM\'s and never ships',
+        fix: 'add `audience: learner` or `audience: dm` in frontmatter at the top of the file',
+      });
+      continue;
+    }
+
+    if (!AUDIENCES.includes(declared as Audience)) {
+      issues.push({
+        file,
+        // Line 2 at the earliest, since the fence is line 1 -- close enough to be useful and
+        // honest, given the parser does not record where each key sat.
+        rule: 'audience',
+        message: `\`audience: ${declared}\` is not an audience`,
+        fix: `use one of: ${AUDIENCES.join(', ')}`,
+      });
     }
   }
 

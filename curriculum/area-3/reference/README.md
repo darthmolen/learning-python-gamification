@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 3 reference solutions
 
 **These are the DM's copy. They are not handouts.**

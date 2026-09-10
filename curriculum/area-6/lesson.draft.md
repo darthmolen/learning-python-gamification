@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Data and the Outside World
 
 Everything you have written so far forgets everything the moment it stops.

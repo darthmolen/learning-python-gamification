@@ -22,6 +22,7 @@ import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import {
   checkContent,
   formatIssues,
+  stripFrontmatter,
   type Area,
   type AreaManifest,
   type ContentIssue,
@@ -232,7 +233,11 @@ export function loadContentRoot(base: string): ContentRoot {
       .map((entry) => entry.name)
       .sort()
       .map((name) => {
-        const body = readFileSync(join(at, name), 'utf8');
+        // Stripped for the same reason `read` strips: a how-to page is prose a person reads, and
+        // metadata rendered into it is metadata they read too. No how-to file carries frontmatter
+        // today — the `audience` rule requires it only under `area-<n>/` — and this is what keeps
+        // that from becoming a trap the day one does.
+        const body = stripFrontmatter(readFileSync(join(at, name), 'utf8'));
         // The `# ` heading is the section's title, and the body below it is what renders. A
         // file with no heading falls back to its own name rather than printing untitled prose.
         const heading = /^#\s+(.+?)\s*$/m.exec(body)?.[1];
@@ -250,6 +255,21 @@ export function loadContentRoot(base: string): ContentRoot {
     items,
     manifests,
     practices,
+    /**
+     * Both halves, to everybody — and the Field Manual deliberately does not do the same.
+     *
+     * `apps/field-manual/src/build.ts` serves `game/how-to/` to its **dm** build only. That
+     * looks like a disagreement and is not one, so it is written down here before somebody
+     * "fixes" it into one: the two surfaces are different products.
+     *
+     * The Field Manual's learner site is *the curriculum published without the game* — that is
+     * its whole thesis, and `no-game.test.ts` deletes `game/` to prove it. Game content has no
+     * place on it. This API serves the SPA, which **is** the game; a learner reading `/how-to`
+     * there needs `how-to-play.md` most of all, since it is the page written to explain the
+     * thing they are standing inside.
+     *
+     * Withholding it here would hide the learner's own guide to the game from the learner.
+     */
     howTo: () => [
       ...sectionsUnder(roots.curriculum, 'curriculum'),
       ...sectionsUnder(roots.game, 'game'),
@@ -262,7 +282,16 @@ export function loadContentRoot(base: string): ContentRoot {
      * directory too high and, worse, would put the whole repository inside the escape check's
      * idea of "inside".
      */
-    read: (relativePath) => readFileSync(resolveInside(roots.curriculum, relativePath), 'utf8'),
+    /*
+     * Frontmatter comes off here rather than at every call site.
+     *
+     * The one caller that matters is the brief on the Quest screen, and every brief under an
+     * area now declares an `audience:`. Served raw, the learner reads their own metadata as the
+     * first line of the instructions — and the Quest screen renders markdown, so a `---` block
+     * arrives as a heading and a rule rather than as nothing.
+     */
+    read: (relativePath) =>
+      stripFrontmatter(readFileSync(resolveInside(roots.curriculum, relativePath), 'utf8')),
     /** Same root and the same escape check, so a path this accepts is one `read` will take. */
     exists: (relativePath) => {
       try {

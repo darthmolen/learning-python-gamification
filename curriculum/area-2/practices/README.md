@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The practice drills
 
 Each `practice-<n>/` directory here holds the files for the practice plan beside it. They

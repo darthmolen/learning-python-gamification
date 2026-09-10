@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 1 — The Loop That Draws
 
 **Concepts:** `for`, `range` · `print`, `variables`, `int` resurfacing

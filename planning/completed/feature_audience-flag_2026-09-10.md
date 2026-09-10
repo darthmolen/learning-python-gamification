@@ -1,13 +1,14 @@
 ---
 kind: plan
-status: queued
+status: completed
 track: audience-flag
 date: 2026-09-10
+completed: 2026-09-10
 ---
 
 # Audience becomes a declared fact, not a filename
 
-**Status:** Planned
+**Status:** Completed 2026-09-10
 **Track:** `audience-flag`
 **Date:** 2026-09-10
 **Author:** Claude (Opus 5)
@@ -155,4 +156,61 @@ failure this plan can most easily introduce.
 
 ## Evidence
 
-`planning/evidence/audience-flag-RED.txt`, `-GREEN.txt`, `-MUTANT.txt`.
+`planning/evidence/audience-flag-MUTANT.txt` — both mutants, and what each one let through.
+
+## Outcome
+
+**122 curriculum documents declare an audience, and three consumers read it.** 1180 tests pass,
+`validate:content` clean, and the published Field Manual carries no frontmatter on any page of
+either site while the DM build still carries all four guides.
+
+Two mutants, because this track has two independent failure modes:
+
+- **The rule.** Neutering `audienceIssues` to return `[]` turns both broken fixtures green. The
+  rule is what makes an unmarked file findable.
+- **The strippers.** Removing `stripFrontmatter` from `briefBody` alone fails the new
+  published-site assertion with `area-0.html prints its frontmatter`. That is the ugly failure
+  the block exists to prevent: `marked` renders a leading `---` block as a heading and a rule, so
+  the page would gain a stray title *and* print the word `dm` to a learner.
+
+### Two corrections to the approved plan
+
+**`readsAsLesson` was left exactly as it was, and the plan was wrong to say otherwise.** The plan
+called it an audience predicate to be replaced by the flag. It is not one. It answers *"does
+ADR 0006 govern this prose?"* — lessons and briefs — while the flag answers *"who may receive
+this file?"*. Those diverge: `practices/README.md` is `audience: learner` and is emphatically not
+a lesson, and its own comment warns that widening the pace rule to READMEs would fire on 66
+honest sentences and teach authors to write around the check. Two predicates, two questions, and
+collapsing them would have broken a working rule to satisfy a tidy sentence in a plan.
+
+**The API and the Field Manual disagree about `game/how-to/`, and they should.** The plan called
+this an inconsistency to resolve in one place. On inspection it is two products answering two
+questions. The Field Manual's learner site is *the curriculum published without the game* —
+`no-game.test.ts` deletes `game/` to prove it — so game content has no place on it. The API
+serves the SPA, which **is** the game, and a learner reading `/how-to` there needs
+`how-to-play.md` most of all. Making them match would have hidden the learner's own guide to the
+game from the learner. The reasoning is now a comment at `apps/api/src/content.ts`'s `howTo`, so
+the next reader does not "fix" it into a bug.
+
+### Also done
+
+- **`Audience` is one type.** `build.ts` had its own `'learner' | 'dm'` union; it now re-exports
+  the content package's, so a build audience and a declared audience cannot drift.
+- **`audienceOf` gates the teaching aid.** The learner build still refuses to *read* the guide —
+  that posture is untouched and is the real guarantee — and the DM build now also requires the
+  file to say `dm` itself, so the flag decides rather than the filename.
+- **A shared test helper**, `apps/field-manual/tests/support/audience.ts`. Twelve tests
+  synthesize content roots and began failing at `loadContentRoot` rather than at their subject.
+  The helper marks `dm-guide.md` as `dm` and everything else `learner` — deliberately the corpus
+  rule, because a helper that marked the guide `learner` would have stopped the DM build carrying
+  it and failed the test asserting it does, for the wrong reason.
+
+### Deferred, on purpose
+
+**The `practices/README.md` sentence is not fixed yet.** *"Copy this whole directory somewhere you
+own"* is the instruction that motivated this whole track, and it is still there in areas 0, 1
+and 2. What it should say depends on what `gitea-remote`'s payload CLI actually ships, and
+guessing twice is worse than waiting once. `gitea-remote` owns it.
+
+The marking is what makes the fix safe when it lands: the DM's plans in that directory now say
+they are the DM's, so a packer can refuse them.

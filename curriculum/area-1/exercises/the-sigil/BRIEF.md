@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Boss 1 — The Sigil
 
 **No scaffolding, no starter, no hints, and Socratic questions only** (§5.3). A blank

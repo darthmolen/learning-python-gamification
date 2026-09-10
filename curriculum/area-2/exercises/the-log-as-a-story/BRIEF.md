@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Log As A Story
 
 A repository nobody can read is a pile of saves. This one has to read as a story, and

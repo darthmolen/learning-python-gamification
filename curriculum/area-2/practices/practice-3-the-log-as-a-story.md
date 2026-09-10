@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 3 — The Log As A Story
 
 **Concepts:** `git-log` · `git-branch` · resurfaces `git-commit`

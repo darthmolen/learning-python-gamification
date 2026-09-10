@@ -12,6 +12,7 @@
  * half-changed.
  */
 
+import { marked } from './support/audience.ts';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -27,7 +28,7 @@ function build(name: string, files: Record<string, string>): { area: string; ind
   const out = resolve(here, '..', `dist-${name}-out`);
   rmSync(src, { recursive: true, force: true });
   rmSync(out, { recursive: true, force: true });
-  for (const [relative, body] of Object.entries(files)) {
+  for (const [relative, body] of Object.entries(marked(files))) {
     const full = join(src, relative);
     mkdirSync(dirname(full), { recursive: true });
     writeFileSync(full, body, 'utf8');

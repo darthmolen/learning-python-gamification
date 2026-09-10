@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The entry to copy
 
 Copy everything below the line into the **bottom** of `journal.md`, then fill it in.

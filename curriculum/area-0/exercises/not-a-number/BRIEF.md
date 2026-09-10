@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Not A Number
 
 You met this one in Practice 3. The order is spelled right, the brackets are closed, the

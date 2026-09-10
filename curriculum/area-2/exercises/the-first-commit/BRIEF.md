@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The First Commit
 
 Your journal has been sitting in a folder since week one. Tonight it stops being a folder

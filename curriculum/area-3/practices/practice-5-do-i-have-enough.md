@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 5 — Do I Have Enough
 
 **Concepts:** `in`, `min`, `max`, `sorted` · `list`, `if`, `else`, `comparison-operators`,

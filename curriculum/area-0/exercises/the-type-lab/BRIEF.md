@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Type Lab
 
 Practice 4 gave you four kinds of thing and one instrument for asking which is which:

@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # First Light
 
 By the end of this area you will have typed a line that draws a square, given things

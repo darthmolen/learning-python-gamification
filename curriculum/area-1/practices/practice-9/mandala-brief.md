@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Mandala
 
 **Practice 9. This is the whole session.** No new orders, no worked example. You have

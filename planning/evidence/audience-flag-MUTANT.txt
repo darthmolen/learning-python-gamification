@@ -1,0 +1,65 @@
+audience: the two mutants
+=========================
+Track: audience-flag        Date: 2026-09-10
+
+This track has two independent failure modes, so it has two mutants. Either one alone would
+leave the other half unproven.
+
+
+MUTANT 1 -- the rule stops looking
+-----------------------------------
+    function audienceIssues(...) {
+      return [];                       // <- seeded
+      ...
+
+$ npx vitest run packages/content/tests/audience.test.ts
+
+     x reports a file under an area that declares no audience
+     x reports an audience that is not one of the two
+       Tests  2 failed | 6 passed (8)
+
+Both broken fixtures go green when the rule stops looking. Without this, `audience` could have
+been a field nothing checked -- which is CLAUDE.md's own line about frontmatter and punctuation,
+and the exact failure this track exists to end.
+
+Restored: 8 passed.
+
+
+MUTANT 2 -- one stripper removed
+----------------------------------
+    const withoutTitle = markdown.replace(/^#\s+.*\r?\n/, '');   // <- stripFrontmatter dropped
+
+$ npx vitest run apps/field-manual/tests/published.test.ts
+
+     x prints no frontmatter on any page of either site
+       AssertionError: area-0.html prints its frontmatter:
+         expected '<!doctype html>...' not to match /audience:\s*(learner|dm)/i
+       Tests  1 failed | 12 passed (13)
+
+Three strippers have to run for no metadata to reach a page -- `briefBody` for lessons and
+briefs, `howToUnder` for the how-to sections, and the API's `read` for the SPA. Removing one is
+enough to fail, which is what makes the assertion worth having.
+
+The failure is also the ugly one rather than a cosmetic one: `marked` renders a leading `---`
+block as a heading and a horizontal rule, so the page gains a stray title AND prints the word
+`dm` to a learner -- on the page the block exists to keep from them.
+
+Restored: 52 passed.
+
+
+THE FULL RUN, AFTER
+--------------------
+$ npm test
+     Test Files  77 passed (77)
+          Tests  1180 passed | 1 skipped (1181)
+
+$ npm run validate:content
+     OK  no problems found -- 30 items across 8 areas
+
+$ npm run build --workspace @pyquest/field-manual
+     field-manual: 8 areas, 95 ideas, 26 exercises -> dist/
+     field-manual: the same, plus 4 teaching aids -> dist/dm/
+
+$ grep -rn 'audience:' apps/field-manual/dist/      -> nothing
+$ grep -rl 'Socratic' apps/field-manual/dist/*.html -> nothing      (learner build)
+$ grep -c  'Socratic' apps/field-manual/dist/dm/area-0.html -> 2    (dm build)

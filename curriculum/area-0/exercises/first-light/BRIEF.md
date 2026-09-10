@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Boss 0 — First Light
 
 No starter file. No hints. A blank file, this specification, and one session.

@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 1 — Control
 
 **Weeks 3–6. Ten sessions of 45–60 minutes.**

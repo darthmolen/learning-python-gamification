@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Inventory
 
 You have been reading lists all week. This one has to read itself back, and it has to still

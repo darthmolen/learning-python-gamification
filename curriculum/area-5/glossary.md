@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Area 5 glossary
 
 One entry per concept this area teaches. The heading is the concept's id from

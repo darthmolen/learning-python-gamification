@@ -18,7 +18,10 @@ import {
   contentRootsFrom,
   formatIssues,
   parseGlossary,
+  stripFrontmatter,
   stripMarks,
+  audienceOf,
+  type Audience,
 } from '@pyquest/content';
 import { marked } from 'marked';
 import { renderArea, renderHowTo, renderIndex, type AreaView, type HowToView } from './render.ts';
@@ -29,8 +32,13 @@ import { renderArea, renderHowTo, renderIndex, type AreaView, type HowToView } f
  * `learner` is the Tome. `dm` is the same pages plus the teaching aids, and the difference is
  * whether the guide is *rendered at all* — never whether it is visible. A hidden aid is an aid
  * anyone can read with view-source, and this site is public.
+ *
+ * **The same two words the documents themselves use.** This was a local `'learner' | 'dm'` union
+ * until the curriculum gained an `audience:` field; re-exporting the content package's type
+ * instead means a build audience and a document's declared audience cannot drift into two
+ * vocabularies that agree only by coincidence.
  */
-export type Audience = 'learner' | 'dm';
+export type { Audience } from '@pyquest/content';
 
 export interface BuildOptions {
   /** The directory holding `curriculum/` and `game/`. Briefs resolve under the former. */
@@ -68,9 +76,12 @@ function howToUnder(root: string): HowToView[] {
     .map((entry) => entry.name)
     .sort()
     .map((name) => {
-      const raw = readFileSync(join(dir, name), 'utf8');
+      const raw = stripFrontmatter(readFileSync(join(dir, name), 'utf8'));
       // The `# ` heading is the section's title, and `briefBody` strips it from the body so the
       // page does not print the same words twice — the rule the area pages already follow.
+      // Frontmatter comes off first: the pattern is multiline, so an `audience:` block would not
+      // fool it, but reading the title out of a document that still carries its metadata is the
+      // kind of near-miss that stops being a near-miss when somebody adds a second key.
       const heading = /^#\s+(.+?)\s*$/m.exec(raw)?.[1];
       return {
         id: name.replace(/\.md$/, ''),
@@ -98,7 +109,16 @@ function readBrief(curriculumRoot: string, relative: string): string {
  * title, and the page already prints that as its heading — rendering both reads as a stutter.
  */
 function briefBody(markdown: string): string {
-  const withoutTitle = markdown.replace(/^#\s+.*\r?\n/, '');
+  /**
+   * Frontmatter goes first, or nothing else here works.
+   *
+   * Every curriculum document under an area now opens with an `audience:` block. Left in place
+   * it defeats the title strip below — the file no longer *starts* with `# ` — and then `marked`
+   * renders the block itself, publishing `audience: dm` onto the page that block exists to keep
+   * from a learner. The two failures compound: the page gains a stray heading and loses the
+   * guarantee it was marked for.
+   */
+  const withoutTitle = stripFrontmatter(markdown).replace(/^#\s+.*\r?\n/, '');
   /**
    * Marks become their display text before `marked` ever sees them.
    *
@@ -151,11 +171,19 @@ ${formatIssues(issues, roots)}`,
        * The guide is read only for the DM build. Reading it and letting the renderer decide
        * would put the teacher's notes one template mistake away from the learner's page; not
        * reading it means the learner build has nothing to leak.
+       *
+       * **The second check is the file's own word for it.** Until 2026-09-10 the audience of
+       * `dm-guide.md` was its filename, which is the same convention that let
+       * `practices/README.md` tell a learner to copy the DM's plans — a name cannot be asked who
+       * reads it. Now the document declares an audience and this honors the declaration, so a
+       * guide marked `learner` by mistake is not silently treated as secret, and a file that
+       * says `dm` cannot reach the learner build whatever it is called.
        */
       ...(() => {
         if (audience !== 'dm') return {};
         const guide = areaProse(roots.curriculum, manifest.area, 'dm-guide.md');
-        return guide ? { teachingAid: briefBody(guide) } : {};
+        if (guide === undefined || audienceOf(guide) !== 'dm') return {};
+        return { teachingAid: briefBody(guide) };
       })(),
       /**
        * The vocabulary, defined rather than merely listed.

@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Loop Error Log
 
 Fill one row per broken loop, **before** you fix it.

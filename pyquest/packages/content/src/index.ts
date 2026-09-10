@@ -8,6 +8,16 @@ export {
 } from './concepts.ts';
 
 export {
+  splitFrontmatter,
+  stripFrontmatter,
+  type Frontmatter,
+} from './frontmatter.ts';
+
+export {
+  AUDIENCES,
+  AUDIENCE_WHEN_UNMARKED,
+  AudienceSchema,
+  audienceOf,
   ContentItemSchema,
   DEFAULT_MEDALS,
   DifficultyClassSchema,
@@ -26,6 +36,7 @@ export {
   parseContentItem,
   parseAreaManifest,
   parsePracticeManifest,
+  type Audience,
   type ContentItem,
   type Kind,
   type Medal,

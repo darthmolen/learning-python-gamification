@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Boss 3 — The Crafting Table
 
 **No scaffolding, no starter, no hints, and Socratic questions only** (§5.3). A blank file,

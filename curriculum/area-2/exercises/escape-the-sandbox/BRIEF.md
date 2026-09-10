@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Boss - Escape the Sandbox
 
 No scaffolding, no hints, and Socratic questions only (§5.3). Pick one of the framings

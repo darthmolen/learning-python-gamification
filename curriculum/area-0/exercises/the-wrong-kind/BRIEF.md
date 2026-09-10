@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Wrong Kind Of Thing
 
 You met this one in Practice 3. On the page, `100` and `"100"` look almost identical. Python

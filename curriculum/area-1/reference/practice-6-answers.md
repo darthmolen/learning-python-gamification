@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 6 — The Broken Loop, answers
 
 **Read this before Practice 6. Not during.** If you are reading it at the table you have

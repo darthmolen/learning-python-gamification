@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 2 — The Scribe's Rite, and Escape the Sandbox
 
 **Weeks 6–8. Eight sessions of 45–60 minutes, in two halves that share a boss.**

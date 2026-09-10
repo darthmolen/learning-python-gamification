@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 0 — First Light
 
 **Weeks 1–2. Six sessions of 45–60 minutes.**

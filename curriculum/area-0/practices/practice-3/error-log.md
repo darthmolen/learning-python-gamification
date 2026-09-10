@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Error Log
 
 **A sigil is a symbol you draw** — a shape that means something, like a crest on a shield

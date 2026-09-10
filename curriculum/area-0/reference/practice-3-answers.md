@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 3 — the seven sigils, answered
 
 **Read this before Practice 3, not during it.** You need to know what is coming so you

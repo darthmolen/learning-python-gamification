@@ -56,7 +56,9 @@ verifier:
 const GOOD_ROOT: Record<string, string> = {
   'curriculum/area-0/area.yml': AREA_0,
   'game/area-0/quests/a0-name-tag.yml': QUEST,
-  'curriculum/area-0/exercises/name-tag/BRIEF.md': '# The Name Tag\n',
+  // Marked because every `.md` under an area declares who reads it, and `loadContentRoot` runs
+  // the same `checkContent` the validator does — an unmarked brief here refuses the whole boot.
+  'curriculum/area-0/exercises/name-tag/BRIEF.md': '---\naudience: learner\n---\n\n# The Name Tag\n',
   'curriculum/area-0/exercises/name-tag/starter/unfinished.py': 'def main() -> None: ...\n',
   'curriculum/area-0/exercises/name-tag/hidden/test.py': 'def test_it() -> None: assert True\n',
 };

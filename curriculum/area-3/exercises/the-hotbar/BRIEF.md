@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Hotbar
 
 Your hotbar is the first nine slots of your inventory. Everything else is in the bag. Both

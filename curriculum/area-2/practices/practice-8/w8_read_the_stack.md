@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 8 — Read The Stack
 
 **Concepts:** `tracebacks` · `main-guard` · resurfaces `reading-errors`, `venv`

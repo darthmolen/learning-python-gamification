@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 0 — DM Guide
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11)

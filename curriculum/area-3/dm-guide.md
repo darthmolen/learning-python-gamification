@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 3 — DM Guide
 
 **Weeks 9–14. Thirteen sessions of 45–60 minutes.**
