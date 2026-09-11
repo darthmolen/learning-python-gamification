@@ -52,7 +52,7 @@ Run `b1_the_typo.py` yourself, on screen, and read it together:
 
 ```
 Traceback (most recent call last):
-  File "...\b1_the_typo.py", line 17, in <module>
+  File "...\b1_the_typo.py", line 12, in <module>
     turtel.left(90)
     ^^^^^^
 NameError: name 'turtel' is not defined. Did you mean: 'turtle'?
@@ -63,7 +63,7 @@ Four things to name, and only four:
 | Part | What it is |
 |---|---|
 | The **last line** | The name of the problem, and a description. **Read this first.** |
-| `File "...", line 17` | Where. There may be several; the one you care about is the one in *your* file. |
+| `File "...", line 12` | Where. There may be several; the one you care about is the one in *your* file. |
 | The repeated line under it | Your actual code, quoted back. |
 | `^^^^^^` | The exact characters. Python is pointing. |
 
@@ -134,7 +134,7 @@ last)`. b3 and b4 do not.
 
 Both differences have the same cause, and it is worth them arriving at it themselves:
 
-> "b1 got as far as line 17 before it died. How far did b3 get?"
+> "b1 got as far as line 12 before it died. How far did b3 get?"
 
 The answer is **nowhere**. Python reads the whole file and turns it into instructions
 *before* it runs a single one. A `SyntaxError` means it could not finish reading, so
@@ -146,7 +146,7 @@ Two more things worth noticing on b3, once that has landed:
 
 - The caret points at the **opening** bracket, not at the end of the line. Python is
   showing them the thing that was never finished, not the place it noticed.
-- It says `line 20` and line 20 really is the wrong line. Python 3.14 is genuinely good
+- It says `line 17` and line 17 really is the wrong line. Python 3.14 is genuinely good
   at this. Older Pythons — and most other languages — blame the line *after*, so if they
   ever meet a syntax error pointing at a line that looks perfectly fine, the answer is
   to look up.

@@ -154,6 +154,49 @@ def check(path):
     return True, (headline[-1] if headline else expect) + where
 
 
+def line_claims(actual: dict[str, str]) -> list[str]:
+    """Prose that quotes a line number, checked against the line the run actually reported.
+
+    This exists because the drift is invisible and has happened three times. Shortening a
+    docstring moves every line below it, and `reference/practice-3-answers.md` and
+    `practices/practice-3-the-broken-sigil.md` both quote these tracebacks verbatim -- so the
+    DM reads a number aloud that no longer matches what is on the learner's screen, in the one
+    practice whose entire subject is reading the number.
+
+    The area README has told people to check this by hand since Area 0 was written. A claim with
+    no command behind it is worth nothing, so this is the command.
+
+    Matched narrowly: the text must mention the file, by full name or by its short stem, and
+    carry a `line N` on the same line. Prose that says "b1 got as far as line 12" two sentences
+    after naming b1 is not caught, and that is the honest limit of this check.
+    """
+    issues: list[str] = []
+    docs = [p for p in [*ROOT.rglob("*.md"), *ROOT.rglob("*.py")] if "__pycache__" not in str(p)]
+
+    for doc in sorted(docs):
+        try:
+            text = doc.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for number, row in enumerate(text.splitlines(), 1):
+            claimed = re.search(r"\bline (\d+)\b", row)
+            if claimed is None:
+                continue
+            for name, real in actual.items():
+                stem = name.split("_")[0]
+                if name not in row and not re.search(rf"\b{stem}\b", row):
+                    continue
+                if claimed.group(1) != real:
+                    where = doc.relative_to(ROOT).as_posix()
+                    issues.append(
+                        f"  {where}:{number} says line {claimed.group(1)}"
+                        f" for {name}, which now fails on line {real}"
+                    )
+                break
+
+    return issues
+
+
 def main() -> int:
     # `reference/` is the DM's copy and is deliberately absent from a learner's machine --
     # reference/README.md opens with "This directory is yours, not the learner's."
@@ -174,6 +217,7 @@ def main() -> int:
 
     failures = 0
     practice = None
+    actual: dict[str, str] = {}
     for path in files:
         if path.parent.name != practice:
             practice = path.parent.name
@@ -182,12 +226,24 @@ def main() -> int:
         mark = "PASS" if ok else "FAIL"
         if not ok:
             failures += 1
+        # Keep the line each failure reported, so the prose that quotes it can be checked.
+        reported = re.search(r"\(line (\d+)\)$", note)
+        if ok and reported is not None:
+            actual[path.name] = reported.group(1)
         print(f"  {mark}  {path.name:<28} {note}")
 
     print(f"\n{len(files) - failures} of {len(files)} exercises behaved as tagged.")
     for directory in absent:
         print(f"{directory.name}/ is not here, so nothing in it was checked.")
-    return 1 if failures else 0
+
+    stale = line_claims(actual)
+    if stale:
+        print("\nprose quoting a line number that has moved:")
+        for issue in stale:
+            print(issue)
+        print("\nFix the prose, not the exercise. The number on the learner's screen is right.")
+
+    return 1 if failures or stale else 0
 
 
 if __name__ == "__main__":

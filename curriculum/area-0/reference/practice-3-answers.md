@@ -74,7 +74,7 @@ SyntaxError: '(' was never closed
 - **No "Traceback" line**, and no frames.
 
 Both because nothing ran. Python reads the whole file before executing any of it, and it
-could not finish reading. Contrast with b1, which got to line 17 and drew a line first.
+could not finish reading. Contrast with b1, which got to line 12 and drew a line first.
 
 Note the caret points at the **opening** bracket — Python shows the thing that was never
 finished, not the place it noticed. Note also that line 20 really is the wrong line;
