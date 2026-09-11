@@ -12,7 +12,7 @@ length of the next line, so the accumulator is the reason the shape grows.
 
 Delete that line and you get a circle. It is one line and it is the whole shape.
 
-Run:  py -3.14 s8e2_the_growing_spiral.py
+Run:  py -3.14 p8e2_the_growing_spiral.py
 """
 # concepts: accumulator-pattern, for, range, variables, int, float, print
 # dc: 16

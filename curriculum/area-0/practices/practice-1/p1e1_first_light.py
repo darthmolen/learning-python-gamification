@@ -3,7 +3,7 @@
 The turtle starts in the middle of the window, facing right.
 Every line below is an order. It carries them out in order, top to bottom.
 
-Run:  py -3.14 s1e1_first_light.py
+Run:  py -3.14 p1e1_first_light.py
 
 Close the window when you are done looking at it.
 """

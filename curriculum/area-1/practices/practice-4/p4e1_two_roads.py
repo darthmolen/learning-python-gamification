@@ -17,7 +17,7 @@ The question is a comparison and you met all six in Practice 3. What comes out o
 a comparison is a `bool` -- True or False -- which is the fourth kind of thing
 from Area 0, finally with a job.
 
-Run:  py -3.14 s4e1_two_roads.py
+Run:  py -3.14 p4e1_two_roads.py
 """
 # concepts: if, else, comparison-operators, bool, variables, int, print
 # dc: 10

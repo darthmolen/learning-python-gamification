@@ -113,8 +113,8 @@ print(type(7.0))      # <class 'float'>
 print(type("7"))      # <class 'str'>
 ```
 
-**`7` and `"7"` are not the same thing**, and this catches everyone. The quotes make it
-text. `7 + 7` is `14`. `"7" + "7"` is `"77"`, because `+` on text means *stick these
+**`7` and `"7"` are not the same thing**, and this catches everyone. The quotes make it a
+`str`. `7 + 7` is `14`. `"7" + "7"` is `"77"`, because `+` on text means *stick these
 together*. And `7 + "7"` is an error, because Python expects the things to match and
 will not guess which one you meant.
 
@@ -136,11 +136,11 @@ print(name)
 
 ```python
 sides = input("How many sides? ")
-print(sides + 1)          # error: you cannot add 1 to text
+print(sides + 1)          # error: you cannot add 1 to a str
 print(int(sides) + 1)     # works
 ```
 
-`int(sides)` converts text into a whole number. Forgetting it is one of the two or three
+`int(sides)` converts a `str` into an `int`. Forgetting it is one of the two or three
 most common mistakes in this whole area, and the error message says so plainly once you
 know how to read it.
 
@@ -179,7 +179,7 @@ TypeError: can only concatenate str (not "int") to str
 Read it **bottom to top**.
 
 1. **The last line is what went wrong.** `TypeError` — something was the wrong type.
-   Then the detail: it can only join text to text, and it was handed a number instead.
+   Then the detail: it can only join a `str` to a `str`, and it was handed an `int` instead.
 2. **The line above is where.** `line 4`, and it shows you the line.
 3. Everything above that is the path Python took to get there. Early on, ignore it.
 
@@ -190,8 +190,8 @@ will meet early on in these lessons:
   quote, and usually on the line *above* the one it names.
 - `NameError` — you used a name that does not exist. Usually a typo, or a variable used
   before it was given a value.
-- `TypeError` — the right kind of operation, the wrong kind of thing. Usually text where
-  a number was meant.
+- `TypeError` — the right kind of operation, the wrong kind of thing. Usually a `str` where
+  an `int` was meant.
 
 **An error is not a failure.** It is the program telling you exactly where it got stuck,
 in a fixed format, on purpose. A program that crashes with a traceback is being far more

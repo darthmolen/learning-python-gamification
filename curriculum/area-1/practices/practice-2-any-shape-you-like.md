@@ -18,7 +18,7 @@ it.
 
 1. `range(4)` — say every number it gives you, in order.
 2. What does the colon at the end of a `for` line do?
-3. Why give something a name instead of typing the number?
+3. Why use a variable instead of typing the number?
 
 ## Beat 2 — Forecast (1 minute)
 

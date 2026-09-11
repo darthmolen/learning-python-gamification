@@ -11,7 +11,7 @@ loop has to be a `while`. Using `while` where `for` would do is how you write
 an infinite loop by accident, because you have taken on all three of the rules
 from p3e1 for no reason.
 
-Run:  py -3.14 s3e3_while_versus_for.py
+Run:  py -3.14 p3e3_while_versus_for.py
 """
 # concepts: while, for, range, comparison-operators, variables, int, print
 # dc: 12

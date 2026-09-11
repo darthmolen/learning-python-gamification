@@ -20,7 +20,7 @@ Blank space is not decoration. It is the only thing telling Python which orders
 belong to the loop and which come after it. You met that in Area 0 as an
 IndentationError. Here it is the whole grammar.
 
-Run:  py -3.14 s1e1_the_repeated_line.py
+Run:  py -3.14 p1e1_the_repeated_line.py
 """
 # concepts: for, range, print, int
 # dc: 8

@@ -10,7 +10,7 @@ There is one trap and you have met it before: `input` always hands back a `str`,
 even when the person typed a number. `int(...)` is the fix, and forgetting it
 gives you a TypeError you have seen in Area 0 Practice 3.
 
-Run:  py -3.14 s2e3_the_shape_dial.py
+Run:  py -3.14 p2e3_the_shape_dial.py
 """
 # concepts: for, range, variables, int, float, input, f-strings, print
 # dc: 12

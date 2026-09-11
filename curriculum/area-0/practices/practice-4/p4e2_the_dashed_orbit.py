@@ -6,7 +6,7 @@ A full turn is 360 degrees. Twelve dashes means turning 360 / 12 between them.
 Try that with 7 dashes and the answer stops being a whole number. A float is
 not a worse int. It is the only kind of number that can answer the question.
 
-Run:  py -3.14 s4e2_the_dashed_orbit.py
+Run:  py -3.14 p4e2_the_dashed_orbit.py
 """
 # concepts: float, int, variables, print
 # dc: 12

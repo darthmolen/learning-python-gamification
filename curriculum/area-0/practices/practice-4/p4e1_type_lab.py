@@ -14,7 +14,7 @@ BEFORE YOU RUN THIS: for each numbered line below, write down on paper what you
 think prints. All thirteen. Being wrong is the point; a wrong prediction you wrote
 down teaches you something, and a wrong prediction you kept in your head does not.
 
-Run:  py -3.14 s4e1_type_lab.py
+Run:  py -3.14 p4e1_type_lab.py
 """
 # concepts: int, float, str, bool, print, variables
 # dc: 12

@@ -20,7 +20,7 @@ file exists so that you learn it on a night when nothing is at stake.
 Look at the three rules in p3e1 and say which one this file breaks. Out loud,
 before you run it.
 
-Run:  py -3.14 s3e4_the_hang.py    ...and then press Ctrl-C.
+Run:  py -3.14 p3e4_the_hang.py    ...and then press Ctrl-C.
 """
 # concepts: while, comparison-operators, variables, int, print, reading-errors
 # dc: 10

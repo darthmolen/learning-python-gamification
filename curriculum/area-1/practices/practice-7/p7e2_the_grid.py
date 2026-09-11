@@ -11,7 +11,7 @@ Sixteen cells, addressed by two numbers. That is a grid, and a grid is how every
 tile map, spreadsheet, chessboard and Minecraft chunk you will ever touch is
 laid out.
 
-Run:  py -3.14 s7e2_the_grid.py
+Run:  py -3.14 p7e2_the_grid.py
 """
 # concepts: nesting, for, range, variables, int, print
 # dc: 14

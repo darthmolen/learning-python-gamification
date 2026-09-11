@@ -8,7 +8,7 @@ input("...") does three things, in this order:
 What it hands back is ALWAYS a str. Always. Even when they typed 120.
 If you want a number, you have to say so.
 
-Run:  py -3.14 s5e1_ask_and_draw.py
+Run:  py -3.14 p5e1_ask_and_draw.py
 """
 # concepts: input, str, int, f-strings, variables, print
 # dc: 12

@@ -14,7 +14,7 @@ means something:
     one indent     inside the loop
     two indents    inside the if, inside the loop
 
-Run:  py -3.14 s4e2_the_first_half.py
+Run:  py -3.14 p4e2_the_first_half.py
 """
 # concepts: if, else, comparison-operators, for, range, bool, variables, int, print
 # dc: 12

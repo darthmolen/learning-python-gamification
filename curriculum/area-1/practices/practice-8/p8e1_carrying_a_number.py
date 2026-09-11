@@ -22,7 +22,7 @@ what they say:
 Neither of those crashes. Neither prints anything red. You met that idea in
 Practice 6 and here it is again, with money on it.
 
-Run:  py -3.14 s8e1_carrying_a_number.py
+Run:  py -3.14 p8e1_carrying_a_number.py
 """
 # concepts: accumulator-pattern, for, range, variables, int, float, print
 # dc: 12

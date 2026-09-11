@@ -51,7 +51,7 @@ The same for all three framings.
    into a number.
 2. The answers **change the picture**, not only the words printed. A different answer
    must produce a visibly different drawing.
-3. It uses a **loop inside a loop**.
+3. It uses **nesting** — a loop inside a loop.
 4. It uses an **accumulator** — something totalled, counted or grown across the whole
    drawing.
 5. It uses an **`if`** that changes the picture.

@@ -13,7 +13,7 @@ worth ten minutes now.
 
 PREDICT FIRST. Write down what each of the five loops prints before you run it.
 
-Run:  py -3.14 s2e1_three_numbers.py
+Run:  py -3.14 p2e1_three_numbers.py
 """
 # concepts: range, for, print, int, variables
 # dc: 10

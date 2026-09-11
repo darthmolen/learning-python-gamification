@@ -10,7 +10,7 @@ reference solution for one of those in `../../reference/` if you get two real
 attempts in and need it (spec 5.5 -- it is a legal move with a name, and it
 costs difficulty, not honor).
 
-Run:  py -3.14 s7e3_the_rosette.py
+Run:  py -3.14 p7e3_the_rosette.py
 """
 # concepts: nesting, for, range, if, else, comparison-operators, variables, int, float, print
 # dc: 16

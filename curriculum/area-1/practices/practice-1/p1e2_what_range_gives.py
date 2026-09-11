@@ -11,7 +11,7 @@ is to show you.
 BEFORE YOU RUN THIS: write down, on paper, what you think each of the four loops
 below prints. All four. Actual numbers, not "four numbers".
 
-Run:  py -3.14 s1e2_what_range_gives.py
+Run:  py -3.14 p1e2_what_range_gives.py
 """
 # concepts: range, for, print, int, variables
 # dc: 8

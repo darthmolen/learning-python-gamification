@@ -9,7 +9,7 @@ You do not know. Neither do I, without working it out, and working it out is
 harder than just asking the computer. That is what `while` is for: **you know
 when to stop, not how many times to go.**
 
-Run:  py -3.14 s3e2_the_shrinking_line.py
+Run:  py -3.14 p3e2_the_shrinking_line.py
 """
 # concepts: while, comparison-operators, variables, float, int, print
 # dc: 14
