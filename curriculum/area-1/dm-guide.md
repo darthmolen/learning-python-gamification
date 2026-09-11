@@ -445,7 +445,7 @@ Nothing. It said nothing. That is the entry.
 Area 0's §7 holds. One addition for this area.
 
 **If they are fed up in Practices 3, 6 or 8**, the recovery is the same and it is a
-picture. Stop the exercise, open `s1e3_the_polygon_engine.py`, and let them change the
+picture. Stop the exercise, open `p1e3_the_polygon_engine.py`, and let them change the
 number at the top four or five times. It takes three minutes, it produces five different shapes,
 and it ends the evening on something that works.
 

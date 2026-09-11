@@ -63,8 +63,8 @@ did you use every single time you had to find one of these?**
 
 ## The three you planted
 
-You break one of your own working files — `s1e3_the_polygon_engine.py` or
-`s5e2_the_ladder.py` are good ones — while Dad looks away. Three bugs.
+You break one of your own working files — `p1e3_the_polygon_engine.py` or
+`p5e2_the_ladder.py` are good ones — while Dad looks away. Three bugs.
 
 **At least two of the three must be silent.** No error message. That is the whole
 point and it is much harder to do well than it sounds.

@@ -90,7 +90,7 @@ turns the answer into text, and glues it in.
 
 ## Beat 3 — The work (25–30 minutes)
 
-### `s5e1_ask_and_draw.py`
+### `p5e1_ask_and_draw.py`
 
 Runs as shipped. Asks for a size, converts it, draws a square, prints a receipt.
 
@@ -110,7 +110,7 @@ The four tasks in it are all deliberate re-breakings:
 4. Ask for the number of sides and print the total turn. They cannot draw it yet — Area 1
    again. Printing it is a complete answer.
 
-### `s5e2_the_nameplate.py`
+### `p5e2_the_nameplate.py`
 
 Two questions, a framed plate, and their name written inside it in real letters.
 

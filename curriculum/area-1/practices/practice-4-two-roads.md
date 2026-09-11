@@ -62,7 +62,7 @@ of thing from Area 0 that has had nothing to do until tonight.
 
 ## Beat 4 — The work (30 minutes)
 
-### `s4e1_two_roads.py` — the fork on its own
+### `p4e1_two_roads.py` — the fork on its own
 
 Predictions before running: the file prints the question, the answer, and the type of the
 answer, so they can see `True` and `<class 'bool'>` next to each other.
@@ -75,7 +75,7 @@ Task 4 asks them to type `if size = 100:` on purpose. It is a `SyntaxError`, whi
 mercy, and it is Python naming the difference between giving a name and asking a
 question.
 
-### `s4e2_the_first_half.py` — the fork inside a loop
+### `p4e2_the_first_half.py` — the fork inside a loop
 
 Twelve sides, red for the first six and black for the rest. One question asked twelve
 times, with a different answer each time, because the counter is what it asks about.
@@ -89,7 +89,7 @@ Task 3 is the real one: change 12 sides to 20 and the `6` becomes a lie. The fix
 split work itself out from `sides`, which is the same move as `turn = 360 / sides` and
 worth naming as such.
 
-### `s4e3_the_choice_board.py` — the person decides
+### `p4e3_the_choice_board.py` — the person decides
 
 `input` and `if` together. Four different pictures out of one file with nothing edited
 between runs.

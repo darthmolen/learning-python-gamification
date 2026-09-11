@@ -8,6 +8,10 @@ input("...") does three things, in this order:
 What it hands back is ALWAYS a str. Always. Even when they typed 120.
 If you want a number, you have to say so.
 
+The prints below start with an f and have {curly braces} in them. That is an
+f-string: whatever is inside the braces gets worked out and dropped into the
+text. Use them here; p5e2_the_nameplate.py is where they get explained properly.
+
 Run:  py -3.14 p5e1_ask_and_draw.py
 """
 # concepts: input, str, int, f-strings, variables, print

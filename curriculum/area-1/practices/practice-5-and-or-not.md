@@ -47,7 +47,7 @@ Do not demonstrate the trap. They meet it in the file, which is much better.
 
 ## Beat 4 — The work (30 minutes)
 
-### `s5e1_and_or_not.py` — predictions on paper first
+### `p5e1_and_or_not.py` — predictions on paper first
 
 Twelve lines of True and False, written down before running. They will score better on
 `and` than on `or` or the other way round, and which one is the weak side is worth knowing.
@@ -64,7 +64,7 @@ have done it once.
 Task 4 asks them to write their own trap, run it, watch it be true for 900 sides, and then
 write it properly. **Do this one.**
 
-### `s5e2_the_ladder.py` — order decides everything
+### `p5e2_the_ladder.py` — order decides everything
 
 Four color bands round a sixteen-sided shape, then a deliberately broken ladder with a
 wide rung above a narrow one, so the narrow rung can never be reached.
@@ -76,7 +76,7 @@ Task 3 is the sharpest question in the session: change every `elif` into an `if`
 it. The picture changes. **"What is different about four separate questions compared with
 one ladder?"**
 
-### `s5e3_the_gatekeeper.py` — the promise from Area 0, kept
+### `p5e3_the_gatekeeper.py` — the promise from Area 0, kept
 
 Open their Area 0 Journal first, at the entry where they wrote that the program crashed
 when they typed something silly and could not fix it. **Read it back to them.** Then say

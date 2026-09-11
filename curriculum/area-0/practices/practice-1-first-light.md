@@ -93,7 +93,7 @@ Then quit: `exit()` or Ctrl-Z Enter.
 
 Three files, in order. They run each with `py -3.14 <name>.py`.
 
-### `s1e1_first_light.py`
+### `p1e1_first_light.py`
 
 Runs as shipped, draws two sides of a triangle. Their job: close the triangle, then pick
 one from the choice board inside the file.
@@ -101,7 +101,7 @@ one from the choice board inside the file.
 The moment they run it, the difference from the REPL lands by itself: nothing printed
 except what `print` printed.
 
-### `s1e2_where_am_i.py`
+### `p1e2_where_am_i.py`
 
 **They must write four predictions on paper before running it.** Insist on it. It takes
 ninety seconds and it is the reason the file exists.
@@ -110,7 +110,7 @@ The four questions at the bottom are the real content. Question 3 — is
 `turtle.forward(-50)` legal — is worth making them commit to an answer out loud before
 they try it.
 
-### `s1e3_pen_and_color.py`
+### `p1e3_pen_and_color.py`
 
 Pen up, pen down, thickness, color. This is the file they will want to keep playing
 with, so leave time for the choice board rather than rushing them to the end.

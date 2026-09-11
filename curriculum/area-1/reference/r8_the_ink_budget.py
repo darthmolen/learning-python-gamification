@@ -1,6 +1,6 @@
 """Datamine payload — p8e3 choices b and c: two stop conditions, and a receipt.
 
-Unlocks: s8e3_the_ink_budget.py, choices (b) and (c).
+Unlocks: p8e3_the_ink_budget.py, choices (b) and (c).
 
 The stall in (b) is two reasons to stop and only one `while` line.
 The move is `or` -- Practice 5 -- inside the condition, and the reason nobody

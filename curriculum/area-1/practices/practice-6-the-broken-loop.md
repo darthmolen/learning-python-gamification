@@ -117,7 +117,7 @@ real.
 Same as Area 0 Practice 3, with one rule added.
 
 They plant **three** bugs in one of their own working files —
-`s1e3_the_polygon_engine.py` or `s5e2_the_ladder.py` are the best candidates — while you
+`p1e3_the_polygon_engine.py` or `p5e2_the_ladder.py` are the best candidates — while you
 look away.
 
 **At least two of the three must be silent.** No error message. That is much harder to

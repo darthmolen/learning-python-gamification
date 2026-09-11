@@ -1,6 +1,6 @@
 """Datamine payload — p7e3 choice board a and b: growing copies, own color each.
 
-Unlocks: s7e3_the_rosette.py, choices (a) and (b) together.
+Unlocks: p7e3_the_rosette.py, choices (a) and (b) together.
 
 Two separate stalls hide in this one file and they are worth separating before
 showing it:

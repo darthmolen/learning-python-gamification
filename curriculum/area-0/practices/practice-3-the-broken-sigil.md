@@ -176,7 +176,7 @@ week two, drawing a square.
 
 ## Beat 4 — Reversal: they break yours (10 minutes)
 
-Hand them a working file — `s2e1_square_by_name.py` is ideal. They plant **three** bugs
+Hand them a working file — `p2e1_square_by_name.py` is ideal. They plant **three** bugs
 in it while you look away. At least one must be silent, b7-style.
 
 Then you find them, out loud, narrating.
