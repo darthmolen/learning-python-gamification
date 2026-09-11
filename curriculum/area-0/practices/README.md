@@ -45,9 +45,13 @@ Every file has:
   engine and the verification harness, not for you. You can ignore them.
 - **a `YOUR MOVE` block near the bottom** — the actual work
 
-**The shipped code always runs and always draws.** It is a starting point, never a
-finished answer. Nothing in this directory contains the solution to its own tasks; the
-few reference solutions that exist live in `../reference/` and are the DM's.
+**The shipped code runs and draws — except in Practice 3, where every file is broken on
+purpose and says so in its first line.** That is the one exception and it is the whole of that
+practice: the work there is reading what the computer said, not extending what it drew.
+
+It is a starting point, never a finished answer. Nothing in this directory contains the
+solution to its own tasks; the few reference solutions that exist live in `../reference/` and
+are the DM's.
 
 ## Predictions
 

@@ -18,13 +18,13 @@ you get something materially different, the Python version differs — check
 
 ```
 Traceback (most recent call last):
-  File "...\b1_the_typo.py", line 17, in <module>
+  File "...\b1_the_typo.py", line 12, in <module>
     turtel.left(90)
     ^^^^^^
 NameError: name 'turtel' is not defined. Did you mean: 'turtle'?
 ```
 
-**Broken:** `turtel` on line 17.
+**Broken:** `turtel` on line 12.
 **Teaches:** the four parts of a traceback. Python even offers the fix, and it is worth
 saying out loud that the suggestion is a *guess* based on spelling — it has no idea what
 they meant.
@@ -34,7 +34,7 @@ they meant.
 
 ```
 Traceback (most recent call last):
-  File "...\b2_wrong_kind.py", line 16, in <module>
+  File "...\b2_wrong_kind.py", line 14, in <module>
     turtle.forward("100")
     ~~~~~~~~~~~~~~^^^^^^^
   File "<string>", line 8, in forward
@@ -61,13 +61,13 @@ is finding their own line, not decoding library internals.
 ## b3 — `b3_never_closed.py`
 
 ```
-  File "...\b3_never_closed.py", line 20
+  File "...\b3_never_closed.py", line 17
     turtle.forward(100
                   ^
 SyntaxError: '(' was never closed
 ```
 
-**Broken:** missing `)` on line 20.
+**Broken:** missing `)` on line 17.
 **Teaches:** this is a *different kind* of error, and the two tells are visible.
 
 - **No window opens at all.** Not for a moment.
@@ -84,7 +84,7 @@ line after.
 ## b4 — `b4_out_of_line.py`
 
 ```
-  File "...\b4_out_of_line.py", line 16
+  File "...\b4_out_of_line.py", line 14
     turtle.left(90)
 IndentationError: unexpected indent
 ```
@@ -99,13 +99,13 @@ a genuinely useful comparison if they raise it.
 
 ```
 Traceback (most recent call last):
-  File "...\b5_no_such_order.py", line 17, in <module>
+  File "...\b5_no_such_order.py", line 15, in <module>
     turtle.forwrd(100)
     ^^^^^^^^^^^^^
 AttributeError: module 'turtle' has no attribute 'forwrd'. Did you mean: 'forward'?
 ```
 
-**Broken:** `forwrd` on line 17.
+**Broken:** `forwrd` on line 15.
 **Teaches:** the distinction from b1, which is the point of having both.
 
 In b1, Python had never heard of `turtel` at all — a wrong **noun**. In b5, Python knows
@@ -119,7 +119,7 @@ Do not accept "they're basically the same". Ask: **"in which one does Python kno
 
 ```
 Traceback (most recent call last):
-  File "...\b6_not_a_number.py", line 15, in <module>
+  File "...\b6_not_a_number.py", line 13, in <module>
     size = int("ten")
 ValueError: invalid literal for int() with base 10: 'ten'
 ```

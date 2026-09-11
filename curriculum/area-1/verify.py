@@ -270,6 +270,8 @@ def main() -> int:
         print(f"  {mark}  {path.name:<34} {note}")
 
     print(f"\n{len(files) - failures} of {len(files)} exercises behaved as tagged.")
+    for directory in absent:
+        print(f"{directory.name}/ is not here, so nothing in it was checked.")
     return 1 if failures else 0
 
 

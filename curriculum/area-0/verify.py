@@ -35,10 +35,26 @@ SEARCH = (ROOT / "practices", ROOT / "reference")
 # Mirrors the area-0 entries of packages/content/src/concepts.ts. Kept here as a
 # literal on purpose: this directory must stay runnable with nothing but Python,
 # and reaching into a TypeScript file to check a tag would break that.
-# If concepts.ts changes, this changes. The overlap is nine strings and is worth
+# If concepts.ts changes, this changes. The overlap is ten strings and is worth
 # the duplication.
+#
+# `git-clone` is Practice 0's and no drill file carries it -- that practice happens to the
+# machine rather than in a file. It is listed anyway, because the check this set backs is
+# "is this tag a real Area 0 concept", and a tag being unreachable today is not the same as
+# it being wrong tomorrow.
 AREA_0_CONCEPTS = frozenset(
-    "print variables int float str bool input f-strings reading-errors".split()
+    [
+        "print",
+        "variables",
+        "int",
+        "float",
+        "str",
+        "bool",
+        "input",
+        "f-strings",
+        "reading-errors",
+        "git-clone",
+    ]
 )
 
 # Runs inside the child process, in place of the exercise's own turtle.done().
@@ -103,6 +119,9 @@ def check(path):
         capture_output=True,
         text=True,
         timeout=60,
+        # Explicit, because half these exercises are SUPPOSED to exit non-zero. Letting
+        # `check` default would raise on exactly the files this harness exists to run.
+        check=False,
     )
     out, err = done.stdout, done.stderr
 
