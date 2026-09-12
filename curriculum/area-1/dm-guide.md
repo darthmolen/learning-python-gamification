@@ -4,6 +4,9 @@ audience: dm
 
 # Area 1 — DM Guide
 
+**Read [the teaching tenets](../TENETS.md) first.** They apply in every area, and this guide
+assumes them.
+
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11) that
 is a parent, who is also a player. Area 0's guide established the seat and says why the
 word *parent* is used where it is; this one assumes you have read it and does not repeat
@@ -98,7 +101,7 @@ everything that goes wrong for the next four weeks.
    every loop that did too much or too little.
 2. **"What has to change for that to become false?"** — for every `while` loop that
    does not stop. If the answer is "nothing in the loop changes it", they have found it
-   themselves, which is the whole point.
+   themselves.
 3. **"Which loop is that line in?"** — for every nesting problem in Practices 7 and 9.
    Point at the indentation with a finger. Do not read it out for them.
 

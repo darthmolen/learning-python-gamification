@@ -4,6 +4,9 @@ audience: dm
 
 # Area 3 — DM Guide
 
+**Read [the teaching tenets](../TENETS.md) first.** They apply in every area, and this guide
+assumes them.
+
 **Weeks 9–14. Thirteen sessions of 45–60 minutes.**
 Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Area 3.
 

@@ -4,6 +4,9 @@ audience: dm
 
 # Area 0 — DM Guide
 
+**Read [the teaching tenets](../TENETS.md) first.** They apply in every area, and this guide
+assumes them.
+
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11)
 that is a parent, who is also a player — but the two roles want different things
 from you, and this guide is written for the DM one. Where it says *parent* rather
