@@ -1,9 +1,9 @@
 """One line of yours, so the first commit is not an empty README.
 
 This goes into your repository next to your journal. It is three lines of
-Python you could have written in week one, and that is deliberate: Practice 2
-is about `add` and `commit`, and a file you have to think about would get in
-the way of the thing you are actually learning tonight.
+Python you could have written in week one, because Practice 2 is about `add`
+and `commit`, and a file you have to think about would get in the way of the
+thing you are actually learning tonight.
 
     py -3.14 motto.py
 """

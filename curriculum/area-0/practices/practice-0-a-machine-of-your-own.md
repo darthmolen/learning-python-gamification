@@ -8,7 +8,7 @@ audience: dm
 **Files:** none. Everything here happens to the machine rather than in it.
 **Journal:** none. The journal starts in Practice 1, with something to write about.
 
-**This one is short, and it is meant to be.** Twenty-five minutes, maybe thirty. Do not
+**This one is short.** Twenty-five minutes, maybe thirty. Do not
 stretch it to fill an evening — a setup session that runs long is a setup session that taught
 somebody programming is mostly waiting for downloads.
 
@@ -16,7 +16,7 @@ No invasion. There is nothing yet to retrieve.
 
 ---
 
-## Why this is a practice and not a footnote
+## The setup cannot arrive by the thing it sets up
 
 The payload with the instructions in it travels by git. So the instructions for installing git
 arrive by the thing they instruct, which is a circle, and the way out is not a cleverer
@@ -32,90 +32,79 @@ means Practice 1 is still Practice 1 for everybody who has ever talked about thi
 
 ## Before they sit down
 
-Three things, on your machine, and all three are yours rather than theirs:
+Three things on the host (or your machine if running locally) before the learner(s) start:
 
-1. **The stack is up and reachable from their machine.** Not from yours — from theirs.
+1. **The stack is up and reachable from their machine.**.
    `tools/git/local-lan-learner.md` has the procedure. Two things are wrong out of the box:
    `GITEA_DOMAIN` defaults to `localhost`, which makes every clone URL Gitea *displays* point at
    whichever machine is reading it, and the firewall has no rule for 3080. Set the domain to the
    host's LAN address and prove the rest with `curl http://<host>:3080/api/healthz` **typed on
    their laptop**.
 
-   **A host cannot test this against itself.** Under WSL mirrored networking it fails from the
-   host and works from everywhere else, so a red result on your own machine means nothing and a
-   green one proves nothing. Borrow the laptop, or a phone browser.
+   **A local host running WSL and Docker Desktop cannot test this against itself.** Under
+   mirrored networking it fails from the host and works from everywhere else, so a red result on your own machine means nothing and a green one proves nothing. Borrow the laptop, or a phone browser.
 
-2. **An account for them.** Yours to create — `gitea admin user create`. Do this before, not
+2. **An account for them.** — `gitea admin user create`. Do this before, not
    during; an admin command at the keyboard is you taking the session.
 
-3. **The repository is theirs to name, and the naming is part of the evening.** §7 means it:
-   one repository for everything they make this year, called whatever they want.
+3. **The repository is theirs to name and is part of the evening.** §7 means it:
+   one repository for everything they make this year, called whatever they want. Try Ask the day
+   before.
 
-   Ask the day before so they arrive with an idea. **Expect them to change it on the night
-   anyway**, which is fine and costs nothing — see Beat 3.
-
-If any of the three is not done, do not start. Move the evening. A first session spent watching
-an adult fight a firewall teaches exactly one thing, and it is not Python.
+4. Write the host name down in both forms, both IP and hostname so that it can be easily
+   referenced while you are working with the learner.
+Do not start if the above 4 pre-reqs are not met. Move the evening. A first session spent watching an adult fight a firewall teaches exactly one thing, and it is not Python.
 
 ---
 
 ## Beat 1 — The hook (5 minutes)
 
-Say this, more or less:
+Say this (paraphrasing is fine):
 
 > Everything you make this year is going to live in one place, and it is going to be yours.
 > Not a folder on this laptop that a reinstall eats. A repository — on the machine in the other
 > room, backed up, and yours. Tonight we go and get it.
 
-Then ask them the name they picked, and use it out loud from here on. Not "your repo": the
-name.
+Then ask them the name they picked and use it instead of anything that smells of "repository".
 
-**The point of the beat is ownership, not git.** They should leave the evening able to say
-where their work lives and why nothing can casually delete it.
+**Ownership, not git, is the principle being distilled.** They should leave the evening able to
+say where their work lives and why nothing can casually delete it.
 
 ---
 
 ## Beat 2 — Python (10 minutes)
 
-They type, you do not.
+They do the typing.
 
-```
+```bash
 py -3.14 --version
 ```
 
 It should say 3.14-something.
 
-**If `python` and `py -3.14` disagree, use `py -3.14` everywhere, including out loud.** On the
-DM's machine `python` is 3.12 in PowerShell and 3.14 in Git Bash, and a learner who has heard
-two commands for one thing will eventually pick the wrong one at the worst moment.
-`tools/python/README.md` has the install and the three day-one failures.
-
-Nothing to explain here. It is a version number, it is the right one, move on.
+**Use `py -3.14` everywhere.** Pathing issues could lead to `python` being 3.12 in PowerShell and 3.14 in Git Bash and the ambiguity could lead to unpredictable results. Refer to `tools/python/README.md` for the install and the three day-one failures if errors are encountered.
+Any failure should pause or push off the session until a later date while the problem is being
+fixed.
 
 ---
 
 ## Beat 3 — The repository, and the clone (10 minutes)
 
-Three steps, and **the order matters** — the middle one is yours, and the payload cannot be
-pushed to a repository that does not exist yet.
+Three steps in this practice because the payload cannot be pushed to a repository that does not
+exist yet.
 
-The heading on each step says whose keyboard it happens at. Nothing below is ambiguous about
-that on purpose: the one way to lose this beat is for you to reach over.
+The heading on each step says whose keyboard it happens at. It's a great activity if running at
+home to collaborate together and talk about what is happening. If not collocated, these steps will need to be done in the order presented, but don't have to happen all at once.
 
 ### 3a — On their machine, in a browser
 
-They sign in at `http://<host>:3080` as themselves, click **New Repository**, and type the name
-they picked. They tick *Initialize this repository*, so the clone arrives with something in it
-rather than Git's empty-repository warning.
-
-**If they change their mind about the name here, let them.** It costs you one command below, and
-it is the only thing in the whole evening that is genuinely theirs to decide.
+They sign in at `http://<host>:3080` as themselves, click **New Repository**, and they type the name they picked. They tick *Initialize this repository*, so the clone arrives with something in it rather than Git's empty-repository warning.
 
 ### 3b — On your machine, in Git Bash
 
-Your keyboard, and the only time tonight it is. Narrate it: *"I'm sending you the files."*
+As you are doing your part, feel free to narrate it: *"I'm sending you the files."*
 
-```console
+```bash
 tools/learner-setup/pack.sh --remote http://<host>:3080/<them>/<their-repo>.git
 ```
 
@@ -125,37 +114,25 @@ It clones their repository to a temp directory, copies the payload in, pushes it
 `learner-setup` branch, and deletes the temp copy. Under a minute, and it ends with
 `pushed learner-setup`. **If it says anything else, stop and read it. Do not go on to 3c.**
 
-**Why this cannot be done in advance if they named it tonight**, which is the whole reason this
-step exists: the branch has to be pushed to a repository that already exists, so a name chosen
-at 3a means a push at 3b. Doing it the day before is fine too, and then this step reports that
-the branch already carries the payload and changes nothing.
-
 ### 3c — On their machine, at a terminal
 
-**They type every line of this. All of it.** The whole of `git-clone`, and no more git than that.
+**Theirs to type, one line at a time.** Replace the obvious place holders with the information
+that's been collected while setting up the host and in this session.
 
-```console
+```bash
 git clone http://<host>:3080/<them>/<their-repo>.git
 cd <their-repo>
 dir
 ```
 
-`dir` lists the folder. **They read what it prints, not you** — ask them what they see rather
-than looking at the screen yourself and telling them.
+`dir` lists the folder. Ask them what they see instead of just telling them what happened.
 
 **What to say when they ask what a repository is:** that it is a folder the other machine is
-also keeping, that it comes back if this laptop dies, and that Area 2 is four sessions about
-exactly this question. Then stop. The full answer costs twenty minutes tonight and is the
-subject of a whole area later, where it lands on somebody who has been using one for five
-weeks and has actual questions.
-
-That deferral is the same move Area 0 already makes with types: they meet `str` and `float` by
-accident in Practices 1 to 3, and Practice 4 names what they have already tripped over. Meeting
-a repository before it is explained is a feature.
+also keeping, that it comes back if this laptop dies, and that this tool will be discussed later in the curriculum.
 
 **Still their machine, still their keyboard** — they switch to the branch:
 
-```console
+```bash
 git fetch
 git checkout learner-setup
 dir
@@ -173,17 +150,6 @@ will see it happen from nothing.
 
 `SETUP.md` is now in front of them. It is written to them, not to you — read the first page
 together and then let them drive.
-
----
-
-## What you may not say
-
-- **"You'll understand this later."** True, and it teaches them that not understanding is the
-  normal state of this room. Say *"that's Area 2, four sessions on it"* — a promise with a date
-  on it rather than a shrug.
-- **"Just copy this."** Every command tonight is short enough to type. Typing a command they do
-  not understand is still typing, and it is how the fingers learn before the head does.
-- Anything about branches. `checkout learner-setup` is a magic word tonight and that is fine.
 
 ---
 

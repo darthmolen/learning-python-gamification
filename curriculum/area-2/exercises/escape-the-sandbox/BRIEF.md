@@ -74,14 +74,14 @@ scar names **which step** it died on, because the step is the lesson:
 
 ## The tools you need
 
-Everything in Area 2, which is the point of it being the boss:
+Everything in Area 2:
 
 - `repository` · `git-init` · `git-add` · `git-commit` · `git-log` · `git-branch` ·
   `git-push`
 - `files-on-disk` · `running-scripts` · `vscode` · `venv` · `pip` · `tracebacks` ·
   `main-guard`
 
-## Why this one is worth 22
+## It is worth 22 because it fails invisibly from where you stand
 
 It is the campaign's first quest over DC 20, and the warning on the card is honest. This is
 the first task whose failure mode is invisible from where you are standing: it works on

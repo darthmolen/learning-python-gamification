@@ -13,10 +13,10 @@ Spec: `docs/specs/2026-08-26-gamified-python-curriculum-design.md`, §4 Area 0.
 **Vehicle: turtle graphics.** The first line they type draws something.
 
 **Practices 1 to 6 need a text editor, a terminal, and Python 3.14 — no application, no server,
-no browser and no internet.** That is deliberate, and spec §8 is why: if Area 0 waits on Phase 1,
+no browser and no internet.** Spec §8 is why: if Area 0 waits on Phase 1,
 *the app becomes a satisfying way to postpone teaching a child Python*.
 
-**Practice 0 is the exception, and it is contained on purpose.** It needs the DM's Gitea
+**Practice 0 is the exception.** It needs the DM's Gitea
 reachable over the LAN, because that is where the learner's repository is and the setup payload
 travels by git. Nothing after it does. If the network fights you on the night, run Practice 1
 instead and clone next time — the plan for Practice 0 says so in as many words. The area's
@@ -48,7 +48,7 @@ independence is a property of the teaching, and one setup evening at the front d
 | 5 | **The Machine Asks** | `input`, `f-strings` | `str`, `int`, `variables`, `print` | `p5e1`, `p5e2` |
 | 6 | **The Commission** | — | all nine | `commission-brief.md`, `p6_starter.py` |
 
-### Why this order
+### Errors come third and types come fourth
 
 **Errors come third, not last.** Every platform surveyed in spec §2.3 treats error
 messages as an interruption to teaching. Here they *are* the teaching, and they land at
@@ -108,9 +108,8 @@ against the Area 0 entries of `packages/content/src/concepts.ts`.
 All ten Area 0 concepts are covered — nine here, and `git-clone` in Practice 0, which has no
 exercise because it happens to the machine rather than in a file.
 
-**`bool` is the thinnest of the nine, at three exercises, and
-that is honest rather than an oversight** — without `if`, a boolean has almost nothing to
-do. It appears where it genuinely occurs (`turtle.isdown()`, `50 > 100`) and is not
+**`bool` is the thinnest of the nine, at three exercises** — without `if`, a boolean has
+almost nothing to do. It appears where it genuinely occurs (`turtle.isdown()`, `50 > 100`) and is not
 padded out with make-work. Area 1 opens with `if` and gives it a job on day one.
 
 **The concepts each file resurfaces are tagged, not just the ones it introduces.** Spec

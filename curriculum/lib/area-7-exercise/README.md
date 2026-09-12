@@ -10,7 +10,7 @@ it is handing over.
 > The DC is for the work, not the idea. Deleting a line and running a command twice is easy.
 > Understanding why the number moved is the whole of Area 7.
 
-## Why this exists rather than a paragraph about draw calls
+## One deleted line, a hundredfold difference you can watch
 
 It is the only place in the campaign where **a one-line deletion produces a hundredfold
 difference you can watch happen.** Nobody acquires performance intuition by being told that

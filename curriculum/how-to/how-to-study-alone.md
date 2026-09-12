@@ -14,8 +14,8 @@ the parts that do not.
 your code and reading what it says. Looking a word up. Writing in your journal. Going back over
 something from three weeks ago because you have a suspicion about it.
 
-**These do not.** A practice with no files in it. About one in five has none, and that is not an
-oversight — the work in those is a conversation: you predict out loud what a program will do
+**These do not.** A practice with no files in it. About one in five has none. The work in
+those is a conversation: you predict out loud what a program will do
 before running it, you explain what broke and why, you argue about which of two ideas is better.
 None of that fits in a folder, and reading about it is not doing it.
 

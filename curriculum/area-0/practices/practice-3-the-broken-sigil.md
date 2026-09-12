@@ -122,7 +122,7 @@ basically the same". They are the difference between a wrong noun and a wrong ve
 Both suggest the fix. Point out that the suggestion is a guess, that Python is often
 wrong about it, and that it has no idea what they were trying to do.
 
-### b3 and b4 are a different kind of error, and that is the lesson
+### b3 and b4 are a different kind of error
 
 Run `b1` and `b3` back to back and ask them to spot two differences.
 

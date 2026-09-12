@@ -179,7 +179,7 @@ scaffolding is a boss beat, not an afterthought.
 And then, at Area 7: delete `ground.combine()` and watch it happen. See
 [`area-7-exercise/`](area-7-exercise/).
 
-## Can he read it?
+## The shim stays small enough for the learner to read
 
 The constraint the shim is held to: he opens `world.py` at Area 4 and recognizes most of it.
 Audited by statement rather than by physical line, because the formatter breaks long calls

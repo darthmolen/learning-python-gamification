@@ -45,7 +45,7 @@ for side in range(sides):
 
 print("four bands of four. One ladder, sixteen climbs, one rung each time.")
 print()
-print("now the broken ladder, which is the point of the file:")
+print("now the broken ladder:")
 
 for n in range(16):
     if n < 12:

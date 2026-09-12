@@ -184,7 +184,7 @@ The walkthrough asks him to write these down. The answers:
 3. **Which line of any traceback says what went wrong?** The last one.
 4. **Which line says where?** The frame directly above it.
 5. **Which file did you fix, and which did you run?** `bottom_frame.py`, and
-   `top_frame.py`. They are not the same file, and that is the point of the exercise.
+   `top_frame.py`. They are not the same file.
 6. **What does `__name__` hold?** `"__main__"` when the file is run, the file's own name
    when it is imported.
 

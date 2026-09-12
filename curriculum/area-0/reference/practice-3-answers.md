@@ -106,7 +106,7 @@ AttributeError: module 'turtle' has no attribute 'forwrd'. Did you mean: 'forwar
 ```
 
 **Broken:** `forwrd` on line 15.
-**Teaches:** the distinction from b1, which is the point of having both.
+**Teaches:** the distinction from b1, which is why there are two.
 
 In b1, Python had never heard of `turtel` at all — a wrong **noun**. In b5, Python knows
 exactly what `turtle` is and is being asked for something it does not have — a wrong
@@ -139,8 +139,7 @@ volunteer it.
 **Broken:** `turtle.left(80)` four times instead of `left(90)`. It draws a lopsided
 open shape.
 
-**This is the point of the session, so protect it.** Let them run it, see no red text,
-and declare it working. Then:
+**Protect this moment.** Let them run it, see no red text, and declare it working. Then:
 
 > "Python is happy. Are you happy? Look at the picture."
 

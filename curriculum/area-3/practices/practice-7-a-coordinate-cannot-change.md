@@ -13,8 +13,7 @@ audience: dm
 
 One idea: round brackets make a thing that cannot be changed. No quest, one new concept, and
 the least visually rewarding hour in the six weeks. `README.md` says in writing that `tuple`
-is the thinnest concept here and that this is a decision rather than an oversight — the same
-call Area 0 made about `bool`.
+is the thinnest concept here — the same call Area 0 made about `bool`.
 
 So: if the evening is short, or the week has been long, **this is the session to cut short**,
 and cutting it short costs nothing. If the evening has room, the fourth task in `p7e1` is

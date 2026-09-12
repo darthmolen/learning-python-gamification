@@ -74,8 +74,7 @@ Area 0's Practice 3 was seven files that all announced their failure. Here, thre
 six say nothing at all: one draws too few sides, one never stops, one draws a shape that
 does not close. There is no red text, no line number and no arrow.
 
-That is the point of the session and it is the hardest evening in the area. Do not fix
-any of them beforehand.
+It is the hardest evening in the area. Do not fix any of them beforehand.
 
 ## Checking they all still work
 

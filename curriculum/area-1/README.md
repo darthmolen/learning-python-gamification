@@ -48,7 +48,7 @@ becomes a satisfying way to postpone teaching a child Python*.
 | 9 | **The Mandala** | — | `nesting`, `accumulator-pattern`, all | `mandala-brief.md`, `p9_mandala_lab.py` |
 | 10 | **The Sigil** | — | all nineteen | `sigil-brief.md`, `p10_sigil_starter.py` |
 
-### Why this order
+### `for` before `while`, and the hang gets its own practice
 
 **`for` before `while`.** A `for` loop over `range(6)` terminates, is visible, and draws a
 hexagon on the first attempt. A `while` loop's first outcome is very often a hung window.
@@ -156,8 +156,7 @@ against the Area 0 and Area 1 entries of `pyquest/packages/content/src/concepts.
 | `elif` | 3 |
 | `boolean-operators` | 3 |
 
-**`elif` and `boolean-operators` are the thinnest, at three exercises each, and that is
-honest rather than an oversight.** Both arrive in Practice 5 and both live almost entirely
+**`elif` and `boolean-operators` are the thinnest, at three exercises each.** Both arrive in Practice 5 and both live almost entirely
 inside it: `p5e1`, `p5e2`, `p5e3`, and then the boss starter. Area 0 said the same thing
 about `bool` at three exercises, for a related reason.
 

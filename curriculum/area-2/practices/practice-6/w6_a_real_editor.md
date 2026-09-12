@@ -166,7 +166,7 @@ git commit -m "..."
 git push
 ```
 
-**The editor has no git buttons and that is deliberate.** You learned the commands first,
+**The editor has no git buttons.** You learned the commands first,
 for four sessions, and the buttons come back in Area 7 as a convenience rather than as a
 crutch. There is a difference and you will be able to feel it.
 

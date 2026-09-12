@@ -18,7 +18,7 @@ Read `reference/practice-6-answers.md` before tonight. Not during.
 
 ---
 
-## Why this session exists
+## Half of what goes wrong in a loop produces no error at all
 
 Area 0 Practice 3 taught them that an error message is the computer helping: a name, a line
 number, an arrow, and the exact characters. That was true and it was training wheels.

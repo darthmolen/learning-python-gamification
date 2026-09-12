@@ -28,7 +28,7 @@ Answer these out loud. You will check both answers in a minute.
 
 ---
 
-## 1. Where am I?
+## 1. Find out where the terminal thinks you are
 
 Open a terminal. Before anything else, find out where it thinks you are.
 
@@ -61,7 +61,7 @@ cd
 dir
 ```
 
-`dir` shows nothing, which is the point: this folder has no past, and in a few minutes it will
+`dir` shows nothing: this folder has no past, and in a few minutes it will
 have one.
 
 **Check that it says `scratch`.** Everything below happens here and nowhere else.
@@ -183,8 +183,6 @@ git for the rest of their lives.
 
 ---
 
----
-
 ## Throw it away
 
 ```
@@ -192,8 +190,7 @@ cd ..
 rmdir /s /q scratch
 ```
 
-Gone — the folder, the `.git` inside it, all of it. **That is the last part of the lesson.** A
-repository is a thing you make, and a thing you can destroy, and nothing about it is precious
+Gone — the folder, the `.git` inside it, all of it. A repository is a thing you make, and a thing you can destroy, and nothing about it is precious
 until you decide it is. The one you actually keep is the repository you cloned in your first
 session, and Practice 2 is where your work starts going into it on purpose.
 

@@ -52,7 +52,7 @@ Do not demonstrate the trap. They meet it in the file, which is much better.
 Twelve lines of True and False, written down before running. They will score better on
 `and` than on `or` or the other way round, and which one is the weak side is worth knowing.
 
-**The trap is in the file and it is the point of it.** `size == 60 or 70` looks like it
+**The trap is in the file.** `size == 60 or 70` looks like it
 asks whether size is 60 or 70. It does not. Python reads `(size == 60) or (70)`, and 70 on
 its own is truthy, so the whole thing is always true. It runs. It is wrong. Nothing
 complains.

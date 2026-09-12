@@ -105,8 +105,7 @@ git switch experiment      # move onto it
 ```
 
 Commits now go onto `experiment`. `git switch main` puts everything back exactly as it
-was. Nothing is lost either way — which is the whole point. **A branch makes an
-experiment cheap**, and cheap experiments are how you learn anything.
+was. Nothing is lost either way. **A branch makes an experiment cheap**, and cheap experiments are how you learn anything.
 
 ### Push
 
