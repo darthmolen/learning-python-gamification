@@ -1,22 +1,28 @@
-# The session drills
+---
+audience: learner
+---
 
-Each `session-<n>/` directory here holds the files for the session plan beside it. They
-are the work of the evening, and they live with the session that teaches them.
+# The practice drills
+
+Each `practice-<n>/` directory here holds the files for the practice plan beside it. They
+are the work of that practice, and they live with the plan that teaches them.
 
 **The brief-bearing exercises are next door in `../exercises/`** — those are the ones with
 a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
 different directory.
 
-Copy this whole directory into the same folder you have been using since Area 0 — the
-one that is yours. Area 2a turns it into a git repository; until then it is still just a
-folder, and that is still fine.
+**The plans beside these folders are not yours, and they do not travel** — the same
+arrangement as Area 0. `practice-1-the-loop-that-draws.md` and its siblings are written for
+whoever runs the evening; what reaches your machine is the `practice-<n>/` folders.
+
+They arrive beside Area 0's, in the same place you have been working since week one.
 
 Nothing new to install. Same Python, same turtle, same editor.
 
 ## Running one
 
 ```text
-py -3.14 s1e1_the_repeated_line.py
+py -3.14 p1e1_the_repeated_line.py
 ```
 
 Use `py -3.14`, not `python`. On the DM's machine `python` is 3.12 in PowerShell and
@@ -33,7 +39,7 @@ a minute and a half to appear. Think of it as a throttle, not a concept.
 the text — not in the drawing. Practice 3 makes you use it on purpose. It is the most
 useful key combination in this area and one of the most useful of the year.
 
-**Two files never finish, and that is correct.** `practice-3/s3e4_the_hang.py` and
+**Two files never finish, and that is correct.** `practice-3/p3e4_the_hang.py` and
 `practice-6/b2_the_loop_that_never_ends.py` are supposed to run forever. Their headers say
 `# expect: hangs`. Do not fix them before the session.
 
@@ -68,8 +74,7 @@ Area 0's Practice 3 was seven files that all announced their failure. Here, thre
 six say nothing at all: one draws too few sides, one never stops, one draws a shape that
 does not close. There is no red text, no line number and no arrow.
 
-That is the point of the session and it is the hardest evening in the area. Do not fix
-any of them beforehand.
+It is the hardest evening in the area. Do not fix any of them beforehand.
 
 ## Checking they all still work
 

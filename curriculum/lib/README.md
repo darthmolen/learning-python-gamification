@@ -51,6 +51,17 @@ comes down is the thing this curriculum refuses to become.
 
 Copy it again if it changes here. It is one file and the copy is the point.
 
+**So there are two copies in his repository, and both have a job.** The learner-setup payload
+carries this directory, so `curriculum/lib/world.py` is there as well — that is the canonical
+one, and it is the one `smoke.py` imports, because `smoke.py` puts its own directory on
+`sys.path` rather than looking beside the caller. The copy at the repository root is the one he
+imports from his own exercises and the one he deletes. Deleting the root copy is the Area 4
+move; deleting this one would break the check that proves ursina is installed.
+
+The command above is written to be run from the root of whichever repository holds
+`curriculum/lib/` — the campaign repository on the DM's machine, or his own after the payload
+lands. It is the same command in both places, which is why it names no machine.
+
 ## The pin
 
 **`ursina==8.3.0`**, in `requirements.txt`, identical on both machines.
@@ -168,7 +179,7 @@ scaffolding is a boss beat, not an afterthought.
 And then, at Area 7: delete `ground.combine()` and watch it happen. See
 [`area-7-exercise/`](area-7-exercise/).
 
-## Can he read it?
+## The shim stays small enough for the learner to read
 
 The constraint the shim is held to: he opens `world.py` at Area 4 and recognizes most of it.
 Audited by statement rather than by physical line, because the formatter breaks long calls

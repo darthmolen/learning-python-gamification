@@ -7,7 +7,7 @@ time".
 Here the counter is the length of the side. It counts down, so the shape spirals
 inward. Nothing in the body says "get smaller"; the range says it.
 
-Run:  py -3.14 s2e2_counting_down.py
+Run:  py -3.14 p2e2_counting_down.py
 """
 # concepts: range, for, variables, int, float, print
 # dc: 10

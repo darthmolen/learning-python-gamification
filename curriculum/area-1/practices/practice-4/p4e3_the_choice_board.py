@@ -10,7 +10,7 @@ The shape here depends on what the person typed. Not on what you typed when you
 wrote the file -- on what they type when they run it. That is the difference
 between a picture and a program.
 
-Run:  py -3.14 s4e3_the_choice_board.py
+Run:  py -3.14 p4e3_the_choice_board.py
 """
 # concepts: if, else, comparison-operators, for, range, input, f-strings, bool, variables, int, str, print
 # dc: 12

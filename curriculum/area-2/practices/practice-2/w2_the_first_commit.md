@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 2 — The First Commit
 
 **Concepts:** `git-add` · `git-commit` · resurfaces `repository`

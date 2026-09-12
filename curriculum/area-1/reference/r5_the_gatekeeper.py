@@ -1,6 +1,6 @@
 """Datamine payload — p5e3 task 4: one square, drawn once.
 
-Unlocks: s5e3_the_gatekeeper.py, the de-duplication task.
+Unlocks: p5e3_the_gatekeeper.py, the de-duplication task.
 
 The shipped file draws the same square twice with different settings, once in
 the `elif` and once in the `else`. They feel that it is wrong and often cannot

@@ -1,20 +1,28 @@
-# The session drills
+---
+audience: learner
+---
 
-Each `session-<n>/` directory here holds the files for the session plan beside it. They
-are the work of the evening, and they live with the session that teaches them.
+# The practice drills
+
+Each `practice-<n>/` directory here holds the files for the practice plan beside it. They
+are the work of that practice, and they live with the plan that teaches them.
 
 **The brief-bearing exercises are next door in `../exercises/`** — those are the ones with
 a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
 different directory.
 
-Copy this whole directory somewhere you own — `Documents/code/` or similar. You need a
-folder that is yours. Area 2a turns it into a git repository; until then it is just a
-folder.
+**The plans beside these folders are not yours, and they do not travel.**
+`practice-1-first-light.md` and its siblings are written for whoever is running the evening.
+Practice 3 in particular only works if you have not read ahead, so what reaches your machine is
+the `practice-<n>/` folders and nothing else.
+
+Work in the folder for the practice you are on. If these files are not on your machine yet,
+whoever is running the session puts them there — you do not need to go and find them.
 
 ## Running one
 
 ```
-py -3.14 s1e1_first_light.py
+py -3.14 p1e1_first_light.py
 ```
 
 Use `py -3.14`, not `python`. On the DM's machine `python` is 3.12 in PowerShell and
@@ -37,9 +45,13 @@ Every file has:
   engine and the verification harness, not for you. You can ignore them.
 - **a `YOUR MOVE` block near the bottom** — the actual work
 
-**The shipped code always runs and always draws.** It is a starting point, never a
-finished answer. Nothing in this directory contains the solution to its own tasks; the
-few reference solutions that exist live in `../reference/` and are the DM's.
+**The shipped code runs and draws — except in Practice 3, where every file is broken on
+purpose and says so in its first line.** That is the one exception and it is the whole of that
+practice: the work there is reading what the computer said, not extending what it drew.
+
+It is a starting point, never a finished answer. Nothing in this directory contains the
+solution to its own tasks; the few reference solutions that exist live in `../reference/` and
+are the DM's.
 
 ## Predictions
 

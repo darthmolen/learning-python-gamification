@@ -28,6 +28,30 @@ and read `SETUP.md`.
 Re-running is safe. It updates the branch and reports what changed; if the payload has not
 moved it commits nothing and says so.
 
+## The payload mirrors the campaign layout, and that is load-bearing
+
+Every path lands in the learner's repository at the **same** relative path it has here.
+`tools/ursina/stress.py` lands at `tools/ursina/stress.py`; `curriculum/lib/world.py` lands at
+`curriculum/lib/world.py`. Only `SETUP.md` and `RESULTS.md` move, to the root, because they are
+addressed to the person rather than to the tree.
+
+**This is a constraint rather than an accident, and nothing enforces it.** Three things depend
+on it:
+
+- [`tools/ursina/stress.py`](../ursina/stress.py) resolves the shim as
+  `Path(__file__).resolve().parents[2] / "curriculum" / "lib"` — two levels up and across. Flatten
+  the payload, or re-root it under a subdirectory, and it stops finding the thing it measures.
+- Every command in `SETUP.md` and `RESULTS.md` is written root-relative —
+  `py -3.14 curriculum/lib/smoke.py` — so it can be copied out of this repository into that one
+  unchanged. That is why they are correct on the learner's machine and *wrong* if you run them
+  from `tools/learner-setup/` here.
+- [`curriculum/lib/README.md`](../../curriculum/lib/README.md)'s `cp curriculum/lib/world.py
+  <his-repo>/world.py` is the same command on both machines for the same reason.
+
+So: **when adding to the payload, add the path. Do not rearrange it.** A tidier layout on the
+learner's machine costs a working `stress.py` and a page of instructions that quietly stop
+resolving, and no test would notice.
+
 ## Why a branch, and not a zip
 
 Because §6.4 makes `git push` the verification mechanism, and a machine that pulls its own

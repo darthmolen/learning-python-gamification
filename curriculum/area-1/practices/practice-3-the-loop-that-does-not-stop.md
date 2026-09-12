@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 3 — The Loop That Does Not Stop
 
 **Concepts:** `while`, `comparison-operators` · `for`, `variables`, `bool`,
@@ -59,7 +63,7 @@ Say Ctrl-C once, now, clearly. Then do not say it again for the rest of the year
 
 Four files, in order. **`p3e4` is last and it is not optional.**
 
-### `s3e1_the_first_while.py` — the six comparisons, and a loop that asks
+### `p3e1_the_first_while.py` — the six comparisons, and a loop that asks
 
 It prints all six comparison operators against the same pair of numbers, then runs a
 `while` loop that reports its own condition every go round.
@@ -70,7 +74,7 @@ one is the entire skill. Make them predict before running.
 Task 4 asks them to delete the line that changes the variable and **not run it**. Just look
 at it and name which rule broke. That is the rehearsal for what happens in twenty minutes.
 
-### `s3e2_the_shrinking_line.py` — the loop whose count nobody knows
+### `p3e2_the_shrinking_line.py` — the loop whose count nobody knows
 
 Each line is 0.8 times the one before, stopping below 4 pixels. **How many lines is that?**
 Neither of you knows without working it out, and working it out is harder than asking.
@@ -84,7 +88,7 @@ Task 4 quietly introduces a counter — `drawn = drawn + 1`, set to 0 *before* t
 and asks them to move it inside and see what happens. They have now written an
 accumulator twice without the word. Practice 8 names it.
 
-### `s3e3_while_versus_for.py` — the same hexagon, twice
+### `p3e3_while_versus_for.py` — the same hexagon, twice
 
 Both loops draw an identical shape. The `for` version is three lines; the `while` version
 is five, and two of them are bookkeeping they have to get right.
@@ -97,7 +101,7 @@ Task 4 is the question worth a Journal sentence: *"draw lines until the turtle h
 traveled more than 1000 pixels"* — which loop, and why can the other one not do it
 cleanly?
 
-### `s3e4_the_hang.py` — the one the session is named after
+### `p3e4_the_hang.py` — the one the session is named after
 
 They read it first and say which rule is broken. **Then they run it anyway.**
 

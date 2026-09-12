@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Functions and Decomposition
 
 By now you can write a long program. This area is about why you should stop.

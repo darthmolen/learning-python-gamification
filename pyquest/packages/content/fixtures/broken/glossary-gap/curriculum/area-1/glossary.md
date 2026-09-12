@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Area 1 glossary
 
 Area 1 teaches ten concepts. This file defines two of them, misspells a third, and invents a

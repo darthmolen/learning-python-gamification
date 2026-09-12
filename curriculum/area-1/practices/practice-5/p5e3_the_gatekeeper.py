@@ -13,7 +13,7 @@ got past.
 This file is deliberately unfinished. It asks, it checks the easy case, and then
 it stops. The rest is yours.
 
-Run:  py -3.14 s5e3_the_gatekeeper.py
+Run:  py -3.14 p5e3_the_gatekeeper.py
 """
 # concepts: boolean-operators, elif, if, else, comparison-operators, for, range, input, f-strings, bool, variables, int, print
 # dc: 14

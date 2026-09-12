@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 1 — Control
 
 **Weeks 3–6. Ten sessions of 45–60 minutes.**
@@ -44,7 +48,7 @@ becomes a satisfying way to postpone teaching a child Python*.
 | 9 | **The Mandala** | — | `nesting`, `accumulator-pattern`, all | `mandala-brief.md`, `p9_mandala_lab.py` |
 | 10 | **The Sigil** | — | all nineteen | `sigil-brief.md`, `p10_sigil_starter.py` |
 
-### Why this order
+### `for` before `while`, and the hang gets its own practice
 
 **`for` before `while`.** A `for` loop over `range(6)` terminates, is visible, and draws a
 hexagon on the first attempt. A `while` loop's first outcome is very often a hung window.
@@ -106,34 +110,34 @@ against the Area 0 and Area 1 entries of `pyquest/packages/content/src/concepts.
 
 | Exercise | Session | DC | Concepts |
 |---|---|---|---|
-| `s1e1_the_repeated_line.py` | 1 | 8 | `for`, `range`, `print`, `int` |
-| `s1e2_what_range_gives.py` | 1 | 8 | `range`, `for`, `print`, `int`, `variables` |
-| `s1e3_the_polygon_engine.py` | 1 | 10 | `for`, `range`, `variables`, `int`, `float`, `print` |
-| `s2e1_three_numbers.py` | 2 | 10 | `range`, `for`, `print`, `int`, `variables` |
-| `s2e2_counting_down.py` | 2 | 10 | `range`, `for`, `variables`, `int`, `float`, `print` |
-| `s2e3_the_shape_dial.py` | 2 | 12 | `for`, `range`, `variables`, `int`, `float`, `input`, `f-strings`, `print` |
-| `s3e1_the_first_while.py` | 3 | 10 | `while`, `comparison-operators`, `bool`, `variables`, `int`, `print` |
-| `s3e2_the_shrinking_line.py` | 3 | 14 | `while`, `comparison-operators`, `variables`, `float`, `int`, `print` |
-| `s3e3_while_versus_for.py` | 3 | 12 | `while`, `for`, `range`, `comparison-operators`, `variables`, `int`, `print` |
-| `s3e4_the_hang.py` | 3 | 10 | `while`, `comparison-operators`, `variables`, `int`, `print`, `reading-errors` |
-| `s4e1_two_roads.py` | 4 | 10 | `if`, `else`, `comparison-operators`, `bool`, `variables`, `int`, `print` |
-| `s4e2_the_first_half.py` | 4 | 12 | `if`, `else`, `comparison-operators`, `for`, `range`, `bool`, `variables`, `int`, `print` |
-| `s4e3_the_choice_board.py` | 4 | 12 | `if`, `else`, `comparison-operators`, `for`, `range`, `input`, `f-strings`, `bool`, `variables`, `int`, `str`, `print` |
-| `s5e1_and_or_not.py` | 5 | 12 | `boolean-operators`, `comparison-operators`, `bool`, `if`, `else`, `variables`, `int`, `print` |
-| `s5e2_the_ladder.py` | 5 | 14 | `elif`, `if`, `else`, `comparison-operators`, `for`, `range`, `bool`, `variables`, `int`, `print` |
-| `s5e3_the_gatekeeper.py` | 5 | 14 | `boolean-operators`, `elif`, `if`, `else`, `comparison-operators`, `for`, `range`, `input`, `f-strings`, `bool`, `variables`, `int`, `print` |
+| `p1e1_the_repeated_line.py` | 1 | 8 | `for`, `range`, `print`, `int` |
+| `p1e2_what_range_gives.py` | 1 | 8 | `range`, `for`, `print`, `int`, `variables` |
+| `p1e3_the_polygon_engine.py` | 1 | 10 | `for`, `range`, `variables`, `int`, `float`, `print` |
+| `p2e1_three_numbers.py` | 2 | 10 | `range`, `for`, `print`, `int`, `variables` |
+| `p2e2_counting_down.py` | 2 | 10 | `range`, `for`, `variables`, `int`, `float`, `print` |
+| `p2e3_the_shape_dial.py` | 2 | 12 | `for`, `range`, `variables`, `int`, `float`, `input`, `f-strings`, `print` |
+| `p3e1_the_first_while.py` | 3 | 10 | `while`, `comparison-operators`, `bool`, `variables`, `int`, `print` |
+| `p3e2_the_shrinking_line.py` | 3 | 14 | `while`, `comparison-operators`, `variables`, `float`, `int`, `print` |
+| `p3e3_while_versus_for.py` | 3 | 12 | `while`, `for`, `range`, `comparison-operators`, `variables`, `int`, `print` |
+| `p3e4_the_hang.py` | 3 | 10 | `while`, `comparison-operators`, `variables`, `int`, `print`, `reading-errors` |
+| `p4e1_two_roads.py` | 4 | 10 | `if`, `else`, `comparison-operators`, `bool`, `variables`, `int`, `print` |
+| `p4e2_the_first_half.py` | 4 | 12 | `if`, `else`, `comparison-operators`, `for`, `range`, `bool`, `variables`, `int`, `print` |
+| `p4e3_the_choice_board.py` | 4 | 12 | `if`, `else`, `comparison-operators`, `for`, `range`, `input`, `f-strings`, `bool`, `variables`, `int`, `str`, `print` |
+| `p5e1_and_or_not.py` | 5 | 12 | `boolean-operators`, `comparison-operators`, `bool`, `if`, `else`, `variables`, `int`, `print` |
+| `p5e2_the_ladder.py` | 5 | 14 | `elif`, `if`, `else`, `comparison-operators`, `for`, `range`, `bool`, `variables`, `int`, `print` |
+| `p5e3_the_gatekeeper.py` | 5 | 14 | `boolean-operators`, `elif`, `if`, `else`, `comparison-operators`, `for`, `range`, `input`, `f-strings`, `bool`, `variables`, `int`, `print` |
 | `b1_five_of_six.py` | 6 | 10 | `for`, `range`, `reading-errors`, `int`, `variables`, `print` |
 | `b2_the_loop_that_never_ends.py` | 6 | 10 | `while`, `comparison-operators`, `reading-errors`, `variables`, `int`, `print` |
 | `b3_the_flat_body.py` | 6 | 8 | `for`, `range`, `reading-errors`, `int`, `print` |
 | `b4_a_number_it_cannot_count.py` | 6 | 12 | `for`, `range`, `reading-errors`, `int`, `float`, `variables`, `print` |
 | `b5_the_name_that_never_was.py` | 6 | 12 | `for`, `range`, `reading-errors`, `int`, `variables`, `print` |
 | `b6_the_shape_that_does_not_close.py` | 6 | 14 | `for`, `range`, `reading-errors`, `int`, `float`, `variables`, `print` |
-| `s7e1_a_loop_inside_a_loop.py` | 7 | 12 | `nesting`, `for`, `range`, `variables`, `int`, `print` |
-| `s7e2_the_grid.py` | 7 | 14 | `nesting`, `for`, `range`, `variables`, `int`, `print` |
-| `s7e3_the_rosette.py` | 7 | 16 | `nesting`, `for`, `range`, `if`, `else`, `comparison-operators`, `variables`, `int`, `float`, `print` |
-| `s8e1_carrying_a_number.py` | 8 | 12 | `accumulator-pattern`, `for`, `range`, `variables`, `int`, `float`, `print` |
-| `s8e2_the_growing_spiral.py` | 8 | 16 | `accumulator-pattern`, `for`, `range`, `variables`, `int`, `float`, `print` |
-| `s8e3_the_ink_budget.py` | 8 | 16 | `accumulator-pattern`, `while`, `comparison-operators`, `variables`, `int`, `float`, `print` |
+| `p7e1_a_loop_inside_a_loop.py` | 7 | 12 | `nesting`, `for`, `range`, `variables`, `int`, `print` |
+| `p7e2_the_grid.py` | 7 | 14 | `nesting`, `for`, `range`, `variables`, `int`, `print` |
+| `p7e3_the_rosette.py` | 7 | 16 | `nesting`, `for`, `range`, `if`, `else`, `comparison-operators`, `variables`, `int`, `float`, `print` |
+| `p8e1_carrying_a_number.py` | 8 | 12 | `accumulator-pattern`, `for`, `range`, `variables`, `int`, `float`, `print` |
+| `p8e2_the_growing_spiral.py` | 8 | 16 | `accumulator-pattern`, `for`, `range`, `variables`, `int`, `float`, `print` |
+| `p8e3_the_ink_budget.py` | 8 | 16 | `accumulator-pattern`, `while`, `comparison-operators`, `variables`, `int`, `float`, `print` |
 | `p9_mandala_lab.py` | 9 | 18 | `nesting`, `accumulator-pattern`, `for`, `range`, `if`, `else`, `comparison-operators`, `variables`, `int`, `float`, `print` |
 | `p10_sigil_starter.py` | 10 | 20 | all nineteen |
 
@@ -152,8 +156,7 @@ against the Area 0 and Area 1 entries of `pyquest/packages/content/src/concepts.
 | `elif` | 3 |
 | `boolean-operators` | 3 |
 
-**`elif` and `boolean-operators` are the thinnest, at three exercises each, and that is
-honest rather than an oversight.** Both arrive in Practice 5 and both live almost entirely
+**`elif` and `boolean-operators` are the thinnest, at three exercises each.** Both arrive in Practice 5 and both live almost entirely
 inside it: `p5e1`, `p5e2`, `p5e3`, and then the boss starter. Area 0 said the same thing
 about `bool` at three exercises, for a related reason.
 
@@ -255,7 +258,7 @@ are *silent*, and the win condition for those is that **they say what is wrong**
 test can check. A quest that accepted "it ran" would accept deleting the loop, which is
 the wrong lesson taught by the right mechanism. They stay DM-delivered.
 
-**`s1e2_what_range_gives.py` and `s5e1_and_or_not.py`.** Both are prediction exercises.
+**`p1e2_what_range_gives.py` and `p5e1_and_or_not.py`.** Both are prediction exercises.
 The value is in the wrong prediction they wrote down before running, and automating them
 deletes the only part that teaches.
 
@@ -296,7 +299,7 @@ Last run: **35 of 35**, on Python 3.14.6, Windows 11.
 
 ### The two things this harness knows that Area 0's did not
 
-**Some files are supposed to hang.** `s3e4_the_hang.py` and
+**Some files are supposed to hang.** `p3e4_the_hang.py` and
 `b2_the_loop_that_never_ends.py` never finish, on purpose, because that is the lesson.
 `# expect: hangs` makes "never finished" the assertion rather than an accident, and a file
 tagged `hangs` that *exits* fails the check.

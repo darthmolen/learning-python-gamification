@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 6 — The Hotbar
 
 **Concepts:** `slicing` · `indexing`, `len`, `list`, `range`, `mutation`,

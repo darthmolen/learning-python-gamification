@@ -1,7 +1,11 @@
-# The session drills
+---
+audience: learner
+---
 
-Each `session-<n>/` directory here holds the files for the session plan beside it. They
-are the work of the evening, and they live with the session that teaches them.
+# The practice drills
+
+Each `practice-<n>/` directory here holds the files for the practice plan beside it. They
+are the work of that practice, and they live with the plan that teaches them.
 
 **The brief-bearing exercises are next door in `../exercises/`** — those are the ones with
 a `BRIEF.md` and a hidden test, and the game points at them. Different kind of object,
@@ -42,11 +46,15 @@ exercise that was meant to break and did not is as wrong as one that crashed (§
 
 ## Where these files go
 
-**Copy them into your own repository, one session at a time, when the walkthrough says
-to.** That is different from Area 0, where you copied the whole directory at the start.
-Here the copying *is* part of the work: an untracked file arriving in a repository is
+**Copy them into your working folder one practice at a time, when the walkthrough says to.**
+That is different from Areas 0 and 1, where everything for the area was simply there from the
+start. Here the copying *is* part of the work: an untracked file arriving in a repository is
 what `git status` is for, and a directory that was already complete would have nothing to
 notice.
+
+The files themselves live where every area's drills live, at
+`curriculum/area-2/practices/practice-<n>/`. The plans beside those folders are the DM's and do
+not travel, the same as every other area.
 
 The exception is Practice 1: copy `still_works.py` in before you run `git init`, so you
 have something in the folder to prove nothing broke.

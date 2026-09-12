@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Journal — entry 07, and the beat that is new
 
 Read the first section out loud at the end of Practice 1. Thirty seconds. It never needs

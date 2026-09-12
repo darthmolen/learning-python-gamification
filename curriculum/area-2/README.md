@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 2 — The Scribe's Rite, and Escape the Sandbox
 
 **Weeks 6–8. Eight sessions of 45–60 minutes, in two halves that share a boss.**
@@ -94,7 +98,7 @@ boss, and `AREAS` is a flat `0..7`; the a/b split is prose in spec §4 and nothi
 
 **Practices 1–4 need no Python at all**, which is why 2a survives Gitea being down.
 
-### Why this order
+### Git comes before the toolchain, because the journal is already five weeks old
 
 **Git comes before the toolchain, not after.** The obvious ordering is the other way —
 teach him to run files properly, then teach him to save them. It is wrong here for one

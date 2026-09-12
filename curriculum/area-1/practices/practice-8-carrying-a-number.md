@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 8 — Carrying A Number
 
 **Concepts:** `accumulator-pattern` · `for`, `while`, `range`, `variables`, `int`,
@@ -56,7 +60,7 @@ it.
 
 ## Beat 4 — The work (30 minutes)
 
-### `s8e1_carrying_a_number.py` — the pattern, deliberately broken and fixed
+### `p8e1_carrying_a_number.py` — the pattern, deliberately broken and fixed
 
 Two accumulators running side by side: total ink and total turn.
 
@@ -70,7 +74,7 @@ Task 4 is the silent one and it is why this session sits after Practice 6: chang
 `total_ink = total_ink + length` to `total_ink = length`. **The picture is identical. The
 number is wrong.** Nothing complains.
 
-### `s8e2_the_growing_spiral.py` — the accumulator IS the drawing
+### `p8e2_the_growing_spiral.py` — the accumulator IS the drawing
 
 In p8e1 the accumulator was bookkeeping. Here the number being carried is the length of the
 next line, so one line — `length = length + growth` — is the entire reason the shape
@@ -83,7 +87,7 @@ Task 4 is a real one: swap the order of the last two lines so `length` grows bef
 ink is added. The picture is unchanged and the total is wrong by a predictable amount. Ask
 them to predict the amount.
 
-### `s8e3_the_ink_budget.py` — the accumulator meets `while`
+### `p8e3_the_ink_budget.py` — the accumulator meets `while`
 
 *"Keep drawing until you have used 2000 pixels of ink."* Nobody knows how many lines that
 is; the program finds out. This is the shape of an enormous amount of real software.

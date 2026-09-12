@@ -35,10 +35,26 @@ SEARCH = (ROOT / "practices", ROOT / "reference")
 # Mirrors the area-0 entries of packages/content/src/concepts.ts. Kept here as a
 # literal on purpose: this directory must stay runnable with nothing but Python,
 # and reaching into a TypeScript file to check a tag would break that.
-# If concepts.ts changes, this changes. The overlap is nine strings and is worth
+# If concepts.ts changes, this changes. The overlap is ten strings and is worth
 # the duplication.
+#
+# `git-clone` is Practice 0's and no drill file carries it -- that practice happens to the
+# machine rather than in a file. It is listed anyway, because the check this set backs is
+# "is this tag a real Area 0 concept", and a tag being unreachable today is not the same as
+# it being wrong tomorrow.
 AREA_0_CONCEPTS = frozenset(
-    "print variables int float str bool input f-strings reading-errors".split()
+    [
+        "print",
+        "variables",
+        "int",
+        "float",
+        "str",
+        "bool",
+        "input",
+        "f-strings",
+        "reading-errors",
+        "git-clone",
+    ]
 )
 
 # Runs inside the child process, in place of the exercise's own turtle.done().
@@ -103,6 +119,9 @@ def check(path):
         capture_output=True,
         text=True,
         timeout=60,
+        # Explicit, because half these exercises are SUPPOSED to exit non-zero. Letting
+        # `check` default would raise on exactly the files this harness exists to run.
+        check=False,
     )
     out, err = done.stdout, done.stderr
 
@@ -135,26 +154,96 @@ def check(path):
     return True, (headline[-1] if headline else expect) + where
 
 
-def main():
-    files = sorted(f for d in SEARCH for f in d.rglob("*.py"))
+def line_claims(actual: dict[str, str]) -> list[str]:
+    """Prose that quotes a line number, checked against the line the run actually reported.
+
+    This exists because the drift is invisible and has happened three times. Shortening a
+    docstring moves every line below it, and `reference/practice-3-answers.md` and
+    `practices/practice-3-the-broken-sigil.md` both quote these tracebacks verbatim -- so the
+    DM reads a number aloud that no longer matches what is on the learner's screen, in the one
+    practice whose entire subject is reading the number.
+
+    The area README has told people to check this by hand since Area 0 was written. A claim with
+    no command behind it is worth nothing, so this is the command.
+
+    Matched narrowly: the text must mention the file, by full name or by its short stem, and
+    carry a `line N` on the same line. Prose that says "b1 got as far as line 12" two sentences
+    after naming b1 is not caught, and that is the honest limit of this check.
+    """
+    issues: list[str] = []
+    docs = [p for p in [*ROOT.rglob("*.md"), *ROOT.rglob("*.py")] if "__pycache__" not in str(p)]
+
+    for doc in sorted(docs):
+        try:
+            text = doc.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for number, row in enumerate(text.splitlines(), 1):
+            claimed = re.search(r"\bline (\d+)\b", row)
+            if claimed is None:
+                continue
+            for name, real in actual.items():
+                stem = name.split("_")[0]
+                if name not in row and not re.search(rf"\b{stem}\b", row):
+                    continue
+                if claimed.group(1) != real:
+                    where = doc.relative_to(ROOT).as_posix()
+                    issues.append(
+                        f"  {where}:{number} says line {claimed.group(1)}"
+                        f" for {name}, which now fails on line {real}"
+                    )
+                break
+
+    return issues
+
+
+def main() -> int:
+    # `reference/` is the DM's copy and is deliberately absent from a learner's machine --
+    # reference/README.md opens with "This directory is yours, not the learner's."
+    #
+    # `rglob` on a directory that does not exist yields nothing rather than raising, so without
+    # this guard the harness printed "15 of 15 exercises behaved as tagged" and exited 0 on a
+    # machine where four files were never looked at. A smaller number presented as a whole one
+    # is the failure practices/README.md already names: a harness that quietly counts fewer
+    # files and prints a reassuring result is worse than one that says what it cannot check.
+    #
+    # An absent reference/ is a CORRECT state, so this names the gap and still exits on the
+    # strength of what it did run.
+    absent = [d for d in SEARCH if not d.exists()]
+    files = sorted(f for d in SEARCH if d.exists() for f in d.rglob("*.py"))
     if not files:
-        print("no exercises found")
+        print("no exercises found -- that is not a pass, it is a missing tree")
         return 1
 
     failures = 0
-    session = None
+    practice = None
+    actual: dict[str, str] = {}
     for path in files:
-        if path.parent.name != session:
-            session = path.parent.name
-            print(f"\n{session}")
+        if path.parent.name != practice:
+            practice = path.parent.name
+            print(f"\n{practice}")
         ok, note = check(path)
         mark = "PASS" if ok else "FAIL"
         if not ok:
             failures += 1
+        # Keep the line each failure reported, so the prose that quotes it can be checked.
+        reported = re.search(r"\(line (\d+)\)$", note)
+        if ok and reported is not None:
+            actual[path.name] = reported.group(1)
         print(f"  {mark}  {path.name:<28} {note}")
 
     print(f"\n{len(files) - failures} of {len(files)} exercises behaved as tagged.")
-    return 1 if failures else 0
+    for directory in absent:
+        print(f"{directory.name}/ is not here, so nothing in it was checked.")
+
+    stale = line_claims(actual)
+    if stale:
+        print("\nprose quoting a line number that has moved:")
+        for issue in stale:
+            print(issue)
+        print("\nFix the prose, not the exercise. The number on the learner's screen is right.")
+
+    return 1 if failures or stale else 0
 
 
 if __name__ == "__main__":

@@ -149,3 +149,73 @@ export function stripMarks(markdown: string): string {
 
   return resolved + out.slice(at);
 }
+
+/**
+ * One line of plain text for a tooltip, from a glossary entry's markdown.
+ *
+ * A glossary entry is prose with an example in it — a paragraph or two, often a fenced block.
+ * None of that belongs in a hover card, so this takes the first paragraph and flattens it.
+ *
+ * **It also strips the characters a markdown renderer would act on.** The result is injected
+ * into markdown that has not been parsed yet, so an entry containing `*` would italicise half a
+ * sentence and one containing a backtick would open a code span that never closes. Escaping the
+ * HTML is not enough; the markdown has to go too.
+ */
+export function definitionSummary(markdown: string): string {
+  const withoutFences = markdown.replace(/```[\s\S]*?```/g, ' ');
+  const firstParagraph = stripMarks(withoutFences).split(/\n\s*\n/).find((p) => p.trim() !== '');
+
+  return (firstParagraph ?? '')
+    .replace(/[*_`<>[\]|]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Marks become glossary pills, each carrying its own definition.
+ *
+ * The Field Manual used `stripMarks` and said why: *"This is HTML with no script; there is no
+ * hover to have."* That was wrong about the web rather than about the site — `:hover` and
+ * `:focus-within` are CSS, and a definition that appears on hover needs no JavaScript at all.
+ * The page stays script-free, which is the property that lets it publish at all.
+ *
+ * `defs` is keyed by concept id and holds flattened text from `definitionSummary`. A mark whose
+ * id has no definition renders as its display text and nothing else — the same fallback
+ * `stripMarks` gives, because a pill promising a definition it does not have is worse than a
+ * word.
+ *
+ * The markup is emitted before the markdown is parsed, which is why `escapeText` runs over both
+ * halves: a renderer is about to read this, and an unescaped `&` in a definition would become an
+ * entity that is not there.
+ */
+export function markGlossary(
+  markdown: string,
+  defs: ReadonlyMap<string, string>,
+  escapeText: (s: string) => string,
+): string {
+  const marks = parseMarks(markdown);
+
+  let out = '';
+  let cursor = 0;
+  for (const mark of marks) {
+    const definition = defs.get(mark.id);
+    out +=
+      markdown.slice(cursor, mark.start) +
+      (definition === undefined || definition === ''
+        ? mark.text
+        : `<span class="gl" tabindex="0">${escapeText(mark.text)}` +
+          `<span class="gl-d"><b>${escapeText(mark.id)}</b> ${escapeText(definition)}</span></span>`);
+    cursor = mark.end;
+  }
+  out += markdown.slice(cursor);
+
+  let resolved = '';
+  let at = 0;
+  overProse(out, (chunk, offset) => {
+    if (offset < at) return;
+    resolved += out.slice(at, offset) + chunk.replaceAll('\[[', '[[');
+    at = offset + chunk.length;
+  });
+
+  return resolved + out.slice(at);
+}

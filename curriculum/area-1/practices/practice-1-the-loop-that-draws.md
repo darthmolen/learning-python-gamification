@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 1 — The Loop That Draws
 
 **Concepts:** `for`, `range` · `print`, `variables`, `int` resurfacing
@@ -20,7 +24,7 @@ Area 0 only. Nothing of Area 1 exists yet.
 
 ## Beat 2 — The hook (7 minutes)
 
-Open `s4e2_the_dashed_orbit.py` from Area 0. Their file. Scroll through the four
+Open `p4e2_the_dashed_orbit.py` from Area 0. Their file. Scroll through the four
 identical blocks of four lines. Ask what number they wrote in their Journal when
 that file asked them to count the blocks they had pasted.
 
@@ -54,7 +58,7 @@ Hand over the keyboard. Minute ten at the latest.
 
 Three files, in order.
 
-### `s1e1_the_repeated_line.py` — the square, in three lines
+### `p1e1_the_repeated_line.py` — the square, in three lines
 
 Task 1 asks what the first number printed was. **Do not let them skip it.** The answer is
 0 and it is the setup for the next file and for the next four weeks.
@@ -68,7 +72,7 @@ question when they stall:
 **Do not say 360.** It is the single most valuable number in the area and it is worth two
 minutes of guessing.
 
-### `s1e2_what_range_gives.py` — predictions on paper first
+### `p1e2_what_range_gives.py` — predictions on paper first
 
 Four loops, four written predictions before they run anything. Insist on it; it costs
 ninety seconds and it is the whole mechanism.
@@ -81,7 +85,7 @@ Task 3 is the gap in the spoke drawing: the first spoke has length 0 and draws n
 There are two fixes and one of them changes a single number. Ask which one they would
 rather read in a month.
 
-### `s1e3_the_polygon_engine.py` — the machine
+### `p1e3_the_polygon_engine.py` — the machine
 
 This is the file that pays for the evening.
 

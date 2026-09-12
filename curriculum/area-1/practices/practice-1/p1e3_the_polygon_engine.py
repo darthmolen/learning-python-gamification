@@ -12,7 +12,7 @@ Change `sides` at the top and everything downstream follows. Nothing else in the
 file needs touching. That is what it means for a program to have a dial on it,
 and it is the difference between a drawing and a generator.
 
-Run:  py -3.14 s1e3_the_polygon_engine.py
+Run:  py -3.14 p1e3_the_polygon_engine.py
 """
 # concepts: for, range, variables, int, float, print
 # dc: 10

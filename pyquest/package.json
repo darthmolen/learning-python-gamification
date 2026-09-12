@@ -18,6 +18,7 @@
     "typecheck": "tsc -b --pretty && npm run typecheck --workspaces --if-present",
     "validate:content": "npm run validate:content --workspace @pyquest/content --",
     "new:quest": "npm run new:quest --workspace @pyquest/content --",
+    "pack:payload": "npm run --silent pack:payload --workspace @pyquest/content --",
     "validate:plans": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/validate-plans.ts"
   },
   "devDependencies": {

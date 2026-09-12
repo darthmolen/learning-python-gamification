@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Area 2 glossary
 
 One entry per concept this area teaches — 2a is git, 2b is the real toolchain. The heading is the

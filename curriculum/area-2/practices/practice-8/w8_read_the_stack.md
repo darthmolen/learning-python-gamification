@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 8 — Read The Stack
 
 **Concepts:** `tracebacks` · `main-guard` · resurfaces `reading-errors`, `venv`
@@ -85,7 +89,7 @@ each.
 **It is identical in all three. The error never moved.** The only thing that changed is
 how far away from it you were standing when you asked.
 
-### The rule, and it is the whole session
+### Read a traceback from the bottom
 
 > **Read a traceback from the bottom.**
 >

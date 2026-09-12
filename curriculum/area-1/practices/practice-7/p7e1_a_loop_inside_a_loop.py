@@ -17,7 +17,7 @@ The second thing everybody gets wrong is which loop a line belongs to. There is
 only one way to tell and it is the indentation. Count the spaces with your
 finger. There is no shame in it; professionals do it too.
 
-Run:  py -3.14 s7e1_a_loop_inside_a_loop.py
+Run:  py -3.14 p7e1_a_loop_inside_a_loop.py
 """
 # concepts: nesting, for, range, variables, int, print
 # dc: 12

@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The entries moved into `journal.md`
 
 There are no entry files any more, and this directory is kept only to say so.

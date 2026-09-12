@@ -1,12 +1,22 @@
+---
+audience: learner
+---
+
 # The First Commit
 
-Your journal has been sitting in a folder since week one. Tonight it stops being a folder
-and starts being history.
+Your journal has been sitting in your repository since week one, untracked. Tonight it stops
+being a pile of files and starts being history.
 
 ## What it must do
 
-1. **A repository of your own, that you named.** Not one I named. `git init` it in the
-   folder your code already lives in.
+1. **Prove you know what `git init` does, in a folder you can throw away.** Make an empty
+   directory somewhere — `scratch/`, anywhere — run `git init` in it, and look at what appeared.
+   Then delete the whole thing.
+
+   You already have a repository: you cloned it in your very first session and you chose its
+   name. That is the one everything below happens in. This step is not about getting one — it is
+   about seeing the moment an ordinary folder becomes one, which is a thing you only get to
+   watch if you do it on purpose.
 2. **Your journal entries, inside it**, in a directory called `journal`. Copy them; leave
    the originals where they are.
 3. **One commit containing them**, with a message you wrote.

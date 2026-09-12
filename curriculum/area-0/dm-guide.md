@@ -1,4 +1,11 @@
+---
+audience: dm
+---
+
 # Area 0 — DM Guide
+
+**Read [the teaching tenets](../TENETS.md) first.** They apply in every area, and this guide
+assumes them.
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11)
 that is a parent, who is also a player — but the two roles want different things
@@ -206,7 +213,7 @@ more than any amount of being told.
 | Starts fixing before reading | The error is noise to them, not information | "Not yet. Read me the last line first. What is it called?" |
 | Reads the top of the traceback | The top is the outermost frame; the bottom is the answer | "Read it from the bottom up. Which line is about a file you wrote?" |
 | b2's five-frame traceback panics them | Four of those frames are inside Python's own turtle.py | "Which of those files did you write? Start there. The rest is Python explaining itself." |
-| b3 looks nothing like the others | It isn't one. Nothing ran, so there are no frames | "b1 got to line 17 before it died. How far did b3 get? Did a window even open?" |
+| b3 looks nothing like the others | It isn't one. Nothing ran, so there are no frames | "b1 got to line 12 before it died. How far did b3 get? Did a window even open?" |
 | b7: "there's no error, so it works" | **The most important moment in the area** | "Right. Python is happy. Are *you* happy? Look at the picture. Is that a square?" |
 
 **Let them get wrong:** all of it. This is the one session where being wrong is the

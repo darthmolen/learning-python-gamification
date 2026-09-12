@@ -10,8 +10,8 @@ Design: [`docs/specs/2026-08-26-gamified-python-curriculum-design.md`](docs/spec
 | Directory | What is in it |
 |---|---|
 | `pyquest/` | **The application.** npm workspace root — run every `npm` command from here |
-| `content/` | Authored quest data: YAML, briefs, starters, hidden tests. Loaded by the app, written by the DM |
-| `curriculum/` | Teaching material for humans: session plans, exercises, the parent guide. Needs no software to use |
+| `curriculum/` | **Every educational artifact.** Practice plans, lessons, glossaries, the DM guide, and the briefs, starters and hidden tests. Needs no software to use |
+| `game/` | The overlay: which exercises are scored and what they are worth. Holds no teaching, and deleting it must leave a curriculum that still validates |
 | `docs/specs/` | The design spec. The document of record |
 | `docs/decisions/` | Short records of choices that outlive the plan that made them |
 | `docs/design/` | UI artboards for the Claude Design canvas |
@@ -20,7 +20,7 @@ Design: [`docs/specs/2026-08-26-gamified-python-curriculum-design.md`](docs/spec
 | `planning/waves/` | Waves — the order plans start in, when the board stops fitting in a head |
 | `spikes/` | Throwaway experiments, kept as a record. Nothing here ships |
 
-`content/` and `curriculum/` sit outside `pyquest/` on purpose: both are authored by a
+`curriculum/` and `game/` sit outside `pyquest/` on purpose: both are authored by a
 person rather than compiled, and the app is one of their consumers rather than their
 owner.
 
@@ -50,9 +50,9 @@ Everything runs from `pyquest/`:
 ```bash
 cd pyquest
 npm install
-npm test                 # 1170 tests; pretest compiles the packages first
+npm test                 # 1172 tests; pretest compiles the packages first
 npm run typecheck
-npm run validate:content # the authored content in ../content
+npm run validate:content # the authored content in ../curriculum and ../game
 npm run new:quest -- --id a3-shulker-sort --title "Shulker Sort" --area 3 \
                      --concepts sorted,min,max --dc 14
 ```

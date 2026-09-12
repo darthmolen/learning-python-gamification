@@ -1,0 +1,17 @@
+# The mistake: the numbers run 2, 3, 4 — the spine starts nowhere.
+#
+# A spine may open at 1 (the ordinary case) or at 0 (a bootstrap that precedes the work). It
+# may not open at 2, because the learner is told to begin at 2 and asks what 1 was. This is the
+# same failure as a gap, moved to the front, and it is worth its own fixture: relaxing the rule
+# to admit 0 is exactly the change that could accidentally admit any starting number at all.
+area: 1
+practices:
+  - n: 2
+    title: The Loop That Does Not Stop
+    exercises: [the-countdown]
+  - n: 3
+    title: Carrying A Number
+    exercises: [the-countdown]
+  - n: 4
+    title: The Sigil
+    exercises: [the-sigil]

@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 2 — Names For Things
 
 **Concepts:** `variables` · `int` · `print`
@@ -73,7 +77,7 @@ Scratch, and this is the same idea with better syntax.
 
 ## Beat 3 — The work (25–30 minutes)
 
-### `s2e1_square_by_name.py`
+### `p2e1_square_by_name.py`
 
 Four numbered tasks in the file. Task 3 — a rectangle always twice as wide as it is
 tall, with only one editable number — is the one that teaches. They will want to write
@@ -85,7 +89,7 @@ tall, with only one editable number — is the one that teaches. They will want 
 Task 4 asks them to print the perimeter without typing the answer. If they type `680`,
 ask what happens when the size changes.
 
-### `s2e2_the_staircase.py`
+### `p2e2_the_staircase.py`
 
 This is the reassignment file, and the line that matters is:
 

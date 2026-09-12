@@ -39,6 +39,21 @@ export const CONCEPTS: readonly Concept[] = [
   { id: 'input', label: 'input', area: 0 },
   { id: 'f-strings', label: 'f-strings', area: 0 },
   { id: 'reading-errors', label: 'reading errors', area: 0 },
+  /**
+   * Area 0's one git idea, and deliberately only one.
+   *
+   * Practice 0 has the learner clone the repository the DM made for them, because the setup
+   * payload travels by git and cannot deliver the instructions for installing git. That is a
+   * bootstrap wearing a lesson's clothes, and it is honest for a DM-led evening.
+   *
+   * **`repository` and `git-init` stay in Area 2.** Area 2a still teaches what a repository *is*,
+   * and a learner who has been using one for five weeks without understanding it is in exactly
+   * the state Area 0 already engineers for types: they meet `str`, `float` and `TypeError` by
+   * accident in Practices 1 to 3, and Practice 4 names what they have already tripped over.
+   * `curriculum/area-0/README.md` argues that ordering at length; this is the same argument
+   * applied to git.
+   */
+  { id: 'git-clone', label: 'git clone', area: 0 },
 
   // Area 1 — Control (weeks 3–6)
   { id: 'if', label: 'if', area: 1 },

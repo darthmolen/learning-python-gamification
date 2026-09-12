@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 6 — A Real Editor
 
 **Concepts:** `vscode` · resurfaces `files-on-disk`, `running-scripts`

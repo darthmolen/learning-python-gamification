@@ -8,6 +8,16 @@ export {
 } from './concepts.ts';
 
 export {
+  splitFrontmatter,
+  stripFrontmatter,
+  type Frontmatter,
+} from './frontmatter.ts';
+
+export {
+  AUDIENCES,
+  AUDIENCE_WHEN_UNMARKED,
+  AudienceSchema,
+  audienceOf,
   ContentItemSchema,
   DEFAULT_MEDALS,
   DifficultyClassSchema,
@@ -26,6 +36,7 @@ export {
   parseContentItem,
   parseAreaManifest,
   parsePracticeManifest,
+  type Audience,
   type ContentItem,
   type Kind,
   type Medal,
@@ -37,7 +48,7 @@ export {
 } from './schema.ts';
 
 export { parseGlossary } from './glossary.ts';
-export { parseMarks, stripMarks, type Mark } from './marks.ts';
+export { parseMarks, stripMarks, markGlossary, definitionSummary, type Mark } from './marks.ts';
 
 export {
   checkContent,

@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 7 — Its Own Python
 
 **Concepts:** `venv` · `pip` · resurfaces `running-scripts`

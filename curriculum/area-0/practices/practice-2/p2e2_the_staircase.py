@@ -1,16 +1,16 @@
-"""The Staircase — a name can be given a new value.
+"""The Staircase — a variable can be given a new value.
 
     step = step + 20
 
 That line is not maths. It is not a claim that a number equals itself plus 20,
 which would be false. It is an order, and it happens left-to-right in two beats:
 
-    1. work out what step + 20 is, using the value step has RIGHT NOW
-    2. make step the name of that new value instead
+    1. work out what step + 20 is, using the value the variable step has RIGHT NOW
+    2. point the variable step at that new value instead
 
 The old value is gone. Nothing else in the program changed.
 
-Run:  py -3.14 s2e2_the_staircase.py
+Run:  py -3.14 p2e2_the_staircase.py
 """
 # concepts: variables, int, print
 # dc: 10
@@ -48,7 +48,7 @@ print("step is now", step)
 # 1. Predict the last printed value BEFORE you run it. Write it down. Check.
 #
 # 2. Add two more stairs. Notice exactly how much typing that took.
-#    Remember the feeling. In two weeks you will learn the line that deletes it.
+#    Remember the feeling. In the future you will learn the line that deletes it.
 #
 # 3. Make the staircase shrink instead of grow.
 #

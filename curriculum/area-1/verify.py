@@ -236,7 +236,7 @@ def check(path: pathlib.Path) -> tuple[bool, str]:
     return True, failure_line(path, expect, err)
 
 
-def in_session_order(path: pathlib.Path) -> tuple[str, int, str]:
+def in_practice_order(path: pathlib.Path) -> tuple[str, int, str]:
     """Sort key that puts practice-2 before practice-10, which plain sorting does not."""
     top = path.relative_to(ROOT).parts[0]
     numbered = re.fullmatch(r"practice-(\d+)", path.parent.name)
@@ -244,17 +244,25 @@ def in_session_order(path: pathlib.Path) -> tuple[str, int, str]:
 
 
 def main() -> int:
-    files = sorted((f for d in SEARCH for f in d.rglob("*.py")), key=in_session_order)
+    # See area-0/verify.py for why this guard exists: `reference/` is the DM's copy and is
+    # absent on a learner's machine by design, `rglob` on a missing directory yields nothing
+    # rather than raising, and the result was a reduced count printed as a whole one with an
+    # exit code of 0. An absent reference/ is correct, so it is named rather than treated as a
+    # failure.
+    absent = [d for d in SEARCH if not d.exists()]
+    files = sorted(
+        (f for d in SEARCH if d.exists() for f in d.rglob("*.py")), key=in_practice_order
+    )
     if not files:
-        print("no exercises found")
+        print("no exercises found -- that is not a pass, it is a missing tree")
         return 1
 
     failures = 0
-    session = None
+    practice = None
     for path in files:
-        if path.parent.name != session:
-            session = path.parent.name
-            print(f"\n{session}")
+        if path.parent.name != practice:
+            practice = path.parent.name
+            print(f"\n{practice}")
         ok, note = check(path)
         mark = "PASS" if ok else "FAIL"
         if not ok:
@@ -262,6 +270,8 @@ def main() -> int:
         print(f"  {mark}  {path.name:<34} {note}")
 
     print(f"\n{len(files) - failures} of {len(files)} exercises behaved as tagged.")
+    for directory in absent:
+        print(f"{directory.name}/ is not here, so nothing in it was checked.")
     return 1 if failures else 0
 
 

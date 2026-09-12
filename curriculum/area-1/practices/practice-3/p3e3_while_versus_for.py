@@ -11,7 +11,7 @@ loop has to be a `while`. Using `while` where `for` would do is how you write
 an infinite loop by accident, because you have taken on all three of the rules
 from p3e1 for no reason.
 
-Run:  py -3.14 s3e3_while_versus_for.py
+Run:  py -3.14 p3e3_while_versus_for.py
 """
 # concepts: while, for, range, comparison-operators, variables, int, print
 # dc: 12
@@ -55,7 +55,7 @@ print("while: 5 lines, and two of them are bookkeeping you have to get right")
 # 3. Change `side < 6` to `side <= 6` and run it. You get a seven-sided
 #    six-sided shape. Look at the picture and find the extra line.
 #
-# 4. Here is the real question, and it is the point of the file:
+# 4. Here is the real question:
 #    "Draw lines until the turtle has traveled more than 1000 pixels."
 #    Which loop would you use, and why can the other one not do it cleanly?
 #    Write your answer in the Journal in one sentence.

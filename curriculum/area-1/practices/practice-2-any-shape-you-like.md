@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 2 — Any Shape You Like
 
 **Concepts:** `range` (three-arg), `variables` · `for`, `int`, `float`, `input`,
@@ -14,7 +18,7 @@ it.
 
 1. `range(4)` — say every number it gives you, in order.
 2. What does the colon at the end of a `for` line do?
-3. Why give something a name instead of typing the number?
+3. Why use a variable instead of typing the number?
 
 ## Beat 2 — Forecast (1 minute)
 
@@ -47,7 +51,7 @@ Do not demonstrate the third form. They meet it in the file.
 
 ## Beat 4 — The work (30 minutes)
 
-### `s2e1_three_numbers.py` — predictions on paper first
+### `p2e1_three_numbers.py` — predictions on paper first
 
 Five loops, five written predictions. They score themselves out of five and the score
 goes in the Journal, because they do this again in Practice 8 and comparing is the point.
@@ -56,7 +60,7 @@ The one to sit on is `range(10, 0)`, which prints **nothing at all** and does no
 complain. That is the second time they have met a loop that silently does not run. Do not
 name it yet. Practice 6 names it.
 
-### `s2e2_counting_down.py` — the counter is the drawing
+### `p2e2_counting_down.py` — the counter is the drawing
 
 The counter stops being a tally and becomes the side length. Nothing in the body says
 "get smaller"; the range says it.
@@ -66,7 +70,7 @@ they should find it rather than be told.
 
 Task 3 asks why the last length was 8 and not 0. The stop is out. Again.
 
-### `s2e3_the_shape_dial.py` — the machine, with a person on it
+### `p2e3_the_shape_dial.py` — the machine, with a person on it
 
 `input` from Area 0 meets the polygon engine from Practice 1. One trap, and they have met
 it before: `input` hands back a `str`, and `forward("90")` is a `TypeError` from Area 0

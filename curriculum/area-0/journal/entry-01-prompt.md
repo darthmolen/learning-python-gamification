@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Journal — the first entry
 
 Read this out loud before the first entry is written. Once, at the end of Practice 1. It

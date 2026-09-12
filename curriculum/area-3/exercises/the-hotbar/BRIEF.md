@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Hotbar
 
 Your hotbar is the first nine slots of your inventory. Everything else is in the bag. Both
@@ -33,7 +37,7 @@ An empty half prints its label and nothing after it.
 
 `inventory[0:9]` gives you nine things — slots 0 to 8 — because a slice stops *before* its
 second number. You have met that rule twice already: `range(9)` gives nine numbers, and
-`range(2, 5)` gives three. This is the third time and it is meant to be the last.
+`range(2, 5)` gives three. This is the third time, and the last.
 
 Two things a machine will check, and you can check both yourself:
 

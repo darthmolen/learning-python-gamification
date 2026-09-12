@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Polygon Engine
 
 A machine with a dial on it. Somebody says a number and gets that shape.

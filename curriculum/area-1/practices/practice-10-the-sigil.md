@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 10 — BOSS 1: The Sigil
 
 **Concepts:** all nineteen — Area 0's nine and Area 1's ten

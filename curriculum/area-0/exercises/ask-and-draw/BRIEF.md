@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Ask And Draw
 
 `input("...")` does three things: it prints your message, stops the program until somebody

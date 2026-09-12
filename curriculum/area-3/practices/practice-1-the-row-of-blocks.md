@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 1 — The Row Of Blocks
 
 **Concepts:** `list`, `iteration` · `for`, `range`, `print`, `len`, `nesting` resurfacing

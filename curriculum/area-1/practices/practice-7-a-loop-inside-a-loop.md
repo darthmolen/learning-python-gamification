@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 7 — A Loop Inside A Loop
 
 **Concepts:** `nesting` · `for`, `range`, `if`, `else`, `comparison-operators`,
@@ -55,7 +59,7 @@ counting spaces with your finger is what professionals do and there is no shame 
 
 ## Beat 4 — The work (30 minutes)
 
-### `s7e1_a_loop_inside_a_loop.py` — one line, three meanings
+### `p7e1_a_loop_inside_a_loop.py` — one line, three meanings
 
 Three squares in a rosette. Tasks 2 and 3 move `turtle.left(120)` one level in and then one
 level out, predicting before each run.
@@ -63,7 +67,7 @@ level out, predicting before each run.
 **That is the whole session in one exercise.** The same line means three different things
 depending only on how far it is indented, and all three arrive in four minutes.
 
-### `s7e2_the_grid.py` — both counters used
+### `p7e2_the_grid.py` — both counters used
 
 A 4×4 grid, where `row` and `col` become a position rather than just a tally. Sixteen cells
 addressed by two numbers, which is how every tile map, spreadsheet, chessboard and
@@ -76,7 +80,7 @@ Task 5(a) — a chessboard with alternating fill — is deliberately just out of
 wants an operator they have not met. Let them try, then have them write in the Journal
 what they needed and did not have. That note is Area 3's problem and it is a good one to be waiting.
 
-### `s7e3_the_rosette.py` — plain on purpose
+### `p7e3_the_rosette.py` — plain on purpose
 
 It draws something correct and dull, with two dials. The value of the evening is entirely
 in the choice board, and there is a Datamine payload for choices (a) and (b) in

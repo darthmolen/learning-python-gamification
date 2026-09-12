@@ -6,7 +6,7 @@ Four new orders:
   turtle.pensize(8)     thickness, in pixels
   turtle.color("red")   color of the line
 
-Run:  py -3.14 s1e3_pen_and_color.py
+Run:  py -3.14 p1e3_pen_and_color.py
 """
 # concepts: print, str, bool
 # dc: 8
@@ -48,7 +48,7 @@ print("pen size is:", turtle.pensize())
 # Colors that work: any of "red" "orange" "gold" "green" "blue" "purple"
 # "black" "white" "cyan" "magenta" "brown" "pink" "gray".
 # A color name Python does not know is an error. Try one on purpose, once,
-# and read what it says. That is the whole of Practice 3 in advance.
+# and read what it says. Reading errors is part of learning.
 # -----------------------------------------------------------------------------
 
 

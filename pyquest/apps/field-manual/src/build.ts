@@ -18,7 +18,12 @@ import {
   contentRootsFrom,
   formatIssues,
   parseGlossary,
+  stripFrontmatter,
   stripMarks,
+  markGlossary,
+  definitionSummary,
+  audienceOf,
+  type Audience,
 } from '@pyquest/content';
 import { marked } from 'marked';
 import { renderArea, renderHowTo, renderIndex, type AreaView, type HowToView } from './render.ts';
@@ -29,8 +34,13 @@ import { renderArea, renderHowTo, renderIndex, type AreaView, type HowToView } f
  * `learner` is the Tome. `dm` is the same pages plus the teaching aids, and the difference is
  * whether the guide is *rendered at all* — never whether it is visible. A hidden aid is an aid
  * anyone can read with view-source, and this site is public.
+ *
+ * **The same two words the documents themselves use.** This was a local `'learner' | 'dm'` union
+ * until the curriculum gained an `audience:` field; re-exporting the content package's type
+ * instead means a build audience and a document's declared audience cannot drift into two
+ * vocabularies that agree only by coincidence.
  */
-export type Audience = 'learner' | 'dm';
+export type { Audience } from '@pyquest/content';
 
 export interface BuildOptions {
   /** The directory holding `curriculum/` and `game/`. Briefs resolve under the former. */
@@ -53,6 +63,47 @@ function areaProse(curriculumRoot: string, area: number, file: string): string |
 }
 
 /**
+ * The DM's plan for one practice, rendered — or `undefined`.
+ *
+ * **This is the document the DM actually runs an evening from, and until 2026-09-10 it was
+ * published nowhere.** The manual carried the lesson, the glossary, the briefs, the spine and
+ * `dm-guide.md`; the plans — thirty-seven of them, the beat-by-beat scripts with the hook, the
+ * stalls and the sentences you may not say — existed only as files in the repository. A DM who
+ * opened the Tome looking for what to do tonight found a practice title and a line saying the
+ * work happens at the table.
+ *
+ * Found by a DM opening the Tome looking for exactly that, and finding exactly that.
+ *
+ * The file is `practices/practice-<n>-<slug>.md` and the slug is not knowable from the spine, so
+ * the directory is scanned for the numbered prefix. `practice-1-` must not match practice 10,
+ * which is why the pattern anchors on the hyphen after the digits.
+ *
+ * **It is read only for the DM build, and only if the file says it is the DM's.** Same posture
+ * as the teaching aid above: for the wrong audience the file is not read at all, so the learner's
+ * HTML cannot contain it by any template mistake.
+ */
+function practicePlan(
+  curriculumRoot: string,
+  area: number,
+  n: number,
+  audience: Audience,
+): string | undefined {
+  if (audience !== 'dm') return undefined;
+
+  const dir = join(curriculumRoot, `area-${area}`, 'practices');
+  if (!existsSync(dir)) return undefined;
+
+  const name = readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .find((file) => new RegExp(`^practice-${String(n)}-.+\\.md$`).test(file));
+  if (name === undefined) return undefined;
+
+  const raw = readFileSync(join(dir, name), 'utf8');
+  return audienceOf(raw) === 'dm' ? briefBody(raw) : undefined;
+}
+
+/**
  * The how-to sections under one root, in filename order.
  *
  * A missing directory is a return value rather than a fault, the same way `areaProse` treats an
@@ -68,9 +119,12 @@ function howToUnder(root: string): HowToView[] {
     .map((entry) => entry.name)
     .sort()
     .map((name) => {
-      const raw = readFileSync(join(dir, name), 'utf8');
+      const raw = stripFrontmatter(readFileSync(join(dir, name), 'utf8'));
       // The `# ` heading is the section's title, and `briefBody` strips it from the body so the
       // page does not print the same words twice — the rule the area pages already follow.
+      // Frontmatter comes off first: the pattern is multiline, so an `audience:` block would not
+      // fool it, but reading the title out of a document that still carries its metadata is the
+      // kind of near-miss that stops being a near-miss when somebody adds a second key.
       const heading = /^#\s+(.+?)\s*$/m.exec(raw)?.[1];
       return {
         id: name.replace(/\.md$/, ''),
@@ -97,8 +151,49 @@ function readBrief(curriculumRoot: string, relative: string): string {
  * Markdown to HTML, minus the title. Every brief opens with an `# H1` that repeats the quest's
  * title, and the page already prints that as its heading — rendering both reads as a stutter.
  */
-function briefBody(markdown: string): string {
-  const withoutTitle = markdown.replace(/^#\s+.*\r?\n/, '');
+/**
+ * Every concept's definition, flattened to one line, across every area's glossary.
+ *
+ * **Across every area, not the one being rendered.** Area 3's lesson marks `[[print]]`, which is
+ * Area 0's word — a curriculum building on itself is the normal case, and `glossary-gap` already
+ * refuses a glossary that defines a concept belonging elsewhere. A per-area map would leave the
+ * majority of marks in the later areas with no card.
+ *
+ * Built once per site rather than per page: eight files, read eight times instead of sixty-four.
+ */
+function glossaryAcross(curriculumRoot: string): Map<string, string> {
+  const defs = new Map<string, string>();
+
+  for (const area of new Set(CONCEPTS.map((c) => c.area))) {
+    const markdown = areaProse(curriculumRoot, area, 'glossary.md');
+    if (markdown === undefined) continue;
+    for (const [id, entry] of parseGlossary(markdown)) {
+      defs.set(id, definitionSummary(entry));
+    }
+  }
+
+  return defs;
+}
+
+/** Markdown's own escaping is not HTML's. Both run here, so the site needs its own. */
+const escapeText = (s: string): string =>
+  s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+
+function briefBody(markdown: string, defs?: ReadonlyMap<string, string>): string {
+  /**
+   * Frontmatter goes first, or nothing else here works.
+   *
+   * Every curriculum document under an area now opens with an `audience:` block. Left in place
+   * it defeats the title strip below — the file no longer *starts* with `# ` — and then `marked`
+   * renders the block itself, publishing `audience: dm` onto the page that block exists to keep
+   * from a learner. The two failures compound: the page gains a stray heading and loses the
+   * guarantee it was marked for.
+   */
+  const withoutTitle = stripFrontmatter(markdown).replace(/^#\s+.*\r?\n/, '');
   /**
    * Marks become their display text before `marked` ever sees them.
    *
@@ -106,17 +201,31 @@ function briefBody(markdown: string): string {
    * it. Without this line a lesson marked up for the Tome would publish literal double brackets to
    * a static site whose entire claim is that the curriculum stands on its own.
    *
-   * **Stripping rather than rendering, and the site loses nothing by it.** This is HTML with no
-   * script; there is no hover to have. The same page already prints every definition in full,
-   * under "What this area teaches" — so the reader who wants the word has it two screens up,
-   * which is more than the SPA gives them.
+   * **They become pills with their own definitions when a glossary is passed**, and plain text
+   * when one is not.
+   *
+   * The old note here said stripping lost nothing because "this is HTML with no script; there is
+   * no hover to have." That was wrong about the web rather than about the site: `:hover` and
+   * `:focus-within` are CSS. The page is still script-free — which is the property that lets it
+   * publish while the API is unfinished — and a reader can now see what a word means without
+   * scrolling two screens up to the vocabulary list.
+   *
+   * The fallback is not vestigial. A brief rendered before the glossary is read, and any prose
+   * whose marks name concepts nobody has defined yet, still print the word rather than a pill
+   * that promises a definition it does not have.
    */
-  return marked.parse(stripMarks(withoutTitle), { async: false });
+  return marked.parse(
+    defs === undefined ? stripMarks(withoutTitle) : markGlossary(withoutTitle, defs, escapeText),
+    { async: false },
+  );
 }
 
 export function buildSite({ contentRoot, outDir, audience = 'learner' }: BuildOptions): AreaView[] {
   const roots = contentRootsFrom(contentRoot);
   const { items, manifests, practices, issues } = checkContent(roots);
+
+  /** One glossary for the whole site. See `glossaryAcross` for why it is not per-area. */
+  const defs = glossaryAcross(roots.curriculum);
 
   // The validator is the gate, not this. If content is broken, say so here rather than
   // publishing a site built from it.
@@ -143,19 +252,27 @@ ${formatIssues(issues, roots)}`,
        */
       ...(() => {
         const final = areaProse(roots.curriculum, manifest.area, 'lesson.md');
-        if (final) return { lesson: briefBody(final) };
+        if (final) return { lesson: briefBody(final, defs) };
         const draft = areaProse(roots.curriculum, manifest.area, 'lesson.draft.md');
-        return draft ? { lesson: briefBody(draft), lessonIsDraft: true } : {};
+        return draft ? { lesson: briefBody(draft, defs), lessonIsDraft: true } : {};
       })(),
       /**
        * The guide is read only for the DM build. Reading it and letting the renderer decide
        * would put the teacher's notes one template mistake away from the learner's page; not
        * reading it means the learner build has nothing to leak.
+       *
+       * **The second check is the file's own word for it.** Until 2026-09-10 the audience of
+       * `dm-guide.md` was its filename, which is the same convention that let
+       * `practices/README.md` tell a learner to copy the DM's plans — a name cannot be asked who
+       * reads it. Now the document declares an audience and this honors the declaration, so a
+       * guide marked `learner` by mistake is not silently treated as secret, and a file that
+       * says `dm` cannot reach the learner build whatever it is called.
        */
       ...(() => {
         if (audience !== 'dm') return {};
         const guide = areaProse(roots.curriculum, manifest.area, 'dm-guide.md');
-        return guide ? { teachingAid: briefBody(guide) } : {};
+        if (guide === undefined || audienceOf(guide) !== 'dm') return {};
+        return { teachingAid: briefBody(guide) };
       })(),
       /**
        * The vocabulary, defined rather than merely listed.
@@ -191,7 +308,7 @@ ${formatIssues(issues, roots)}`,
         .filter((item) => item.area === manifest.area && item.kind === 'quest')
         .map((item) => ({
           title: item.title,
-          body: briefBody(readBrief(roots.curriculum, item.brief)),
+          body: briefBody(readBrief(roots.curriculum, item.brief), defs),
           concepts: [...item.concepts],
         })),
       /**
@@ -240,16 +357,19 @@ ${formatIssues(issues, roots)}`,
           const repeats = publishable.filter((r) => printed.has(r.slug));
           for (const r of fresh) printed.add(r.slug);
 
+          const plan = practicePlan(roots.curriculum, manifest.area, practice.n, audience);
+
           return {
             n: practice.n,
             title: practice.title,
+            ...(plan === undefined ? {} : { plan }),
             withheld: publishable.length < resolved.length,
             continues: repeats.map((r) => r.item?.title ?? r.slug),
             exercises: fresh.map((r) => ({
               // A slug the overlay does not score still has a brief, and the title falls back
               // to the slug so the section is never nameless.
               title: r.item?.title ?? r.slug,
-              body: briefBody(readBrief(roots.curriculum, r.brief)),
+              body: briefBody(readBrief(roots.curriculum, r.brief), defs),
               concepts: r.item === undefined ? [] : [...r.item.concepts],
             })),
           };

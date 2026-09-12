@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Area 3 — Collections
 
 **Weeks 9–14. Thirteen sessions of 45–60 minutes.**
@@ -48,8 +52,7 @@ assertion moved to area 4 rather than being weakened, and gained a second half a
 that area 3 is now announced as finished. The day area 7 is done, that test wants a fixture
 rather than a real area.
 
-**`area.yml` stays `authoring: partial`, and that is a decision rather than an oversight.**
-Every artifact exists, but Areas 1 and 2 set the rule and it is a good one: `complete` is a
+**`area.yml` stays `authoring: partial`.** Every artifact exists, but Areas 1 and 2 set the rule and it is a good one: `complete` is a
 person deciding an area is finished, not a consequence of the last file landing. Two things
 are still open — **no hidden test has run over the real `local-repo` path** against a cloned
 repository, and **no practice has been delivered to a learner.** Until then a tilde is the
@@ -102,7 +105,7 @@ Boss 3 where it is most expensive.
 **Thirteen, and the count is a commitment.** Twelve or fourteen only by an explicit merge
 or split, named and argued here.
 
-### Why this order
+### Each collection arrives because the last one could not do the job
 
 **Each collection arrives because the previous one could not do the job.** That is §4's
 sequencing rule applied inside an area rather than between them, and it is the whole

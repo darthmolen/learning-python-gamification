@@ -1,6 +1,6 @@
 """Datamine payload — p3e2 task 5c: shrink until the total ink passes 1000.
 
-Unlocks: s3e2_the_shrinking_line.py, the third choice on the board.
+Unlocks: p3e2_the_shrinking_line.py, the third choice on the board.
 
 The task nobody sees their way into is holding TWO things across the loop at
 once: the length, which shrinks, and the total, which grows. The stall is almost

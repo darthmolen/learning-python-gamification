@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 4 — Pick It Up
 
 **Concepts:** `list-methods` · `mutation`, `list`, `indexing`, `iteration`,

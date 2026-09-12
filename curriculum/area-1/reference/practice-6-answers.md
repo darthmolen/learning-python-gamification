@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 6 — The Broken Loop, answers
 
 **Read this before Practice 6. Not during.** If you are reading it at the table you have
@@ -160,7 +164,7 @@ Same as Area 0 Practice 3, with one rule added: **at least two of their three bu
 silent.** No error message. That is much harder to author than it sounds and doing it
 teaches them more about this session than finding your bugs does.
 
-`s1e3_the_polygon_engine.py` and `s5e2_the_ladder.py` are the best files to hand over.
+`p1e3_the_polygon_engine.py` and `p5e2_the_ladder.py` are the best files to hand over.
 
 **Get one wrong out loud.** Really try, really fail, really find it. If you find all
 three instantly, say which was hardest and why. Never make it look free.

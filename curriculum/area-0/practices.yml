@@ -14,6 +14,17 @@
 # this, and the Area screen says so rather than showing a gap.
 area: 0
 practices:
+  # Practice 0 is the bootstrap, and numbering it 0 is the honest way to say so: setup that
+  # happens before the work starts. It exists because `tools/learner-setup/` delivers its payload
+  # as a branch of the learner's own repository, and that payload contains the instructions for
+  # installing git -- so receiving the instructions required the thing they instruct. The way out
+  # of the circle is to do the setup at the table, together, and call it what it is.
+  #
+  # No exercises, for the same reason Practice 1 has none: it is delivered out loud.
+  - n: 0
+    title: A Machine Of Your Own
+    exercises: []
+
   - n: 1
     title: First Light
     exercises: []

@@ -1,9 +1,9 @@
 """Does Python still work in here? Run this before you type `git init`.
 
-Nothing in this file is new, and that is the point. Practice 1 is about the
-folder, not about Python. This file exists so you can prove the folder is an
-ordinary folder BEFORE you turn it into a repository -- and then prove it is
-still an ordinary folder afterwards.
+Nothing in this file is new. Practice 1 is about the folder, not about
+Python. This file exists so you can prove the folder is an ordinary folder
+BEFORE you turn it into a repository -- and then prove it is still an
+ordinary folder afterwards.
 
     py -3.14 still_works.py
 """

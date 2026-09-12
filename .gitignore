@@ -11,6 +11,11 @@ dist-*/
 
 .env
 .env.local
+# Timestamped copies made before editing a live .env. Same secrets, same rule -- and the
+# pattern is here rather than the habit being trusted, because `.env` was ignored and
+# `.env.bak-20260910` was not, which is a leak one `git add -A` wide.
+.env.bak-*
+.env.*.bak
 
 # Agent worktrees. Sub-agents run in isolated checkouts under here; each is a
 # full copy of the repository (154MB for three) and none of it belongs in history.

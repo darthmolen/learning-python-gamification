@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # It Is Somewhere Else
 
 Everything you have made in three sessions exists in one place, on one laptop, in one
@@ -23,7 +27,7 @@ an address.
 Then delete the clone. On purpose. You destroyed a full copy of everything you own and
 lost nothing, and that is worth feeling strange about for a minute.
 
-## Why step 5 matters more than it looks
+## A file you never added is not in the clone
 
 *A file that was never `git add`ed is not in the clone.* That is how Boss 2 fails, four
 sessions from now, on somebody else's machine, in front of you, with nothing you can do

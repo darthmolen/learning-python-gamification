@@ -17,11 +17,15 @@ what order, and what proves each one works.
 [`tools/README.md`](tools/README.md) gives the order and the week each install is first
 needed. Two things are worth knowing before you start rather than after:
 
-**Python is first and everything else is downstream of it.** Week 1, Area 0 session 1 opens a
-REPL. And read [`tools/python/README.md`](tools/python/README.md) on `py -3.14` — on at least
-one machine here, `python` means 3.12 in PowerShell and 3.14 in Git Bash, so a `pip install`
-under the wrong one installs a package the other cannot see and the failure arrives much later
-wearing a different face.
+**git is first, and you have already used it.** You cloned this repository and checked out this
+branch, which is Area 0's Practice 0 and the only reason this page is in front of you. Nothing
+below could have reached you any other way.
+
+**Python is next, and everything after it is downstream.** Week 1, Area 0 practice 1 opens a
+REPL. Read [`tools/python/README.md`](tools/python/README.md) on `py -3.14` — on at least one
+machine here, `python` means 3.12 in PowerShell and 3.14 in Git Bash, so a `pip install` under
+the wrong one installs a package the other cannot see and the failure arrives much later wearing
+a different face.
 
 **Do not install VS Code early.** Week 7, not before. Area 0's DM guide is explicit: it is
 Area 2b vocabulary and costs a session for no gain if it arrives ahead of time. Areas 0 and 1
@@ -33,12 +37,11 @@ hands-on and the download is not.
 
 | # | Install | Instructions | What proves it |
 |---|---|---|---|
-| 1 | Python 3.14 | [`tools/python/README.md`](tools/python/README.md) | `py -3.14 --version` |
-| 2 | An editor | — | Notepad is genuinely sufficient until week 7 |
-| 3 | git | [`tools/git/README.md`](tools/git/README.md) | `git --version`, and an identity configured **before** session 1 |
-| 4 | The remote | [`tools/git/local-lan-learner.md`](tools/git/local-lan-learner.md) | a real push from this machine, landing on the host |
-| 5 | VS Code + profile | [`tools/vscode/README.md`](tools/vscode/README.md) | **its §4 checklist** — see the gate below |
-| 6 | ursina | [`tools/ursina/README.md`](tools/ursina/README.md) | `py -3.14 curriculum/lib/smoke.py` |
+| 1 | git, and the remote | [`tools/git/README.md`](tools/git/README.md) | **already done** — this branch is here. Still set your identity, before practice 1 |
+| 2 | Python 3.14 | [`tools/python/README.md`](tools/python/README.md) | `py -3.14 --version` |
+| 3 | An editor | — | Notepad is genuinely sufficient until week 7 |
+| 4 | VS Code + profile | [`tools/vscode/README.md`](tools/vscode/README.md) | **its §4 checklist** — see the gate below |
+| 5 | ursina | [`tools/ursina/README.md`](tools/ursina/README.md) | `py -3.14 curriculum/lib/smoke.py` |
 
 ---
 
@@ -65,7 +68,7 @@ re-export is what turns the directory from a plan into an artifact. Without it t
 open and Area 2 is not ready to be taught.
 
 Then open one real exercise in it and use it, rather than admiring it:
-[`curriculum/area-2/exercises/session-2/motto.py`](curriculum/area-2/exercises/session-2/motto.py),
+[`curriculum/area-2/practices/practice-2/motto.py`](curriculum/area-2/practices/practice-2/motto.py),
 which is the file §4's `py -3.14 motto.py` line means.
 
 ### Gate 2 — the ursina framerate on this machine

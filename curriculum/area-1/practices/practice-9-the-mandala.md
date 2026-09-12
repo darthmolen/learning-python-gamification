@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 9 — The Mandala
 
 **Concepts:** none introduced — `nesting` and `accumulator-pattern` under load,

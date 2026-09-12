@@ -1,0 +1,60 @@
+# Ruff, for the Python in this repository.
+#
+# CLAUDE.md holds this repository to the standard it grades the learner against: §5.10's
+# Idiomatic medal is literally "ruff and pyright clean". That applies to code we write. It
+# cannot apply to code written to be wrong.
+#
+# ## What is excluded, and why it is not a loophole
+#
+# Area 0 Practice 3 and Area 1 Practice 6 are entire practices about reading error messages.
+# Their files carry a `# expect: SyntaxError` tag and then contain a real syntax error, because
+# an exercise that was supposed to break and did not is as wrong as one that crashed (§3
+# principle 5). The same is true of the `starter/` a fix-it quest hands over: `never-closed`,
+# `out-of-line` and `the-typo` ship broken by design and their hidden tests prove the learner
+# un-broke them.
+#
+# Linting those is not a weaker standard, it is a category error — and the noise is worse than
+# useless, because six permanent red files in an editor teach a DM to stop reading the panel.
+#
+# **`curriculum/lib/` is deliberately NOT excluded.** `curriculum/README.md` draws that line
+# already: lib is "the one thing here that is not an area … code a learner *depends on* rather
+# than code they write", and it carries a pytest suite for the same reason. It passes today and
+# is meant to keep passing.
+#
+# The two `verify.py` harnesses are not excluded either. They are real code that happens to live
+# beside teaching material, and they pass.
+
+exclude = [
+    # Deliberately broken: the practices about reading errors.
+    "curriculum/area-*/practices/practice-*/b*.py",
+    # Deliberately broken or deliberately unfinished: what a quest hands the learner to fix.
+    "curriculum/area-*/exercises/*/starter/**",
+    # The DM's worked answers. Teaching code, and some of it is wrong on purpose so that the
+    # answer key can show what the error looked like.
+    "curriculum/area-*/reference/**",
+]
+
+line-length = 100
+
+# Where a rule fights the teaching rather than the code.
+#
+# Scoped per file rather than ignored globally, and not written as `# noqa` in the file itself:
+# a learner reads these, and a lint pragma beside a line is a question they cannot answer yet.
+# `p7e1_a_coordinate.py` does carry an inline `# noqa` and keeps it — one line, already there,
+# and a blanket ignore here would make it dead and trip RUF100.
+[lint.per-file-ignores]
+# The whole point of the file is to print what `type(...)` returns. UP003 would rewrite each
+# demonstration into its own answer.
+# It also prints `50 > 100` to show what a bool is, which PLR0133 objects to for the same
+# reason: comparing two constants is pointless in production and is the entire demonstration
+# here.
+"curriculum/area-0/practices/practice-4/p4e1_type_lab.py" = ["UP003", "PLR0133"]
+# Comparison operators, taught by printing `10 <= 10` and reading what comes back. PLR0133
+# objects to comparing two constants, which is the lesson.
+"curriculum/area-1/practices/practice-3/p3e1_the_first_while.py" = ["PLR0133"]
+# A boss starter: the docstring, then the `# concepts:`/`# dc:`/`# expect:` header every drill
+# carries, then one import, then a commented reference card. I001 reads that arrangement as an
+# unformatted import block. The arrangement is the convention `practices/README.md` documents,
+# and the learner meets it in every file, so the linter is the thing that gives way.
+"curriculum/area-0/practices/practice-6/p6_starter.py" = ["I001"]
+"curriculum/area-1/practices/practice-10/p10_sigil_starter.py" = ["I001"]

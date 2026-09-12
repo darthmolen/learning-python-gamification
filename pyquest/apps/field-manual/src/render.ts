@@ -43,6 +43,14 @@ export interface AreaView {
     readonly n: number;
     readonly title: string;
     /**
+     * The DM's plan for this practice, rendered. Present only in the `dm` build.
+     *
+     * It is the document an evening is actually run from — the five beats, the hook, the
+     * predicted stalls and the sentences you may not say — and it was published nowhere until
+     * 2026-09-10. The area guide covers the area; this covers tonight.
+     */
+    readonly plan?: string;
+    /**
      * True when this practice claims work the site does not publish — a boss specification.
      * The row still appears, because a gap in the sequence is the failure the spine exists to
      * end, but the reason it is empty is stated rather than left to look like an oversight.
@@ -113,6 +121,49 @@ const STYLE = `
               font-family:'IBM Plex Mono',monospace;font-size:13px}
   .lesson code{font-family:'IBM Plex Mono',monospace;font-size:13.5px}
   /* The aid pushes the page down rather than covering it: no pop-overs, nothing lost. */
+  /* Glossary pills. No script: :hover for a mouse, :focus-within for a keyboard, and the pill
+     is tabbable so the second one is reachable. CLAUDE.md lets reference material float over
+     PROSE — this site has no editor to cover, which is the condition that rule turns on. */
+  .gl{position:relative;border-bottom:1px dotted var(--accent);cursor:help;
+      color:var(--accent);white-space:nowrap}
+  .gl-d{position:absolute;left:0;bottom:calc(100% + 6px);z-index:5;
+        display:none;width:max-content;max-width:min(34rem,80vw);
+        white-space:normal;padding:9px 12px;
+        background:var(--panel);border:1px solid var(--accent);
+        color:var(--fg);font-size:.92rem;line-height:1.45;
+        box-shadow:0 6px 18px rgba(0,0,0,.45)}
+  .gl-d b{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .gl:hover>.gl-d,.gl:focus-within>.gl-d,.gl:focus>.gl-d{display:block}
+  /* Near the right edge the card would overflow; anchoring the last one on the line to its
+     right edge keeps it on the page without measuring anything. */
+  .gl:last-child>.gl-d{left:auto;right:0}
+  /* The vocabulary. A row of words, and CLICKING one opens its full entry BELOW the row —
+     the in-app Tome's behaviour, and CLAUDE.md's rule: it expands in place and pushes the page
+     down, so nothing is covered and nothing is lost.
+     A hover card was tried here first and was wrong twice over: ten of them overlapped each
+     other, and a definition with a code block in it does not belong in a tooltip. Hover cards
+     stay where they earn their keep, on the marks inline in prose, where the answer is one
+     line and the reader is mid-sentence. */
+  .vr{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .vocab{margin:10px 0 22px}
+  .vocab-row{display:flex;flex-wrap:wrap;gap:8px}
+  .vocab-row .gl{position:static;border:1px solid var(--soft);background:var(--panel);
+                 padding:4px 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+                 font-size:.9rem;cursor:pointer;user-select:none}
+  .vocab-row .gl:hover{border-color:var(--accent)}
+  /* The open word stays lit, so the panel below is never orphaned from what opened it. */
+  ${''}
+  .vp{display:none;margin-top:10px;border:1px solid var(--accent);background:var(--panel)}
+  .vp-h{display:flex;justify-content:space-between;align-items:center;
+        padding:8px 14px;border-bottom:1px solid var(--line)}
+  .vp-h b{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .vx{color:var(--dim);cursor:pointer;font-size:.85rem}
+  .vx:hover{color:var(--accent)}
+  .vp .brief{padding:2px 16px 12px}
+  /* A word on the syllabus whose entry is unwritten. Present, and visibly not clickable —
+     the same honesty the page applies to an unwritten lesson. */
+  .vocab-row .gl-off{color:var(--dim);border-style:dashed;cursor:default}
+  @media(max-width:640px){.gl-d{left:0;right:0;width:auto;max-width:none}}
   .aid{border:1px solid var(--accent);background:var(--panel);margin:20px 0}
   .aid>summary{cursor:pointer;padding:11px 16px;font-weight:600;color:var(--accent);
                font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em}
@@ -140,7 +191,7 @@ const escape = (s: string): string =>
  */
 const NOINDEX = '<meta name="robots" content="noindex, nofollow">';
 
-function page(title: string, body: string, noindex = false): string {
+function page(title: string, body: string, noindex = false, extraCss = ''): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -148,7 +199,7 @@ function page(title: string, body: string, noindex = false): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">${noindex ? NOINDEX : ''}
 <title>${escape(title)}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<style>${STYLE}</style>
+<style>${STYLE}${extraCss}</style>
 </head>
 <body>
 ${body}
@@ -254,6 +305,26 @@ ${a.teachingAid}
   </details>`;
 }
 
+/**
+ * One practice's plan, or nothing.
+ *
+ * The same `<details>` as the teaching aid above and for the same reason — it expands in place
+ * and pushes the rest of the spine down, so nothing is covered and the reader does not lose
+ * their position in a list they are working through.
+ *
+ * **Labelled "Run this practice" rather than "Plan".** A DM opening an area at seven o'clock is
+ * looking for tonight, and a noun says what the thing is where a verb says what it is for.
+ */
+function practicePlanBlock(plan: string | undefined): string {
+  if (plan === undefined) return '';
+  return `    <details class="aid">
+      <summary>Run this practice</summary>
+      <div class="aid-in">
+${plan}
+      </div>
+    </details>`;
+}
+
 /** One area: what it teaches, and the exercises that teach it. */
 export function renderArea(a: AreaView, noindex = false): string {
   const lesson =
@@ -289,19 +360,61 @@ ${a.lesson}
    * so the sweep would fail on an author's Python example. A glossary definition is author prose
    * by exactly the same argument as a brief, and wears the same class to say so.
    */
+  /**
+   * The vocabulary: a row of words, each carrying its own meaning.
+   *
+   * **This was ten definitions printed in full**, several paragraphs and a code block each, sat
+   * between the reader and the lesson they came for. The in-app Tome had already solved it with
+   * a row of pills and the line *"Click a word for what it means"*, and the two surfaces now
+   * agree rather than each having their own idea of what a glossary looks like.
+   *
+   * The full entries are not lost — they are one click down, in the `<details>` below, because a
+   * static reference is the one place somebody might genuinely want to read all of them in
+   * order. What changed is that they no longer have to.
+   */
+  const group = `v${String(a.area)}`;
+  const defined = a.concepts.filter((c) => c.definition !== undefined);
+
+  const inputs =
+    `<input type="radio" name="${group}" id="${group}-none" class="vr" checked>` +
+    defined.map((c) => `<input type="radio" name="${group}" id="${group}-${c.id}" class="vr">`).join('');
+
+  const row = a.concepts
+    .map((c) =>
+      c.definition === undefined
+        ? `<span class="gl gl-off" title="on the syllabus; the entry is not written">${escape(c.label)}</span>`
+        : `<label class="gl" for="${group}-${c.id}">${escape(c.label)}</label>`,
+    )
+    .join('');
+
+  const panels = defined
+    .map(
+      (c) => `<div class="vp" id="p-${group}-${c.id}">
+      <div class="vp-h"><b>${escape(c.label)}</b><label class="vx" for="${group}-none">close</label></div>
+      <div class="brief">${c.definition ?? ''}</div>
+    </div>`,
+    )
+    .join('\n    ');
+
+  /**
+   * One rule per concept, emitted with the page rather than in the shared stylesheet.
+   *
+   * The selector has to name both the radio and its panel, so it cannot be written once for all
+   * areas — and an id is the only thing that ties a label to the panel it opens without script.
+   * Ten to seventeen rules per page, which is cheaper than the JavaScript it replaces.
+   */
+  const vocabCss = defined
+    .map((c) => `#${group}-${c.id}:checked~#p-${group}-${c.id}{display:block}`)
+    .join('');
+
   const concepts =
     a.concepts.length > 0
       ? `<h2>What this area teaches</h2>
-  <dl class="glossary">${a.concepts
-    .map(
-      (c) =>
-        `<dt>${escape(c.label)}</dt>${
-          c.definition === undefined
-            ? '<dd class="gap">Not defined yet. The word is on the syllabus; the glossary entry is not written.</dd>'
-            : `<dd class="brief">${c.definition}</dd>`
-        }`,
-    )
-    .join('')}</dl>`
+  <p class="n">Click a word for what it means.</p>
+  <div class="vocab">${inputs}
+    <div class="vocab-row">${row}</div>
+    ${panels}
+  </div>`
       : '';
 
   const exercise = (e: {
@@ -333,6 +446,7 @@ ${a.practices
   .map(
     (p) => `  <section class="practice">
     <h3>${escape(`${String(p.n)}. ${p.title}`)}</h3>
+${practicePlanBlock(p.plan)}
 ${
   p.continues.length > 0
     ? `    <div class="gap"><p style="margin:0">Continues ${p.continues
@@ -377,5 +491,6 @@ ${a.exercises.map(exercise).join('\n')}`
   ${work}
 </div>`,
     noindex,
+    vocabCss,
   );
 }

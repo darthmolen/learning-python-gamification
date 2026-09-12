@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Mandala
 
 **Practice 9. This is the whole session.** No new orders, no worked example. You have
@@ -30,7 +34,7 @@ earlier files is not cheating and it is what everybody does.
 Check each one before you say you are finished.
 
 - [ ] At least **two rings**, and the second is not identical to the first
-- [ ] A **loop inside a loop**, and you can say which lines are in which
+- [ ] **Nesting** — a loop inside a loop, and you can say which lines are in which
 - [ ] At least one **accumulator** — something that grows, shrinks or counts across
       the whole drawing
 - [ ] At least one **`if`** that changes the picture, not just what gets printed

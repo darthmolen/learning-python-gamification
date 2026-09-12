@@ -70,6 +70,23 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       SPOOL_ROOT: /spool
       API_PORT: "3081"
+      # The three the git verifiers need, and all three were missing until 2026-09-10.
+      #
+      # `local-repo` clones a learner's repository into WORKSPACE_ROOT and runs the quest's
+      # pytest specification; `git-signal` reads their log through the Gitea API. Without
+      # GITEA_TOKEN both refuse — deliberately, rather than guessing — and without
+      # PLAYER_REPOS the api cannot tell whose repository to ask about. That is 8 `local-repo`
+      # and 2 `git-signal` quests, a third of the campaign, failing politely into a log line.
+      #
+      # `gitea` is the service name on the compose network, not the LAN host: this is the api
+      # talking to a container beside it, and the port is the container's 3000 rather than the
+      # published 3080.
+      GITEA_URL: http://gitea:3000
+      GITEA_TOKEN: ${GITEA_TOKEN:-}
+      PLAYER_REPOS: ${PLAYER_REPOS:-}
+      # Where a cloned repository lands. Named on the volume below, and the api refuses
+      # `local-repo` outright when it is unset rather than writing somewhere arbitrary.
+      WORKSPACE_ROOT: /workspaces
     volumes:
       # No workspace mount, and its absence is the fix. See `apps/api/Dockerfile`: a bind mount
       # over `/workspace` replaces the directory wholesale and masks the `node_modules` the image
@@ -88,6 +105,11 @@ services:
       # The job handoff. The api writes here and the runner reads; neither can reach the other by
       # any other route, which is the point.
       - runner_spool:/spool
+      # Where `local-repo` clones a learner's repository to. A named volume rather than a bind:
+      # this is a working copy the api resets hard and cleans on every submission, and pointing
+      # it at a host directory would put `git reset --hard` and `git clean -qfdx` one typo away
+      # from somebody's actual checkout.
+      - api_workspaces:/workspaces
     ports:
       # 3081, reserved for this service before it existed — and bound to LOOPBACK, the way postgres
       # already is.
@@ -179,3 +201,5 @@ services:
 volumes:
   runner_spool:
     name: pyquest_runner_spool
+  api_workspaces:
+    name: pyquest_api_workspaces

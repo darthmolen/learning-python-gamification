@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Walkthrough 8 — Stop the program and look at it
 
 This is the tool half of practice 8. There is no file to run and nothing for a harness to

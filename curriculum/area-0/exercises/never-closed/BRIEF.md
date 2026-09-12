@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Never Closed
 
 You met this one in Practice 3. Something is missing on one line, and Python never gets as

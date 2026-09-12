@@ -934,8 +934,23 @@ export function buildServer(options: ServerOptions): FastifyInstance {
 
       const area = Number(request.params.area);
       const practiceN = Number(request.params.practiceN);
-      if (!Number.isInteger(area) || area < 0 || area > 7 || !Number.isInteger(practiceN) || practiceN < 1) {
-        throw new ApiFailure('verifier-failed', 'an area is 0–7 and a practice number is 1 or more');
+      /*
+       * A practice number is 0 or more, not 1 or more.
+       *
+       * Area 0 opens with Practice 0 — the bootstrap, "create your first repository", which
+       * exists because the setup payload travels by git and so could not deliver the
+       * instructions for installing git. `packages/content/src/schema.ts` and migration 0008
+       * both say `>= 0`; this route was the fourth place that said otherwise, and the only one
+       * that would have rejected the tick before the database ever saw it.
+       */
+      if (
+        !Number.isInteger(area) ||
+        area < 0 ||
+        area > 7 ||
+        !Number.isInteger(practiceN) ||
+        practiceN < 0
+      ) {
+        throw new ApiFailure('verifier-failed', 'an area is 0–7 and a practice number is 0 or more');
       }
 
       const parsed = PracticeTickSchema.safeParse(request.body);

@@ -11,7 +11,7 @@ Nobody knows how many lines that is. The program finds out.
 This is the shape of a huge amount of real software: keep going until a budget
 runs out, a file ends, a user says stop, or a total is reached.
 
-Run:  py -3.14 s8e3_the_ink_budget.py
+Run:  py -3.14 p8e3_the_ink_budget.py
 """
 # concepts: accumulator-pattern, while, comparison-operators, variables, int, float, print
 # dc: 16

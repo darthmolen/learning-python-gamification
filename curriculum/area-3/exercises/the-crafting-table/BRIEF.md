@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Boss 3 — The Crafting Table
 
 **No scaffolding, no starter, no hints, and Socratic questions only** (§5.3). A blank file,
@@ -111,7 +115,7 @@ Four real sentences:
 too: **it must run from a clean clone on somebody else's machine.** Push it, then have
 somebody clone it into a folder that has never seen your code and drive it themselves.
 
-They will type things you did not think of. That is the point.
+They will type things you did not think of.
 
 ## Scars
 

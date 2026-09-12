@@ -18,7 +18,20 @@ const contentRoot = resolve(here, '..', '..', '..', '..');
 const out = resolve(here, '..', 'dist-published');
 
 const NEWLINE = String.fromCharCode(10);
-const LESSON = `A list holds things.${NEWLINE}`;
+/**
+ * Marked, because a lesson under an area has to declare who reads it or `checkContent` refuses
+ * the whole root — and this suite's subject is the deletion test, not the audience rule. The
+ * block is written out here rather than assembled by a helper so that the one thing this file
+ * builds is visible in one place.
+ */
+const LESSON = [
+  '---',
+  'audience: learner',
+  '---',
+  '',
+  'A list holds things.',
+  '',
+].join(NEWLINE);
 
 const pages = (dir: string): { file: string; html: string }[] =>
   readdirSync(dir)
@@ -69,6 +82,37 @@ describe('what the learner artifact may not contain', () => {
   it('carries no teaching aid on any page', () => {
     for (const p of learner) {
       expect(p.html, `${p.file} carries a teaching aid`).not.toMatch(/teaching aid/i);
+    }
+  });
+
+  /**
+   * The practice plans are the DM's, in exactly the way the guide is.
+   *
+   * They are a sharper leak than the guide if they get out: a plan names the stalls before the
+   * learner hits them, and Practice 3's whole design is that they do not know what is coming.
+   */
+  it('carries no practice plan on any page', () => {
+    for (const p of learner) {
+      expect(p.html, `${p.file} carries a practice plan`).not.toMatch(/Run this practice/i);
+      // A phrase that only ever appears inside a plan, in case the summary label changes.
+      expect(p.html, `${p.file} carries plan prose`).not.toMatch(/What you may not say/i);
+    }
+  });
+
+  /**
+   * The audience block is metadata about the reader, and the reader is not its audience.
+   *
+   * Every `.md` under an area declares `audience: learner` or `audience: dm`, and three
+   * separate strippers have to run for none of it to reach a page — `briefBody` for lessons and
+   * briefs, `howToUnder` for the how-to sections, and the API's `read` for the SPA. Miss any one
+   * and the failure is quiet and ugly: `marked` renders a leading `---` block as a heading and a
+   * rule, so the page gains a stray title *and* prints the word `dm` to a learner.
+   *
+   * Asserted across both artifacts, because the dm site is public too — unlisted is not private.
+   */
+  it('prints no frontmatter on any page of either site', () => {
+    for (const p of [...learner, ...dm]) {
+      expect(p.html, `${p.file} prints its frontmatter`).not.toMatch(/audience:\s*(learner|dm)/i);
     }
   });
 
@@ -136,6 +180,26 @@ describe('what the dm artifact adds', () => {
   it('carries the aid on the areas that have a guide', () => {
     const withAid = dm.filter((p) => /teaching aid/i.test(p.html));
     expect(withAid.length).toBeGreaterThan(0);
+  });
+
+  /**
+   * The plan for each practice — the document an evening is actually run from.
+   *
+   * Published nowhere until 2026-09-10, and found the way these things are found: a DM opened
+   * the Tome looking for what to do tonight and got a practice title and a line saying the work
+   * happens at the table. The area guide covers the area; nothing covered the evening.
+   *
+   * Asserted on an area known to have plans rather than on "at least one somewhere", because
+   * the failure worth catching is a whole area's worth going missing while another still has
+   * some.
+   */
+  it('carries a runnable plan for every practice of an authored area', () => {
+    const areaZero = dm.find((p) => p.file === 'area-0.html');
+    expect(areaZero).toBeDefined();
+
+    // Seven practices in Area 0 since Practice 0 was added, and every one has a plan file.
+    const plans = areaZero?.html.match(/Run this practice/g) ?? [];
+    expect(plans).toHaveLength(7);
   });
 
   /**

@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 4 — Four Kinds Of Thing
 
 **Concepts:** `int` · `float` · `str` · `bool` · `variables`, `print` resurfacing
@@ -74,7 +78,7 @@ them carry it for ten minutes.
 
 ## Beat 3 — The work (25–30 minutes)
 
-### `s4e1_type_lab.py`
+### `p4e1_type_lab.py`
 
 **They write thirteen predictions on paper before running it.** This is not optional and
 it is not busywork — a written wrong prediction is the entire mechanism. Do not correct a
@@ -94,7 +98,7 @@ The four questions at the bottom, in order of value:
 4. **`True + True`** is `2`. Let them be appalled. Do not defend Python. Agreeing that it
    is a bit odd costs nothing and buys credibility.
 
-### `s4e2_the_dashed_orbit.py`
+### `p4e2_the_dashed_orbit.py`
 
 The drawing half, and the reason floats exist rather than a lecture about them.
 

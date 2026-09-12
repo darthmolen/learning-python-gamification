@@ -1,4 +1,11 @@
+---
+audience: dm
+---
+
 # Area 2 — DM Guide
+
+**Read [the teaching tenets](../TENETS.md) first.** They apply in every area, and this guide
+assumes them.
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11) that
 is his father, who is also a player. Read this once before Practice 1, and come back to
@@ -17,7 +24,7 @@ so far has been trapped on one laptop. These three weeks are how it gets off.
 **Second: this is the area where his mistakes stop being local.** In Area 0 a wrong line
 drew a wrong square. In Area 2 a wrong line means his file is not in the clone, on your
 machine, in front of you, and there is nothing he can do about it from where he is
-sitting. That is the whole point (§2.3, §3 principle 8) and it is also genuinely
+sitting. The design intends that (§2.3, §3 principle 8), and it is also genuinely
 uncomfortable. Say out loud, in Practice 1, that this is coming.
 
 ---
@@ -331,7 +338,7 @@ guide §6 still stands. Two additions for this area:
   §7. A failure is a scar (§3 principle 5, §5.3) and is written down with the same care
   as a pass — more, because the step that failed is the lesson.
 
-### Your reply goes in two places from here, and that is deliberate
+### Your reply goes in two places from here
 
 **Keep writing under `### DM reply` in his `journal.md`, exactly as in Area 0. From the
 session Gitea exists, also leave a comment on his commit.** Both. Every time.

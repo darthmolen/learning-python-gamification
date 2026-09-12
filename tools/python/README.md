@@ -2,7 +2,7 @@
 
 **Both machines. Needed week 1, before anything else.**
 
-Everything in this campaign is Python 3.14. Area 0 session 1 opens a terminal and types
+Everything in this campaign is Python 3.14. Area 0 practice 1 opens a terminal and types
 into the REPL, so this is the one install that cannot be deferred.
 
 ## Install
@@ -27,7 +27,7 @@ under the wrong interpreter installs a package the other interpreter cannot see,
 failure surfaces later as a missing module rather than as a wrong shell.
 
 A machine with only 3.14 installed will not hit this. The habit is still the one to teach,
-because Area 2b's session 7 is about exactly this: a program gets its own Python.
+because Area 2b's practice 7 is about exactly this: a program gets its own Python.
 
 ### The one exception, and it is the one that bites
 
@@ -50,7 +50,7 @@ interpreter, and the venv it was meant for cannot see the package.
 **Inside an activated venv, use `python`.** That is what activation is for, and it is the only
 place in this repository where `python` is the right answer. Everywhere else, `py -3.14`.
 
-Area 2b session 7 teaches this directly — it is the session about which Python is running, so
+Area 2b practice 7 teaches this directly — it is the session about which Python is running, so
 the exception is content rather than an inconvenience.
 
 ## The DM's machine also needs

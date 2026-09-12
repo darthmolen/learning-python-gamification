@@ -31,7 +31,7 @@ holding three things.
 An exercise belongs to the practice that teaches it. One exercise can belong to two practices
 when it is built out of both — you will meet that, and the brief will say so.
 
-## Why some practices have no exercises
+## Practices with no exercises are worked at the table
 
 Plenty of practices have no exercise folder at all, and those are not lesser practices.
 

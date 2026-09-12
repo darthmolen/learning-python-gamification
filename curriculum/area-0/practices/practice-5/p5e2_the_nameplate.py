@@ -15,7 +15,7 @@ turtle.write takes four things in this order:
     the text, whether to move afterwards, how to line it up, and the font.
 The font is three things of its own: family, size, style.
 
-Run:  py -3.14 s5e2_the_nameplate.py
+Run:  py -3.14 p5e2_the_nameplate.py
 """
 # concepts: input, f-strings, str, int, variables, print
 # dc: 14

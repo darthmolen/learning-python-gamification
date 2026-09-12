@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Reference — Datamine payloads
 
 **This directory is yours, not the learner's.** Do not copy it onto the learner's machine.
@@ -9,7 +13,7 @@ and not a failure. The five rules that come with using one are in Area 0's
 
 ## What is deliberately not here
 
-**Nothing for Practices 1–4, and that is not an oversight.**
+**Nothing for Practices 1–4.**
 
 A git walkthrough's answer is the next line of the walkthrough. There is no reference
 solution to unlock for "make a commit, then read the log", because the walkthrough already

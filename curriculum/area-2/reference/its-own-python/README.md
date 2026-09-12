@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # its-own-python
 
 A program that draws a word very large. It cannot run without a package, which is the
@@ -63,7 +67,7 @@ heart —
 python -c "import sys; print(sys.executable)"
 ```
 
-## Why `pyfiglet`
+## `pyfiglet` is something the program cannot fake
 
 It had to be something the program genuinely cannot fake. A project that would run the
 same with an empty environment has not needed one yet, and the brief refuses it.
@@ -74,8 +78,7 @@ dependencies are paperwork.
 
 ## What is not here, on purpose
 
-**No `.venv` directory.** That is the point of the quest and the first thing the harness
-checks. It is rebuilt from the four commands above in about ten seconds, by anybody, on
+**No `.venv` directory.** It is the first thing the harness checks. It is rebuilt from the four commands above in about ten seconds, by anybody, on
 any machine, which is exactly why nobody commits one.
 
 **No pinned version** in `requirements.txt`, and the file says why.

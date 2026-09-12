@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # The Log As A Story
 
 A repository nobody can read is a pile of saves. This one has to read as a story, and
@@ -17,7 +21,7 @@ somebody else has to be able to follow it.
 The dm has heard the story, from your log, without opening a single file. That is the
 whole win condition and it is why this one is signed off by a person.
 
-## Why a person signs this off
+## No signal can tell you the log reads as a story
 
 A signal can prove commits exist. It cannot prove they read as a story, and the story is
 the entire concept. Nothing automated is going to tell you that `stuff2` was a bad

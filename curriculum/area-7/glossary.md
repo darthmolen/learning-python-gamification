@@ -1,3 +1,7 @@
+---
+audience: learner
+---
+
 # Area 7 glossary
 
 One entry per concept this area teaches. The heading is the concept's id from

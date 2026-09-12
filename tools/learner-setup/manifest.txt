@@ -43,7 +43,12 @@ spikes/ursina-tier3/_timed_runner.py
 
 # ---------------------------------------------------------------------------
 # What the VS Code install is verified against: one real exercise, opened and run.
-# Session 2's, because tools/vscode/README.md's checklist names `motto.py`.
+# Practice 2's, because tools/vscode/README.md's checklist names `motto.py`.
+#
+# This directory holds the drill files and nothing else -- the DM's plan for the practice is
+# `practices/practice-2-the-first-commit.md`, a level up, and does not travel. The two used to
+# sit under `exercises/session-2`; ADR 0007's rename moved them here and the manifest did not
+# follow, which took `pack.sh` out entirely until 2026-09-10. `packages/content/tests/
+# learner-setup.test.ts` is the check that now says so.
 # ---------------------------------------------------------------------------
-curriculum/area-2/exercises/README.md
-curriculum/area-2/exercises/session-2
+curriculum/area-2/practices/practice-2

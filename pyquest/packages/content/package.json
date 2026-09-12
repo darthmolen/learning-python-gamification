@@ -19,7 +19,8 @@
     "build": "tsc -b",
     "typecheck": "tsc -b && tsc -p tsconfig.test.json",
     "validate:content": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/validate.ts",
-    "new:quest": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/new-quest.ts"
+    "new:quest": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/new-quest.ts",
+    "pack:payload": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli/pack-payload.ts"
   },
   "dependencies": {
     "yaml": "^2.6.1",

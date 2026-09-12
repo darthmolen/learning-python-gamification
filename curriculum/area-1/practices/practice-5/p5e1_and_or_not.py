@@ -20,7 +20,7 @@ The trap, and it is a bad one: `if n == 1 or 2:` looks like it asks whether n is
 PREDICT FIRST: write down True or False for all twelve lines below before
 running.
 
-Run:  py -3.14 s5e1_and_or_not.py
+Run:  py -3.14 p5e1_and_or_not.py
 """
 # concepts: boolean-operators, comparison-operators, bool, if, else, variables, int, print
 # dc: 12

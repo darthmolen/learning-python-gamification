@@ -1,0 +1,11 @@
+id: a1-the-countdown
+title: "The Countdown"
+kind: quest
+area: 1
+concepts: [while]
+dc: 12
+brief: area-1/exercises/the-countdown/BRIEF.md
+verifier:
+  type: hidden-tests
+  starter: area-1/exercises/the-countdown/starter/unfinished.py
+  tests: area-1/exercises/the-countdown/hidden/test.py

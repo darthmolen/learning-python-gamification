@@ -1,6 +1,7 @@
 """The Type Lab — four kinds of thing, and how to ask which is which.
 
-Python has more kinds of value than four, but these are the four you now own:
+A kind of thing in programming is called a type. Python has more kinds of value than four, 
+but these are the four you now own:
 
     int     a whole number                 120        -3        0
     float   a number with a fractional part 1.5       33.33     2.0
@@ -14,7 +15,7 @@ BEFORE YOU RUN THIS: for each numbered line below, write down on paper what you
 think prints. All thirteen. Being wrong is the point; a wrong prediction you wrote
 down teaches you something, and a wrong prediction you kept in your head does not.
 
-Run:  py -3.14 s4e1_type_lab.py
+Run:  py -3.14 p4e1_type_lab.py
 """
 # concepts: int, float, str, bool, print, variables
 # dc: 12
@@ -49,12 +50,15 @@ print("13. pen down?", turtle.isdown(), "which is a", type(turtle.isdown()))
 
 
 # --- YOUR MOVE ---------------------------------------------------------------
-# Answer these by experiment, not by asking. Every one is a print away.
+# Find these out by trying them, not by being told. Most of them are one print away.
 #
-#   1. Line 5 and line 6 use the same + symbol and do two different jobs.
-#      What decides which job it does?
+# The numbers below are the labels this program printed — result 5 is the line that
+# came out saying "5.", not the fifth line of the file.
 #
-#   2. 100 / 4 is 25, a whole number. Why did line 9 not say int?
+#   1. Results 5 and 6 use the same + symbol and it does two different actions.
+#      What decides which action it does?
+#
+#   2. 100 / 4 is 25, a whole number. Why did result 9 not say int?
 #      Find the OTHER division operator that does say int. It is one character
 #      different. What does it give for 100 and 3?
 #

@@ -31,7 +31,7 @@ print(settings)
 #
 # 1. Count the frames. Now count the ones that name a file YOU wrote.
 #
-# 2. Say the answer out loud: one. Line 20, this file.
+# 2. Say the answer out loud: one. Line 19, this file.
 #
 # 3. That is the whole skill. The other three frames are Python explaining
 #    itself to itself, and reading them costs you ten minutes and teaches

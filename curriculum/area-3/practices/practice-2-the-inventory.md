@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 2 — The Inventory
 
 **Concepts:** `indexing`, `len` · `list`, `iteration`, `for`, `range`, `reading-errors`

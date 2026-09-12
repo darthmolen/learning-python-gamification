@@ -1,4 +1,11 @@
+---
+audience: dm
+---
+
 # Area 1 — DM Guide
+
+**Read [the teaching tenets](../TENETS.md) first.** They apply in every area, and this guide
+assumes them.
 
 **Who this is for.** Whoever holds the DM seat. In Kitchen Table mode (spec §5.11) that
 is a parent, who is also a player. Area 0's guide established the seat and says why the
@@ -94,7 +101,7 @@ everything that goes wrong for the next four weeks.
    every loop that did too much or too little.
 2. **"What has to change for that to become false?"** — for every `while` loop that
    does not stop. If the answer is "nothing in the loop changes it", they have found it
-   themselves, which is the whole point.
+   themselves.
 3. **"Which loop is that line in?"** — for every nesting problem in Practices 7 and 9.
    Point at the indentation with a finger. Do not read it out for them.
 
@@ -441,7 +448,7 @@ Nothing. It said nothing. That is the entry.
 Area 0's §7 holds. One addition for this area.
 
 **If they are fed up in Practices 3, 6 or 8**, the recovery is the same and it is a
-picture. Stop the exercise, open `s1e3_the_polygon_engine.py`, and let them change the
+picture. Stop the exercise, open `p1e3_the_polygon_engine.py`, and let them change the
 number at the top four or five times. It takes three minutes, it produces five different shapes,
 and it ends the evening on something that works.
 

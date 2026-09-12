@@ -1,3 +1,7 @@
+---
+audience: dm
+---
+
 # Practice 3 — The Log As A Story
 
 **Concepts:** `git-log` · `git-branch` · resurfaces `git-commit`
@@ -124,7 +128,7 @@ not just whether he was right.
 ## Beat 4 — Choice board (in the work time)
 
 - **The Time Traveler** — `git switch --detach <a commit hash from the log>`, look at the
-  files, and get back. **He will land in a detached HEAD, which is the point.** Git prints
+  files, and get back. **He will land in a detached HEAD.** Git prints
   a paragraph containing the instruction to escape. He finds the line, not you.
 - **The Abandoned Branch** — make a branch, commit something bad on it, switch back to
   `main` and never merge it. Prove with `git log --oneline --graph --all` that it is still

@@ -25,10 +25,10 @@ The question is built from a comparison operator. There are six:
     <=  less than or equal        >=  greater than or equal
     ==  is equal to               !=  is not equal to
 
-`=` gives a name to a value. `==` asks whether two values are the same. They are
+`=` gives a variable its value. `==` asks whether two values are the same. They are
 not the same thing and confusing them is a rite of passage.
 
-Run:  py -3.14 s3e1_the_first_while.py
+Run:  py -3.14 p3e1_the_first_while.py
 """
 # concepts: while, comparison-operators, bool, variables, int, print
 # dc: 10

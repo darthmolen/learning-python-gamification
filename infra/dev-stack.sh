@@ -290,6 +290,9 @@ api() {
     API_HOST="127.0.0.1" \
     SPOOL_ROOT="$DEV_SPOOL" \
     WORKSPACE_ROOT="$DEV_WORKSPACES" \
+    GITEA_URL="${GITEA_URL:-http://localhost:${GITEA_HTTP_PORT:-3080}}" \
+    GITEA_TOKEN="${GITEA_TOKEN:-}" \
+    PLAYER_REPOS="${PLAYER_REPOS:-}" \
     npm start --workspace @pyquest/api
 }
 

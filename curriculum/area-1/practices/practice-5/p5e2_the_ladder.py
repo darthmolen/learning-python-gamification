@@ -16,7 +16,7 @@ That "first one wins" rule is the whole of this file. Put a wide rung above a
 narrow one and the narrow one can never be reached -- and nothing complains,
 nothing crashes, and the picture is quietly wrong.
 
-Run:  py -3.14 s5e2_the_ladder.py
+Run:  py -3.14 p5e2_the_ladder.py
 """
 # concepts: elif, if, else, comparison-operators, for, range, bool, variables, int, print
 # dc: 14
@@ -45,7 +45,7 @@ for side in range(sides):
 
 print("four bands of four. One ladder, sixteen climbs, one rung each time.")
 print()
-print("now the broken ladder, which is the point of the file:")
+print("now the broken ladder:")
 
 for n in range(16):
     if n < 12:
